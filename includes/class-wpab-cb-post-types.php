@@ -1,0 +1,215 @@
+<?php
+/**
+ * The file that defines the custom post types and statuses for the plugin.
+ *
+ * A class definition that registers all post types and statuses for backend data storage.
+ *
+ * @link       https://wpanchorbay.com
+ * @since      1.0.0
+ *
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/includes
+ */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * The custom post type and status definition class.
+ *
+ * This is used to register the `wpab_cb_campaign` post type and the custom statuses
+ * like 'Active', 'Scheduled', and 'Expired'. The post type itself has no visible UI in the admin,
+ * as it is managed entirely by a React application via the REST API.
+ *
+ * @since      1.0.0
+ * @package    WPAB_CampaignBay
+ * @author     WP Anchor Bay <wpanchorbay@gmail.com>
+ */
+class WPAB_CB_Post_Types {
+
+	/**
+	 * Gets an instance of this object.
+	 * Prevents duplicate instances which avoid artefacts and improves performance.
+	 *
+	 * @static
+	 * @access public
+	 * @since 1.0.0
+	 * @return object
+	 */
+	public static function get_instance() {
+		// Store the instance locally to avoid private static replication.
+		static $instance = null;
+
+		// Only run these methods if they haven't been ran previously.
+		if ( null === $instance ) {
+			$instance = new self();
+		}
+
+		// Always return the instance.
+		return $instance;
+	}
+
+	/**
+	 * A dummy constructor to prevent the class from being loaded more than once.
+	 *
+	 * @see Wpab_Cb_Post_Types::get_instance()
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 */
+	private function __construct() {
+		/* We do nothing here! */
+	}
+
+	/**
+	 * Hook into WordPress actions and filters.
+	 *
+	 * @since 1.0.0
+	 */
+	public function run() {
+		add_action( 'init', array( $this, 'register_post_type' ) );
+		add_action( 'init', array( $this, 'register_post_statuses' ) );
+
+		// This filter is kept for debugging purposes. It will only have an effect
+		// if a developer temporarily sets 'show_ui' to true.
+		add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
+	}
+
+	/**
+	 * Register the `wpab_cb_campaign` Custom Post Type.
+	 *
+	 * This CPT is registered without a visible UI in the admin area. It serves as a
+	 * backend data store to be managed by the plugin's React interface via the REST API.
+	 *
+	 * Note: The 'Campaign Type' (category) and other rules are stored as post meta,
+	 * not registered as part of the CPT itself. This is handled by the API controller.
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_post_type() {
+		$labels = array(
+			'name'          => _x( 'Campaigns', 'Post Type General Name', WPAB_CB_TEXT_DOMAIN ),
+			'singular_name' => _x( 'Campaign', 'Post Type Singular Name', WPAB_CB_TEXT_DOMAIN ),
+			'all_items'     => __( 'All Campaigns', WPAB_CB_TEXT_DOMAIN ),
+			'add_new_item'  => __( 'Add New Campaign', WPAB_CB_TEXT_DOMAIN ),
+			'add_new'       => __( 'Add New', WPAB_CB_TEXT_DOMAIN ),
+			'edit_item'     => __( 'Edit Campaign', WPAB_CB_TEXT_DOMAIN ),
+			'update_item'   => __( 'Update Campaign', WPAB_CB_TEXT_DOMAIN ),
+			'search_items'  => __( 'Search Campaign', WPAB_CB_TEXT_DOMAIN ),
+		);
+
+		$args = array(
+			'label'               => __( 'Campaign', WPAB_CB_TEXT_DOMAIN ),
+			'description'         => __( 'Discount Campaigns for WooCommerce', WPAB_CB_TEXT_DOMAIN ),
+			'labels'              => $labels,
+			'supports'            => array( 'title' ), // We only need a title for internal reference.
+			'hierarchical'        => false,
+			'public'              => false,
+			// 'show_ui'             => false,
+			// 'show_in_menu'        => false,
+			// 'show_in_admin_bar'   => false,
+            'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => false,
+			'can_export'          => true,
+			'has_archive'         => false,
+			'exclude_from_search' => true,
+			'publicly_queryable'  => false,
+			'capability_type'     => 'post',
+			'show_in_rest'        => true,  // CRITICAL: This makes the CPT available to the REST API and React app.
+			'rest_base'           => 'campaigns', // The endpoint will be /wp-json/wpab-cb/v1/campaigns/
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
+		);
+		register_post_type( 'wpab_cb_campaign', $args );
+	}
+
+	/**
+	 * Register Custom Post Statuses.
+	 *
+	 * These statuses are registered to be used programmatically and via the REST API.
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_post_statuses() {
+		register_post_status(
+			'wpab_cb_active',
+			array(
+				'label'                     => _x( 'Active', 'post status', WPAB_CB_TEXT_DOMAIN ),
+				'public'                    => true,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => true,
+				/* translators: %s: number of posts. */
+				'label_count'               => _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', WPAB_CB_TEXT_DOMAIN ),
+			)
+		);
+
+		register_post_status(
+			'wpab_cb_scheduled',
+			array(
+				'label'                     => _x( 'Scheduled', 'post status', WPAB_CB_TEXT_DOMAIN ),
+				'public'                    => true,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => true,
+				/* translators: %s: number of posts. */
+				'label_count'               => _n_noop( 'Scheduled <span class="count">(%s)</span>', 'Scheduled <span class="count">(%s)</span>', WPAB_CB_TEXT_DOMAIN ),
+			)
+		);
+
+		register_post_status(
+			'wpab_cb_expired',
+			array(
+				'label'                     => _x( 'Expired', 'post status', WPAB_CB_TEXT_DOMAIN ),
+				'public'                    => true,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => true,
+				/* translators: %s: number of posts. */
+				'label_count'               => _n_noop( 'Expired <span class="count">(%s)</span>', 'Expired <span class="count">(%s)</span>', WPAB_CB_TEXT_DOMAIN ),
+			)
+		);
+	}
+
+	/**
+	 * Add the custom post status to the display states.
+	 *
+	 * This is kept for debugging. It will only have a visible effect if a developer
+	 * temporarily sets 'show_ui' to true in the CPT arguments.
+	 *
+	 * @param array   $post_states An array of post display states.
+	 * @param WP_Post $post        The current post object.
+	 * @return array  The modified post states.
+	 */
+	public function add_display_post_states( $post_states, $post ) {
+		if ( ! is_admin() || $post->post_type !== 'wpab_cb_campaign' ) {
+			return $post_states;
+		}
+
+		if ( 'wpab_cb_active' === $post->post_status ) {
+			$post_states['wpab_cb_active'] = __( 'Active', WPAB_CB_TEXT_DOMAIN );
+		}
+
+		if ( 'wpab_cb_scheduled' === $post->post_status ) {
+			$post_states['wpab_cb_scheduled'] = __( 'Scheduled', WPAB_CB_TEXT_DOMAIN );
+		}
+
+		if ( 'wpab_cb_expired' === $post->post_status ) {
+			$post_states['wpab_cb_expired'] = __( 'Expired', WPAB_CB_TEXT_DOMAIN );
+		}
+
+		return $post_states;
+	}
+}
+
+if ( ! function_exists( 'wpab_cb_post_types' ) ) {
+	/**
+	 * The function which returns the one WPAB_CB_Post_Types instance.
+	 *
+	 * @since 1.0.0
+	 * @return WPAB_CB_Post_Types
+	 */
+	function wpab_cb_post_types() {
+		return WPAB_CB_Post_Types::get_instance();
+	}
+}

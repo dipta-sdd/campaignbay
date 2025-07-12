@@ -1,0 +1,125 @@
+
+.toplevel_page_wpab-cb #wpcontent {
+	padding-left: 0;
+}
+#wpab-cb *,
+#wpab-cb *::before,
+#wpab-cb *::after {
+    box-sizing: border-box;
+}
+
+#wpab-cb {
+    
+    & .wpab-cb{
+        padding: 0;
+        margin: 0;
+    }
+    & .m-0 {
+        margin: 0 !important;
+    }
+    & .p-0 {
+        padding: 0 !important;
+    }
+
+
+    $my-plug-spacing-unit: 4px;
+    $my-plug-border-radius-base: 0.5rem;
+    $my-plug-border-width-base: 1px;
+    $my-plug-border-color-base: #dcdcdc; // Light gray for borders
+    // Typography (using SCSS variables)
+    $fs-sm: 0.875rem; // 14px
+    $fs-base: 1rem;   // 16px
+    $fs-lg: 1.25rem;  // 20px
+    $fs-xl: 1.5rem;   // 24px
+    $fs-2xl: 2rem;    // 32px
+
+    $fw-light: 300;
+    $fw-normal: 400;
+    $fw-bold: 700;
+    $fw-bolder: 900;
+
+    $lh-base: 1.5; // Standard line height
+    
+    $bg-white:#f8f8f8;
+    $bg-gray: #f5f5f5; // Default gray background
+    $bg-gray-darkest: #e8e8e8; // Darkest gray
+    $bg-gray-light: #f0f0f0; // Light gray background for sections
+    $bg-gray-dark: #e0e0e0; // Darker gray for
+    $bg-primary: #3858e9; // Primary color (WordPress blue)
+
+    & .wpab-cb-container{
+        margin: #{$my-plug-spacing-unit * 3};
+        width: auto;
+        // border: #{$my-plug-border-width-base} solid #{$my-plug-border-color-base}; 
+        border-radius: #{$my-plug-border-radius-base }; 
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    }
+    
+
+    & .wpab-cb-page{
+        display: block;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        height: auto;
+    }
+
+    & .wpab-cb-page-header {
+        display: flex;
+        align-items: center;
+        justify-content:flex-start;
+        margin: 0;
+        padding: #{$my-plug-spacing-unit * 4};
+        background-color: #{$bg-white}; // Light gray background
+        border-bottom: #{$my-plug-border-width-base} solid #{$my-plug-border-color-base};
+        border-radius: #{$my-plug-border-radius-base } #{$my-plug-border-radius-base } 0 0; 
+    }
+
+
+    // this will not change , checked source code of component
+    & .wpab-cb-settings-tabs .components-tab-panel__tabs{
+        background-color: #{$bg-white};
+        border-bottom: #{$my-plug-border-width-base} solid #{$my-plug-border-color-base};
+    }
+    & .components-tab-panel__tabs-item.is-active {
+        color: #{$bg-primary};
+    }
+    
+    & .wpab-cb-settings-tab{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: #{$my-plug-spacing-unit * 4};
+        flex-wrap: nowrap;
+        width: 100%;
+        padding: #{$my-plug-spacing-unit * 4};
+        border-radius: 0 0 #{$my-plug-border-radius-base } #{$my-plug-border-radius-base };
+        // margin-top: -1px;
+    }
+
+    & .wpab-cb-settings-active-tab{
+        color: #{$bg-primary};
+    }
+    & .wpab-cb-settings-card {
+        max-width: 1200px;
+        width: 100%;
+        background-color: #{$bg-white}; // Light gray background for cards
+        border-radius: #{$my-plug-border-radius-base };
+        padding: #{$my-plug-spacing-unit * 4};
+        border: #{$my-plug-border-width-base} solid #{$my-plug-border-color-base};
+    }
+
+} 
+
+
+
+
+
+#wpab-cb input,
+#wpab-cb select,
+#wpab-cb textarea,
+#wpab-cb button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}

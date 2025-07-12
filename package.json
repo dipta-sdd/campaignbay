@@ -1,0 +1,19 @@
+{
+  "name": "anchor-bay-autopilot",
+  "version": "1.0.0",
+  "description": "Its a boilerpalte for creating wordpress plugin with react.",
+  "main": "index.js",
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "makepot": "wp-scripts i18n make-pot -- . languages/anchor-bay-boilerplate.pot"
+  },
+  "author": "sankarsan das",
+  "license": "ISC",
+  "devDependencies": {
+    "@wordpress/scripts": "^30.19.0"
+  },
+  "dependencies": {
+    "react-router-dom": "^7.6.3"
+  }
+}

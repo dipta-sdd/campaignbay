@@ -1,0 +1,17 @@
+{
+    "name": "anchorbay/autopilot",
+    "description": "Its a boilerpalte for creating wordpress plugin with react",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Anchorbay\\Autopilot\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "sankarsan das"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
