@@ -1,7 +1,7 @@
 {
-  "name": "anchor-bay-autopilot",
+  "name": "campaign-bay",
   "version": "1.0.0",
-  "description": "Its a boilerpalte for creating wordpress plugin with react.",
+  "description": "CampaignBay for WooCommerce Product Discount WordPress Plugin.",
   "main": "index.js",
   "scripts": {
     "build": "wp-scripts build",
@@ -11,9 +11,12 @@
   "author": "sankarsan das",
   "license": "ISC",
   "devDependencies": {
+    "@wordpress/babel-plugin-makepot": "^6.26.0",
     "@wordpress/scripts": "^30.19.0"
   },
   "dependencies": {
+    "@wordpress/icons": "^10.26.0",
+    "lucide-react": "^0.525.0",
     "react-router-dom": "^7.6.3"
   }
 }

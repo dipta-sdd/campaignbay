@@ -234,12 +234,12 @@ if ( ! function_exists( 'wpab_cb_get_white_label' ) ) :
 				'plugin_name'      => esc_html__( 'WPAB - WooCommerce Smart Campaigns', WPAB_CB_TEXT_DOMAIN ),
 				'short_name'       => esc_html__( 'Smart Campaigns', WPAB_CB_TEXT_DOMAIN ),
 				'menu_label'       => esc_html__( 'Campaigns', WPAB_CB_TEXT_DOMAIN ),
-				'custom_icon'   => WPAB_CB_URL . 'assets/img/logo-20-20.png',
+				'custom_icon'  	   => WPAB_CB_URL . 'assets/img/logo-2.svg',
 				'author_name'      => 'WP Anchor Bay',
 				'author_uri'       => 'https://wpanchorbay.com',
 				'support_uri'      => 'https://wpanchorbay.com/support',
 				'docs_uri'         => 'https://wpanchorbay.com/docs',
-				'menu_icon'        => 'dashicons-megaphone',
+				'menu_icon'        => 'dashicons-awards',
 				'position'         => 57,
 			)
 		);

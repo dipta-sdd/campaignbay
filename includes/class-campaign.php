@@ -265,3 +265,4 @@ class WPAB_CB_Campaign {
 		return $this->post->post_status;
 	}
 }
+

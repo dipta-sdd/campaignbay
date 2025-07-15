@@ -1,11 +1,14 @@
 import App from "./App";
+// import "./styles/mini-tailwind.scss";
 import "./styles/index.scss";
 import domReady from '@wordpress/dom-ready';
 import { createRoot } from '@wordpress/element';
 
-domReady( () => {
+domReady(() => {
 	const root = createRoot(
-		document.getElementById( 'wpab-cb' )
+		document.getElementById('wpab-cb')
 	);
-	root.render( <App /> );
-} );
+	root.render(<App />);
+});
+
+
