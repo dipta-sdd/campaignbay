@@ -2,8 +2,7 @@ import { useState } from '@wordpress/element';
 import MultiSelect from './Multiselect';
 
 
-const AdvancedSettings = ({ advancedSettings, setAdvancedSettings, isSaving, handleSave }) => {
-
+const AdvancedSettings = ({ advancedSettings, setAdvancedSettings }) => {
     const [selected, setSelected] = useState(['africa']);
     const options = [
         {

@@ -6,7 +6,7 @@ import Select from './Select';
 import Input from './Input';
 
 
-const ProductSettings = ({ productSettings, setProductSettings, isSaving, handleSave }) => {
+const   ProductSettings = ({ productSettings, setProductSettings }) => {
 
 
 
@@ -70,12 +70,6 @@ const ProductSettings = ({ productSettings, setProductSettings, isSaving, handle
 
             </SettingCard>
 
-            <div className='wpab-button-con-card'>
-                <button className='isLoading' disabled={isSaving} onClick={() => handleSave({ ...productSettings })}>
-                    <Save className="icon" />
-                    Save Changes
-                </button>
-            </div>
         </div>
     );
 }

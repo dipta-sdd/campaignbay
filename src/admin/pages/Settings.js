@@ -8,6 +8,7 @@ import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import Loader from '../components/Loader';
 import { useToast } from '../store/toast/use-toast';
+import { check, Icon } from '@wordpress/icons';
 const Settings = () => {
     const [settings, setSettings] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +20,7 @@ const Settings = () => {
     const [cartSettings, setCartSettings] = useState({});
     const [promotionSettings, setPromotionSettings] = useState({});
     const [advancedSettings, setAdvancedSettings] = useState({});
+    const [formData, setFormData] = useState('global');
 
 
     useEffect(() => {
@@ -44,33 +46,37 @@ const Settings = () => {
     // "global_decimalPlaces": 2,
     // "perf_enableCaching": true,
     // "debug_enableMode": false,
-    // "debug_logLevel": "errors_only",
-    //     "product_showDiscountedPrice": true,
-    //     "product_messageFormat": "You save {percentage_off}!",
-    //     "product_enableQuantityTable": true,
-    //     "product_excludeSaleItems": true,
-    //     "product_priorityMethod": "apply_highest",
-    //     "cart_allowWcCouponStacking": false,
-    //     "cart_allowCampaignStacking": false,
-    //     "cart_savedMessageFormat": "You saved {saved_amount} on this order!",
-    //     "cart_showNextDiscountBar": true,
-    //     "cart_nextDiscountFormat": "Spend {remaining_amount} more for {discount_percentage} off!",
-    //     "cart_showDiscountBreakdown": true,
-    //     "promo_enableBar": false,
-    //     "promo_barPosition": "top_of_page",
-    //     "promo_barBgColor": "#000000",
-    //     "promo_barTextColor": "#FFFFFF",
-    //     "promo_barContent": "FLASH SALE! {percentage_off} on all shirts!",
-    //     "promo_barLinkUrl": "",
-    //     "promo_barDisplayPages": [
-    //         "shop_page",
-    //         "product_pages"
-    //     ],
-    //     "promo_enableCustomBadges": true,
-    //     "advanced_deleteAllOnUninstall": false,
-    //     "advanced_customCss": "",
-    //     "advanced_customJs": "",
-    //     "_locale": "user"
+    // "debug_logLevel": ["errors_only"],
+
+    // "product_showDiscountedPrice": true,
+    // "product_messageFormat": "You save {percentage_off}!",
+    // "product_enableQuantityTable": true,
+    // "product_excludeSaleItems": true,
+    // "product_priorityMethod": "apply_highest",
+
+    // "cart_allowWcCouponStacking": false,
+    // "cart_allowCampaignStacking": false,
+
+    // "cart_savedMessageFormat": "You saved {saved_amount} on this order!",
+    // "cart_showNextDiscountBar": true,
+    // "cart_nextDiscountFormat": "Spend {remaining_amount} more for {discount_percentage} off!",
+    // "cart_showDiscountBreakdown": true,
+
+    // "promo_enableBar": false,
+    // "promo_barPosition": "top_of_page",
+    // "promo_barBgColor": "#000000",
+    // "promo_barTextColor": "#FFFFFF",
+    // "promo_barContent": "FLASH SALE! {percentage_off} on all shirts!",
+    // "promo_barLinkUrl": "",
+    // "promo_barDisplayPages": [
+    //     "shop_page",
+    //     "product_pages"
+    // ],
+    // "promo_enableCustomBadges": true,
+    // "advanced_deleteAllOnUninstall": false,
+    // "advanced_customCss": "",
+    // "advanced_customJs": "",
+    // "_locale": "user"
     // }
     useEffect(() => {
         if (!settings) {
@@ -114,16 +120,50 @@ const Settings = () => {
         });
     }, [settings]);
 
-    const updateSettings = async (formData) => {
+    const updateSettings = async () => {
         try {
-            console.log(formData)
             setIsSaving(true);
+            console.log(formData);
+            let data = {};
+            switch (formData) {
+                case 'global':
+                    data = {
+                        ...globalSettings
+                    }
+                    break;
+                case 'product':
+                    data = {
+                        ...productSettings
+                    }
+                    break;
+                case 'cart':
+                    data = {
+                        ...cartSettings
+                    }
+                    break;
+                case 'promotion':
+                    data = {
+                        ...promotionSettings
+                    }
+                    break;
+                case 'advanced':
+                    data = {
+                        ...advancedSettings
+                    }
+                    break;
+                default:
+                    data = {
+                        ...globalSettings
+                    }
+                    break;
+            }
+            console.log(data);
             const response = await apiFetch({
                 path: '/wpab-cb/v1/settings',
                 method: 'POST',
                 data: {
                     ...settings,
-                    ...formData
+                    ...data
                 }
             });
             setSettings(response);
@@ -143,7 +183,15 @@ const Settings = () => {
 
     return (
         <div className="wpab-cb-page">
-            <h1 className='wpab-cb-page-header'> CampaignBay Settings</h1>
+            <div className='wpab-cb-page-header'>
+                <div className='cb-container'>
+                    <h1 className='wpab-cb-page-header-text'> CampaignBay Settings</h1>
+                    <button className='wpab-cb-btn wpab-cb-btn-primary' disabled={isSaving} onClick={updateSettings}>
+                        <Icon icon={check} fill="currentColor" />
+                        Save Settings</button>
+                </div>
+            </div>
+            {/* <div className="wpab-cb-settings-tabs-container"> */}
             <TabPanel
                 className='wpab-cb-settings-tabs'
                 // activeClass='wpab-cb-settings-active-tab'
@@ -174,21 +222,37 @@ const Settings = () => {
                     (() => {
                         switch (tab.name) {
                             case 'global':
-                                return <GlobalSettings globalSettings={globalSettings} setGlobalSettings={setGlobalSettings} isSaving={isSaving} handleSave={(data) => updateSettings(data)} />;
+                                setFormData('global');
+                                return <GlobalSettings globalSettings={globalSettings} setGlobalSettings={setGlobalSettings} />;
                             case 'product':
-                                return <ProductSettings isSaving={isSaving} productSettings={productSettings} setProductSettings={setProductSettings} handleSave={(data) => updateSettings(data)} />;
+                                setFormData('product');
+                                return <ProductSettings productSettings={productSettings} setProductSettings={setProductSettings} />;
                             case 'cart':
-                                return <CartSettings cartSettings={cartSettings} setCartSettings={setCartSettings} isSaving={isSaving} handleSave={(data) => updateSettings(data)} />;
+                                setFormData('cart');
+                                return <CartSettings cartSettings={cartSettings} setCartSettings={setCartSettings} />;
                             case 'promotion':
-                                return <PromotionSettings promotionSettings={promotionSettings} setPromotionSettings={setPromotionSettings} isSaving={isSaving} handleSave={(data) => updateSettings(data)} />;
+                                setFormData('promotion');
+                                return <PromotionSettings promotionSettings={promotionSettings} setPromotionSettings={setPromotionSettings} />;
                             case 'advanced':
-                                return <AdvancedSettings advancedSettings={advancedSettings} setAdvancedSettings={setAdvancedSettings} isSaving={isSaving} handleSave={(data) => updateSettings(data)} />;
+                                setFormData('advanced');
+                                return <AdvancedSettings advancedSettings={advancedSettings} setAdvancedSettings={setAdvancedSettings} />;
                             default:
-                                return <GlobalSettings globalSettings={globalSettings} setGlobalSettings={setGlobalSettings} isSaving={isSaving} handleSave={(data) => updateSettings(data)} />;
+                                setFormData('global');
+                                return <GlobalSettings globalSettings={globalSettings} setGlobalSettings={setGlobalSettings} />;
                         }
                     })()
                 )}
             </TabPanel>
+            <div className='wpab-button-con-card'>
+                <div className='cb-container '>
+                    <button className="wpab-cb-btn wpab-cb-btn-primary" disabled={isSaving} onClick={updateSettings}>
+                        <Icon icon={check} fill="currentColor" />
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+            {/* </div> */}
+
         </div>
     );
 }

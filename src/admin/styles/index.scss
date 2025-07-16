@@ -9,6 +9,7 @@
 }
 
 #wpab-cb {
+    position: relative;
 
     & .wpab-cb {
         padding: 0;
@@ -25,9 +26,9 @@
 
 
     $cb-spacing-unit: 4px;
-    $cb-border-radius-base: 0.2rem;
+    $cb-border-radius-base: 4px;
     $cb-border-width-base: 1px;
-    $cb-border-color-base: rgb(0, 0, 0, 0.2); // Light gray for borders
+    $cb-border-color-base: #949494; // Light gray for borders
     // Typography (using SCSS variables)
 
     $fs-sm: 12px;
@@ -46,6 +47,7 @@
     $lh-base: 1.5; // Standard line height
 
     $bg-white: #f8f8f8;
+    $bg-black: #1e1e1e;
 
     $bg-gray: #f5f5f5; // Default gray background
     $bg-gray-darkest: #e8e8e8; // Darkest gray
@@ -53,8 +55,42 @@
     $bg-gray-dark: #e0e0e0; // Darker gray for
     $bg-primary: #3858e9; // Primary color (WordPress blue)
 
+
+
+    // new variables
+
+    $cb-fs-xxl: 20px;
+    $cb-lh-xxl: 24px;
+
+    $cb-fs-xl: 15px;
+    $cb-lh-xl: 20px;
+
+    $cb-fs-base: 13px;
+    $cb-lh-base: 18px;
+
+    $cb-fs-md: 12px;
+    $cb-lh-md: 16px;
+
+    $cb-fw-normal: 500;
+    $cb-fw-semibold: 600;
+    $cb-fw-bold: 700;
+
+    $cb-page-header-con-p: 20px;
+
+    $cb-max-width-container: min(calc(100% - 40px), 1500px);
+
+    $cb-bg-gray: #f0f0f1;
+
+    $cb-text-secondary: #757575;
+
+    $cb-color-primary: #3858e9;
+    $cb-color-white: #ffffff;
+    $cb-color-danger: #cc1818;
+
+
+
     & .wpab-cb-container {
-        margin: #{$cb-spacing-unit * 3};
+        margin: 0;
         width: auto;
         // border: #{$cb-border-width-base} solid #{$cb-border-color-base}; 
 
@@ -67,69 +103,213 @@
         padding: 0;
         margin: 0;
         height: auto;
-        border-radius: #{$cb-border-radius-base * 2 };
-        box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px 0px, rgba(27, 31, 35, 0.20) 0px 0px 0px 1px;
+    }
+
+    & .cb-container {
+        max-width: #{$cb-max-width-container};
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    & .cb-p-1 {
+        padding: #{$cb-spacing-unit * 1};
+    }
+
+    & .cb-p-2 {
+        padding: #{$cb-spacing-unit * 2};
+    }
+
+    & .cb-p-3 {
+        padding: #{$cb-spacing-unit * 3};
+    }
+
+    & .cb-bg-white {
+        background-color: #{$bg-white};
+    }
+
+    & .cb-flex-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     & .wpab-cb-page-header {
         display: flex;
         align-items: center;
-        justify-content: flex-start;
-        margin: 0;
-        padding: #{$cb-spacing-unit * 4};
-        background-color: #{$bg-white}; // Light gray background
-        border-bottom: #{$cb-border-width-base} solid #{$cb-border-color-base};
-        border-radius: #{$cb-border-radius-base * 2 } #{$cb-border-radius-base * 2 } 0 0;
-        font-size: #{$fs-lg};
-    }
-
-
-    // this will not change , checked source code of component
-    & .wpab-cb-settings-tabs .components-tab-panel__tabs {
+        justify-content: center;
+        padding: #{$cb-page-header-con-p} 0;
         background-color: #{$bg-white};
         border-bottom: #{$cb-border-width-base} solid #{$cb-border-color-base};
+
+        & .cb-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        & .wpab-cb-page-header-text {
+            font-size: #{$cb-fs-xxl};
+            font-weight: #{$cb-fw-normal};
+            line-height: #{$cb-lh-xxl};
+            margin: 0;
+            padding: 0;
+            text-transform: none;
+        }
+
+
     }
 
-    & .components-tab-panel__tabs-item.is-active {
-        color: #{$bg-primary};
+    & .wpab-cb-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: #{$cb-spacing-unit };
+        padding: #{$cb-spacing-unit * 2} #{$cb-spacing-unit * 3} #{$cb-spacing-unit * 2} #{$cb-spacing-unit * 2};
+        cursor: pointer;
+        border-radius: #{$cb-border-radius-base * 0.5};
+
+        font-size: #{$cb-fs-base};
+        line-height: #{$cb-lh-base};
+        font-weight: #{$cb-fw-normal};
+        border: none;
     }
 
-    & .wpab-cb-settings-active-tab {
-        color: #{$bg-primary};
+    & .wpab-cb-btn-primary {
+        background-color: #{$cb-color-primary};
+        color: #{$cb-color-white};
+
+        &:hover {
+            background-color: #2145e6;
+            border-color: #2145e6;
+        }
+
+        &:disabled {
+            color: #{$cb-color-white}75;
+        }
     }
+
+    & .wpab-cb-btn-danger {
+        background-color: #{$cb-color-danger};
+        color: #{$cb-color-white};
+
+        &:hover {
+            background-color: #b81616;
+            border-color: #b81616;
+        }
+
+        &:disabled {
+            color: #{$cb-color-white}75;
+        }
+    }
+
+    & .wpab-cb-btn-outline-primary {
+        background-color: #{$cb-color-white};
+        color: #{$cb-color-primary};
+        border: 1px solid #{$cb-color-primary};
+
+        &:hover {
+            background-color: rgba(56, 88, 233, 0.04);
+            border-color: #2145e6;
+        }
+
+        &:disabled {
+            background-color: #ffffff;
+            color: #949494;
+            border-color: #dddddd
+        }
+    }
+
+    & .wpab-cb-btn-outline-danger {
+        background-color: #{$cb-color-white};
+        color: #{$cb-color-danger};
+        border: 1px solid #{$cb-color-danger};
+
+        &:hover {
+            background-color: #{$cb-color-danger}0a;
+            border-color: #b81616;
+        }
+    }
+
+    & .wpab-cb-settings-tabs {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        background: #{$bg-white};
+
+        & .components-tab-panel__tabs {
+            width: 100%;
+            max-width: #{$cb-max-width-container};
+        }
+
+        & .components-tab-panel__tab-content {
+            width: 100%;
+            background: #{$cb-bg-gray};
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+        }
+    }
+
+
+
+    // & .components-tab-panel__tabs-item {
+    //     font-size: #{$fs-base};
+
+    //     &.is-active {
+    //         color: #{$bg-primary};
+    //     }
+    // }
+
+    // & .wpab-cb-settings-active-tab {
+    //     color: #{$bg-primary};
+    // }
 
     // container for the settings tab
     & .wpab-cb-settings-tab {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: #{$cb-spacing-unit * 4};
+        gap: 10px;
         flex-wrap: nowrap;
         width: 100%;
-        padding: #{$cb-spacing-unit * 4};
-        border-radius: 0 0 #{$cb-border-radius-base * 2 } #{$cb-border-radius-base * 2 };
-        // margin-top: -1px;
+        padding-block: #{$cb-spacing-unit * 5};
     }
 
 
 
     & .wpab-cb-settings-card {
-        max-width: 1000px;
+        max-width: #{$cb-max-width-container};
         width: 100%;
         background-color: #{$bg-white};
-        border-radius: #{$cb-border-radius-base * 2 };
-        padding: #{$cb-spacing-unit * 4};
         border: #{$cb-border-width-base} solid #{$cb-border-color-base};
+        padding: 0;
+    }
+
+    & .wpab-cb-sc-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        height: 50px;
+        padding: 30px 30px 0px 30px;
+        font-size: #{$cb-fs-xl};
+        font-weight: #{$cb-fw-normal};
+        line-height: #{$cb-lh-xl};
     }
 
     & .wpab-cb-sc-content {
         margin: 0;
         padding: 0;
-        margin-top: #{$cb-spacing-unit * 4};
+        margin: 0;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: #{$cb-spacing-unit * 5};
+        gap: 0;
     }
 
 
@@ -140,27 +320,31 @@
     // input fields 
 
     & .wpab-input-con {
+        padding: 20px 30px;
         display: flex;
         flex-direction: column;
-        gap: #{$cb-spacing-unit * 2};
+        gap: 10px;
         width: 100%;
         align-items: start;
     }
 
     & .wpab-input-label {
-        font-size: #{$fs-base};
-        font-weight: #{$fw-semibold};
+        font-size: #{$cb-fs-base};
+        line-height: #{$cb-lh-base};
+        font-weight: #{$cb-fw-normal};
+        color: #{$bg-black};
         text-transform: none;
     }
 
     & .wpab-input,
     & .wpab-select {
         min-width: min(100%, 200px);
-        padding: #{$cb-spacing-unit * 0.5} #{$cb-spacing-unit * 1};
-        border-radius: #{$cb-border-radius-base};
-        font-size: #{$fs-base};
-        font-weight: #{$fw-semibold};
-        min-height: #{$cb-spacing-unit *8} !important;
+        padding: 10px 10px 10px 12px;
+        border-radius: #{$cb-border-radius-base * 0.5};
+        font-size: #{$cb-fs-base};
+        line-height: #{$cb-lh-base};
+        font-weight: #{$cb-fw-normal};
+        border: 1px solid #{$cb-border-color-base};
 
         &:focus {
             border: 1px solid #{$bg-primary};
@@ -170,9 +354,11 @@
     }
 
     & .wpab-input-help {
-        font-size: #{$fs-sm};
+        font-size: #{$cb-fs-md};
+        line-height: #{$cb-lh-md};
         font-weight: #{$fw-normal};
-        color: rgb(117, 117, 117);
+        color: #{$cb-text-secondary};
+        // margin-top: -#{$cb-spacing-unit * 2};
     }
 
     // checkbox fields
@@ -185,11 +371,12 @@
 
     & .wpab-toggle-con-inner {
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-start;
+        gap: 10px;
     }
 
     & .wpab-checkbox-con-inner+.wpab-input-help {
-        margin-left: calc(#{$fs-base} + 8px);
+        margin-left: calc(#{$fs-base} + 10px);
     }
 
     & .wpab-checkbox-con-inner-checkbox {
@@ -199,18 +386,19 @@
     }
 
     & .wpab-checkbox {
-        width: #{$fs-base};
-        height: #{$fs-base};
-        min-height: #{$fs-base} !important;
-        min-height: #{$fs-base} !important;
+        width: 16px !important;
+        height: 16px !important;
+        min-width: 16px !important;
+        min-height: 16px !important;
         aspect-ratio: 1/1;
-        border-color: var(--wp-admin-theme-color);
+        border-color: #{$cb-border-color-base};
         border-radius: #{$cb-border-radius-base};
         color: white;
         margin: 0;
 
         &:checked {
-            background: var(--wp-admin-theme-color);
+            background: #{$cb-color-primary};
+            border: 1px solid #{$cb-color-primary};
         }
 
         &::before {
@@ -244,42 +432,49 @@
     & .wpab-toggle-switch-con {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         position: relative;
-        width: 44px;
-        height: 22px;
-        top: 4px;
+        width: 32px;
+        height: 16px;
+
     }
 
     & .wpab-toggle {
         opacity: 0;
-        width: 44px;
-        height: 22px;
+        width: 32px;
+        height: 16px;
         position: absolute;
         left: 0;
-        top: 4px;
+        top: 0px;
+        margin: 0;
         z-index: 2;
         cursor: pointer;
+        border: none;
     }
 
     & .wpab-toggle-slider {
         display: inline-block;
-        width: 44px;
-        height: 22px;
-        background: #ccc;
-        border-radius: 22px;
+        width: 32px;
+        height: 16px;
+        background: #{$cb-color-white};
+        border-radius: 16px;
         position: absolute;
         transition: background 0.2s;
         box-sizing: border-box;
         cursor: pointer;
+        border: 1px solid #{$cb-border-color-base};
+        top: 0px;
+        left: 0px;
+        margin: 0;
 
         &::before {
             content: "";
             position: absolute;
-            left: 5px;
-            top: 3px;
-            width: 16px;
-            height: 16px;
-            background: #fff;
+            left: 1px;
+            top: 1px;
+            width: 12px;
+            height: 12px;
+            background-color: #{$cb-color-primary};
             border-radius: 50%;
             transition: transform 0.2s;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -287,11 +482,16 @@
     }
 
     & .wpab-toggle:checked+.wpab-toggle-slider {
-        background: var(--wp-admin-theme-color, #007cba);
+        background: #{$cb-color-primary};
+        border: 1px solid #{$cb-color-primary};
+
+        &::before {
+            background-color: #{$cb-color-white};
+        }
     }
 
     & .wpab-toggle:checked+.wpab-toggle-slider::before {
-        transform: translateX(18px);
+        transform: translateX(16px);
     }
 
 
@@ -299,58 +499,32 @@
 
 
 
-    // buttons
-    // secondery button
-    & .wpab-button-secondery {
+
+
+    & .wpab-cb-btn-con-bottom {
         display: flex;
-        align-items: center;
-        background: #00000020;
-        color: #000000aa;
-        border-radius: #{$cb-border-radius-base * 2};
-        border: none;
-        padding: #{$cb-spacing-unit * 3} #{$cb-spacing-unit * 4};
-        font-size: #{$fs-base};
-        line-height: #{$fs-base};
-        font-weight: #{$fw-semibold};
-        gap: #{$cb-spacing-unit * 1.5};
-        cursor: pointer;
-        transition: background 0.2s;
-
-        & .icon {
-            height: #{$fs-base};
-            width: #{$fs-base};
-            color: inherit
-        }
-
-        &:hover {
-            background: #00000035;
-            color: #00000099;
-        }
+        flex-direction: row;
+        gap: 10px;
+        align-items: flex-end;
+        justify-content: flex-end;
+        margin: 0;
+        padding: 0 30px 30px 30px;
     }
 
     // save or update buttons
     & .wpab-button-con-card {
+        width: 100%;
         display: flex;
-        flex-direction: column;
-        margin-block: #{ $cb-spacing-unit * 8 };
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
 
-        & button {
-            padding: #{$cb-spacing-unit * 4} #{$cb-spacing-unit * 8};
+        & .cb-container {
             display: flex;
-            gap: #{$cb-spacing-unit * 4};
-            align-items: center;
-            font-weight: #{$fw-semibold};
-            font-size: #{$fs-lg};
-            background-color: #000000;
-            color: #ffffff;
-            border: none;
-            border-radius: #{$cb-border-radius-base * 2};
-            cursor: pointer;
-
-            &:disabled {
-                opacity: 0.8;
-                cursor: text;
-            }
+            flex-direction: row;
+            gap: 10px;
+            align-items: flex-end;
+            justify-content: flex-end;
         }
     }
 
@@ -386,7 +560,12 @@
     & .wpab-grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: #{$cb-spacing-unit * 4};
+        gap: 0;
+
+
+        & .wpab-input-con {
+            padding: 10px 30px;
+        }
 
         @media (max-width: 768px) {
             grid-template-columns: 1fr;
@@ -611,6 +790,7 @@
     }
 
     & .wpab-multiselect-option {
+        margin: 0;
         padding: 8px;
         cursor: pointer;
         background: transparent;
