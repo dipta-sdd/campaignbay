@@ -1,0 +1,60 @@
+{
+    "translation-revision-date": "2025-07-17 10:54+0000",
+    "generator": "WP-CLI\/2.12.0",
+    "source": "src\/admin\/components\/GlobalSettings.js",
+    "domain": "wpab-cb",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "wpab-cb",
+                "lang": "bn_BD",
+                "plural-forms": "nplurals=2; plural=n != 1;"
+            },
+            "Before Tax": [
+                "\u099f\u09cd\u09af\u09be\u0995\u09cd\u09b8\u09c7\u09b0 \u09aa\u09b0\u09c7"
+            ],
+            "Enable Discount Add-on": [
+                ""
+            ],
+            "Turn off to temporarily disable all discount campaigns.": [
+                ""
+            ],
+            "Default Rule Priority": [
+                ""
+            ],
+            "Lower number indicate higher priority for rules with the same conditions.": [
+                ""
+            ],
+            "Discount Calculation Mode": [
+                ""
+            ],
+            "After Tax": [
+                "\u099f\u09cd\u09af\u09be\u0995\u09cd\u09b8\u09c7\u09b0 \u0986\u0997\u09c7\n"
+            ],
+            "Decimal Places for Discount Values": [
+                ""
+            ],
+            "Enable Discount Caching": [
+                ""
+            ],
+            "Improve performance by caching discount rule calculations. Clear cache if rules don't seem to apply immediately": [
+                ""
+            ],
+            "Enable Debug Mode": [
+                ""
+            ],
+            "Show detailed error messages and logging for troubleshooting.": [
+                ""
+            ],
+            "Log Level": [
+                ""
+            ],
+            "Error Only": [
+                ""
+            ],
+            "All": [
+                ""
+            ]
+        }
+    }
+}

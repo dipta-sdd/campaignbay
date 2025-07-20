@@ -1,0 +1,200 @@
+# Copyright (C) 2025 WP Anchor Bay
+# This file is distributed under the MIT.
+msgid ""
+msgstr ""
+"Project-Id-Version: CampaignBay 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/campaign-bay\n"
+"Last-Translator: \n"
+"Language-Team: বাংলা\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-07-17T12:53:19+02:00\n"
+"PO-Revision-Date: 2025-07-17 10:54+0000\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Domain: wpab-cb\n"
+"\n"
+"Language: bn_BD\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Loco-Version: 2.8.0; wp-6.8.2; php-8.2.12"
+
+#. Plugin Name of the plugin
+#: campaign-bay.php
+msgid "CampaignBay"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: campaign-bay.php
+msgid "https://wpanchorbay.com/CampaignBay"
+msgstr ""
+
+#. Description of the plugin
+#: campaign-bay.php
+msgid "CampaignBay for WooCommerce Product Discount WordPress Plugin."
+msgstr ""
+
+#. Author of the plugin
+#: campaign-bay.php
+msgid "WP Anchor Bay"
+msgstr ""
+
+#. Author URI of the plugin
+#: campaign-bay.php
+msgid "https://wpanchorbay.com"
+msgstr ""
+
+#: includes/functions.php:234
+msgid "WPAB - WooCommerce Smart Campaigns"
+msgstr ""
+
+#: includes/functions.php:236
+msgid "Campaigns"
+msgstr ""
+
+#: build/admin.js:12767 build/admin.js:12802
+#: src/admin/components/GlobalSettings.js:11
+#: src/admin/components/GlobalSettings.js:43 build/admin.js:12474
+#: build/admin.js:12506
+msgid "Before Tax"
+msgstr ""
+
+#: build/admin.js:12774 src/admin/components/GlobalSettings.js:17
+#: build/admin.js:12480
+msgid "Enable Discount Add-on"
+msgstr ""
+
+#: build/admin.js:12775 src/admin/components/GlobalSettings.js:18
+#: build/admin.js:12481
+msgid "Turn off to temporarily disable all discount campaigns."
+msgstr ""
+
+#: build/admin.js:12786 src/admin/components/GlobalSettings.js:29
+#: build/admin.js:12492
+msgid "Default Rule Priority"
+msgstr ""
+
+#: build/admin.js:12787 src/admin/components/GlobalSettings.js:30
+#: build/admin.js:12493
+msgid ""
+"Lower number indicate higher priority for rules with the same conditions."
+msgstr ""
+
+#: build/admin.js:12795 src/admin/components/GlobalSettings.js:39
+#: build/admin.js:12502
+msgid "Discount Calculation Mode"
+msgstr ""
+
+#: build/admin.js:12799 src/admin/components/GlobalSettings.js:42
+#: build/admin.js:12505
+msgid "After Tax"
+msgstr ""
+
+#: build/admin.js:12813 src/admin/components/GlobalSettings.js:55
+#: build/admin.js:12518
+msgid "Decimal Places for Discount Values"
+msgstr ""
+
+#: build/admin.js:12830 src/admin/components/GlobalSettings.js:72
+#: build/admin.js:12535
+msgid "Enable Discount Caching"
+msgstr ""
+
+#: build/admin.js:12831 src/admin/components/GlobalSettings.js:73
+#: build/admin.js:12536
+msgid ""
+"Improve performance by caching discount rule calculations. Clear cache if "
+"rules don't seem to apply immediately"
+msgstr ""
+
+#: build/admin.js:12850 src/admin/components/GlobalSettings.js:88
+#: build/admin.js:12551
+msgid "Enable Debug Mode"
+msgstr ""
+
+#: build/admin.js:12851 src/admin/components/GlobalSettings.js:89
+#: build/admin.js:12552
+msgid "Show detailed error messages and logging for troubleshooting."
+msgstr ""
+
+#: build/admin.js:12853 src/admin/components/GlobalSettings.js:92
+#: build/admin.js:12555
+msgid "Log Level"
+msgstr ""
+
+#: build/admin.js:12855 src/admin/components/GlobalSettings.js:94
+#: build/admin.js:12557
+msgid "Error Only"
+msgstr ""
+
+#: build/admin.js:12858 src/admin/components/GlobalSettings.js:95
+#: build/admin.js:12558
+msgid "All"
+msgstr ""
+
+#: build/admin.js:13124 src/admin/components/ProductSettings.js:16
+#: build/admin.js:12768
+msgid "Product Page Display"
+msgstr ""
+
+#: build/admin.js:13131 src/admin/components/ProductSettings.js:23
+#: build/admin.js:12775
+msgid "Display Discounted Price"
+msgstr ""
+
+#: build/admin.js:13132 src/admin/components/ProductSettings.js:24
+#: build/admin.js:12776
+msgid "Display the discounted price with the original price crossed out."
+msgstr ""
+
+#: build/admin.js:13137 build/admin.js:13167
+#: src/admin/components/ProductSettings.js:28
+#: src/admin/components/ProductSettings.js:58 build/admin.js:12780
+#: build/admin.js:12810
+msgid "Product Page Discount Message Format"
+msgstr ""
+
+#: build/admin.js:13139 src/admin/components/ProductSettings.js:29
+#: build/admin.js:12781
+msgid "Use Placeholder like {percentage_off}, {ampount_of} ."
+msgstr ""
+
+#: build/admin.js:13151 src/admin/components/ProductSettings.js:42
+#: build/admin.js:12794
+msgid "Enable Quantity Discounts Table on Product Page"
+msgstr ""
+
+#: build/admin.js:13152 src/admin/components/ProductSettings.js:43
+#: build/admin.js:12795
+msgid "Show a table outlining tiered quantity based discounts"
+msgstr ""
+
+#: build/admin.js:13155 src/admin/components/ProductSettings.js:47
+#: build/admin.js:12799
+msgid "Product Exclusion & Prioritization"
+msgstr ""
+
+#: build/admin.js:13162 src/admin/components/ProductSettings.js:54
+#: build/admin.js:12806
+msgid "Automatically Exclude Sale Items from Campaigns"
+msgstr ""
+
+#: build/admin.js:13163 src/admin/components/ProductSettings.js:55
+#: build/admin.js:12807
+msgid ""
+"Prevent double-discounting on products already set as 'Sale' in WooCommerce"
+msgstr ""
+
+#: build/admin.js:13169 src/admin/components/ProductSettings.js:59
+#: build/admin.js:12811
+msgid "Defines how multiple product-level discounts are applied."
+msgstr ""
+
+#: build/admin.js:13171 src/admin/components/ProductSettings.js:61
+#: build/admin.js:12813
+msgid "Apply Highest Discount"
+msgstr ""
+
+#: build/admin.js:13174 src/admin/components/ProductSettings.js:62
+#: build/admin.js:12814
+msgid "Apply Lowest Discount"
+msgstr ""

@@ -171,28 +171,22 @@ class WPAB_CB_Admin {
 		if ( ! $this->is_menu_page() ) {
 			return;
 		}
-
-
-		/*Scripts dependency files*/
+	
 		$deps_file = WPAB_CB_PATH . 'build/admin.asset.php';
-
-		/*Fallback dependency array*/
-		$dependency = array();
+		$dependency = array( 'wp-i18n' );
 		$version    = WPAB_CB_VERSION;
-
-		/*Set dependency and version*/
+	
 		if ( file_exists( $deps_file ) ) {
 			$deps_file  = require $deps_file;
 			$dependency = $deps_file['dependencies'];
 			$version    = $deps_file['version'];
 		}
-
+	
 		wp_enqueue_script( WPAB_CB_PLUGIN_NAME, WPAB_CB_URL . 'build/admin.js', $dependency, $version, true );
-
+	
 		wp_enqueue_style( WPAB_CB_PLUGIN_NAME, WPAB_CB_URL . 'build/admin.css', array( 'wp-components' ), $version );
 		wp_style_add_data( WPAB_CB_PLUGIN_NAME, 'rtl', 'replace' );
-
-		/* Localize */
+	
 		$localize = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_admin_localize',
 			array(
@@ -204,9 +198,30 @@ class WPAB_CB_Admin {
 				'white_label' => wpab_cb_include()->get_white_label(),
 			)
 		);
-
-		wp_set_script_translations( WPAB_CB_PLUGIN_NAME, WPAB_CB_PLUGIN_NAME );
+	
 		wp_localize_script( WPAB_CB_PLUGIN_NAME, 'wpab_cb_Localize', $localize );
+		
+		// --- START OF DEBUGGING BLOCK ---
+	
+		$path_to_check = WPAB_CB_PATH . 'languages';
+		// wpab_cb_log( '--------------------' );
+		// wpab_cb_log( 'Checking for translations...' );
+		// wpab_cb_log( 'Script Handle: ' . WPAB_CB_PLUGIN_NAME );
+		// wpab_cb_log( 'Text Domain: ' . 'wpab-cb' );
+		// wpab_cb_log( 'Full Path Being Checked: ' . $path_to_check );
+		// wpab_cb_log( 'Does path exist? ' . ( file_exists( $path_to_check ) ? 'Yes' : 'No' ) );
+		// wasted 3 hours on this because of poor documentation, there was no issue here
+		// // --- END OF DEBUGGING BLOCK ---
+	
+		$result = wp_set_script_translations(
+			WPAB_CB_PLUGIN_NAME,
+			'wpab-cb',
+			$path_to_check
+		);
+		
+		// Log the result of the function call
+		// wpab_cb_log( 'Result of wp_set_script_translations: ' . ( $result ? 'True (Success)' : 'False (Failure)' ) );
+
 	}
 
 	/**

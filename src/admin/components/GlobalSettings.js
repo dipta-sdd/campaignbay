@@ -3,15 +3,18 @@ import SettingCard from "./SettingCard";
 import Input from "./Input";
 import Select from "./Select";
 import { __ } from '@wordpress/i18n';
+// import { useI18n } from '@wordpress/react-i18n';
+
 import Toggle from "./Toggle";
 import { Eye, Save, Trash2 } from "lucide-react";
 import { Icon, seen, trash } from "@wordpress/icons";
 
 const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
 
+
     return (
         <div className="wpab-cb-settings-tab">
-            <SettingCard title="Global Options">
+            <SettingCard title={__('Global Options', 'wpab-cb')}>
                 <Toggle
                     label={__('Enable Discount Add-on', 'wpab-cb')}
                     help={__('Turn off to temporarily disable all discount campaigns.', 'wpab-cb')}
@@ -62,7 +65,7 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
                     max={10}
                 />
             </SettingCard>
-            <SettingCard title="Performence & Caching">
+            <SettingCard title={__('Performence & Caching', 'wpab-cb')}>
                 <Checkbox checked={globalSettings.perf_enableCaching}
                     onChange={() => setGlobalSettings((prev) => ({
                         ...prev,
@@ -75,10 +78,10 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
                 <div className="wpab-cb-btn-con-bottom">
                     <button className="wpab-cb-btn wpab-cb-btn-outline-danger">
                         <Icon icon={trash} fill="currentColor" />
-                        Clear Discount Cache</button>
+                        {__('Clear Discount Cache', 'wpab-cb')}</button>
                 </div>
             </SettingCard>
-            <SettingCard title="Debugging & Logging">
+            <SettingCard title={__('Debugging & Logging', 'wpab-cb')}>
                 <Checkbox checked={globalSettings.debug_enableLogging}
                     onChange={() => setGlobalSettings((prev) => ({
                         ...prev,
@@ -102,11 +105,11 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
                 <div className="wpab-cb-btn-con-bottom">
                     <button className="wpab-cb-btn wpab-cb-btn-outline-primary">
                         <Icon icon={seen} fill="currentColor" />
-                        View Logs
+                        {__('View Logs', 'wpab-cb')}
                     </button>
                     <button className="wpab-cb-btn wpab-cb-btn-outline-danger">
                         <Icon icon={trash} fill="currentColor" />
-                        Clear Log Files
+                        {__('Clear Log Files', 'wpab-cb')}
                     </button>
                 </div>
             </SettingCard>

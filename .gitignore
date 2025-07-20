@@ -2,3 +2,5 @@
 /vendor
 /build
 routing.json
+wp-cli.phar
+/.ignores

@@ -109,6 +109,8 @@ const MultiSelect = ({
                     className="wpab-multiselect-inputfield"
                     onKeyDown={handleKeyDown}
                     {...props}
+                    disabled={options.length === 0}
+                    placeholder='Type to search...'
                 />
                 {dropdownOpen && filteredOptions.length > 0 && (
                     <ul
@@ -128,7 +130,7 @@ const MultiSelect = ({
                     </ul>
                 )}
             </div>
-            <span className="wpab-input-help">{help}</span>
+            {help && <span className="wpab-input-help">{help}</span>}
         </div>
     );
 };

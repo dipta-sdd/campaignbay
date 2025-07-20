@@ -6,7 +6,8 @@
   "scripts": {
     "build": "wp-scripts build",
     "start": "wp-scripts start",
-    "makepot": "wp-scripts i18n make-pot -- . languages/anchor-bay-boilerplate.pot"
+    "makepot": "php wp-cli.phar i18n make-pot . languages/wpab-cb.pot  --domain=wpab-cb",
+    "make-json": "php wp-cli.phar i18n make-json . languages"
   },
   "author": "sankarsan das",
   "license": "ISC",
@@ -15,8 +16,14 @@
     "@wordpress/scripts": "^30.19.0"
   },
   "dependencies": {
+    "@wordpress/i18n": "^5.26.0",
     "@wordpress/icons": "^10.26.0",
+    "@wordpress/react-i18n": "^4.26.0",
     "lucide-react": "^0.525.0",
     "react-router-dom": "^7.6.3"
+  },
+  "wp-i18n": {
+    "domain": "wpab-cb",
+    "potFile": "languages/wpab-cb.pot"
   }
 }

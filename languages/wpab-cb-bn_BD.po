@@ -1,0 +1,49 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CampaignBay 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/campaign-bay\n"
+"Last-Translator: \n"
+"Language-Team: বাংলা\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-07-17T12:53:19+02:00\n"
+"PO-Revision-Date: 2025-07-17 10:54+0000\n"
+"Language: bn_BD\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Domain: wpab-cb\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Loco-Version: 2.8.0; wp-6.8.2; php-8.2.12\n"
+
+#. Plugin Name of the plugin
+#: campaign-bay.php
+msgid "CampaignBay"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: campaign-bay.php
+msgid "https://wpanchorbay.com/CampaignBay"
+msgstr ""
+
+#. Description of the plugin
+#: campaign-bay.php
+msgid "CampaignBay for WooCommerce Product Discount WordPress Plugin."
+msgstr ""
+
+#. Author of the plugin
+#: campaign-bay.php
+msgid "WP Anchor Bay"
+msgstr ""
+
+#. Author URI of the plugin
+#: campaign-bay.php
+msgid "https://wpanchorbay.com"
+msgstr ""
+
+#: includes/functions.php:234
+msgid "WPAB - WooCommerce Smart Campaigns"
+msgstr ""
+
+#: includes/functions.php:236
+msgid "Campaigns"
+msgstr ""
