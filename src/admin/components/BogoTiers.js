@@ -5,7 +5,7 @@ import BogoTierRow from "./BogoTierRow";
 
 const BogoTiers = ({ onTiersChange, initialTiers, products }) => {
 
-    const [tiers, setTiers] = useState([{
+    const [tiers, setTiers] = useState(initialTiers || [{
         id: 0, buy_product: null, get_product: null, buy_quantity: 1, get_quantity: 1
     }]);
 

@@ -351,14 +351,9 @@ if ( ! class_exists( 'WPAB_CB_Api_Campaigns' ) ) {
 					'campaign_type'       => array(
 						'description' => __( 'The core type of the campaign.', WPAB_CB_TEXT_DOMAIN ),
 						'type'        => 'string',
-						'enum'        => array( 'earlybird', 'bogo', 'recurring', 'amount_discount', 'quantity_discount' ),
+						'enum'        => array( 'earlybird', 'bogo', 'scheduled', 'quantity' ),
 						'context'     => array( 'view', 'edit' ),
 						'required'    => true,
-					),
-					'rule_status'         => array(
-						'description' => __( 'The current state of the rule.', WPAB_CB_TEXT_DOMAIN ),
-						'type'        => 'string',
-						'context'     => array( 'view', 'edit' ),
 					),
 					'discount_type'       => array(
 						'description' => __( 'The type of discount (percentage, fixed).', WPAB_CB_TEXT_DOMAIN ),
@@ -372,20 +367,15 @@ if ( ! class_exists( 'WPAB_CB_Api_Campaigns' ) ) {
 						'context'     => array( 'view', 'edit' ),
 					),
 					'target_type'         => array(
-						'description' => __( 'The scope of the rule (store, categories, products).', WPAB_CB_TEXT_DOMAIN ),
+						'description' => __( 'The scope of the rule (store, categories, products, tags).', WPAB_CB_TEXT_DOMAIN ),
 						'type'        => 'string',
-						'enum'        => array( 'store', 'categories', 'products' ),
+						'enum'        => array( 'entire_store', 'categories', 'products', 'tags' ),
 						'context'     => array( 'view', 'edit' ),
 					),
 					'target_ids'          => array(
-						'description' => __( 'Array of category or product IDs.', WPAB_CB_TEXT_DOMAIN ),
+						'description' => __( 'Array of category, product, or tag IDs.', WPAB_CB_TEXT_DOMAIN ),
 						'type'        => 'array',
 						'items'       => array( 'type' => 'integer' ),
-						'context'     => array( 'view', 'edit' ),
-					),
-					'min_quantity'        => array(
-						'description' => __( 'Minimum quantity required for the discount.', WPAB_CB_TEXT_DOMAIN ),
-						'type'        => 'integer',
 						'context'     => array( 'view', 'edit' ),
 					),
 					'exclude_sale_items'  => array(
@@ -403,31 +393,30 @@ if ( ! class_exists( 'WPAB_CB_Api_Campaigns' ) ) {
 						'type'        => 'boolean',
 						'context'     => array( 'view', 'edit' ),
 					),
-					'start_timestamp'     => array(
-						'description' => __( 'The rule\'s start date/time (Unix Timestamp).', WPAB_CB_TEXT_DOMAIN ),
-						'type'        => 'integer',
+					'start_datetime'     => array(
+						'description' => __( 'The rule\'s start date/time (ISO 8601 string).', WPAB_CB_TEXT_DOMAIN ),
+						'type'        => 'string',
+						'format'      => 'date-time',
 						'context'     => array( 'view', 'edit' ),
 					),
-					'end_timestamp'       => array(
-						'description' => __( 'The rule\'s end date/time (Unix Timestamp).', WPAB_CB_TEXT_DOMAIN ),
-						'type'        => 'integer',
+					'end_datetime'       => array(
+						'description' => __( 'The rule\'s end date/time (ISO 8601 string).', WPAB_CB_TEXT_DOMAIN ),
+						'type'        => 'string',
+						'format'      => 'date-time',
 						'context'     => array( 'view', 'edit' ),
 					),
 					'timezone_string'     => array(
 						'description' => __( 'The timezone identifier.', WPAB_CB_TEXT_DOMAIN ),
 						'type'        => 'string',
 						'context'     => array( 'view', 'edit' ),
-					),
-					'priority'            => array(
-						'description' => __( 'The priority of the campaign.', WPAB_CB_TEXT_DOMAIN ),
-						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
-					),
-					'usage_limit'         => array(
-						'description' => __( 'The total number of times the campaign can be used.', WPAB_CB_TEXT_DOMAIN ),
-						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
-					),
+						'required'    => true,
+                    ),
+                    'campaign_tiers'      => array(
+                        'description' => __( 'The tiers of the campaign.', WPAB_CB_TEXT_DOMAIN ),
+                        'type'        => 'array',
+                        'items'       => array( 'type' => 'object' ),
+                        'context'     => array( 'view', 'edit' ),
+                    ),
 				),
 			);
 

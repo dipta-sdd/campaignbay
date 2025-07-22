@@ -55,6 +55,7 @@
     $bg-gray-light: #f0f0f0; // Light gray background for sections
     $bg-gray-dark: #e0e0e0; // Darker gray for
     $bg-primary: #3858e9; // Primary color (WordPress blue)
+    $bg-error: #d63638; // Error color
 
 
 
@@ -153,6 +154,10 @@
     & .text-2xl {
         font-size: #{$cb-fs-xxl};
         line-height: #{$cb-lh-xxl};
+    }
+
+    & .wpab-input-error {
+        border-color: #{$bg-error} !important;
     }
 
 
@@ -633,6 +638,28 @@
         line-height: #{$cb-lh-xxl};
         font-weight: #{$cb-fw-normal};
         color: #{$bg-black};
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+        align-items: center;
+
+        & input,
+        & span {
+            font-size: #{$cb-fs-xxl};
+            line-height: #{$cb-lh-xxl};
+            font-weight: #{$cb-fw-normal};
+        }
+
+        & .cb-page-header-title-icon {
+            fill: #{$bg-black};
+            cursor: pointer;
+
+            &:hover {
+                fill: #{$bg-primary};
+                transform: scale(1.1);
+                transition: fill 0.2s ease-in-out, transform 0.2s ease-in-out;
+            }
+        }
     }
 
     & .cb-page-header-actions {
@@ -1137,6 +1164,58 @@
             font-weight: #{$cb-fw-normal};
         }
     }
+
+    & .cb-form-input-con .components-input-control__container:has(select:hover) .components-input-control__backdrop,
+    & .cb-form-input-con .components-input-control__container:has(input:hover) .components-input-control__backdrop,
+    & .wpab-multiselect-input:has(input:hover),
+    & .wpab-input:hover,
+    & .wpab-select:hover {
+        border: #{$cb-border-width-base} solid #{$cb-border-color-base};
+    }
+
+    & .cb-form-input-con .components-datetime__time-field-hours-input .components-input-control__backdrop {
+        border-right: none !important;
+    }
+
+    & .cb-form-input-con .components-datetime__time-field-minutes-input .components-input-control__backdrop {
+        border-left: none !important;
+    }
+
+
+    & .cb-form-input-con .components-input-control__container:has(select:focus-visible) .components-input-control__backdrop,
+    & .cb-form-input-con .components-input-control__container:has(input:focus-visible) .components-input-control__backdrop,
+    & .wpab-multiselect-input:has(input:focus-visible),
+    & .wpab-input:focus-visible,
+    & .wpab-select:focus-visible,
+    & .cb-form-input-con .components-input-control__container:has(input:focus) .components-input-control__backdrop,
+    & .cb-form-input-con .components-input-control__container:has(select:focus) .components-input-control__backdrop,
+    & .wpab-multiselect-input:has(input:focus),
+    & .wpab-input:focus,
+    & .wpab-select:focus {
+
+        border: 1px solid #{$bg-primary} !important;
+        outline: none;
+        box-shadow: none;
+    }
+
+
+    & .wpab-input-error .components-input-control__container:has(select:focus-visible) .components-input-control__backdrop,
+    & .wpab-input-error .components-input-control__container:has(input:focus-visible) .components-input-control__backdrop,
+    & .wpab-input-error .components-input-control__container:has(input:focus) .components-input-control__backdrop,
+    & .wpab-input-error .components-input-control__container:has(select:focus) .components-input-control__backdrop,
+    & .wpab-input-error .components-input-control__backdrop,
+    & .wpab-input-error,
+    & .wpab-input-error,
+    & .wpab-input-error:focus,
+    & .wpab-input-error:hover,
+    & .wpab-input-error:focus-visible {
+        border-color: #{$bg-error} !important;
+        box-shadow: none !important;
+    }
+
+
+
+
 
 }
 

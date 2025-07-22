@@ -77,6 +77,11 @@ class WPAB_CB_Campaign {
 		$this->load_meta();
 	}
 
+	public static function throw_validation_error( $field = '' ) {
+		return new WP_Error( 'rest_invalid_param', 'Invalid parameter(s): ' . $field,
+		 array( 'params' => array( $field => 'Invalid parameter(s): ' . $field ) ) );
+	}
+
 	/**
 	 * Create a new campaign.
 	 *
@@ -87,25 +92,21 @@ class WPAB_CB_Campaign {
 	 */
 	public static function create( $args ) {
 		$defaults = array(
-			'title'         => '',
-			'status'        => 'draft',
-			'campaign_type' => '',
+			'status'        => 'wpab_cb_active',
 		);
 		$args     = wp_parse_args( $args, $defaults );
-
-		// --- Validation ---
+		wpab_cb_log( json_encode( $args ), 'DEBUG');
 		if ( empty( $args['title'] ) ) {
-			return new WP_Error( 'missing_title', 'A campaign title is required.' );
+			return self::throw_validation_error( 'title' );
 		}
 		if ( empty( $args['campaign_type'] ) ) {
-			return new WP_Error( 'missing_campaign_type', 'A campaign type is required.' );
+			return self::throw_validation_error( 'campaign_type' );
 		}
-		$allowed_types = array( 'earlybird', 'bogo', 'recurring', 'amount_discount', 'quantity_discount' );
+		$allowed_types = array( 'earlybird', 'bogo', 'scheduled', 'quantity' );
 		if ( ! in_array( $args['campaign_type'], $allowed_types, true ) ) {
-			return new WP_Error( 'invalid_campaign_type', 'The provided campaign type is not valid.' );
+			return self::throw_validation_error( 'campaign_type' );
 		}
 
-		// --- Create Post ---
 		$post_data = array(
 			'post_title'  => sanitize_text_field( $args['title'] ),
 			'post_type'   => 'wpab_cb_campaign',
@@ -123,6 +124,8 @@ class WPAB_CB_Campaign {
 
 		return $campaign;
 	}
+
+
 
 	/**
 	 * Update an existing campaign's data.
@@ -149,7 +152,6 @@ class WPAB_CB_Campaign {
 			}
 		}
 
-		// --- Update Meta Data ---
 		$this->update_meta_from_args( $args );
 
 		return true;
@@ -191,15 +193,81 @@ class WPAB_CB_Campaign {
 	 */
 	private function update_meta_from_args( $args ) {
 		$meta_keys = wpab_cb_get_campaign_meta_keys();
-
 		foreach ( $meta_keys as $key ) {
 			if ( isset( $args[ $key ] ) ) {
-				// Simple sanitization, can be expanded.
-				$value = is_array( $args[ $key ] ) ? array_map( 'sanitize_text_field', $args[ $key ] ) : sanitize_text_field( $args[ $key ] );
+				$value = $this->sanitize_meta_value( $key, $args[ $key ] );
 				$this->update_meta( $key, $value );
 			}
 		}
 	}
+
+	/**
+	 * Sanitize a meta value based on its key.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @param string $key The meta key.
+	 * @param mixed  $value The raw value.
+	 * @return mixed The sanitized value.
+	 */
+	private function sanitize_meta_value( $key, $value ) {
+		switch ( $key ) {
+			case 'discount_value':
+				return floatval( $value );
+
+			case 'min_quantity':
+			case 'start_timestamp':
+			case 'end_timestamp':
+			case 'priority':
+			case 'usage_limit':
+				return absint( $value );
+
+			case 'exclude_sale_items':
+			case 'apply_to_shipping':
+			case 'schedule_enabled':
+				return (bool) $value;
+
+			case 'target_ids':
+				return is_array( $value ) ? array_map( 'absint', $value ) : array();
+
+			case 'campaign_type':
+			case 'rule_status':
+			case 'discount_type':
+			case 'target_type':
+			case 'timezone_string':
+				return sanitize_key( $value );
+			case 'campaign_tiers':
+				return is_array( $value ) ? array_map( array( $this, 'sanitize_tier_item' ), $value ) : array();
+
+			default:
+				return sanitize_text_field( $value );
+		}
+	}
+
+	/**
+	 * Sanitizes a single tier item from the campaign_tiers array.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @param array $tier The tier array to sanitize.
+	 * @return array The sanitized tier array.
+	 */
+	private function sanitize_tier_item( $tier ) {
+		if ( ! is_array( $tier ) ) {
+			return array();
+		}
+
+		$sanitized_tier = array();
+
+		$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
+		$sanitized_tier['min']   = isset( $tier['min'] ) ? absint( $tier['min'] ) : 0;
+		$sanitized_tier['max']   = isset( $tier['max'] ) ? sanitize_text_field( $tier['max'] ) : ''; // Max can be empty or a number.
+		$sanitized_tier['value'] = isset( $tier['value'] ) ? floatval( $tier['value'] ) : 0;
+		$sanitized_tier['type']  = isset( $tier['type'] ) ? sanitize_key( $tier['type'] ) : 'percentage';
+
+		return $sanitized_tier;
+	}
+
 
 	/**
 	 * Get a specific piece of metadata.
@@ -220,6 +288,7 @@ class WPAB_CB_Campaign {
 	 * @param mixed  $value The value to save.
 	 */
 	public function update_meta( $key, $value ) {
+		wpab_cb_log($value, 'DEBUG');
 		$this->meta[ $key ] = $value;
 		update_post_meta( $this->id, '_wpab_cb_' . $key, $value );
 	}
@@ -237,6 +306,28 @@ class WPAB_CB_Campaign {
 
 	public function get_status() {
 		return $this->post->post_status;
+	}
+
+
+}
+
+
+if ( ! function_exists( 'wpab_cb_get_campaign' ) ) {
+	/**
+	 * Helper function to get a campaign object.
+	 *
+	 * @since 1.0.0
+	 * @param int|WP_Post $campaign The ID or post object of the campaign.
+	 * @return WPAB_CB_Campaign|null The campaign object, or null if not found.
+	 */
+	function wpab_cb_get_campaign( $campaign ) {
+		try {
+			return new WPAB_CB_Campaign( $campaign );
+		} catch ( Exception $e ) {
+			// Optional: Log the error if needed.
+			// wpab_cb_log($e->getMessage());
+			return null;
+		}
 	}
 }
 

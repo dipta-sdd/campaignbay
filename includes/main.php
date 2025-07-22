@@ -67,7 +67,19 @@ class WPAB_CB {
 		
 		/**Plugin Core Functions*/
 		require_once WPAB_CB_PATH . 'includes/functions.php';
+
+		/**
+		 * The class responsible for defining all campaign related functionality.
+		 */
+		require_once WPAB_CB_PATH . 'includes/class-campaign.php';
+
+		/**
+		 * The class responsible for defining all custom post types and statuses.
+		 */
+		require_once WPAB_CB_PATH . 'includes/class-wpab-cb-post-types.php';
 		
+
+
 		/* API */
 		require_once WPAB_CB_PATH . 'includes/api/index.php';
 
@@ -97,10 +109,6 @@ class WPAB_CB {
 
 		$this->loader = new WPAB_CB_Loader();
 
-		/**
-		 * The class responsible for defining all custom post types and statuses.
-		 */
-		require_once WPAB_CB_PATH . 'includes/class-wpab-cb-post-types.php';
 		
 	}
 

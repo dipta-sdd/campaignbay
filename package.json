@@ -16,6 +16,7 @@
     "@wordpress/scripts": "^30.19.0"
   },
   "dependencies": {
+    "@wordpress/dataviews": "^4.22.0",
     "@wordpress/i18n": "^5.26.0",
     "@wordpress/icons": "^10.26.0",
     "@wordpress/react-i18n": "^4.26.0",

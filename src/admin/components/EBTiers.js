@@ -5,7 +5,7 @@ import EBTierRow from "./EBTierRow";
 
 const EBTiers = ({ onTiersChange, initialTiers }) => {
 
-    const [tiers, setTiers] = useState([{
+    const [tiers, setTiers] = useState(initialTiers || [{
         id: 0, quantity: null, value: null, type: 'percentage', total: 0
     }]);
 

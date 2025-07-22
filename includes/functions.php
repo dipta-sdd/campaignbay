@@ -307,20 +307,17 @@ if ( ! function_exists( 'wpab_cb_get_campaign_meta_keys' ) ) :
 	function wpab_cb_get_campaign_meta_keys() {
 		return array(
 			'campaign_type',
-			'rule_status',
 			'discount_type',
 			'discount_value',
 			'target_type',
 			'target_ids',
-			'min_quantity',
 			'exclude_sale_items',
 			'apply_to_shipping',
 			'schedule_enabled',
-			'start_timestamp',
-			'end_timestamp',
+			'start_datetime',
+			'end_datetime',
 			'timezone_string',
-			'priority',
-			'usage_limit',
+			'campaign_tiers'
 		);
 	}
 endif;

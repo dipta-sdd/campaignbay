@@ -22,7 +22,7 @@ const App = () => {
                             <Route path="settings" element={<Settings />} />
                             <Route path="campaigns" element={<Campaigns />} />
                             <Route path="campaigns/add" element={<CampaignsAdd />} />
-                            <Route path="campaigns/edit/:id" element={<CampaignsEdit />} />
+                            <Route path="campaigns/:id" element={<CampaignsEdit />} />
 
                             {/* <Route path="rules/new" element={<AddNewRulePage />} /> */}
                             {/* <Route path="rules/edit/:ruleId" element={<AddNewRulePage />} />  */}
