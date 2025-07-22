@@ -4,25 +4,18 @@ import {
     __experimentalToggleGroupControl as ToggleGroupControl,
     __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useCbStore } from '../store/cbStore';
-const TierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst }) => {
+
+const EBTierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst }) => {
     const [error, setError] = useState('');
 
     const { woocommerce_currency_symbol } = useCbStore();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        // Create a new object for the update
         const updatedTier = { ...tierData, [name]: value };
-
-        // **Inline Validation Logic**
-        if (name === 'max' && value && parseInt(value, 10) < tierData.min) {
-            setError('Max quantity must be greater than min quantity.');
-        } else {
-            setError('');
-        }
-
+        setError('');
         onUpdate(updatedTier);
     };
 
@@ -35,27 +28,39 @@ const TierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst }) =
             <div className='tier-inputs'>
                 <div className='wpab-grid-2'>
                     <div className='wpab-tier-input-grid-child'>
-                        <span className='wpab-input-label'>Buy from</span>
+                        <span className='wpab-input-label'>
+                            {
+                                isFirst ?
+                                    __('For First', 'wpab-cb') :
+                                    __('For Next', 'wpab-cb')
+                            }
+
+                        </span>
                         <input
                             type="number"
-                            name="min"
-                            value={tierData.min}
-                            readOnly // Min is non-editable to enforce connected tiers
+                            name="quantity"
+                            value={tierData.quantity}
                             className="min-input wpab-input"
-                        />
-                        <span className='wpab-input-label'>to</span>
-                        <input
-                            type="number"
-                            name="max"
-                            value={tierData.max}
                             onChange={handleChange}
-                            placeholder="e.g., 5"
-                            className="max-input wpab-input"
+                            min="0"
+                            placeholder="e.g., 10"
                         />
+                        <span className='wpab-input-label'>
+                            {__('Sales ', 'wpab-cb')}
+
+                            {/* {  tierData.quantity ?
+                                '(' + (parseInt(tierData.total, 10) + parseInt(1)) + '-' + (parseInt(tierData.total, 10) + parseInt(tierData.quantity, 10)) + ')'
+                                : null
+                            }  */}
+
+                            {'( ' + (parseInt(tierData.total, 10) + parseInt(1)) + ' - '}
+                            {tierData.quantity ? (parseInt(tierData.total, 10) + parseInt(tierData.quantity, 10)) : ''}
+                            {' ),'}
+                        </span>
                     </div>
                     <div className='wpab-tier-input-grid-child'>
 
-                        <span className='wpab-input-label'>items, get</span>
+                        <span className='wpab-input-label'>{__('give ', 'wpab-cb')}</span>
                         <input
                             type="number"
                             name="value"
@@ -108,4 +113,4 @@ const TierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst }) =
     );
 };
 
-export default TierRow;
+export default EBTierRow;

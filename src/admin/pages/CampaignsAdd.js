@@ -10,13 +10,15 @@ import { check, Icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { useToast } from '../store/toast/use-toast';
 import { useEffect } from 'react';
-import { getSettings as getDateSettings } from '@wordpress/date';
 import Required from '../components/Required';
 import QuantityTiers from '../components/QuantityTiers';
-
+import EBTiers from '../components/EBTiers';
+import BogoTiers from '../components/BogoTiers';
+import { useCbStore } from '../store/cbStore';
 
 const CampaignsAdd = () => {
-    const [campaignType, setCampaignType] = useState('quantity');
+    const { woocommerce_currency_symbol } = useCbStore();
+    const [campaignType, setCampaignType] = useState('bogo');
     const [selectionType, setSelectionType] = useState('entire_store');
     const [selections, setSelections] = useState([]);
     const [discountType, setDiscountType] = useState('percentage');
@@ -28,9 +30,13 @@ const CampaignsAdd = () => {
     const [products, setProducts] = useState([]);
     const [tags, setTags] = useState([]);
     const [quantityTiers, setQuantityTiers] = useState([]);
-    const { timezone } = getDateSettings();
+    const [ebTiers, setEBTiers] = useState([]);
+    const [bogoTiers, setBogoTiers] = useState([]);
+
 
     const fetchCategories = async () => {
+
+
         try {
             const response = await apiFetch({ path: '/wc/v3/products/categories' });
             setCategories(response.map(item => ({
@@ -79,20 +85,28 @@ const CampaignsAdd = () => {
 
     useEffect(() => {
         fetchCategories();
+        fetchProducts();
     }, []);
 
     const handleSelectionTypeChange = (value) => {
         setSelectionType(value);
         setSelections([]);
-        if (value === 'product') {
-            fetchProducts();
-        }
+        // if (value === 'product') {
+        //     fetchProducts();
+        // }
         if (value === 'tags') {
             fetchTags();
         }
     }
 
-    
+    const handleCampaignTypeChange = (value) => {
+        setCampaignType(value);
+        if (value === 'bogo') {
+            handleSelectionTypeChange('product');
+        }
+    }
+
+
 
     return (
         <div className="cb-page">
@@ -108,7 +122,7 @@ const CampaignsAdd = () => {
             <div className="cb-page-container">
                 <div className="cb-form-input-con">
                     <label htmlFor="campaign-type">{__('SELECT DISCOUNT TYPE', 'wpab-cb')}   <Required /></label>
-                    <select type="text" id="campaign-type" className="wpab-input w-100" value={campaignType} onChange={(e) => setCampaignType(e.target.value)}>
+                    <select type="text" id="campaign-type" className="wpab-input w-100" value={campaignType} onChange={(e) => handleCampaignTypeChange(e.target.value)}>
                         <option value="sheduled">{__('Sheduled Discount', 'wpab-cb')}</option>
                         <option value="quantity">{__('Quantity Based Discount', 'wpab-cb')}</option>
                         <option value="earlybird">{__('EarlyBird Discount', 'wpab-cb')}</option>
@@ -116,80 +130,76 @@ const CampaignsAdd = () => {
                     </select>
                 </div>
 
-                <div className="cb-form-input-con">
-                    <label htmlFor="selection-type">{__('SELECT FOR USERS', 'wpab-cb')}  <Required /></label>
-                    <select type="text" id="selection-type" className="wpab-input w-100" value={selectionType} onChange={(e) => handleSelectionTypeChange(e.target.value)}>
-                        <option value="entire_store">{__('Entire Store', 'wpab-cb')}</option>
-                        <option value="category">{__('By Product Category', 'wpab-cb')}</option>
-                        <option value="product">{__('By Product', 'wpab-cb')}</option>
-                        <option value="tag">{__('By Tags', 'wpab-cb')}</option>
-                    </select>
-
-                    {selectionType !== 'entire_store' ?
-                        <div style={{ background: '#ffffff' }}>
-                            <MultiSelect
-                                label={
-                                    selectionType === 'product' ? __('Select Products *', 'wpab-cb') : selectionType === 'tag' ? __('Select Tags *', 'wpab-cb') : selectionType === 'category' ? __('Select Categories *', 'wpab-cb') : ''
-                                }
-                                options={selectionType === 'product' ? products : selectionType === 'tag' ? tags : selectionType === 'category' ? categories : []}
-                                value={selections}
-                                onChange={setSelections}
-                            />
-                        </div>
-                        : null
-                    }
-                </div>
-
-                {/* {selectionType !== 'entire_store' ?
+                {campaignType !== 'bogo' && (
                     <div className="cb-form-input-con">
-                        <MultiSelect
-                            style={{
-                                padding: '0 16px',
-                            }}
-                            label={
-                                selectionType === 'product' ? __('Select Products *', 'wpab-cb') : selectionType === 'tag' ? __('Select Tags *', 'wpab-cb') : selectionType === 'category' ? __('Select Categories *', 'wpab-cb') : ''
-                            }
-                            options={selectionType === 'product' ? products : selectionType === 'tag' ? tags : selectionType === 'category' ? categories : []}
-                            value={selections}
-                            onChange={setSelections}
-                        />
+                        <label htmlFor="selection-type">{__('SELECT FOR USERS', 'wpab-cb')}  <Required /></label>
+                        <select type="text" id="selection-type" className="wpab-input w-100" value={selectionType} onChange={(e) => handleSelectionTypeChange(e.target.value)}>
+                            {campaignType !== 'bogo' && (<option value="entire_store">{__('Entire Store', 'wpab-cb')}</option>)}
+                            {campaignType !== 'bogo' && (<option value="category">{__('By Product Category', 'wpab-cb')}</option>)}
+                            <option value="product">{__('By Product', 'wpab-cb')}</option>
+                            {campaignType !== 'bogo' && (<option value="tag">{__('By Tags', 'wpab-cb')}</option>)}
+
+
+                        </select>
+
+                        {selectionType !== 'entire_store' ?
+                            <div style={{ background: '#ffffff' }}>
+                                <MultiSelect
+                                    label={
+                                        selectionType === 'product' ? __('Select Products *', 'wpab-cb') : selectionType === 'tag' ? __('Select Tags *', 'wpab-cb') : selectionType === 'category' ? __('Select Categories *', 'wpab-cb') : ''
+                                    }
+                                    options={selectionType === 'product' ? products : selectionType === 'tag' ? tags : selectionType === 'category' ? categories : []}
+                                    value={selections}
+                                    onChange={setSelections}
+                                />
+                            </div>
+                            : null
+                        }
                     </div>
-                    : null
-                } */}
+                )}
+
+                {campaignType === 'bogo' && products?.length > 0 && (
+                    <BogoTiers onTiersChange={setBogoTiers} initialTiers={bogoTiers} products={products} />
+                )}
 
 
                 {campaignType === 'quantity' && (
                     <QuantityTiers onTiersChange={setQuantityTiers} initialTiers={quantityTiers} />
                 )}
 
+                {campaignType === 'earlybird' && (
+                    <EBTiers onTiersChange={setEBTiers} initialTiers={ebTiers} />
+                )}
 
-                <div className="cb-form-input-con">
-                    <label htmlFor="discount-type">{__('How many you want to discount?', 'wpab-cb')}  <Required /></label>
-                    <ToggleGroupControl
-                        className="cb-toggle-group-control"
-                        __next40pxDefaultSize
-                        __nextHasNoMarginBottom
-                        isBlock
-                        value={discountType}
-                        onChange={(value) => setDiscountType(value)}
-                    >
-                        <ToggleGroupControlOption
-                            label={__('Percentage %', 'wpab-cb')}
-                            value="percentage"
-                        />
-                        <ToggleGroupControlOption
-                            label={__('Currency $', 'wpab-cb')}
-                            value="currency"
-                        />
-                    </ToggleGroupControl>
-                    <span className='wpab-input-help'>{__('If you want you will change mode', 'wpab-cb')}</span>
+                {campaignType === 'sheduled' && (
 
-                    <div className='cb-input-with-suffix'>
-                        <input value={discountValue} type="text" name='discount-value' inputMode='numeric' pattern="[0-9]*" className="wpab-input w-100 " placeholder="Enter Value" onChange={(e) => setDiscountValue(e.target.value)} />
-                        <span className='cb-suffix'>{discountType === 'percentage' ? '%' : '$'}</span>
+                    <div className="cb-form-input-con">
+                        <label htmlFor="discount-type">{__('How many you want to discount?', 'wpab-cb')}  <Required /></label>
+                        <ToggleGroupControl
+                            className="cb-toggle-group-control"
+                            __next40pxDefaultSize
+                            __nextHasNoMarginBottom
+                            isBlock
+                            value={discountType}
+                            onChange={(value) => setDiscountType(value)}
+                        >
+                            <ToggleGroupControlOption
+                                label={__('Percentage %', 'wpab-cb')}
+                                value="percentage"
+                            />
+                            <ToggleGroupControlOption
+                                label={__('Currency ', 'wpab-cb') + (woocommerce_currency_symbol || '$')}
+                                value="currency"
+                            />
+                        </ToggleGroupControl>
+                        <span className='wpab-input-help'>{__('If you want you will change mode', 'wpab-cb')}</span>
+
+                        <div className='cb-input-with-suffix'>
+                            <input value={discountValue} type="text" name='discount-value' inputMode='numeric' pattern="[0-9]*" className="wpab-input w-100 " placeholder="Enter Value" onChange={(e) => setDiscountValue(e.target.value)} />
+                            <span className='cb-suffix'>{discountType === 'percentage' ? '%' : (woocommerce_currency_symbol || '$')}</span>
+                        </div>
                     </div>
-                </div>
-
+                )}
                 <div className="cb-form-input-con">
                     <label htmlFor="start-time">{__('SELECT CAMPAIGN DURATION', 'wpab-cb')}  <Required /></label>
                     <div className='wpab-grid-2 cb-date-time-fix' style={{ gap: '16px' }}>
@@ -212,9 +222,17 @@ const CampaignsAdd = () => {
 
 
                 </div>
-
+                <div className='wpab-btn-bottom-con'>
+                    <button className="wpab-cb-btn wpab-cb-btn-primary">
+                        <Icon icon={check} fill="currentColor" />
+                        {__('Save Changes', 'wpab-cb')}
+                    </button>
+                </div>
 
             </div>
+
+
+
         </div>
     );
 };

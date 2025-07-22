@@ -68,7 +68,7 @@ if ( ! class_exists( 'WPAB_CB_Api_Settings' ) ) {
 						'methods'             => WP_REST_Server::EDITABLE,
 						'callback'            => array( $this, 'update_item' ),
 						'args'                => rest_get_endpoint_args_for_schema( $this->get_item_schema(), WP_REST_Server::EDITABLE ),
-						'permission_callback' => array( $this, 'get_item_permissions_check' ),
+						'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					),
 					'schema' => array( $this, 'get_public_item_schema' ),
 				)
@@ -85,6 +85,36 @@ if ( ! class_exists( 'WPAB_CB_Api_Settings' ) ) {
 		 */
 		public function get_item_permissions_check( $request ) {
 			return current_user_can( 'manage_options' );
+		}
+
+		/**
+		 * Checks if a given request has access to update settings and verifies nonce.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param WP_REST_Request $request Full details about the request.
+		 * @return bool|WP_Error True if the request has update access for the item and nonce is valid, otherwise false or WP_Error.
+		 */
+		public function update_item_permissions_check( $request ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return false;
+			}
+
+			$nonce = $request->get_header( 'X-WP-Nonce' );
+
+			if ( ! $nonce ) {
+				$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
+			}
+
+			if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+				return new WP_Error(
+					'rest_invalid_nonce',
+					__( 'Invalid or missing nonce.', 'wpab-cb' ),
+					array( 'status' => 403 )
+				);
+			}
+
+			return true;
 		}
 
 		/**
@@ -133,7 +163,6 @@ if ( ! class_exists( 'WPAB_CB_Api_Settings' ) ) {
 		 */
 		public function update_item( $request ) {
 			$schema = $this->get_registered_schema();
-
 			$params = $request->get_params();
 
 			if ( is_wp_error( rest_validate_value_from_schema( $params, $schema ) ) ) {

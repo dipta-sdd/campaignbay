@@ -126,5 +126,8 @@ if ( ! class_exists( 'WPAB_CB_Api' ) ) {
 			// Unserializing instances of the class is forbidden.
 			_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', WPAB_CB_TEXT_DOMAIN ), '1.0.0' );
 		}
+
+		
 	}
 }
+ 

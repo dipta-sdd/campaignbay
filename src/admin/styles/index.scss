@@ -109,6 +109,10 @@
         --cb-p-6: 30px;
     }
 
+    & input::placeholder {
+        color: #{$cb-text-secondary}90;
+    }
+
     // matching class for tailwind
     & .font-normal {
         font-weight: #{$cb-fw-normal};
@@ -707,9 +711,15 @@
         line-height: #{$cb-lh-base};
         font-weight: #{$cb-fw-normal};
 
+        & .wpab-bogo-select,
         & input {
             min-width: 20px;
             width: auto;
+
+            &[type="number"] {
+                width: 90px;
+                padding-right: 5px;
+            }
         }
 
         & .tier-inputs,
@@ -743,8 +753,8 @@
             align-items: center;
             justify-content: flex-start;
             gap: 10px;
-            width: auto;
-            max-width: 100% !important;
+            width: max-content;
+            // max-width: 100% !important;
         }
 
         & .tier-actions {
@@ -762,6 +772,25 @@
                 // line-height: 1;
             }
         }
+
+        & .wpab-bogo-select {
+            & .wpab-multiselect-input {
+                scrollbar-width: none; // Firefox
+
+                &::-webkit-scrollbar {
+                    display: none; // Chrome, Safari, Opera
+                }
+            }
+        }
+    }
+
+    & .wpab-btn-bottom-con {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        width: 100%;
+        margin-top: var(--cb-p-2);
     }
 
 
@@ -796,6 +825,12 @@
     & .cb-date-time-fix {
         & .components-input-control__container {
             border: none;
+
+            // & input,
+            & input:hover+.components-input-control__backdrop {
+                border: none;
+            }
+
         }
 
         & fieldset:first-of-type legend {
@@ -1078,6 +1113,7 @@
 
     & .cb-toggle-group-control::before {
         background-color: #{$cb-color-primary};
+        left: 0px;
     }
 
     & .cb-input-with-suffix {

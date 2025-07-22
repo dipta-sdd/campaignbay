@@ -186,7 +186,7 @@ class WPAB_CB_Admin {
 	
 		wp_enqueue_style( WPAB_CB_PLUGIN_NAME, WPAB_CB_URL . 'build/admin.css', array( 'wp-components' ), $version );
 		wp_style_add_data( WPAB_CB_PLUGIN_NAME, 'rtl', 'replace' );
-	
+		$woocommerce_currency_symbol = get_woocommerce_currency_symbol();
 		$localize = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_admin_localize',
 			array(
@@ -196,6 +196,7 @@ class WPAB_CB_Admin {
 				'store'       => WPAB_CB_PLUGIN_NAME,
 				'rest_url'    => get_rest_url(),
 				'white_label' => wpab_cb_include()->get_white_label(),
+				'woocommerce_currency_symbol' => $woocommerce_currency_symbol,
 			)
 		);
 	

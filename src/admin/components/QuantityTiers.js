@@ -16,7 +16,15 @@ const QuantityTiers = ({ onTiersChange, initialTiers }) => {
     const handleAddTier = (setError) => {
         const lastTier = tiers[tiers.length - 1];
         if (!lastTier.max) {
-            setError("Please fill in the previous tier's maximum quantity first.");
+            setError(__('Please fill in the previous tier\'s maximum quantity first.', 'wpab-cb'));
+            return;
+        }
+        if (lastTier.max <= lastTier.min) {
+            setError(__('The maximum quantity must be greater than the minimum quantity.', 'wpab-cb'));
+            return;
+        }
+        if (!lastTier.value) {
+            setError(__('Please fill in the previous tier\'s value first.', 'wpab-cb'));
             return;
         }
 
@@ -39,10 +47,6 @@ const QuantityTiers = ({ onTiersChange, initialTiers }) => {
         const newTiers = tiers.map(tier =>
             tier.id === updatedTier.id ? updatedTier : tier
         );
-        console.log(newTiers.length, ' ', updatedTier.id);
-        // newTiers[updatedTier.id].max = '20'; // Ensure max is always set to 20
-        // console.log('updatedTier', updatedTier);
-        // console.log('Updated Tiers:', newTiers);
         if (updatedTier.id < tiers.length - 1 && updatedTier.max) {
             newTiers[updatedTier.id + 1].min = parseInt(updatedTier.max, 10) + 1;
         }

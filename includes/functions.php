@@ -102,10 +102,8 @@ if ( ! function_exists( 'wpab_cb_get_options' ) ) :
 	 */
 	function wpab_cb_get_options( $key = '' ) {
 		$options = get_option( WPAB_CB_OPTION_NAME );
-		// wpab_cb_log( 'wpab_cb_get_options: ' . json_encode( $options ) );
 
 		$default_options = wpab_cb_default_options();
-		// wpab_cb_log( 'wpab_cb_default_options: ' . json_encode( $default_options ) );
 		if ( ! empty( $key ) ) {
 			if ( isset( $options[ $key ] ) ) {
 				return $options[ $key ];
@@ -141,9 +139,7 @@ if ( ! function_exists( 'wpab_cb_update_options' ) ) :
 		} else {
 			$options = $key_or_data;
 		}
-		wpab_cb_log( 'wpab_cb_update_options: ' . json_encode( $options ) );
 		update_option( WPAB_CB_OPTION_NAME, $options );
-		wpab_cb_log( 'wpab_cb_updated_options: ' . json_encode( get_option( WPAB_CB_OPTION_NAME ) ) );
 	}
 endif;
 
@@ -292,3 +288,39 @@ if(! function_exists('wpab_cb_log')) {
 		file_put_contents( $log_file, $log_entry, FILE_APPEND | LOCK_EX );
 	}
 }
+
+
+// in includes/functions.php
+
+if ( ! function_exists( 'wpab_cb_get_campaign_meta_keys' ) ) :
+	/**
+	/**
+	 * Get the defined meta keys for a campaign.
+	 *
+	 * Provides a single source of truth for all campaign metadata fields.
+	 * If you update this list, also update the schema in the API controller
+	 * (see WPAB_CB_Api_Campaigns::get_item_schema in includes/api/class-wpab-cb-api-campaigns.php)
+	 *
+	 * @since 1.0.0
+	 * @return array List of meta keys.
+	 */
+	function wpab_cb_get_campaign_meta_keys() {
+		return array(
+			'campaign_type',
+			'rule_status',
+			'discount_type',
+			'discount_value',
+			'target_type',
+			'target_ids',
+			'min_quantity',
+			'exclude_sale_items',
+			'apply_to_shipping',
+			'schedule_enabled',
+			'start_timestamp',
+			'end_timestamp',
+			'timezone_string',
+			'priority',
+			'usage_limit',
+		);
+	}
+endif;

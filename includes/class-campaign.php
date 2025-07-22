@@ -175,38 +175,12 @@ class WPAB_CB_Campaign {
 	 * @access private
 	 */
 	private function load_meta() {
-		$meta_keys = self::get_meta_keys();
+		$meta_keys = wpab_cb_get_campaign_meta_keys();
 		foreach ( $meta_keys as $key ) {
 			$this->meta[ $key ] = get_post_meta( $this->id, '_wpab_cb_' . $key, true );
 		}
 	}
 
-	/**
-	 * A helper function to get all defined meta keys.
-	 *
-	 * @since 1.0.0
-	 * @static
-	 * @return array
-	 */
-	public static function get_meta_keys() {
-		return array(
-			'campaign_type', 
-			'rule_status',// The current state of the rule. (e.g., 'active', 'scheduled', 'expired', 'inactive').
-			'discount_type',  // The type of discount (e.g., 'percentage', 'fixed').
-			'discount_value', // The value of the discount.
-			'target_type', // The type of target (e.g., 'product', 'category').
-			'target_ids', // The IDs of the target products or categories.
-            'min_quantity', // Minimum quantity required for the discount to apply.
-			'exclude_sale_items', // Whether to exclude items on sale from the discount.
-            'apply_to_shipping', // Whether the discount applies to shipping costs.
-			'schedule_enabled', // Whether the campaign has a schedule.
-			'start_timestamp', // The start time of the campaign in Unix timestamp.
-			'end_timestamp', // The end time of the campaign in Unix timestamp.
-			'timezone_string', // The timezone string for the campaign.
-            'priority', // The priority of the campaign.
-            'usage_limit', // The total number of times the campaign can be used.
-		);
-	}
 
 	/**
 	 * Updates post meta from a given array of arguments.
@@ -216,7 +190,7 @@ class WPAB_CB_Campaign {
 	 * @param array $args The arguments to save as metadata.
 	 */
 	private function update_meta_from_args( $args ) {
-		$meta_keys = self::get_meta_keys();
+		$meta_keys = wpab_cb_get_campaign_meta_keys();
 
 		foreach ( $meta_keys as $key ) {
 			if ( isset( $args[ $key ] ) ) {

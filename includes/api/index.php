@@ -13,5 +13,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once trailingslashit( __DIR__ ) . 'class-api.php';
 require_once trailingslashit( __DIR__ ) . 'class-api-settings.php';
-
-// include the main plugin class -> load_dependencies
+require_once trailingslashit( __DIR__ ) . 'class-wpab-cb-api-campaigns.php';
