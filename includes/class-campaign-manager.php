@@ -131,7 +131,9 @@ if ( ! class_exists( 'WPAB_CB_Campaign_Manager' ) ) {
 		 * @return WPAB_CB_Campaign[] An array of active campaign objects.
 		 */
 		public function get_active_campaigns() {
+			wpab_cb_log( 'campaign manager()->get_active_campaigns', 'DEBUG' );
 			if ( null !== $this->active_campaigns ) {
+				
 				return $this->active_campaigns;
 			}
 			$cached_campaigns = get_transient( 'wpab_cb_active_campaigns' );

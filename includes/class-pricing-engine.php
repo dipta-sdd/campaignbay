@@ -120,22 +120,28 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 		 * @param WC_Cart $cart The cart object.
 		 */
 		public function apply_discounts( $cart ) {
-			wpab_cb_log( 'apply_discounts pricing engine' );
+			wpab_cb_log( 'woocommerce_before_calculate_totals', 'DEBUG' );
 			if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 				return;
 			}
 			$campaign_manager = wpab_cb_campaign_manager();
 			$active_campaigns = $campaign_manager->get_active_campaigns();
+			wpab_cb_log( 'active_campaigns: ', 'DEBUG' );
+			wpab_cb_log( json_encode( $active_campaigns ), 'DEBUG' );
 			if ( empty( $active_campaigns ) ) {
 				return;
 			}
 			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
 				$product = $cart_item['data'];
+				wpab_cb_log( 'product price: ' . $product->get_price(), 'DEBUG' );
+
 				foreach ( $active_campaigns as $campaign ) {
 					if ( 'percentage' === $campaign->get_meta( 'discount_type' ) ) {
 						$original_price = $product->get_price();
 						$discount_value = (float) $campaign->get_meta( 'discount_value' );
+						wpab_cb_log( 'discount_value: ' . $discount_value, 'DEBUG' );
 						$new_price      = $original_price - ( $original_price * ( $discount_value / 100 ) );
+						wpab_cb_log( 'new_price: ' . $new_price, 'DEBUG' );
 						$cart_item['data']->set_price( $new_price );
 					}
 				}
