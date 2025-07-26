@@ -95,7 +95,6 @@ class WPAB_CB_Campaign {
 			'status'        => 'wpab_cb_active',
 		);
 		$args     = wp_parse_args( $args, $defaults );
-		wpab_cb_log( json_encode( $args ), 'DEBUG');
 		if ( empty( $args['title'] ) ) {
 			return self::throw_validation_error( 'title' );
 		}
@@ -288,7 +287,6 @@ class WPAB_CB_Campaign {
 	 * @param mixed  $value The value to save.
 	 */
 	public function update_meta( $key, $value ) {
-		wpab_cb_log($value, 'DEBUG');
 		$this->meta[ $key ] = $value;
 		update_post_meta( $this->id, '_wpab_cb_' . $key, $value );
 	}
@@ -324,8 +322,7 @@ if ( ! function_exists( 'wpab_cb_get_campaign' ) ) {
 		try {
 			return new WPAB_CB_Campaign( $campaign );
 		} catch ( Exception $e ) {
-			// Optional: Log the error if needed.
-			// wpab_cb_log($e->getMessage());
+			wpab_cb_log( 'wpab_cb_get_campaign error: ' . $e->getMessage() );
 			return null;
 		}
 	}

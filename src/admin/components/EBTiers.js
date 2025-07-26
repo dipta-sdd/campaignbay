@@ -3,15 +3,8 @@ import Required from "./Required";
 import { useEffect, useState } from '@wordpress/element';
 import EBTierRow from "./EBTierRow";
 
-const EBTiers = ({ onTiersChange, initialTiers }) => {
+const EBTiers = ({ tiers, setTiers, errors }) => {
 
-    const [tiers, setTiers] = useState(initialTiers || [{
-        id: 0, quantity: null, value: null, type: 'percentage', total: 0
-    }]);
-
-    useEffect(() => {
-        onTiersChange(tiers);
-    }, [tiers]);
 
     const handleAddTier = (setError) => {
         const lastTier = tiers[tiers.length - 1];

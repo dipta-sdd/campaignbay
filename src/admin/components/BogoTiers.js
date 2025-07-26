@@ -3,15 +3,9 @@ import Required from "./Required";
 import { useEffect, useState } from '@wordpress/element';
 import BogoTierRow from "./BogoTierRow";
 
-const BogoTiers = ({ onTiersChange, initialTiers, products }) => {
+const BogoTiers = ({ tiers, setTiers, products }) => {
 
-    const [tiers, setTiers] = useState(initialTiers || [{
-        id: 0, buy_product: null, get_product: null, buy_quantity: 1, get_quantity: 1
-    }]);
 
-    useEffect(() => {
-        onTiersChange(tiers);
-    }, [tiers]);
 
     const handleAddTier = (setError) => {
         const lastTier = tiers[tiers.length - 1];

@@ -36,9 +36,15 @@ const CampaignsEdit = () => {
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
     const [tags, setTags] = useState([]);
-    const [quantityTiers, setQuantityTiers] = useState([]);
-    const [ebTiers, setEBTiers] = useState([]);
-    const [bogoTiers, setBogoTiers] = useState([]);
+    const [quantityTiers, setQuantityTiers] = useState([{
+        id: 0, min: 1, max: '', value: '', type: 'percentage'
+    }]);
+    const [ebTiers, setEBTiers] = useState([{
+        id: 0, quantity: null, value: null, type: 'percentage', total: 0
+    }]);
+    const [bogoTiers, setBogoTiers] = useState([{
+        id: 0, buy_product: null, get_product: null, buy_quantity: 1, get_quantity: 1
+    }]);
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [errors, setErrors] = useState({});
     useEffect(() => {
@@ -53,11 +59,11 @@ const CampaignsEdit = () => {
             setStartDate(response.start_datetime);
             setEndDate(response.end_datetime);
             if (response.campaign_type === 'bogo') {
-                setBogoTiers(response.campaign_tiers);
+                setBogoTiers([...response.campaign_tiers]);
             } else if (response.campaign_type === 'quantity') {
-                setQuantityTiers(response.campaign_tiers);
+                setQuantityTiers([...response.campaign_tiers]);
             } else if (response.campaign_type === 'earlybird') {
-                setEBTiers(response.campaign_tiers);
+                setEBTiers([...response.campaign_tiers]);
             }
             setIsLoading(false);
         }
@@ -65,7 +71,7 @@ const CampaignsEdit = () => {
         fetchCategories();
         fetchProducts();
     }, [id]);
-
+    console.log(quantityTiers);
 
 
     const fetchCategories = async () => {
@@ -134,7 +140,7 @@ const CampaignsEdit = () => {
             title: campaignTitle,
             campaign_type: campaignType,
             discount_type: discountType,
-            discount_value: discountValue,
+            discount_value: discountValue || 0,
             target_type: selectionType,
             target_ids: selections,
             start_datetime: startDate,
@@ -252,16 +258,16 @@ const CampaignsEdit = () => {
                         )}
 
                         {campaignType === 'bogo' && products?.length > 0 && (
-                            <BogoTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} onTiersChange={setBogoTiers} initialTiers={bogoTiers} products={products} />
+                            <BogoTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} tiers={bogoTiers} setTiers={setBogoTiers} products={products} />
                         )}
 
 
                         {campaignType === 'quantity' && (
-                            <QuantityTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} onTiersChange={setQuantityTiers} initialTiers={quantityTiers} />
+                            <QuantityTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} tiers={quantityTiers} setTiers={setQuantityTiers} errors={errors} />
                         )}
 
                         {campaignType === 'earlybird' && (
-                            <EBTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} onTiersChange={setEBTiers} initialTiers={ebTiers} />
+                            <EBTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} tiers={ebTiers} setTiers={setEBTiers} errors={errors} />
                         )}
 
                         {campaignType === 'scheduled' && (

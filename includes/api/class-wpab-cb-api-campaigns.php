@@ -369,7 +369,7 @@ if ( ! class_exists( 'WPAB_CB_Api_Campaigns' ) ) {
 					'target_type'         => array(
 						'description' => __( 'The scope of the rule (store, categories, products, tags).', WPAB_CB_TEXT_DOMAIN ),
 						'type'        => 'string',
-						'enum'        => array( 'entire_store', 'categories', 'products', 'tags' ),
+						'enum'        => array( 'entire_store', 'category', 'product', 'tag' ),
 						'context'     => array( 'view', 'edit' ),
 					),
 					'target_ids'          => array(

@@ -71,7 +71,7 @@ class WPAB_CB_Post_Types {
 	public function run() {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_post_statuses' ) );
-
+		add_action( 'init', array( $this, 'register_meta_fields' ) );
 		// This filter is kept for debugging purposes. It will only have an effect
 		// if a developer temporarily sets 'show_ui' to true.
 		add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
@@ -167,6 +167,48 @@ class WPAB_CB_Post_Types {
 				'show_in_admin_status_list' => true,
 				/* translators: %s: number of posts. */
 				'label_count'               => _n_noop( 'Expired <span class="count">(%s)</span>', 'Expired <span class="count">(%s)</span>', WPAB_CB_TEXT_DOMAIN ),
+			)
+		);
+	}
+
+
+
+	/**
+	 * Register the meta fields for the `wpab_cb_campaign` post type.
+	 *
+	 * This makes them available in the REST API for the React UI.
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_meta_fields() {
+		$meta_keys = wpab_cb_get_campaign_meta_keys(); 
+
+		foreach ( $meta_keys as $meta_key ) {
+			register_post_meta(
+				'wpab_cb_campaign',
+				'_wpab_cb_' . $meta_key, 
+				array(
+					'show_in_rest'  => true,
+					'single'        => true, 
+					'type'          => 'string', // A default type, can be more specific.
+					'auth_callback' => function() {
+						return current_user_can( 'edit_posts' );
+					},
+				)
+			);
+		}
+
+		// Special handling for the tiers array
+		register_post_meta(
+			'wpab_cb_campaign',
+			'_wpab_cb_campaign_tiers',
+			array(
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'array',
+				'auth_callback' => function() {
+					return current_user_can( 'edit_posts' );
+				},
 			)
 		);
 	}

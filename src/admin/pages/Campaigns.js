@@ -1,114 +1,153 @@
-import { DataViews, FOLDER_ICON } from '@wordpress/dataviews';
+import { DataViews, FOLDER_ICON } from '@wordpress/dataviews/wp';
 import { Button, Badge } from '@wordpress/components';
-import { useState, useMemo } from '@wordpress/element'; // <-- NEW: Import useState
+import { useState, useMemo, useEffect } from '@wordpress/element'; // <-- NEW: Import useState
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
+import { Icon, plus } from '@wordpress/icons';
+import apiFetch from '@wordpress/api-fetch';
+import { __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
+import { useToast } from '../store/toast/use-toast';
 
-// --- Dummy Data (No changes here) ---
-const dummyData = [
-    {
-        id: 1,
-        campaignName: 'Summer Sale 2025',
-        status: 'Active',
-        discountType: 'Schedule Discount',
-        target: 'Entire Store',
-        value: '20%',
-        startDate: 'Jun 1, 2025',
-        endDate: 'Aug 31, 2025',
-        usage: 1247,
-    },
-    {
-        id: 2,
-        campaignName: 'BOGO Electronics',
-        status: 'Scheduled',
-        discountType: 'Buy 1 Get 1',
-        target: 'Electronics Category',
-        value: 'Buy 1 Get 1',
-        startDate: 'Mar 15, 2025',
-        endDate: 'Mar 31, 2025',
-        usage: 0,
-    },
-    {
-        id: 3,
-        campaignName: 'Early Bird Special',
-        status: 'Active',
-        discountType: 'EarlyBird',
-        target: 'New Arrivals',
-        value: '$15 off',
-        startDate: 'Jan 1, 2025',
-        endDate: 'Dec 31, 2025',
-        usage: 432,
-    },
-    {
-        id: 4,
-        campaignName: 'Holiday Flash Sale',
-        status: 'Expired',
-        discountType: 'Schedule Discount',
-        target: 'Entire Store',
-        value: '35%',
-        startDate: 'Dec 20, 2024',
-        endDate: 'Dec 31, 2024',
-        usage: 2156,
-    },
-    {
-        id: 5,
-        campaignName: 'Clothing Category Sale',
-        status: 'Draft',
-        discountType: 'By Product Category',
-        target: 'Clothing',
-        value: '25%',
-        startDate: 'Apr 1, 2025',
-        endDate: 'Apr 30, 2025',
-        usage: 0,
-    },
-];
+
+
 
 const Campaigns = () => {
-    // --- NEW: State Management for the View ---
+    const [campaigns, setCampaigns] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
     const [view, setView] = useState({
         type: 'table', // The default view type
         search: '', // The search term
         page: 1, // The current page number
         perPage: 5, // Items per page
-        fields: ['status', 'campaignName', 'discountType', 'target', 'value', 'startDate', 'endDate', 'usage'],
-        // You can also add state for sorting, filters, etc. here
+        fields: ['status', 'campaign_type', 'target', 'value', 'start_datetime', 'end_datetime'],
+        titleField: 'title',
     });
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCampaign, setSelectedCampaign] = useState(null);
+    const { addToast } = useToast();
     // Fields and Actions definitions remain the same...
     const fields = useMemo(
         () => [
             {
-                id: 'campaignName',
-                header: __('Campaign Name', 'wpab-cb'),
-                render: ({ item }) => <strong>{item.campaignName}</strong>,
+                id: 'title',
+                header: __('Title', 'wpab-cb'),
+                render: ({ item }) => <strong>{item.title}</strong>,
                 enableHiding: true,
             },
             {
                 id: 'status',
                 header: __('Status', 'wpab-cb'),
                 render: ({ item }) => {
-                    const isSuccess = item.status === 'Active';
-                    const isWarning = item.status === 'Scheduled';
-                    const isError = item.status === 'Expired';
-                    const isInfo = item.status === 'Draft';
+                    // Map internal status codes to human-readable labels and badge types
+                    let label = '';
+                    let badgeType = '';
+                    switch (item.status) {
+                        case 'wpab_cb_active':
+                            label = __('Active', 'wpab-cb');
+                            badgeType = 'success';
+                            break;
+                        case 'wpab_cb_scheduled':
+                            label = __('Scheduled', 'wpab-cb');
+                            badgeType = 'warning';
+                            break;
+                        case 'wpab_cb_expired':
+                            label = __('Expired', 'wpab-cb');
+                            badgeType = 'error';
+                            break;
+                        case 'wpab_cb_draft':
+                        default:
+                            label = __('Draft', 'wpab-cb');
+                            badgeType = 'info';
+                            break;
+                    }
                     return (
                         <span
-                            isSuccess={isSuccess}
-                            isWarning={isWarning}
-                            isDestructive={isError}
-                            isInfo={isInfo}
+                            status={badgeType}
                         >
-                            {item.status}
+                            {label}
                         </span>
                     );
                 },
                 enableHiding: true,
             },
-            { id: 'discountType', header: __('Discount Type', 'wpab-cb'), enableHiding: true, },
-            { id: 'target', header: __('Target', 'wpab-cb'), enableHiding: true, },
-            { id: 'value', header: __('Value', 'wpab-cb'), enableHiding: true, },
-            { id: 'startDate', header: __('Start Date', 'wpab-cb'), enableHiding: true, },
-            { id: 'endDate', header: __('End Date', 'wpab-cb'), enableHiding: true, },
-            { id: 'usage', header: __('Usage', 'wpab-cb'), enableHiding: true, },
+            {
+                id: 'campaign_type',
+                header: __('Campaign Type', 'wpab-cb'),
+                render: ({ item }) => {
+                    // Map internal campaign_type to human-readable
+                    let label = '';
+                    switch (item.campaign_type) {
+                        case 'quantity':
+                            label = __('Quantity', 'wpab-cb');
+                            break;
+                        case 'early_bird':
+                            label = __('Early Bird', 'wpab-cb');
+                            break;
+                        case 'bogo':
+                            label = __('BOGO', 'wpab-cb');
+                            break;
+                        default:
+                            label = item.campaign_type;
+                    }
+                    return label;
+                },
+                enableHiding: true,
+            },
+            {
+                id: 'target',
+                header: __('Target', 'wpab-cb'),
+                render: ({ item }) => {
+                    // Map target_type to human-readable
+                    switch (item.target_type) {
+                        case 'entire_store':
+                            return __('Entire Store', 'wpab-cb');
+                        case 'categories':
+                            return __('Categories', 'wpab-cb');
+                        case 'products':
+                            return __('Products', 'wpab-cb');
+                        case 'tags':
+                            return __('Tags', 'wpab-cb');
+                        default:
+                            return item.target_type;
+                    }
+                },
+                enableHiding: true,
+            },
+            {
+                id: 'value',
+                header: __('Value', 'wpab-cb'),
+                render: ({ item }) => {
+                    // Show discount value and type
+                    if (item.discount_type === 'percentage') {
+                        return `${item.discount_value}%`;
+                    } else if (item.discount_type === 'fixed_cart' || item.discount_type === 'fixed_product') {
+                        return `${item.discount_value}`;
+                    }
+                    return item.discount_value;
+                },
+                enableHiding: true,
+            },
+            {
+                id: 'start_datetime',
+                header: __('Start Date', 'wpab-cb'),
+                render: ({ item }) => {
+                    if (!item.start_datetime) return '';
+                    const date = new Date(item.start_datetime);
+                    return date.toLocaleString();
+                },
+                enableHiding: true,
+            },
+            {
+                id: 'end_datetime',
+                header: __('End Date', 'wpab-cb'),
+                render: ({ item }) => {
+                    if (!item.end_datetime) return '';
+                    const date = new Date(item.end_datetime);
+                    return date.toLocaleString();
+                },
+                enableHiding: true,
+            },
         ],
         []
     );
@@ -118,37 +157,111 @@ const Campaigns = () => {
             {
                 id: 'edit',
                 label: __('Edit', 'wpab-cb'),
-                callback: (item) => alert(`Editing "${item.campaignName}"`),
+                callback: (item) => {
+                    navigate(`./${item[0].id}`);
+                },
             },
             {
                 id: 'delete',
                 label: __('Delete', 'wpab-cb'),
                 isDestructive: true,
                 callback: (item) => {
-                    if (window.confirm(`Delete "${item.campaignName}"?`)) {
-                        console.log('Deleting campaign:', item);
-                    }
+                    setSelectedCampaign(item);
+                    setIsModalOpen(true);
                 },
             },
         ],
         []
     );
 
-    console.log('view', view);
+    const defaultLayouts = {
+        table: {
+            showMedia: false,
+        },
+        grid: {
+            showMedia: false,
+        },
+    };
+    useEffect(() => {
+        setIsLoading(true);
+        const fetchCampaigns = async () => {
+            try {
+                const response = await apiFetch({
+                    path: '/wpab-cb/v1/campaigns',
+                    method: 'GET',
+                });
+                setCampaigns(response);
+                setIsLoading(false);
+            } catch (error) {
+                setIsLoading(false);
+                addToast(__('Something went wrong, please try again later.', 'wpab-cb'), 'error');
+            }
+
+        };
+
+        fetchCampaigns();
+    }, []);
+
+    const handleConfirmDelete = async () => {
+        try {
+            const response = await apiFetch({
+                path: `/wpab-cb/v1/campaigns/${selectedCampaign[0]?.id}`,
+                method: 'DELETE',
+            });
+            addToast(__('Campaign deleted successfully', 'wpab-cb'), 'success');
+            setCampaigns(campaigns.filter(campaign => campaign.id !== selectedCampaign[0]?.id));
+            console.log('campaigns', campaigns);
+            console.log('selectedCampaign', selectedCampaign);
+        } catch (error) {
+            addToast(__('Error deleting campaign', 'wpab-cb'), 'error');
+        }
+        setIsModalOpen(false);
+    };
+
+
     return (
 
-        <DataViews
-            data={dummyData}
-            fields={fields}
-            actions={actions}
-            // --- NEW: Pass the state and handlers to the component ---
-            view={view}
-            onChangeView={setView}
-            paginationInfo={{
-                totalItems: 5,
-                totalPages: 1,
-            }}
-        />
+        <div className='cb-page'>
+            <div className="cb-page-header-container">
+                <div className="cb-page-header-title">{__('Campaigns', 'wpab-cb')}</div>
+                <div className="cb-page-header-actions">
+                    <button className="wpab-cb-btn wpab-cb-btn-primary " onClick={() => navigate('/campaigns/add')}>
+                        <Icon icon={plus} fill="currentColor" />
+                        {__('Add Campaign', 'wpab-cb')}
+                    </button>
+                </div>
+            </div>
+            <div className="cb-page-container">
+                <div className="cb-bg-white">
+                    <DataViews
+                        data={campaigns}
+                        isLoading={isLoading}
+                        fields={fields}
+                        actions={actions}
+                        view={view}
+                        onChangeView={setView}
+                        paginationInfo={{
+                            totalItems: 5,
+                            totalPages: 5,
+                        }}
+                        defaultLayouts={defaultLayouts}
+                        search={false}
+                        filters={false}
+                        perPageSize={[5, 10, 25, 100]}
+                    />
+                </div>
+            </div>
+
+            <ConfirmDialog
+                isOpen={isModalOpen}
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setIsModalOpen(false)}
+            >
+                {__('Are you sure you want to delete this campaign?', 'wpab-cb')}
+            </ConfirmDialog>
+
+        </div>
+
 
     );
 };

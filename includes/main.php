@@ -42,7 +42,7 @@ class WPAB_CB {
 
 		$this->load_dependencies();
 		$this->set_locale();
-		$this->define_include_hooks();
+		$this->define_core_hooks();
 		$this->define_admin_hooks();
 
 	}
@@ -67,6 +67,10 @@ class WPAB_CB {
 		
 		/**Plugin Core Functions*/
 		require_once WPAB_CB_PATH . 'includes/functions.php';
+		/**
+		 * The class responsible for defining all custom post types and statuses.
+		 */
+		require_once WPAB_CB_PATH . 'includes/class-wpab-cb-post-types.php';
 
 		/**
 		 * The class responsible for defining all campaign related functionality.
@@ -74,9 +78,14 @@ class WPAB_CB {
 		require_once WPAB_CB_PATH . 'includes/class-campaign.php';
 
 		/**
-		 * The class responsible for defining all custom post types and statuses.
+		 * The class responsible for defining all campaign related functionality.
 		 */
-		require_once WPAB_CB_PATH . 'includes/class-wpab-cb-post-types.php';
+		require_once WPAB_CB_PATH . 'includes/class-campaign-manager.php';
+
+		/**
+		 * The class responsible for defining all campaign related functionality.
+		 */
+		require_once WPAB_CB_PATH . 'includes/class-pricing-engine.php';
 		
 
 
@@ -108,7 +117,6 @@ class WPAB_CB {
 		require_once WPAB_CB_PATH . 'includes/class-admin.php';
 
 		$this->loader = new WPAB_CB_Loader();
-
 		
 	}
 
@@ -135,7 +143,7 @@ class WPAB_CB {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_include_hooks() {
+	private function define_core_hooks() {
 
 		$plugin_include = wpab_cb_include();
 
@@ -145,6 +153,37 @@ class WPAB_CB {
 		$post_types = wpab_cb_post_types();
 		$this->loader->add_action( 'init', $post_types, 'register_post_type' );
 		$this->loader->add_action( 'init', $post_types, 'register_post_statuses' );
+		$campaign_manager = wpab_cb_campaign_manager();
+		$pricing_engine   = wpab_cb_pricing_engine();
+
+		// A list of all components that provide a get_hooks() method.
+		$components_with_hooks = array(
+			$campaign_manager,
+			$pricing_engine,
+		);
+
+		foreach ( $components_with_hooks as $component ) {
+			$hooks = $component->get_hooks();
+			foreach ( $hooks as $hook ) {
+				if ( 'action' === $hook['type'] ) {
+					$this->loader->add_action(
+						$hook['hook'],
+						$component,
+						$hook['callback'],
+						$hook['priority'],
+						$hook['accepted_args']
+					);
+				} elseif ( 'filter' === $hook['type'] ) {
+					$this->loader->add_filter(
+						$hook['hook'],
+						$component,
+						$hook['callback'],
+						$hook['priority'],
+						$hook['accepted_args']
+					);
+				}
+			}
+		}
 		
 	}
 

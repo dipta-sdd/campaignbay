@@ -3,16 +3,8 @@ import Required from "./Required";
 import { useEffect, useState } from '@wordpress/element';
 import TierRow from "./TierRow";
 
-const QuantityTiers = ({ onTiersChange, initialTiers, errors }) => {
+const QuantityTiers = ({ tiers, setTiers, errors }) => {
 
-    const [tiers, setTiers] = useState(initialTiers || [{
-        id: 0, min: 1, max: '', value: '', type: 'percentage'
-    }]);
-    console.log(errors);
-
-    useEffect(() => {
-        onTiersChange(tiers);
-    }, [tiers]);
 
     const handleAddTier = (setError) => {
         const lastTier = tiers[tiers.length - 1];

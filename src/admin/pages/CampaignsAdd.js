@@ -31,9 +31,15 @@ const CampaignsAdd = () => {
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
     const [tags, setTags] = useState([]);
-    const [quantityTiers, setQuantityTiers] = useState([]);
-    const [ebTiers, setEBTiers] = useState([]);
-    const [bogoTiers, setBogoTiers] = useState([]);
+    const [quantityTiers, setQuantityTiers] = useState([{
+        id: 0, min: 1, max: '', value: '', type: 'percentage'
+    }]);
+    const [ebTiers, setEBTiers] = useState([{
+        id: 0, quantity: null, value: null, type: 'percentage', total: 0
+    }]);
+    const [bogoTiers, setBogoTiers] = useState([{
+        id: 0, buy_product: null, get_product: null, buy_quantity: 1, get_quantity: 1
+    }]);
     const [errors, setErrors] = useState({});
 
 
@@ -107,7 +113,7 @@ const CampaignsAdd = () => {
             title: campaignTitle,
             campaign_type: campaignType,
             discount_type: discountType,
-            discount_value: discountValue,
+            discount_value: discountValue || 0,
             target_type: selectionType,
             target_ids: selections,
             start_datetime: startDate,
@@ -151,6 +157,7 @@ const CampaignsAdd = () => {
         try {
             const response = await apiFetch({ path: '/wpab-cb/v1/campaigns', method: 'POST', data: campaignData });
             addToast(__('Campaign saved successfully', 'wpab-cb'), 'success');
+            navigate(`./campaigns/${response.id}`);
         } catch (error) {
             if (error?.code === 'rest_invalid_param') {
                 setErrors(error?.data?.params);
@@ -214,16 +221,16 @@ const CampaignsAdd = () => {
                 )}
 
                 {campaignType === 'bogo' && products?.length > 0 && (
-                    <BogoTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} onTiersChange={setBogoTiers} initialTiers={bogoTiers} products={products} />
+                    <BogoTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} tiers={bogoTiers} setTiers={setBogoTiers} products={products} />
                 )}
 
 
                 {campaignType === 'quantity' && (
-                    <QuantityTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} onTiersChange={setQuantityTiers} initialTiers={quantityTiers} />
+                    <QuantityTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} tiers={quantityTiers} setTiers={setQuantityTiers} errors={errors} />
                 )}
 
                 {campaignType === 'earlybird' && (
-                    <EBTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} onTiersChange={setEBTiers} initialTiers={ebTiers} />
+                    <EBTiers className={`${errors?.campaign_tiers ? 'wpab-input-error' : ''}`} tiers={ebTiers} setTiers={setEBTiers} errors={errors} />
                 )}
 
                 {campaignType === 'scheduled' && (
