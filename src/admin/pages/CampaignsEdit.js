@@ -183,7 +183,7 @@ const CampaignsEdit = () => {
         // }
         try {
             setIsSaving(true);
-            const response = await apiFetch({ path: '/wpab-cb/v1/campaigns', method: 'POST', data: campaignData });
+            const response = await apiFetch({ path: '/wpab-cb/v1/campaigns/' + id, method: 'POST', data: campaignData });
             setIsSaving(false);
             addToast(__('Campaign saved successfully', 'wpab-cb'), 'success');
         } catch (error) {

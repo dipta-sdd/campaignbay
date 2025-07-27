@@ -131,16 +131,15 @@ if ( ! class_exists( 'WPAB_CB_Campaign_Manager' ) ) {
 		 * @return WPAB_CB_Campaign[] An array of active campaign objects.
 		 */
 		public function get_active_campaigns() {
-			wpab_cb_log( 'campaign manager()->get_active_campaigns', 'DEBUG' );
 			if ( null !== $this->active_campaigns ) {
 				
 				return $this->active_campaigns;
 			}
-			$cached_campaigns = get_transient( 'wpab_cb_active_campaigns' );
-			if ( false !== $cached_campaigns ) {
-				$this->active_campaigns = $cached_campaigns;
-				return $this->active_campaigns;
-			}
+			// $cached_campaigns = get_transient( 'wpab_cb_active_campaigns' );
+			// if ( false !== $cached_campaigns ) {
+			// 	$this->active_campaigns = $cached_campaigns;
+			// 	return $this->active_campaigns;
+			// }
 			$campaign_args = array(
 				'post_type'      => 'wpab_cb_campaign',
 				'post_status'    => 'wpab_cb_active',
@@ -157,6 +156,7 @@ if ( ! class_exists( 'WPAB_CB_Campaign_Manager' ) ) {
 					}
 				}
 			}
+
 			set_transient( 'wpab_cb_active_campaigns', $campaign_objects, 5 * MINUTE_IN_SECONDS );
 			$this->active_campaigns = $campaign_objects;
 			return $this->active_campaigns;

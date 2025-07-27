@@ -56,6 +56,15 @@ class WPAB_CB_Campaign {
 	private $meta = array();
 
 	/**
+	 * A flat list of all product and variation IDs this campaign applies to.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @var int[]
+	 */
+	private $applicable_product_ids = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
@@ -75,7 +84,141 @@ class WPAB_CB_Campaign {
 		}
 
 		$this->load_meta();
+		$this->load_applicable_product_ids(); // Pre-calculate the list of products this campaign applies to.
 	}
+
+
+	/**
+	 * Populates the applicable_product_ids property based on the campaign's targeting rules.
+	 * This is the core logic for pre-calculating which products are affected.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 */
+	private function load_applicable_product_ids() {
+		$target_type = $this->get_meta( 'target_type' );
+		$target_ids  = $this->get_meta( 'target_ids' );
+
+
+		if ( 'entire_store' === $target_type ) {
+			// For store-wide, the list is empty. The pricing engine will interpret this as "applies to all".
+			$this->applicable_product_ids = array();
+			return;
+		}
+
+		if ( empty( $target_ids ) || ! is_array( $target_ids ) ) {
+			$this->applicable_product_ids = array();
+			return;
+		}
+
+		$product_ids = array();
+
+		if ( 'category' === $target_type ) {
+			$product_ids = $this->get_products_from_categories( $target_ids );
+		} elseif ( 'product' === $target_type ) {
+			$product_ids = $target_ids;
+		}
+		// After getting the initial list, expand any variable products to include their variations.
+		$this->applicable_product_ids = $this->expand_variable_products( $product_ids );
+	}
+
+	/**
+	 * Gets all product IDs from a given list of category term IDs.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @param int[] $category_ids An array of category term IDs.
+	 * @return int[] An array of product IDs.
+	 */
+	private function get_products_from_categories( $category_ids ) {
+		$category_ids = array_map( 'absint', $category_ids );
+		$args = array(
+			'product_category_id' => $category_ids,
+			'limit'    => -1, // Get all matching products.
+			'return'   => 'ids', // Performance: only return the IDs.
+		);
+		$products = wc_get_products( $args );
+		if ( is_wp_error( $products ) ) {
+			return array();
+		}
+		return $products;
+	}
+
+	/**
+	 * Expands a given list of product IDs to also include all of their variation IDs.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @param int[] $product_ids An array of product IDs.
+	 * @return int[] A final, flat array of all parent and variation IDs.
+	 */
+	private function expand_variable_products( $product_ids ) {
+		$final_ids = array();
+		if ( empty( $product_ids ) ) {
+			return $final_ids;
+		}
+
+		foreach ( $product_ids as $id ) {
+			$product = wc_get_product( $id );
+			if ( ! $product ) {
+				continue; // Skip if product has been deleted.
+			}
+
+			// Add the parent product ID itself.
+			$final_ids[] = $product->get_id();
+
+			// If it's a variable product, get its children (the variations).
+			if ( $product->is_type( 'variable' ) ) {
+				$variation_ids = $product->get_children();
+				if ( ! empty( $variation_ids ) ) {
+					$final_ids = array_merge( $final_ids, $variation_ids );
+				}
+			}
+		}
+
+		// Ensure the final list has only unique, integer IDs.
+		return array_unique( array_map( 'absint', $final_ids ) );
+	}
+
+	/**
+	 * Get the final, pre-calculated list of all applicable product and variation IDs.
+	 *
+	 * @since 1.0.0
+	 * @return int[]
+	 */
+	public function get_applicable_product_ids() {
+		return $this->applicable_product_ids;
+	}
+
+	/**
+	 * Checks if this campaign's targeting rules apply to a given product.
+	 *
+	 * This is the primary method to determine if a product is eligible for this campaign.
+	 * It leverages the pre-calculated list of applicable product IDs for high performance.
+	 *
+	 * @since 1.0.0
+	 * @param WC_Product|int $product The product object or product ID to check.
+	 * @return bool True if the product is a match, false otherwise.
+	 */
+	public function is_applicable_to_product( $product ) {
+
+		if ( is_numeric( $product ) ) {
+			$product_id = absint( $product );
+		} else {
+			return false; // Invalid input.
+		}
+
+		if ( ! $product_id ) {
+			return false;
+		}
+
+		// 1. Check for the simplest case: a store-wide discount.
+		if ( 'entire_store' === $this->get_meta( 'target_type' ) ) {
+			return true;
+		}
+		return in_array( $product_id, $this->get_applicable_product_ids(), true );
+	}
+
 
 	public static function throw_validation_error( $field = '' ) {
 		return new WP_Error( 'rest_invalid_param', 'Invalid parameter(s): ' . $field,
