@@ -44,6 +44,7 @@ class WPAB_CB {
 		$this->set_locale();
 		$this->define_core_hooks();
 		$this->define_admin_hooks();
+		$this->define_public_hooks();
 
 	}
 
@@ -188,6 +189,30 @@ class WPAB_CB {
 	}
 
 	/**
+	 * Register all of the hooks related to the public area functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_public_hooks() {
+		if ( is_admin() ) {
+			return;
+		}
+		// Enqueue the public CSS for the plugin.
+		$this->loader->add_action(
+			'wp_enqueue_scripts',
+			$this,
+			'enqueue_public_styles'
+		);
+
+	}
+
+	public function enqueue_public_styles() {
+		wp_enqueue_style( 'wpab-cb-public', WPAB_CB_URL . 'build/public.css', array(), WPAB_CB_VERSION );
+	}
+
+	/**
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
 	 *
@@ -197,6 +222,11 @@ class WPAB_CB {
 	private function define_admin_hooks() {
 
 		$plugin_admin = wpab_cb_admin();
+		if ( ! is_admin() ) {
+			// wpab_cb_log('Not in admin area', 'DEBUG');
+			return;
+		}
+		// wpab_cb_log('In admin area', 'DEBUG');
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
 		$this->loader->add_filter( 'admin_body_class', $plugin_admin, 'add_has_sticky_header' );

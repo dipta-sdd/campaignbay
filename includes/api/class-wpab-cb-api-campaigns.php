@@ -417,6 +417,7 @@ if ( ! class_exists( 'WPAB_CB_Api_Campaigns' ) ) {
                         'items'       => array( 'type' => 'object' ),
                         'context'     => array( 'view', 'edit' ),
                     ),
+					
 				),
 			);
 
