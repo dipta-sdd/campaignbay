@@ -16,9 +16,12 @@ import EBTiers from '../components/EBTiers';
 import BogoTiers from '../components/BogoTiers';
 import { useCbStore } from '../store/cbStore';
 import { getSettings as getDateSettings } from '@wordpress/date';
+import { useNavigate } from 'react-router-dom';
+
 
 const CampaignsAdd = () => {
     const { woocommerce_currency_symbol } = useCbStore();
+    const navigate = useNavigate();
     const [campaignType, setCampaignType] = useState('scheduled');
     const [campaignTitle, setCampaignTitle] = useState('');
     const [selectionType, setSelectionType] = useState('entire_store');
@@ -121,7 +124,7 @@ const CampaignsAdd = () => {
             timezone_string: timezone.offsetFormatted,
             campaign_tiers: campaignType === 'bogo' ? bogoTiers : campaignType === 'quantity' ? quantityTiers : campaignType === 'earlybird' ? ebTiers : [],
         }
-        console.log(campaignData);
+        // console.log(campaignData);
         if (!campaignData?.title) {
             setErrors({ title: 'Title is required' });
             return;
@@ -157,7 +160,7 @@ const CampaignsAdd = () => {
         try {
             const response = await apiFetch({ path: '/wpab-cb/v1/campaigns', method: 'POST', data: campaignData });
             addToast(__('Campaign saved successfully', 'wpab-cb'), 'success');
-            navigate(`./campaigns/${response.id}`);
+            navigate(`/campaigns/${response.id}`);
         } catch (error) {
             if (error?.code === 'rest_invalid_param') {
                 setErrors(error?.data?.params);

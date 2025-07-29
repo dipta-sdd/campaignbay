@@ -113,6 +113,7 @@ const Settings = () => {
             cart_savedMessageFormat: settings.cart_savedMessageFormat,
             cart_showNextDiscountBar: settings.cart_showNextDiscountBar,
             cart_nextDiscountFormat: settings.cart_nextDiscountFormat,
+            cart_showDiscountBreakdown: settings.cart_showDiscountBreakdown,
         });
         setAdvancedSettings({
             advanced_deleteAllOnUninstall: settings.advanced_deleteAllOnUninstall,
