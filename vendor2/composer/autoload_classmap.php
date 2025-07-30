@@ -16,6 +16,7 @@ return array(
     'WpabCb\\Core\\Deactivator' => $baseDir . '/app/Core/Deactivator.php',
     'WpabCb\\Core\\I18n' => $baseDir . '/app/Core/I18n.php',
     'WpabCb\\Core\\Loader' => $baseDir . '/app/Core/Loader.php',
+    'WpabCb\\Core\\Plugin' => $baseDir . '/app/Core/Plugin.php',
     'WpabCb\\Data\\DbManager' => $baseDir . '/app/Data/DbManager.php',
     'WpabCb\\Data\\PostTypes' => $baseDir . '/app/Data/PostTypes.php',
     'WpabCb\\Engine\\Campaign' => $baseDir . '/app/Engine/Campaign.php',

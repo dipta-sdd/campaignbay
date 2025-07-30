@@ -39,7 +39,7 @@ class Deactivator {
 	public static function deactivate() {
 		// if the user has selected to delete all data on deactivation, remove the options.
 		if ( wpab_cb_get_options( 'deleteAll' ) ) {
-			delete_option( WPAB_CB_OPTION_NAME );
+			// delete_option( WPAB_CB_OPTION_NAME );
 		}
 	}
 } 

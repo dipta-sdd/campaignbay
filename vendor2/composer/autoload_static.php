@@ -35,6 +35,7 @@ class ComposerStaticInit1a72b9b484af8f73bc6b3df50d046dff
         'WpabCb\\Core\\Deactivator' => __DIR__ . '/../..' . '/app/Core/Deactivator.php',
         'WpabCb\\Core\\I18n' => __DIR__ . '/../..' . '/app/Core/I18n.php',
         'WpabCb\\Core\\Loader' => __DIR__ . '/../..' . '/app/Core/Loader.php',
+        'WpabCb\\Core\\Plugin' => __DIR__ . '/../..' . '/app/Core/Plugin.php',
         'WpabCb\\Data\\DbManager' => __DIR__ . '/../..' . '/app/Data/DbManager.php',
         'WpabCb\\Data\\PostTypes' => __DIR__ . '/../..' . '/app/Data/PostTypes.php',
         'WpabCb\\Engine\\Campaign' => __DIR__ . '/../..' . '/app/Engine/Campaign.php',

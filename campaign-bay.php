@@ -23,7 +23,7 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'WPAB_CB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WPAB_CB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPAB_CB_URL', plugin_dir_url( __FILE__ ) );
-define( 'WPAB_CB_VERSION', '1.0.0' );
+define( 'WPAB_CB_VERSION', '0.0.5' );
 define( 'WPAB_CB_PLUGIN_NAME', 'wpab-cb' );
 define( 'WPAB_CB_TEXT_DOMAIN', 'wpab-cb' );
 define( 'WPAB_CB_OPTION_NAME', 'wpab_cb' );
@@ -64,3 +64,5 @@ function wpab_cb_run() {
 	$plugin->run();
 }
 wpab_cb_run();
+
+// composer dump-autoload -o
