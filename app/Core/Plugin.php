@@ -55,10 +55,7 @@ class Plugin {
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
 		if ( null === self::$instance ) {
-			wpab_cb_log('Plugin constructor new instance'. WPAB_CB_TEST_TIME);
 			self::$instance = new self();
-		}else {
-			wpab_cb_log('Plugin constructor existing instance'. WPAB_CB_TEST_TIME);
 		}
 		return self::$instance;
 	}
@@ -181,7 +178,6 @@ class Plugin {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-		wpab_cb_log('define_admin_hooks');
 		$plugin_admin = Admin::get_instance();
 		if ( ! is_admin() ) {
 			return;

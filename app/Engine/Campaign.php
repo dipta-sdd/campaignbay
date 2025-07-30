@@ -148,7 +148,6 @@ class Campaign {
 		if ( is_wp_error( $products ) ) {
 			return array();
 		}
-		// wpab_cb_log('products' .  print_r($products, true) , 'DEBUG');
 		return $products;
 	}
 

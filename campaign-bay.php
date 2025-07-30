@@ -48,10 +48,6 @@ spl_autoload_register( function ( $class ) {
 // --- 3. Include helper functions ---
 require_once WPAB_CB_PATH . 'app/functions.php';
 
-// just for testing
-$curent_time = time();
-define( 'WPAB_CB_TEST_TIME', $curent_time );
-wpab_cb_log('Plugin constructor ' . WPAB_CB_TEST_TIME);
 
 // --- 4. Update Activation/Deactivation hooks to use the new namespaced classes ---
 register_activation_hook( __FILE__, [ \WpabCb\Core\Activator::class, 'activate' ] );

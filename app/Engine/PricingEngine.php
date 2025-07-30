@@ -105,7 +105,6 @@ class PricingEngine {
 
 		// Conditionally add the hook for the discount breakdown in cart totals, based on settings.
 		if( wpab_cb_get_options('cart_showDiscountBreakdown') ){
-			wpab_cb_log('add_cart_discount_fee', 'DEBUG');
 			$this->add_action( 'woocommerce_cart_calculate_fees', 'add_cart_discount_fee', 20, 1 );
 		}
 
@@ -133,7 +132,6 @@ class PricingEngine {
 	 * @param WC_Cart $cart The cart object.
 	 */
 	public function apply_discounts_and_prepare_notices( $cart ) {
-		wpab_cb_log('woocommerce_before_calculate_totals', 'DEBUG');
 
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 			return;
@@ -589,7 +587,7 @@ class PricingEngine {
 		// Check the request-level cache first to avoid recalculating the discount for the same product.
 		if ( isset( $this->product_discount_cache[ $product_id ] ) ) {
 			// Log the cache hit.
-			wpab_cb_log('Cache hit for product: ' . $product->get_title(), 'DEBUG');
+			// wpab_cb_log('Cache hit for product: ' . $product->get_title(), 'DEBUG');
 			return $this->product_discount_cache[ $product_id ];
 		}
 

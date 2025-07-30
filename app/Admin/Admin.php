@@ -69,7 +69,7 @@ class Admin {
 	 * @since    1.0.0
 	 */
 	public function add_admin_menu() {
-		$white_label     = wpab_cb_include()->get_white_label();
+		$white_label     = Common::get_instance()->get_white_label();
 		$this->menu_info = array(
 			'page_title' => $white_label['plugin_name'],
 			'menu_title' => $white_label['menu_label'],

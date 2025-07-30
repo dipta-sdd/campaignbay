@@ -186,7 +186,6 @@ class CampaignsController extends ApiController {
 				}
 			}
 		}
-		// wpab_cb_log('response_data', print_r($response_data, true));
 		$response = new WP_REST_Response( $response_data, 200 );
 		$response->header( 'X-WP-Total', $query->found_posts );
 		$response->header( 'X-WP-TotalPages', $query->max_num_pages );
