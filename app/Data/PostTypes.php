@@ -1,4 +1,7 @@
 <?php
+
+namespace WpabCb\Data;
+
 /**
  * The file that defines the custom post types and statuses for the plugin.
  *
@@ -27,8 +30,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package    WPAB_CampaignBay
  * @author     WP Anchor Bay <wpanchorbay@gmail.com>
  */
-class WPAB_CB_Post_Types {
-
+class PostTypes {
+	/**
+	 * The single instance of the class.
+	 *
+	 * @since 1.0.0
+	 * @var   PostTypes
+	 * @access private
+	 */
+	private static $instance = null;
 	/**
 	 * Gets an instance of this object.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.
@@ -41,20 +51,16 @@ class WPAB_CB_Post_Types {
 	public static function get_instance() {
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
-
-		// Only run these methods if they haven't been ran previously.
-		if ( null === $instance ) {
-			$instance = new self();
+		if ( null === self::$instance ) {
+			self::$instance = new self();
 		}
-
-		// Always return the instance.
-		return $instance;
+		return self::$instance;
 	}
 
 	/**
 	 * A dummy constructor to prevent the class from being loaded more than once.
 	 *
-	 * @see Wpab_Cb_Post_Types::get_instance()
+	 * @see PostTypes::get_instance()
 	 *
 	 * @since 1.0.0
 	 * @access private
@@ -98,38 +104,42 @@ class WPAB_CB_Post_Types {
 			'edit_item'     => __( 'Edit Campaign', WPAB_CB_TEXT_DOMAIN ),
 			'update_item'   => __( 'Update Campaign', WPAB_CB_TEXT_DOMAIN ),
 			'search_items'  => __( 'Search Campaign', WPAB_CB_TEXT_DOMAIN ),
+			'not_found'     => __( 'Not Found', WPAB_CB_TEXT_DOMAIN ),
+			'not_found_in_trash' => __( 'Not found in Trash', WPAB_CB_TEXT_DOMAIN ),
 		);
 
 		$args = array(
-			'label'               => __( 'Campaign', WPAB_CB_TEXT_DOMAIN ),
-			'description'         => __( 'Discount Campaigns for WooCommerce', WPAB_CB_TEXT_DOMAIN ),
-			'labels'              => $labels,
-			'supports'            => array( 'title' ), // We only need a title for internal reference.
-			'hierarchical'        => false,
-			'public'              => false,
-			// 'show_ui'             => false,
-			// 'show_in_menu'        => false,
-			// 'show_in_admin_bar'   => false,
-            'show_ui'             => true,
-			'show_in_menu'        => true,
-			'show_in_admin_bar'   => true,
-			'show_in_nav_menus'   => false,
-			'can_export'          => true,
-			'has_archive'         => false,
-			'exclude_from_search' => true,
-			'publicly_queryable'  => false,
-			'capability_type'     => 'post',
-			'show_in_rest'        => true,  // CRITICAL: This makes the CPT available to the REST API and React app.
-			'rest_base'           => 'campaigns', // The endpoint will be /wp-json/wpab-cb/v1/campaigns/
-			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			'label'                 => __( 'Campaign', WPAB_CB_TEXT_DOMAIN ),
+			'description'           => __( 'Campaign post type for managing discount campaigns.', WPAB_CB_TEXT_DOMAIN ),
+			'labels'                => $labels,
+			'supports'              => array( 'title', 'editor', 'custom-fields' ),
+			'taxonomies'            => array(),
+			'hierarchical'          => false,
+			'public'                => false,
+			'show_ui'               => false, // No UI in admin - managed by React
+			'show_in_menu'          => false,
+			'menu_position'         => 5,
+			'show_in_admin_bar'     => false,
+			'show_in_nav_menus'     => false,
+			'can_export'            => true,
+			'has_archive'           => false,
+			'exclude_from_search'   => true,
+			'publicly_queryable'    => false,
+			'capability_type'       => 'post',
+			'show_in_rest'          => true, // Enable REST API
+			'rest_base'             => 'campaigns',
 		);
+
 		register_post_type( 'wpab_cb_campaign', $args );
 	}
 
 	/**
-	 * Register Custom Post Statuses.
+	 * Register custom post statuses for campaigns.
 	 *
-	 * These statuses are registered to be used programmatically and via the REST API.
+	 * These statuses are used to track the lifecycle of campaigns:
+	 * - Active: Currently running and applying discounts
+	 * - Scheduled: Set to start at a future date/time
+	 * - Expired: Past its end date/time
 	 *
 	 * @since 1.0.0
 	 */
@@ -170,8 +180,6 @@ class WPAB_CB_Post_Types {
 			)
 		);
 	}
-
-
 
 	/**
 	 * Register the meta fields for the `wpab_cb_campaign` post type.
@@ -241,17 +249,5 @@ class WPAB_CB_Post_Types {
 		}
 
 		return $post_states;
-	}
-}
-
-if ( ! function_exists( 'wpab_cb_post_types' ) ) {
-	/**
-	 * The function which returns the one WPAB_CB_Post_Types instance.
-	 *
-	 * @since 1.0.0
-	 * @return WPAB_CB_Post_Types
-	 */
-	function wpab_cb_post_types() {
-		return WPAB_CB_Post_Types::get_instance();
 	}
 }

@@ -19,6 +19,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+// --- 1. Define all your constants as before ---
 define( 'WPAB_CB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WPAB_CB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPAB_CB_URL', plugin_dir_url( __FILE__ ) );
@@ -28,31 +29,33 @@ define( 'WPAB_CB_TEXT_DOMAIN', 'wpab-cb' );
 define( 'WPAB_CB_OPTION_NAME', 'wpab_cb' );
 define( 'WPAB_CB_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'WPAB_CB_DEV_MODE', true );
+// --- 2. Simple autoloader for our namespaced classes ---
+spl_autoload_register( function ( $class ) {
+	// Only handle our plugin's classes
+	if ( strpos( $class, 'WpabCb\\' ) !== 0 ) {
+		return;
+	}
 
+	// Convert namespace to file path
+	$file = WPAB_CB_PATH . 'app/' . str_replace( '\\', '/', substr( $class, 7 ) ) . '.php';
+	
+	// Load the file if it exists
+	if ( file_exists( $file ) ) {
+		require_once $file;
+	}
+} );
 
-/**
- * The code that runs during plugin activation.
- */
-function wpab_cb_activate() {
-	require_once WPAB_CB_PATH . 'includes/class-activator.php';
-	WPAB_CB_Activator::activate();
-}
+// --- 3. Include helper functions ---
+require_once WPAB_CB_PATH . 'app/functions.php';
 
-/**
- * The code that runs during plugin deactivation.
- */
-function wpab_cb_deactivate() {
-	require_once WPAB_CB_PATH . 'includes/class-deactivator.php';
-	WPAB_CB_Deactivator::deactivate();
-}
+// just for testing
+$curent_time = time();
+define( 'WPAB_CB_TEST_TIME', $curent_time );
+wpab_cb_log('Plugin constructor ' . WPAB_CB_TEST_TIME);
 
-register_activation_hook( __FILE__, 'wpab_cb_activate' );
-register_deactivation_hook( __FILE__, 'wpab_cb_deactivate' );
-
-/**
- * The core plugin class.
- */
-require WPAB_CB_PATH . 'includes/main.php';
+// --- 4. Update Activation/Deactivation hooks to use the new namespaced classes ---
+register_activation_hook( __FILE__, [ \WpabCb\Core\Activator::class, 'activate' ] );
+register_deactivation_hook( __FILE__, [ \WpabCb\Core\Deactivator::class, 'deactivate' ] );
 
 /**
  * Begins execution of the plugin.
@@ -60,7 +63,8 @@ require WPAB_CB_PATH . 'includes/main.php';
  * @since    1.0.0
  */
 function wpab_cb_run() {
-	$plugin = new WPAB_CB();
+	// --- 5. Instantiate your main plugin class using its full, namespaced name ---
+	$plugin = \WpabCb\Core\Plugin::get_instance();
 	$plugin->run();
 }
 wpab_cb_run();

@@ -1,4 +1,7 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+
+namespace WpabCb\Core;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBayincludes
  * @author     dipta-sdd <sankarsandipta@gmail.com>
  */
-class WPAB_CB_Deactivator {
+class Deactivator {
 
 	/**
 	 * Fired during plugin deactivation.

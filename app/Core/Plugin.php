@@ -1,10 +1,21 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+
+namespace WpabCb\Core;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-  
+// Use statements to import the classes we need
+use WpabCb\Admin\Admin;
+use WpabCb\Engine\CampaignManager;
+use WpabCb\Engine\PricingEngine;
+use WpabCb\Data\PostTypes;
+use WpabCb\Data\DbManager;
+use WpabCb\Api\SettingsController;
+use WpabCb\Api\CampaignsController;
+
 /**
  * The core plugin class.
  *
@@ -19,18 +30,38 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBayincludes
  * @author     dipta-sdd <sankarsandipta@gmail.com>
  */
-class WPAB_CB {
-
+class Plugin {
+	/**
+	 * The single instance of the class.
+	 *
+	 * @since 1.0.0
+	 * @var   Plugin
+	 * @access private
+	 */
+	private static $instance = null;
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      WPAB_CB_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
+	protected $tester_count = 0;
+
+	public static function get_instance() {
+		// Store the instance locally to avoid private static replication.
+		static $instance = null;
+		if ( null === self::$instance ) {
+			wpab_cb_log('Plugin constructor new instance'. WPAB_CB_TEST_TIME);
+			self::$instance = new self();
+		}else {
+			wpab_cb_log('Plugin constructor existing instance'. WPAB_CB_TEST_TIME);
+		}
+		return self::$instance;
+	}
 	/**
 	 * Define the core functionality of the plugin.
 	 * Load the dependencies, define the locale, and set the hooks for the admin area and
@@ -39,125 +70,58 @@ class WPAB_CB {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-
-		$this->load_dependencies();
+		$this->tester_count++;
+		wpab_cb_log('Plugin constructor ' . $this->tester_count);
+		// Initialize the loader first
+		$this->loader = Loader::get_instance();
+		
 		$this->set_locale();
 		$this->define_core_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
-	}
-
-	/**
-	 * Load the required dependencies for this plugin.
-	 *
-	 * Include the following files that make up the plugin:
-	 *
-	 * - WPAB_CB_Loader. Orchestrates the hooks of the plugin.
-	 * - WPAB_CB_i18n. Defines internationalization functionality.
-	 * - WPAB_CB_Admin. Defines all hooks for the admin area.
-	 * - WPAB_CB_Public. Defines all hooks for the public side of the site.
-	 *
-	 * Create an instance of the loader which will be used to register the hooks
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function load_dependencies() {
-		
-		/**Plugin Core Functions*/
-		require_once WPAB_CB_PATH . 'includes/functions.php';
-		/**
-		 * The class responsible for defining all custom post types and statuses.
-		 */
-		require_once WPAB_CB_PATH . 'includes/class-wpab-cb-post-types.php';
-
-		/**
-		 * The class responsible for defining all campaign related functionality.
-		 */
-		require_once WPAB_CB_PATH . 'includes/class-campaign.php';
-
-		/**
-		 * The class responsible for defining all campaign related functionality.
-		 */
-		require_once WPAB_CB_PATH . 'includes/class-campaign-manager.php';
-
-		/**
-		 * The class responsible for defining all campaign related functionality.
-		 */
-		require_once WPAB_CB_PATH . 'includes/class-pricing-engine.php';
-		
-
-
-		/* API */
-		require_once WPAB_CB_PATH . 'includes/api/index.php';
-
-
-		/**
-		 * The class responsible for orchestrating the actions and filters of the
-		 * core plugin.
-		 */
-		require_once WPAB_CB_PATH . 'includes/class-loader.php';
-
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once WPAB_CB_PATH . 'includes/class-i18n.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in both admin and public area.
-		 */
-		require_once WPAB_CB_PATH . 'includes/class-include.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the admin area.
-		 */
-
-		require_once WPAB_CB_PATH . 'includes/class-admin.php';
-
-		$this->loader = new WPAB_CB_Loader();
-		
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the WPAB_CB_i18n class in order to set the domain and to register the hook
+	 * Uses the I18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
 	 * @access   private
 	 */
 	private function set_locale() {
-
-		$plugin_i18n = new WPAB_CB_i18n();
-
+		$plugin_i18n = new I18n();
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**
-	 * Register all of the hooks related to both admin and public-facing areas functionality
+	 * Register all of the hooks related to the core functionality
 	 * of the plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   private
 	 */
 	private function define_core_hooks() {
+		// Initialize post types
+		$post_types = PostTypes::get_instance();
+		$post_types->run();
 
-		$plugin_include = wpab_cb_include();
+		// Initialize database manager
+		$db_manager = DbManager::get_instance();
+		$db_manager->create_tables();
 
-		/* Register scripts and styles */
-		$this->loader->add_action( 'init', $plugin_include, 'register_scripts_and_styles' );
-		/* Register custom post types and statuses */
-		$post_types = wpab_cb_post_types();
-		$this->loader->add_action( 'init', $post_types, 'register_post_type' );
-		$this->loader->add_action( 'init', $post_types, 'register_post_statuses' );
-		$campaign_manager = wpab_cb_campaign_manager();
-		$pricing_engine   = wpab_cb_pricing_engine();
+		// Initialize API controllers
+		$settings_controller = SettingsController::get_instance();
+		$settings_controller->run();
 
-		// A list of all components that provide a get_hooks() method.
+		$campaigns_controller = CampaignsController::get_instance();
+		$campaigns_controller->run();
+
+		// Get instances of components that have hooks
+		$campaign_manager = CampaignManager::get_instance();
+		$pricing_engine = PricingEngine::get_instance();
+
 		$components_with_hooks = array(
 			$campaign_manager,
 			$pricing_engine,
@@ -185,7 +149,6 @@ class WPAB_CB {
 				}
 			}
 		}
-		
 	}
 
 	/**
@@ -205,7 +168,6 @@ class WPAB_CB {
 			$this,
 			'enqueue_public_styles'
 		);
-
 	}
 
 	public function enqueue_public_styles() {
@@ -220,14 +182,11 @@ class WPAB_CB {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-
-		$plugin_admin = wpab_cb_admin();
+		wpab_cb_log('define_admin_hooks');
+		$plugin_admin = Admin::get_instance();
 		if ( ! is_admin() ) {
-			// wpab_cb_log('Not in admin area', 'DEBUG');
 			return;
 		}
-		// wpab_cb_log('In admin area', 'DEBUG');
-
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
 		$this->loader->add_filter( 'admin_body_class', $plugin_admin, 'add_has_sticky_header' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_resources' );
@@ -238,8 +197,6 @@ class WPAB_CB {
 		$plugin_basename = plugin_basename( WPAB_CB_PATH . 'campaign-bay.php' );
 		$this->loader->add_filter( 'plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_plugin_links', 10, 4 );
 	}
-
-
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
@@ -254,7 +211,7 @@ class WPAB_CB {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    WPAB_CB_Loader    Orchestrates the hooks of the plugin.
+	 * @return    Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;

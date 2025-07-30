@@ -1,11 +1,21 @@
-<?php //phpcs:ignore Class file names should be based on the class name with "class-" prepended
+<?php
+
+namespace WpabCb\Data;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WPAB_CB_Db_Manager {
-
+class DbManager {
+    /**
+     * The single instance of the class.
+     *
+     * @since 1.0.0
+     * @var   DbManager
+     * @access private
+     */
+    private static $instance = null;
     /**
      * Gets an instance of this object.
      * Prevents duplicate instances which avoids artefacts and improves performance.
@@ -16,22 +26,18 @@ class WPAB_CB_Db_Manager {
      * @return object
      */
     public static function get_instance() {
-        // Store the instance locally to avoid private static replication.
-        static $instance = null;
-
-        // Only run these methods if they haven't been ran previously.
-        if ( null === $instance ) {
-            $instance = new self();
-        }
-
-        // Always return the instance.
-        return $instance;
-    }
+		// Store the instance locally to avoid private static replication.
+		static $instance = null;
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
 
     /**
      * A dummy constructor to prevent the class from being loaded more than once.
      *
-     * @see WPAB_CB_Db_Manager::get_instance()
+     * @see DbManager::get_instance()
      *
      * @since 1.0.0
      * @access private
@@ -72,7 +78,7 @@ class WPAB_CB_Db_Manager {
 			order_id BIGINT(20) UNSIGNED DEFAULT 0 NOT NULL,
 			user_id BIGINT(20) UNSIGNED DEFAULT 0 NOT NULL,
 			log_type VARCHAR(20) NOT NULL,
-			log_details TEXT DEFAULT '' NOT NULL,
+			log_details TEXT ,
             timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY  (log_id),
 			KEY campaign_id (campaign_id),
@@ -107,17 +113,4 @@ class WPAB_CB_Db_Manager {
 
 		dbDelta( $sql );
 	}
-}
-
-
-if ( ! function_exists( 'wpab_cb_db_manager' ) ) {
-    /**
-     * Returns the instance of the WPAB_CB_Db_Manager class.
-     *
-     * @since 1.0.0
-     * @return WPAB_CB_Db_Manager
-     */
-    function wpab_cb_db_manager() {
-        return WPAB_CB_Db_Manager::get_instance();
-    }
 }

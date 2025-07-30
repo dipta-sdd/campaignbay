@@ -1,4 +1,9 @@
 <?php
+
+namespace WpabCb\Core;
+
+use WpabCb\Data\DbManager;
+
 /**
  * Fired during plugin activation
  *
@@ -24,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBay/includes
  * @author     WP Anchor Bay <wpanchorbay@gmail.com>
  */
-class WPAB_CB_Activator {
+class Activator {
 
 	/**
 	 * The main activation method.
@@ -56,8 +61,7 @@ class WPAB_CB_Activator {
 	 * @access private
 	 */
 	private static function create_custom_tables() {
-		require_once WPAB_CB_PATH . 'includes/class-wpab-cb-db-manager.php';
-		$db_manager = wpab_cb_db_manager();
+		$db_manager = DbManager::get_instance();
 		$db_manager->create_tables();
 	}
 

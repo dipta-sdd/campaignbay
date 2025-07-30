@@ -1,9 +1,11 @@
-<?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+<?php
+
+namespace WpabCb\Core;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 
 /**
  * Register all actions and filters for the plugin.
@@ -16,8 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBayincludes
  * @author     dipta-sdd <sankarsandipta@gmail.com>
  */
-class WPAB_CB_Loader {
-
+class Loader {
+	/**
+	 * The single instance of the class.
+	 *
+	 * @since 1.0.0
+	 * @var   Loader
+	 * @access private
+	 */
+	private static $instance = null;
 	/**
 	 * The array of actions registered with WordPress.
 	 *
@@ -36,6 +45,15 @@ class WPAB_CB_Loader {
 	 */
 	protected $filters;
 
+	public static function get_instance() {
+		// Store the instance locally to avoid private static replication.
+		static $instance = null;
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+	
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *

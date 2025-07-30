@@ -1,5 +1,7 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
 
+namespace WpabCb\Core;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package    WPAB_CampaignBay
  * @subpackage WPAB_CampaignBayincludes
  */
-class WPAB_CB_I18n {
+class I18n {
 
 	/**
 	 * Load the plugin text domain for translation.

@@ -1,4 +1,10 @@
 <?php
+
+namespace WpabCb\Engine;
+
+use WC_Product;
+use \WpabCb\Engine\CampaignManager;
+
 /**
  * The file that defines the Pricing Engine class.
  *
@@ -16,18 +22,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
-	/**
-	 * The Pricing Engine class.
-	 *
-	 * This class is responsible for applying discount logic by hooking into WooCommerce
-	 * pricing filters and actions. It is the "engine" that drives the customer-facing changes.
-	 *
-	 * @since      1.0.0
-	 * @package    WPAB_CampaignBay
-	 * @author     WP Anchor Bay <wpanchorbay@gmail.com>
-	 */
-	class WPAB_CB_Pricing_Engine {
+/**
+ * The Pricing Engine class.
+ *
+ * This class is responsible for applying discount logic by hooking into WooCommerce
+ * pricing filters and actions. It is the "engine" that drives the customer-facing changes.
+ *
+ * @since      1.0.0
+ * @package    WPAB_CampaignBay
+ * @author     WP Anchor Bay <wpanchorbay@gmail.com>
+ */
+class PricingEngine {
 
 		/**
 		 * The single instance of the class.
@@ -65,10 +70,12 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 		 * @return object
 		 */
 		public static function get_instance() {
+			// Store the instance locally to avoid private static replication.
+			static $instance = null;
 			if ( null === self::$instance ) {
-				$instance = new self();
+				self::$instance = new self();
 			}
-			return $instance;
+			return self::$instance;
 		}
 
 		/**
@@ -98,7 +105,6 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 
 			// Conditionally add the hook for the discount breakdown in cart totals, based on settings.
 			if( wpab_cb_get_options('cart_showDiscountBreakdown') ){
-				wpab_cb_log('add_cart_discount_fee', 'DEBUG');
 				$this->add_action( 'woocommerce_cart_calculate_fees', 'add_cart_discount_fee', 20, 1 );
 			}
 
@@ -126,7 +132,6 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 		 * @param WC_Cart $cart The cart object.
 		 */
 		public function apply_discounts_and_prepare_notices( $cart ) {
-			wpab_cb_log('woocommerce_before_calculate_totals', 'DEBUG');
 			if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 				return;
 			}
@@ -136,7 +141,6 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 
 			// Loop through each item in the cart.
 			foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
-
 				// Initialize our custom notice key for this item.
 				$cart->cart_contents[ $cart_item_key ]['wpab_cb_discount_data'] = array(
 					'message' => null,
@@ -528,6 +532,7 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 		 */
 		public function get_or_calculate_product_discount( $product ) {
 			// If the product is not a valid WC_Product object, log an error and return.
+			
 			if ( ! $product instanceof WC_Product ) {
 				wpab_cb_log('Invalid product type: ' . gettype( $product ), 'ERROR' );
 				return array(
@@ -571,12 +576,11 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 			// Check the request-level cache first to avoid recalculating the discount for the same product.
 			if ( isset( $this->product_discount_cache[ $product_id ] ) ) {
 				// Log the cache hit.
-				wpab_cb_log('Cache hit for product: ' . $product->get_title(), 'DEBUG');
 				return $this->product_discount_cache[ $product_id ];
 			}
 
 			// Get the campaign manager.
-			$campaign_manager = wpab_cb_campaign_manager();
+			$campaign_manager = CampaignManager::get_instance();
 			// Get all active campaigns.
 			$active_campaigns = $campaign_manager->get_active_campaigns();
 			// Get the base price of the product.
@@ -656,6 +660,7 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 			return $discount_data;
 		}
 
+
 		/**
 		 * Calculate the simple price for a campaign.
 		 *
@@ -704,44 +709,25 @@ if ( ! class_exists( 'WPAB_CB_Pricing_Engine' ) ) {
 			return $base_price - $tier_value;
 		}
 
-		/**
-		 * Check if a campaign is better than the current best campaign.
-		 *
-		 * @since 1.0.0
-		 * @access private
-		 * @param float     $best_price The current best price.
-		 * @param float     $tier_price The price of the tier.
-		 * @return bool True if the campaign is better, false otherwise.
-		 */
-		private function is_better_campaign( $best_price, $tier_price ) {
-			// If the tier price is not set, return false.
-			if( ! $tier_price ){
-				return false;
-			}
-			// If the priority method is set to apply the highest price, return true if the tier price is less than the best price.
-			if( 'apply_highest' === wpab_cb_get_options( 'product_priorityMethod' ) ){
-				return ! $best_price || $tier_price < $best_price ;
-			}
-			// If the priority method is set to apply the lowest price, return true if the tier price is greater than the best price.
-			return ! $best_price || $tier_price > $best_price;
-		}
-
-
-		
-	}
-
-
-}
-
-if ( ! function_exists( 'wpab_cb_pricing_engine' ) ) {
 	/**
-	 * Returns the single instance of the Pricing Engine class.
+	 * Check if a campaign is better than the current best campaign.
 	 *
 	 * @since 1.0.0
-	 * @access public
-	 * @return WPAB_CB_Pricing_Engine
+	 * @access private
+	 * @param float     $best_price The current best price.
+	 * @param float     $tier_price The price of the tier.
+	 * @return bool True if the campaign is better, false otherwise.
 	 */
-	function wpab_cb_pricing_engine() {
-		return WPAB_CB_Pricing_Engine::get_instance();
+	private function is_better_campaign( $best_price, $tier_price ) {
+		// If the tier price is not set, return false.
+		if( ! $tier_price ){
+			return false;
+		}
+		// If the priority method is set to apply the highest price, return true if the tier price is less than the best price.
+		if( 'apply_highest' === wpab_cb_get_options( 'product_priorityMethod' ) ){
+			return ! $best_price || $tier_price < $best_price ;
+		}
+		// If the priority method is set to apply the lowest price, return true if the tier price is greater than the best price.
+		return ! $best_price || $tier_price > $best_price;
 	}
 }

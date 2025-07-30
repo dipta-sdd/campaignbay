@@ -294,15 +294,13 @@ if(! function_exists('wpab_cb_log')) {
 
 if ( ! function_exists( 'wpab_cb_get_campaign_meta_keys' ) ) :
 	/**
-	/**
-	 * Get the defined meta keys for a campaign.
+	 * Get the campaign meta keys.
 	 *
-	 * Provides a single source of truth for all campaign metadata fields.
-	 * If you update this list, also update the schema in the API controller
-	 * (see WPAB_CB_Api_Campaigns::get_item_schema in includes/api/class-wpab-cb-api-campaigns.php)
+	 * This function returns an array of meta keys that are used by the campaign post type.
+	 * These keys are registered with the REST API for the React UI.
 	 *
 	 * @since 1.0.0
-	 * @return array List of meta keys.
+	 * @return array Array of meta keys.
 	 */
 	function wpab_cb_get_campaign_meta_keys() {
 		return array(
@@ -321,3 +319,4 @@ if ( ! function_exists( 'wpab_cb_get_campaign_meta_keys' ) ) :
 		);
 	}
 endif;
+

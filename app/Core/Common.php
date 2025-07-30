@@ -1,4 +1,7 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+
+namespace WpabCb\Core;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,8 +30,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBayincludes
  * @author     dipta-sdd <sankarsandipta@gmail.com>
  */
-class WPAB_CB_Include {
-
+class Common {
+	/**
+	 * The single instance of the class.
+	 *
+	 * @since 1.0.0
+	 * @var   Common
+	 * @access private
+	 */
+	private static $instance = null;
 	/**
 	 * Gets an instance of this object.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.
@@ -41,14 +51,10 @@ class WPAB_CB_Include {
 	public static function get_instance() {
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
-
-		// Only run these methods if they haven't been ran previously.
-		if ( null === $instance ) {
-			$instance = new self();
+		if ( null === self::$instance ) {
+			self::$instance = new self();
 		}
-
-		// Always return the instance.
-		return $instance;
+		return self::$instance;
 	}
 	/**
 	 * Get the settings with caching.
@@ -93,18 +99,5 @@ class WPAB_CB_Include {
 	 */
 	public function register_scripts_and_styles() {
 		
-	}
-}
-
-if ( ! function_exists( 'wpab_cb_include' ) ) {
-	/**
-	 * Return instance of  WPAB_CB_Include class
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return WPAB_CB_Include
-	 */
-	function wpab_cb_include() {//phpcs:ignore
-		return WPAB_CB_Include::get_instance();
 	}
 }

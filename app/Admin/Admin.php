@@ -1,9 +1,13 @@
-<?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
+<?php
+
+namespace WpabCb\Admin;
+
+use WpabCb\Core\Common;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 
 /**
  * The admin-specific functionality of the plugin.
@@ -15,8 +19,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBayadmin
  * @author     dipta-sdd <sankarsandipta@gmail.com>
  */
-class WPAB_CB_Admin {
+class Admin {
 
+	/**
+	 * The single instance of the class.
+	 *
+	 * @since 1.0.0
+	 * @var   Admin
+	 * @access private
+	 */
+	private static $instance = null;
+	
 	/**
 	 * Menu info.
 	 *
@@ -25,6 +38,8 @@ class WPAB_CB_Admin {
 	 * @var      array    $menu_info    Admin menu information.
 	 */
 	private $menu_info;
+
+
 
 	
 
@@ -40,14 +55,10 @@ class WPAB_CB_Admin {
 	public static function get_instance() {
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
-
-		// Only run these methods if they haven't been ran previously.
-		if ( null === $instance ) {
-			$instance = new self();
+		if ( null === self::$instance ) {
+			self::$instance = new self();
 		}
-
-		// Always return the instance.
-		return $instance;
+		return self::$instance;
 	}
 
 	/**
@@ -58,7 +69,7 @@ class WPAB_CB_Admin {
 	 * @since    1.0.0
 	 */
 	public function add_admin_menu() {
-		$white_label     = wpab_cb_include()->get_white_label();
+		$white_label     = Common::get_instance()->get_white_label();
 		$this->menu_info = array(
 			'page_title' => $white_label['plugin_name'],
 			'menu_title' => $white_label['menu_label'],
@@ -113,13 +124,14 @@ class WPAB_CB_Admin {
 		}
 	}
 
+
 	/**
-	 * Check if current menu page.
+	 * Check if current page is menu page.
 	 *
 	 * @access public
 	 *
 	 * @since    1.0.0
-	 * @return boolean ture if current menu page else false.
+	 * @return bool
 	 */
 	public function is_menu_page() {
 		$screen              = get_current_screen();
@@ -129,26 +141,32 @@ class WPAB_CB_Admin {
 		}
 		return true;
 	}
+	// public function is_menu_page() {
+	// 	$screen = get_current_screen();
+	// 	if ( ! $screen ) {
+	// 		return false;
+	// 	}
+	// 	return strpos( $screen->id, WPAB_CB_PLUGIN_NAME ) !== false;
+	// }
 
 	/**
-	 * Add class "at-has-hdr-stky".
+	 * Add has sticky header class.
 	 *
 	 * @access public
+	 *
 	 * @since    1.0.0
-	 * @param string $classes  a space-separated string of class names.
-	 * @return string $classes with added class if confition meet.
+	 * @param string $classes The classes.
+	 * @return string
 	 */
 	public function add_has_sticky_header( $classes ) {
-
-		if ( ! $this->is_menu_page() ) {
-			return $classes;
+		if ( $this->is_menu_page() ) {
+			$classes .= ' has-sticky-header';
 		}
-
-		return $classes . ' at-has-hdr-stky ';
+		return $classes;
 	}
 
 	/**
-	 * Add Root Div For React.
+	 * Add setting root div.
 	 *
 	 * @access public
 	 *
@@ -159,10 +177,9 @@ class WPAB_CB_Admin {
 	}
 
 	/**
-	 * Register the CSS/JavaScript Resources for the admin area.
+	 * Enqueue resources.
 	 *
 	 * @access public
-	 * Use Condition to Load it Only When it is Necessary
 	 *
 	 * @since    1.0.0
 	 */
@@ -195,7 +212,7 @@ class WPAB_CB_Admin {
 				'nonce'       => wp_create_nonce( 'wp_rest' ),
 				'store'       => WPAB_CB_PLUGIN_NAME,
 				'rest_url'    => get_rest_url(),
-				'white_label' => wpab_cb_include()->get_white_label(),
+				'white_label' => Common::get_instance()->get_white_label(),
 				'woocommerce_currency_symbol' => $woocommerce_currency_symbol,
 			)
 		);
@@ -225,186 +242,113 @@ class WPAB_CB_Admin {
 
 	}
 
+
 	/**
-	 * Get settings schema
-	 * Schema: http://json-schema.org/draft-04/schema#
-	 *
-	 * Add your own settings fields here
+	 * Get settings schema.
 	 *
 	 * @access public
 	 *
-	 * @since 1.0.0
-	 *
+	 * @since    1.0.0
 	 * @return array settings schema for this plugin.
 	 */
 	public function get_settings_schema() {
-		$setting_properties = apply_filters(
-			WPAB_CB_OPTION_NAME  . '_options_properties',
-			array(
-				/*==================================================
-				* Global Settings Tab
-				==================================================*/
-				'global_enableAddon'     => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'global_defaultPriority' => array(
-					'type'    => 'integer',
-					'default' => 10,
-				),
-				'global_calculationMode' => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_key',
-					'default'           => 'after_tax',
-				),
-				'global_calculationMode' => array(
-                'type'              => 'string',
-                'sanitize_callback' => 'sanitize_key',
-                'default'           => 'after_tax',
-				),
-				'global_decimalPlaces'   => array(
-					'type'    => 'integer',
-					'default' => 2,
-				),
+		$setting_properties = array(
+			/*==================================================
+			* Global Settings Tab
+			==================================================*/
+			'global_enablePlugin' => array(
+				'type'    => 'boolean',
+				'default' => true,
+			),
+			'global_debugMode' => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
 
-				/*==================================================
-				* Performance & Caching (from Global Tab)
-				==================================================*/
-				'perf_enableCaching'     => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
+			/*==================================================
+			* Product Settings Tab
+			==================================================*/
+			'product_showDiscountedPrice' => array(
+				'type'    => 'boolean',
+				'default' => true,
+			),
+			'product_excludeSaleItems' => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'product_priorityMethod' => array(
+				'type'    => 'string',
+				'enum'    => array( 'apply_highest', 'apply_lowest' ),
+				'default' => 'apply_highest',
+			),
+			'product_messageFormat' => array(
+				'type'    => 'string',
+				'default' => 'Save {percentage_off} ({amount_off})',
+			),
 
-				/*==================================================
-				* Debugging & Logging (from Global Tab)
-				==================================================*/
-				'debug_enableMode'       => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'debug_logLevel'         => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_key',
-					'default'           => 'errors_only',
-				),
+			/*==================================================
+			* Cart Settings Tab
+			==================================================*/
+			'cart_showDiscountBreakdown' => array(
+				'type'    => 'boolean',
+				'default' => true,
+			),
+			'cart_showNextDiscountBar' => array(
+				'type'    => 'boolean',
+				'default' => true,
+			),
+			'cart_nextDiscountFormat' => array(
+				'type'    => 'string',
+				'default' => 'Add {remaining_amount} more for {discount_percentage} off',
+			),
 
-				/*==================================================
-				* Product Settings Tab
-				==================================================*/
-				'product_showDiscountedPrice' => array(
-					'type'    => 'boolean',
-					'default' => true,
+			/*==================================================
+			* Promotion Settings Tab
+			==================================================*/
+			'promo_enablePromoBar' => array(
+				'type'    => 'boolean',
+				'default' => true,
+			),
+			'promo_barMessage' => array(
+				'type'    => 'string',
+				'default' => 'Free shipping on orders over $50!',
+			),
+			'promo_barBackgroundColor' => array(
+				'type'    => 'string',
+				'default' => '#000000',
+			),
+			'promo_barTextColor' => array(
+				'type'    => 'string',
+				'default' => '#ffffff',
+			),
+			'promo_barDisplayPages' => array(
+				'type'  => 'array',
+				'items' => array(
+					'type' => 'string',
 				),
-				'product_messageFormat'       => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => 'You save {percentage_off}!',
-				),
-				'product_enableQuantityTable' => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'product_excludeSaleItems'    => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'product_priorityMethod'      => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_key',
-					'default'           => 'apply_highest',
-				),
+				'default' => ['shop_page', 'product_pages'],
+			),
+			'promo_enableCustomBadges' => array(
+				'type'    => 'boolean',
+				'default' => true,
+			),
 
-				/*==================================================
-				* Cart Settings Tab
-				==================================================*/
-				'cart_allowWcCouponStacking'  => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'cart_allowCampaignStacking'  => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'cart_savedMessageFormat'     => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => 'You saved {saved_amount} on this order!',
-				),
-				'cart_showNextDiscountBar'    => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'cart_nextDiscountFormat'     => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => 'Spend {remaining_amount} more for {discount_percentage} off!',
-				),
-				'cart_showDiscountBreakdown'  => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-
-				/*==================================================
-				* Promotion Settings Tab
-				==================================================*/
-				'promo_enableBar'             => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'promo_barPosition'           => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_key',
-					'default'           => 'top_of_page',
-				),
-				'promo_barBgColor'            => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_hex_color',
-					'default'           => '#000000',
-				),
-				'promo_barTextColor'          => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_hex_color',
-					'default'           => '#FFFFFF',
-				),
-				'promo_barContent'            => array(
-					'type'    => 'string',
-					'default' => 'FLASH SALE! {percentage_off} on all shirts!',
-					// Note: Use a broader sanitize callback like wp_kses_post in the actual save hook if HTML is allowed.
-				),
-				'promo_barLinkUrl'            => array(
-					'type'              => 'string',
-					'sanitize_callback' => 'esc_url_raw',
-					'default'           => '',
-				),
-				'promo_barDisplayPages'       => array(
-					'type'  => 'array',
-					'items' => array(
-						'type' => 'string',
-					),
-					'default' => ['shop_page', 'product_pages'],
-				),
-				'promo_enableCustomBadges'    => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-
-				/*==================================================
-				* Advance Settings Tab
-				==================================================*/
-				'advanced_deleteAllOnUninstall' => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'advanced_customCss'            => array(
-					'type'    => 'string',
-					'default' => '',
-					// Note: Requires special sanitization for CSS (e.g., wp_strip_all_tags)
-				),
-				'advanced_customJs'             => array(
-					'type'    => 'string',
-					'default' => '',
-					// Note: Requires careful sanitization.
-				),
+			/*==================================================
+			* Advance Settings Tab
+			==================================================*/
+			'advanced_deleteAllOnUninstall' => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'advanced_customCss' => array(
+				'type'    => 'string',
+				'default' => '',
+				// Note: Requires special sanitization for CSS (e.g., wp_strip_all_tags)
+			),
+			'advanced_customJs' => array(
+				'type'    => 'string',
+				'default' => '',
+				// Note: Requires careful sanitization.
 			),
 		);
 
@@ -459,18 +403,5 @@ class WPAB_CB_Admin {
 	public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
 		$actions[] = '<a href="' . esc_url( menu_page_url( $this->menu_info['menu_slug'], false ) ) . '">' . esc_html__( 'Settings', WPAB_CB_TEXT_DOMAIN ) . '</a>';
 		return $actions;
-	}
-}
-
-if ( ! function_exists( 'wpab_cb_admin' ) ) {
-	/**
-	 * Return instance of  WPAB_CB_Admin class
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return WPAB_CB_Admin
-	 */
-	function wpab_cb_admin() {//phpcs:ignore
-		return WPAB_CB_Admin::get_instance();
 	}
 }

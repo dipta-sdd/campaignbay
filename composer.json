@@ -1,15 +1,20 @@
 {
-    "name": "anchorbay/autopilot",
-    "description": "Its a boilerpalte for creating wordpress plugin with react",
+    "name": "wp-anchor-bay/campaign-bay",
+    "description": "CampaignBay for WooCommerce Product Discount WordPress Plugin.",
+    "type": "wordpress-plugin",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Anchorbay\\Autopilot\\": "src/"
-        }
+            "WpabCb\\": "app/"
+        },
+        "files": [
+            "app/functions.php"
+        ]
     },
     "authors": [
         {
-            "name": "sankarsan das"
+            "name": "WP Anchor Bay",
+            "homepage": "https://wpanchorbay.com"
         }
     ],
     "minimum-stability": "dev",
