@@ -100,7 +100,15 @@ class SettingsController extends ApiController {
 	 * @return bool True if the request has read access for the item, otherwise false.
 	 */
 	public function get_item_permissions_check( $request ) {
-		return current_user_can( 'manage_options' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sorry, you are not allowed to manage campaigns.', WPAB_CB_TEXT_DOMAIN ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		return true;
 	}
 
 	/**
@@ -113,14 +121,24 @@ class SettingsController extends ApiController {
 	 */
 	public function update_item_permissions_check( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return false;
+			// return false;
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sorry, you are not allowed to manage campaigns.', WPAB_CB_TEXT_DOMAIN ),
+				array( 'status' => rest_authorization_required_code() )
+			);
 		}
 
 		$nonce = $request->get_header( 'X-WP-Nonce' );
+
+		if ( ! $nonce ) {
+			$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
+		}
+
 		if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 			return new WP_Error(
-				'rest_cookie_invalid_nonce',
-				__( 'Cookie check failed', 'default' ),
+				'rest_invalid_nonce',
+				__( 'Invalid or missing nonce.', 'wpab-cb' ),
 				array( 'status' => 403 )
 			);
 		}
@@ -134,18 +152,18 @@ class SettingsController extends ApiController {
 	 * @since 1.0.0
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
-	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 * @return array|WP_Error Array on success, or WP_Error object on failure.
 	 */
 	public function get_item( $request ) {
-		$options = wpab_cb_get_options();
-		$schema  = $this->get_item_schema();
+		$response = array();
 
-		$data = array();
-		foreach ( $schema['properties'] as $key => $property ) {
-			$data[ $key ] = isset( $options[ $key ] ) ? $options[ $key ] : $property['default'];
-		}
+		$saved_options = wpab_cb_get_options();
 
-		return rest_ensure_response( $data );
+		$schema = $this->get_registered_schema();
+
+		$response = $this->prepare_value( $saved_options, $schema );
+
+		return $response;
 	}
 
 	/**
@@ -153,36 +171,30 @@ class SettingsController extends ApiController {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed $value  The value to prepare.
-	 * @param array $schema The schema for the object.
+	 * @param mixed $value  Value to prepare.
+	 * @param array $schema Schema to match.
 	 * @return mixed The prepared value.
 	 */
 	protected function prepare_value( $value, $schema ) {
-		$prepared_value = array();
 
-		foreach ( $schema['properties'] as $key => $property ) {
-			if ( isset( $value[ $key ] ) ) {
-				$prepared_value[ $key ] = $value[ $key ];
-			}
-		}
+		$sanitized_value = rest_sanitize_value_from_schema( $value, $schema );
 
-		return $prepared_value;
+		return $sanitized_value;
 	}
 
 	/**
-	 * Updates settings for the object.
+	 * Updates settings.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
-	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 * @return array|WP_Error Array on success, or error object on failure.
 	 */
 	public function update_item( $request ) {
+		$schema = $this->get_registered_schema();
 		$params = $request->get_params();
-		$schema = $this->get_item_schema();
 
-		$current_options = wpab_cb_get_options();
-		if ( null === $current_options ) {
+		if ( is_wp_error( rest_validate_value_from_schema( $params, $schema ) ) ) {
 			return new WP_Error(
 				'rest_invalid_stored_value',
 				sprintf( __( 'The %s property has an invalid stored value, and cannot be updated to null.', WPA ), WPAB_CB_OPTION_NAME ),
@@ -247,6 +259,8 @@ class SettingsController extends ApiController {
 
 		return $this->add_additional_fields_schema( $this->schema );
 	}
+
+
 
 	/**
 	 * Gets an instance of this object.

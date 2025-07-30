@@ -61,8 +61,7 @@ class Activator {
 	 * @access private
 	 */
 	private static function create_custom_tables() {
-		$db_manager = DbManager::get_instance();
-		$db_manager->create_tables();
+		DbManager::get_instance()->create_tables();
 	}
 
 	/**

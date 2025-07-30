@@ -39,6 +39,7 @@ class Common {
 	 * @access private
 	 */
 	private static $instance = null;
+
 	/**
 	 * Gets an instance of this object.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.

@@ -107,18 +107,26 @@ class Campaign {
 		$target_type = $this->get_meta( 'target_type' );
 		$target_ids  = $this->get_meta( 'target_ids' );
 
-		if ( empty( $target_type ) || empty( $target_ids ) ) {
+		if ( 'entire_store' === $target_type ) {
+			// For store-wide, the list is empty. The pricing engine will interpret this as "applies to all".
+			$this->applicable_product_ids = array();
 			return;
 		}
 
-		switch ( $target_type ) {
-			case 'product':
-				$this->applicable_product_ids = $this->expand_variable_products( $target_ids );
-				break;
-			case 'category':
-				$this->applicable_product_ids = $this->get_products_from_categories( $target_ids );
-				break;
+		if ( empty( $target_ids ) || ! is_array( $target_ids ) ) {
+			$this->applicable_product_ids = array();
+			return;
 		}
+
+		$product_ids = array();
+
+		if ( 'category' === $target_type ) {
+			$product_ids = $this->get_products_from_categories( $target_ids );
+		} elseif ( 'product' === $target_type ) {
+			$product_ids = $target_ids;
+		}
+		// After getting the initial list, expand any variable products to include their variations.
+		$this->applicable_product_ids = $this->expand_variable_products( $product_ids );
 	}
 
 	/**
@@ -130,28 +138,18 @@ class Campaign {
 	 * @return array Array of product IDs.
 	 */
 	private function get_products_from_categories( $category_ids ) {
-		$product_ids = array();
-
-		foreach ( $category_ids as $category_id ) {
-			$args = array(
-				'post_type'      => 'product',
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'tax_query'      => array(
-					array(
-						'taxonomy' => 'product_cat',
-						'field'    => 'term_id',
-						'terms'    => $category_id,
-					),
-				),
-				'fields'         => 'ids',
-			);
-
-			$query = new WP_Query( $args );
-			$product_ids = array_merge( $product_ids, $query->posts );
+		$category_ids = array_map( 'absint', $category_ids );
+		$args = array(
+			'product_category_id' => $category_ids,
+			'limit'    => -1, // Get all matching products.
+			'return'   => 'ids', // Performance: only return the IDs.
+		);
+		$products = wc_get_products( $args );
+		if ( is_wp_error( $products ) ) {
+			return array();
 		}
-
-		return $this->expand_variable_products( $product_ids );
+		// wpab_cb_log('products' .  print_r($products, true) , 'DEBUG');
+		return $products;
 	}
 
 	/**
@@ -164,25 +162,28 @@ class Campaign {
 	 */
 	private function expand_variable_products( $product_ids ) {
 		$expanded_ids = array();
-
+		if ( empty( $product_ids ) ) {
+			return $expanded_ids;
+		}
 		foreach ( $product_ids as $product_id ) {
 			$product = wc_get_product( $product_id );
 
 			if ( ! $product ) {
 				continue;
 			}
+			// Add the product itself.
+			$expanded_ids[] = $product_id;
 
+			// Add the product variations.
 			if ( $product->is_type( 'variable' ) ) {
-				// For variable products, include all variations.
 				$variation_ids = $product->get_children();
-				$expanded_ids = array_merge( $expanded_ids, $variation_ids );
-			} else {
-				// For simple products, include the product itself.
-				$expanded_ids[] = $product_id;
-			}
+					if ( ! empty( $variation_ids ) ) {
+						$expanded_ids = array_merge( $expanded_ids, $variation_ids );
+				}
+			} 
 		}
-
-		return array_unique( $expanded_ids );
+		// Ensure final list only has unique IDs.
+		return array_unique( array_map( 'absint', $expanded_ids ) );
 	}
 
 	/**
@@ -204,6 +205,14 @@ class Campaign {
 	 */
 	public function is_applicable_to_product( $product ) {
 		$product_id = is_object( $product ) ? $product->get_id() : absint( $product );
+		if ( !is_numeric( $product_id ) ) {
+			return false;
+		}
+
+		if ( 'entire_store' === $this->get_meta( 'target_type' ) ) {
+			return true;
+		}
+
 		return in_array( $product_id, $this->applicable_product_ids, true );
 	}
 
@@ -240,14 +249,19 @@ class Campaign {
 			self::throw_validation_error( 'campaign_type' );
 		}
 
+		$allowed_types = array( 'earlybird', 'bogo', 'scheduled', 'quantity' );
+		if ( ! in_array( $args['campaign_type'], $allowed_types, true ) ) {
+			self::throw_validation_error( 'campaign_type' );
+		}
+
 		// Create the post.
 		$post_data = array(
 			'post_title'  => sanitize_text_field( $args['title'] ),
-			'post_status' => 'publish',
 			'post_type'   => 'wpab_cb_campaign',
+			'post_status' => sanitize_key( $args['status'] ),
 		);
 
-		$post_id = wp_insert_post( $post_data );
+		$post_id = wp_insert_post( $post_data , true );
 
 		if ( is_wp_error( $post_id ) ) {
 			throw new Exception( 'Failed to create campaign post.' );
@@ -255,7 +269,7 @@ class Campaign {
 
 		// Create the campaign object and update it with the provided arguments.
 		$campaign = new self( $post_id );
-		$campaign->update( $args );
+		$campaign->update_meta_from_args( $args );
 
 		return $campaign;
 	}
@@ -268,20 +282,24 @@ class Campaign {
 	 * @return bool True on success, false on failure.
 	 */
 	public function update( $args ) {
-		// Update the post title if provided.
-		if ( ! empty( $args['title'] ) ) {
-			$post_data = array(
-				'ID'          => $this->id,
-				'post_title'  => sanitize_text_field( $args['title'] ),
-			);
-			wp_update_post( $post_data );
+		// --- Update Post Data (if provided) ---
+		$post_data = array();
+		if ( isset( $args['title'] ) ) {
+			$post_data['post_title'] = sanitize_text_field( $args['title'] );
+		}
+		if ( isset( $args['status'] ) ) {
+			$post_data['post_status'] = sanitize_key( $args['status'] );
 		}
 
-		// Update the metadata.
-		$this->update_meta_from_args( $args );
+		if ( ! empty( $post_data ) ) {
+			$post_data['ID'] = $this->id;
+			$result          = wp_update_post( $post_data, true );
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		}
 
-		// Reload the applicable product IDs.
-		$this->load_applicable_product_ids();
+		$this->update_meta_from_args( $args );
 
 		return true;
 	}
@@ -306,16 +324,7 @@ class Campaign {
 	 * @access private
 	 */
 	private function load_meta() {
-		$meta_keys = array(
-			'campaign_type',
-			'rule_status',
-			'discount_type',
-			'discount_value',
-			'target_type',
-			'target_ids',
-			'campaign_tiers',
-			'timezone_string',
-		);
+		$meta_keys = wpab_cb_get_campaign_meta_keys();
 
 		foreach ( $meta_keys as $key ) {
 			$value = get_post_meta( $this->id, '_wpab_cb_' . $key, true );
@@ -331,16 +340,7 @@ class Campaign {
 	 * @param array $args The arguments containing metadata.
 	 */
 	private function update_meta_from_args( $args ) {
-		$meta_keys = array(
-			'campaign_type',
-			'rule_status',
-			'discount_type',
-			'discount_value',
-			'target_type',
-			'target_ids',
-			'campaign_tiers',
-			'timezone_string',
-		);
+		$meta_keys = wpab_cb_get_campaign_meta_keys();
 
 		foreach ( $meta_keys as $key ) {
 			if ( isset( $args[ $key ] ) ) {
@@ -363,8 +363,22 @@ class Campaign {
 		switch ( $key ) {
 			case 'discount_value':
 				return floatval( $value );
+
+			case 'min_quantity':
+			case 'start_timestamp':
+			case 'end_timestamp':
+			case 'priority':
+			case 'usage_limit':
+				return absint( $value );
+
+			case 'exclude_sale_items':
+			case 'apply_to_shipping':
+			case 'schedule_enabled':
+				return (bool) $value;
+
 			case 'target_ids':
 				return is_array( $value ) ? array_map( 'absint', $value ) : array();
+
 			case 'campaign_type':
 			case 'rule_status':
 			case 'discount_type':

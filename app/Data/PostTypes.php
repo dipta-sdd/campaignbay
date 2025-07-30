@@ -77,7 +77,8 @@ class PostTypes {
 	public function run() {
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_post_statuses' ) );
-		add_action( 'init', array( $this, 'register_meta_fields' ) );
+		// TODO: Add meta fields
+		// add_action( 'init', array( $this, 'register_meta_fields' ) );
 		// This filter is kept for debugging purposes. It will only have an effect
 		// if a developer temporarily sets 'show_ui' to true.
 		add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
@@ -104,42 +105,38 @@ class PostTypes {
 			'edit_item'     => __( 'Edit Campaign', WPAB_CB_TEXT_DOMAIN ),
 			'update_item'   => __( 'Update Campaign', WPAB_CB_TEXT_DOMAIN ),
 			'search_items'  => __( 'Search Campaign', WPAB_CB_TEXT_DOMAIN ),
-			'not_found'     => __( 'Not Found', WPAB_CB_TEXT_DOMAIN ),
-			'not_found_in_trash' => __( 'Not found in Trash', WPAB_CB_TEXT_DOMAIN ),
 		);
 
 		$args = array(
-			'label'                 => __( 'Campaign', WPAB_CB_TEXT_DOMAIN ),
-			'description'           => __( 'Campaign post type for managing discount campaigns.', WPAB_CB_TEXT_DOMAIN ),
-			'labels'                => $labels,
-			'supports'              => array( 'title', 'editor', 'custom-fields' ),
-			'taxonomies'            => array(),
-			'hierarchical'          => false,
-			'public'                => false,
-			'show_ui'               => false, // No UI in admin - managed by React
-			'show_in_menu'          => false,
-			'menu_position'         => 5,
-			'show_in_admin_bar'     => false,
-			'show_in_nav_menus'     => false,
-			'can_export'            => true,
-			'has_archive'           => false,
-			'exclude_from_search'   => true,
-			'publicly_queryable'    => false,
-			'capability_type'       => 'post',
-			'show_in_rest'          => true, // Enable REST API
-			'rest_base'             => 'campaigns',
+			'label'               => __( 'Campaign', WPAB_CB_TEXT_DOMAIN ),
+			'description'         => __( 'Discount Campaigns for WooCommerce', WPAB_CB_TEXT_DOMAIN ),
+			'labels'              => $labels,
+			'supports'            => array( 'title' ), // We only need a title for internal reference.
+			'hierarchical'        => false,
+			'public'              => false,
+			'show_ui'             => false,
+			'show_in_menu'        => false,
+			'show_in_admin_bar'   => false,
+            // 'show_ui'             => true,
+			// 'show_in_menu'        => true,
+			// 'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => false,
+			'can_export'          => true,
+			'has_archive'         => false,
+			'exclude_from_search' => true,
+			'publicly_queryable'  => false,
+			'capability_type'     => 'post',
+			'show_in_rest'        => true,  // CRITICAL: This makes the CPT available to the REST API and React app.
+			'rest_base'           => 'campaigns', // The endpoint will be /wp-json/wpab-cb/v1/campaigns/
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
 		);
-
 		register_post_type( 'wpab_cb_campaign', $args );
 	}
 
 	/**
-	 * Register custom post statuses for campaigns.
+	 * Register Custom Post Statuses.
 	 *
-	 * These statuses are used to track the lifecycle of campaigns:
-	 * - Active: Currently running and applying discounts
-	 * - Scheduled: Set to start at a future date/time
-	 * - Expired: Past its end date/time
+	 * These statuses are registered to be used programmatically and via the REST API.
 	 *
 	 * @since 1.0.0
 	 */
@@ -181,6 +178,8 @@ class PostTypes {
 		);
 	}
 
+
+
 	/**
 	 * Register the meta fields for the `wpab_cb_campaign` post type.
 	 *
@@ -220,6 +219,8 @@ class PostTypes {
 			)
 		);
 	}
+
+
 
 	/**
 	 * Add the custom post status to the display states.

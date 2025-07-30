@@ -162,7 +162,6 @@ class CampaignManager {
 					$campaign_objects[ $campaign->get_id() ] = $campaign;
 				}
 			}
-		}else{
 		}
 
 		set_transient( 'wpab_cb_active_campaigns', $campaign_objects, 5 * MINUTE_IN_SECONDS );

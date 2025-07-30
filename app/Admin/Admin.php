@@ -69,7 +69,7 @@ class Admin {
 	 * @since    1.0.0
 	 */
 	public function add_admin_menu() {
-		$white_label     = Common::get_instance()->get_white_label();
+		$white_label     = wpab_cb_include()->get_white_label();
 		$this->menu_info = array(
 			'page_title' => $white_label['plugin_name'],
 			'menu_title' => $white_label['menu_label'],
@@ -160,7 +160,7 @@ class Admin {
 	 */
 	public function add_has_sticky_header( $classes ) {
 		if ( $this->is_menu_page() ) {
-			$classes .= ' has-sticky-header';
+			$classes .= ' at-has-hdr-stky ';
 		}
 		return $classes;
 	}
@@ -252,103 +252,173 @@ class Admin {
 	 * @return array settings schema for this plugin.
 	 */
 	public function get_settings_schema() {
-		$setting_properties = array(
-			/*==================================================
-			* Global Settings Tab
-			==================================================*/
-			'global_enablePlugin' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'global_debugMode' => array(
-				'type'    => 'boolean',
-				'default' => false,
-			),
-
-			/*==================================================
-			* Product Settings Tab
-			==================================================*/
-			'product_showDiscountedPrice' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'product_excludeSaleItems' => array(
-				'type'    => 'boolean',
-				'default' => false,
-			),
-			'product_priorityMethod' => array(
-				'type'    => 'string',
-				'enum'    => array( 'apply_highest', 'apply_lowest' ),
-				'default' => 'apply_highest',
-			),
-			'product_messageFormat' => array(
-				'type'    => 'string',
-				'default' => 'Save {percentage_off} ({amount_off})',
-			),
-
-			/*==================================================
-			* Cart Settings Tab
-			==================================================*/
-			'cart_showDiscountBreakdown' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'cart_showNextDiscountBar' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'cart_nextDiscountFormat' => array(
-				'type'    => 'string',
-				'default' => 'Add {remaining_amount} more for {discount_percentage} off',
-			),
-
-			/*==================================================
-			* Promotion Settings Tab
-			==================================================*/
-			'promo_enablePromoBar' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'promo_barMessage' => array(
-				'type'    => 'string',
-				'default' => 'Free shipping on orders over $50!',
-			),
-			'promo_barBackgroundColor' => array(
-				'type'    => 'string',
-				'default' => '#000000',
-			),
-			'promo_barTextColor' => array(
-				'type'    => 'string',
-				'default' => '#ffffff',
-			),
-			'promo_barDisplayPages' => array(
-				'type'  => 'array',
-				'items' => array(
-					'type' => 'string',
+		$setting_properties = apply_filters(
+			WPAB_CB_OPTION_NAME  . '_options_properties',
+			array(
+				/*==================================================
+				* Global Settings Tab
+				==================================================*/
+				'global_enableAddon'     => array(
+					'type'    => 'boolean',
+					'default' => true,
 				),
-				'default' => ['shop_page', 'product_pages'],
-			),
-			'promo_enableCustomBadges' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
+				'global_defaultPriority' => array(
+					'type'    => 'integer',
+					'default' => 10,
+				),
+				'global_calculationMode' => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_key',
+					'default'           => 'after_tax',
+				),
+				'global_calculationMode' => array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_key',
+                'default'           => 'after_tax',
+				),
+				'global_decimalPlaces'   => array(
+					'type'    => 'integer',
+					'default' => 2,
+				),
 
-			/*==================================================
-			* Advance Settings Tab
-			==================================================*/
-			'advanced_deleteAllOnUninstall' => array(
-				'type'    => 'boolean',
-				'default' => false,
-			),
-			'advanced_customCss' => array(
-				'type'    => 'string',
-				'default' => '',
-				// Note: Requires special sanitization for CSS (e.g., wp_strip_all_tags)
-			),
-			'advanced_customJs' => array(
-				'type'    => 'string',
-				'default' => '',
-				// Note: Requires careful sanitization.
+				/*==================================================
+				* Performance & Caching (from Global Tab)
+				==================================================*/
+				'perf_enableCaching'     => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+
+				/*==================================================
+				* Debugging & Logging (from Global Tab)
+				==================================================*/
+				'debug_enableMode'       => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'debug_logLevel'         => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_key',
+					'default'           => 'errors_only',
+				),
+
+				/*==================================================
+				* Product Settings Tab
+				==================================================*/
+				'product_showDiscountedPrice' => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'product_messageFormat'       => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+					'default'           => 'You save {percentage_off}!',
+				),
+				'product_enableQuantityTable' => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'product_excludeSaleItems'    => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'product_priorityMethod'      => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_key',
+					'default'           => 'apply_highest',
+				),
+
+				/*==================================================
+				* Cart Settings Tab
+				==================================================*/
+				'cart_allowWcCouponStacking'  => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'cart_allowCampaignStacking'  => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'cart_savedMessageFormat'     => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+					'default'           => 'You saved {saved_amount} on this order!',
+				),
+				'cart_showNextDiscountBar'    => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'cart_nextDiscountFormat'     => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+					'default'           => 'Spend {remaining_amount} more for {discount_percentage} off!',
+				),
+				'cart_showDiscountBreakdown'  => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+
+				/*==================================================
+				* Promotion Settings Tab
+				==================================================*/
+				'promo_enableBar'             => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'promo_barPosition'           => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_key',
+					'default'           => 'top_of_page',
+				),
+				'promo_barBgColor'            => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_hex_color',
+					'default'           => '#000000',
+				),
+				'promo_barTextColor'          => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_hex_color',
+					'default'           => '#FFFFFF',
+				),
+				'promo_barContent'            => array(
+					'type'    => 'string',
+					'default' => 'FLASH SALE! {percentage_off} on all shirts!',
+					// Note: Use a broader sanitize callback like wp_kses_post in the actual save hook if HTML is allowed.
+				),
+				'promo_barLinkUrl'            => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'esc_url_raw',
+					'default'           => '',
+				),
+				'promo_barDisplayPages'       => array(
+					'type'  => 'array',
+					'items' => array(
+						'type' => 'string',
+					),
+					'default' => ['shop_page', 'product_pages'],
+				),
+				'promo_enableCustomBadges'    => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+
+				/*==================================================
+				* Advance Settings Tab
+				==================================================*/
+				'advanced_deleteAllOnUninstall' => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'advanced_customCss'            => array(
+					'type'    => 'string',
+					'default' => '',
+					// Note: Requires special sanitization for CSS (e.g., wp_strip_all_tags)
+				),
+				'advanced_customJs'             => array(
+					'type'    => 'string',
+					'default' => '',
+					// Note: Requires careful sanitization.
+				),
 			),
 		);
 
@@ -357,6 +427,7 @@ class Admin {
 			'properties' => $setting_properties,
 		);
 	}
+
 
 	/**
 	 * Register settings.

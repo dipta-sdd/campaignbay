@@ -186,7 +186,7 @@ class CampaignsController extends ApiController {
 				}
 			}
 		}
-		wpab_cb_log('response_data', print_r($response_data, true));
+		// wpab_cb_log('response_data', print_r($response_data, true));
 		$response = new WP_REST_Response( $response_data, 200 );
 		$response->header( 'X-WP-Total', $query->found_posts );
 		$response->header( 'X-WP-TotalPages', $query->max_num_pages );
@@ -201,14 +201,15 @@ class CampaignsController extends ApiController {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_item( $request ) {
-		$campaign_id = $request->get_param( 'id' );
-		$campaign    = wpab_cb_get_campaign( $campaign_id );
+		$id       = (int) $request['id'];
+		$campaign = new Campaign( $id );
 
 		if ( ! $campaign ) {
 			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 404 ) );
 		}
 
-		return rest_ensure_response( $this->prepare_item_for_response( $campaign, $request ) );
+		$data = $this->prepare_item_for_response( $campaign, $request );
+		return new WP_REST_Response( $data, 200 );
 	}
 
 	/**
@@ -218,16 +219,19 @@ class CampaignsController extends ApiController {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function create_item( $request ) {
-		$params = $request->get_params();
+		$params   = $request->get_json_params();
+		$campaign = Campaign::create( $params );
 
-		try {
-			$campaign = Campaign::create( $params );
-			return rest_ensure_response( $this->prepare_item_for_response( $campaign, $request ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'rest_campaign_creation_failed', $e->getMessage(), array( 'status' => 400 ) );
+		if ( is_wp_error( $campaign ) ) {
+			return $campaign;
 		}
-	}
 
+		$data     = $this->prepare_item_for_response( $campaign, $request );
+		$response = new WP_REST_Response( $data, 201 );
+		$response->header( 'Location', rest_url( sprintf( '%s/%s/%d', $this->namespace . $this->version, $this->rest_base, $campaign->get_id() ) ) );
+
+		return $response;
+	}
 	/**
 	 * Update a single campaign.
 	 *
@@ -235,17 +239,25 @@ class CampaignsController extends ApiController {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function update_item( $request ) {
-		$campaign_id = $request->get_param( 'id' );
-		$campaign    = wpab_cb_get_campaign( $campaign_id );
+		$id       = (int) $request['id'];
+		$campaign = new Campaign( $id );
 
 		if ( ! $campaign ) {
 			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 404 ) );
 		}
 
-		$params = $request->get_params();
-		$campaign->update( $params );
+		$params = $request->get_json_params();
+		$result = $campaign->update( $params );
 
-		return rest_ensure_response( $this->prepare_item_for_response( $campaign, $request ) );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		// Get the fresh, updated campaign object to return.
+		$updated_campaign = new Campaign( $id );
+		$data             = $this->prepare_item_for_response( $updated_campaign, $request );
+
+		return new WP_REST_Response( $data, 200 );
 	}
 
 	/**
@@ -258,14 +270,15 @@ class CampaignsController extends ApiController {
 		$campaign_id = $request->get_param( 'id' );
 		$force       = $request->get_param( 'force' );
 
-		$campaign = wpab_cb_get_campaign( $campaign_id );
+		$campaign = new Campaign( $campaign_id );
 		if ( ! $campaign ) {
 			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 404 ) );
 		}
 
-		$result = Campaign::delete( $campaign_id, $force );
+		// $result = Campaign::delete( $campaign_id, $force );
+		$result = $campaign->delete( $campaign_id, $force );
 		if ( ! $result ) {
-			return new WP_Error( 'rest_campaign_deletion_failed', __( 'Failed to delete campaign.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'rest_cannot_delete', __( 'Failed to delete campaign.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 500 ) );
 		}
 
 		return new WP_REST_Response( null, 204 );
@@ -313,18 +326,22 @@ class CampaignsController extends ApiController {
 	 * @return array
 	 */
 	public function get_item_schema() {
+		if ( isset( $this->schema ) ) {
+			return $this->add_additional_fields_schema( $this->schema );
+		}
+
 		$schema = array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
 			'title'      => 'campaign',
 			'type'       => 'object',
 			'properties' => array(
-				'id'                 => array(
+				'id'                  => array(
 					'description' => __( 'Unique identifier for the campaign.', WPAB_CB_TEXT_DOMAIN ),
 					'type'        => 'integer',
-					'context'     => array( 'view', 'edit', 'embed' ),
+					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
-				'title'              => array(
+				'title'               => array(
 					'description' => __( 'The title for the campaign.', WPAB_CB_TEXT_DOMAIN ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
@@ -398,13 +415,13 @@ class CampaignsController extends ApiController {
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 					'required'    => true,
-                ),
-                'campaign_tiers'      => array(
-                    'description' => __( 'The tiers of the campaign.', WPAB_CB_TEXT_DOMAIN ),
-                    'type'        => 'array',
-                    'items'       => array( 'type' => 'object' ),
-                    'context'     => array( 'view', 'edit' ),
-                ),
+				),
+				'campaign_tiers'      => array(
+					'description' => __( 'The tiers of the campaign.', WPAB_CB_TEXT_DOMAIN ),
+					'type'        => 'array',
+					'items'       => array( 'type' => 'object' ),
+					'context'     => array( 'view', 'edit' ),
+				),
 				
 			),
 		);

@@ -49,7 +49,7 @@ class Plugin {
 	 */
 	protected $loader;
 
-	protected $tester_count = 0;
+
 
 	public static function get_instance() {
 		// Store the instance locally to avoid private static replication.
@@ -70,8 +70,6 @@ class Plugin {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		$this->tester_count++;
-		wpab_cb_log('Plugin constructor ' . $this->tester_count);
 		// Initialize the loader first
 		$this->loader = Loader::get_instance();
 		
@@ -107,16 +105,11 @@ class Plugin {
 		$post_types = PostTypes::get_instance();
 		$post_types->run();
 
-		// Initialize database manager
-		$db_manager = DbManager::get_instance();
-		$db_manager->create_tables();
 
 		// Initialize API controllers
-		$settings_controller = SettingsController::get_instance();
-		$settings_controller->run();
+		SettingsController::get_instance()->run();
 
-		$campaigns_controller = CampaignsController::get_instance();
-		$campaigns_controller->run();
+		CampaignsController::get_instance()->run();
 
 		// Get instances of components that have hooks
 		$campaign_manager = CampaignManager::get_instance();
@@ -170,6 +163,12 @@ class Plugin {
 		);
 	}
 
+	/**
+	 * Enqueue the public CSS for the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
 	public function enqueue_public_styles() {
 		wp_enqueue_style( 'wpab-cb-public', WPAB_CB_URL . 'build/public.css', array(), WPAB_CB_VERSION );
 	}
