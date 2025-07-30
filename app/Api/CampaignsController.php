@@ -107,7 +107,7 @@ class CampaignsController extends ApiController {
 			array(
 				'args'   => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the campaign.', WPAB_CB_TEXT_DOMAIN ),
+						'description' => __( 'Unique identifier for the campaign.', 'campaignbay' ),
 						'type'        => 'integer',
 					),
 				),
@@ -133,7 +133,7 @@ class CampaignsController extends ApiController {
 						'force' => array(
 							'type'        => 'boolean',
 							'default'     => false,
-							'description' => __( 'Whether to bypass trash and force deletion.', WPAB_CB_TEXT_DOMAIN ),
+							'description' => __( 'Whether to bypass trash and force deletion.', 'campaignbay' ),
 						),
 					),
 				),
@@ -152,7 +152,7 @@ class CampaignsController extends ApiController {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sorry, you are not allowed to manage campaigns.', WPAB_CB_TEXT_DOMAIN ),
+				__( 'Sorry, you are not allowed to manage campaigns.', 'campaignbay' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
@@ -204,7 +204,7 @@ class CampaignsController extends ApiController {
 		$campaign = new Campaign( $id );
 
 		if ( ! $campaign ) {
-			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 404 ) );
+			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', 'campaignbay' ), array( 'status' => 404 ) );
 		}
 
 		$data = $this->prepare_item_for_response( $campaign, $request );
@@ -242,7 +242,7 @@ class CampaignsController extends ApiController {
 		$campaign = new Campaign( $id );
 
 		if ( ! $campaign ) {
-			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 404 ) );
+			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', 'campaignbay' ), array( 'status' => 404 ) );
 		}
 
 		$params = $request->get_json_params();
@@ -271,13 +271,13 @@ class CampaignsController extends ApiController {
 
 		$campaign = new Campaign( $campaign_id );
 		if ( ! $campaign ) {
-			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 404 ) );
+			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', 'campaignbay' ), array( 'status' => 404 ) );
 		}
 
 		// $result = Campaign::delete( $campaign_id, $force );
 		$result = $campaign->delete( $campaign_id, $force );
 		if ( ! $result ) {
-			return new WP_Error( 'rest_cannot_delete', __( 'Failed to delete campaign.', WPAB_CB_TEXT_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'rest_cannot_delete', __( 'Failed to delete campaign.', 'campaignbay' ), array( 'status' => 500 ) );
 		}
 
 		return new WP_REST_Response( null, 204 );
@@ -335,88 +335,88 @@ class CampaignsController extends ApiController {
 			'type'       => 'object',
 			'properties' => array(
 				'id'                  => array(
-					'description' => __( 'Unique identifier for the campaign.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'Unique identifier for the campaign.', 'campaignbay' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
 				'title'               => array(
-					'description' => __( 'The title for the campaign.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The title for the campaign.', 'campaignbay' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 					'required'    => true,
 				),
 				'status'              => array(
-					'description' => __( 'A named status for the campaign.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'A named status for the campaign.', 'campaignbay' ),
 					'type'        => 'string',
 					'enum'        => array( 'draft', 'publish', 'wpab_cb_active', 'wpab_cb_scheduled', 'wpab_cb_expired' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'campaign_type'       => array(
-					'description' => __( 'The core type of the campaign.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The core type of the campaign.', 'campaignbay' ),
 					'type'        => 'string',
 					'enum'        => array( 'earlybird', 'bogo', 'scheduled', 'quantity' ),
 					'context'     => array( 'view', 'edit' ),
 					'required'    => true,
 				),
 				'discount_type'       => array(
-					'description' => __( 'The type of discount (percentage, fixed).', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The type of discount (percentage, fixed).', 'campaignbay' ),
 					'type'        => 'string',
 					'enum'        => array( 'percentage', 'fixed' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'discount_value'      => array(
-					'description' => __( 'The numeric value of the discount.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The numeric value of the discount.', 'campaignbay' ),
 					'type'        => 'number',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'target_type'         => array(
-					'description' => __( 'The scope of the rule (store, categories, products, tags).', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The scope of the rule (store, categories, products, tags).', 'campaignbay' ),
 					'type'        => 'string',
 					'enum'        => array( 'entire_store', 'category', 'product', 'tag' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'target_ids'          => array(
-					'description' => __( 'Array of category, product, or tag IDs.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'Array of category, product, or tag IDs.', 'campaignbay' ),
 					'type'        => 'array',
 					'items'       => array( 'type' => 'integer' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'exclude_sale_items'  => array(
-					'description' => __( 'Prevent double-discounting.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'Prevent double-discounting.', 'campaignbay' ),
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'apply_to_shipping'   => array(
-					'description' => __( 'Whether the discount applies to shipping costs.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'Whether the discount applies to shipping costs.', 'campaignbay' ),
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'schedule_enabled'    => array(
-					'description' => __( 'Whether scheduling is active for this rule.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'Whether scheduling is active for this rule.', 'campaignbay' ),
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'start_datetime'     => array(
-					'description' => __( 'The rule\'s start date/time (ISO 8601 string).', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The rule\'s start date/time (ISO 8601 string).', 'campaignbay' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'end_datetime'       => array(
-					'description' => __( 'The rule\'s end date/time (ISO 8601 string).', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The rule\'s end date/time (ISO 8601 string).', 'campaignbay' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'timezone_string'     => array(
-					'description' => __( 'The timezone identifier.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The timezone identifier.', 'campaignbay' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 					'required'    => true,
 				),
 				'campaign_tiers'      => array(
-					'description' => __( 'The tiers of the campaign.', WPAB_CB_TEXT_DOMAIN ),
+					'description' => __( 'The tiers of the campaign.', 'campaignbay' ),
 					'type'        => 'array',
 					'items'       => array( 'type' => 'object' ),
 					'context'     => array( 'view', 'edit' ),

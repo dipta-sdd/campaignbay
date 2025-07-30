@@ -31,8 +31,8 @@ const EBTierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst })
                         <span className='wpab-input-label'>
                             {
                                 isFirst ?
-                                    __('For First', 'wpab-cb') :
-                                    __('For Next', 'wpab-cb')
+                                    __('For First', 'campaignbay') :
+                                    __('For Next', 'campaignbay')
                             }
 
                         </span>
@@ -46,7 +46,7 @@ const EBTierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst })
                             placeholder="e.g., 10"
                         />
                         <span className='wpab-input-label'>
-                            {__('Sales ', 'wpab-cb')}
+                            {__('Sales ', 'campaignbay')}
 
                             {/* {  tierData.quantity ?
                                 '(' + (parseInt(tierData.total, 10) + parseInt(1)) + '-' + (parseInt(tierData.total, 10) + parseInt(tierData.quantity, 10)) + ')'
@@ -60,7 +60,7 @@ const EBTierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst })
                     </div>
                     <div className='wpab-tier-input-grid-child'>
 
-                        <span className='wpab-input-label'>{__('give ', 'wpab-cb')}</span>
+                        <span className='wpab-input-label'>{__('give ', 'campaignbay')}</span>
                         <input
                             type="number"
                             name="value"

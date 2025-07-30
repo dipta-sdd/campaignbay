@@ -278,7 +278,7 @@ class PricingEngine {
 			return;
 		}
 		// Echo the message.
-		echo '<div class="wpab-cb-cart-item-notice" style="font-size: 0.9em; color: #777;">' . $discount_data['message'] . '</div>';
+		echo '<div class="wpab-cb-cart-item-notice" style="font-size: 0.9em; color: #777;">' . esc_html( $discount_data['message'] ) . '</div>';
 	}
 
 	/**

@@ -97,19 +97,19 @@ class PostTypes {
 	 */
 	public function register_post_type() {
 		$labels = array(
-			'name'          => _x( 'Campaigns', 'Post Type General Name', WPAB_CB_TEXT_DOMAIN ),
-			'singular_name' => _x( 'Campaign', 'Post Type Singular Name', WPAB_CB_TEXT_DOMAIN ),
-			'all_items'     => __( 'All Campaigns', WPAB_CB_TEXT_DOMAIN ),
-			'add_new_item'  => __( 'Add New Campaign', WPAB_CB_TEXT_DOMAIN ),
-			'add_new'       => __( 'Add New', WPAB_CB_TEXT_DOMAIN ),
-			'edit_item'     => __( 'Edit Campaign', WPAB_CB_TEXT_DOMAIN ),
-			'update_item'   => __( 'Update Campaign', WPAB_CB_TEXT_DOMAIN ),
-			'search_items'  => __( 'Search Campaign', WPAB_CB_TEXT_DOMAIN ),
+			'name'          => _x( 'Campaigns', 'Post Type General Name', 'campaignbay' ),
+			'singular_name' => _x( 'Campaign', 'Post Type Singular Name', 'campaignbay' ),
+			'all_items'     => __( 'All Campaigns', 'campaignbay' ),
+			'add_new_item'  => __( 'Add New Campaign', 'campaignbay' ),
+			'add_new'       => __( 'Add New', 'campaignbay' ),
+			'edit_item'     => __( 'Edit Campaign', 'campaignbay' ),
+			'update_item'   => __( 'Update Campaign', 'campaignbay' ),
+			'search_items'  => __( 'Search Campaign', 'campaignbay' ),
 		);
 
 		$args = array(
-			'label'               => __( 'Campaign', WPAB_CB_TEXT_DOMAIN ),
-			'description'         => __( 'Discount Campaigns for WooCommerce', WPAB_CB_TEXT_DOMAIN ),
+			'label'               => __( 'Campaign', 'campaignbay' ),
+			'description'         => __( 'Discount Campaigns for WooCommerce', 'campaignbay' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ), // We only need a title for internal reference.
 			'hierarchical'        => false,
@@ -127,7 +127,7 @@ class PostTypes {
 			'publicly_queryable'  => false,
 			'capability_type'     => 'post',
 			'show_in_rest'        => true,  // CRITICAL: This makes the CPT available to the REST API and React app.
-			'rest_base'           => 'campaigns', // The endpoint will be /wp-json/wpab-cb/v1/campaigns/
+			'rest_base'           => 'campaigns', // The endpoint will be /wp-json/campaignbay/v1/campaigns/
 			'rest_controller_class' => 'WP_REST_Posts_Controller',
 		);
 		register_post_type( 'wpab_cb_campaign', $args );
@@ -144,36 +144,36 @@ class PostTypes {
 		register_post_status(
 			'wpab_cb_active',
 			array(
-				'label'                     => _x( 'Active', 'post status', WPAB_CB_TEXT_DOMAIN ),
+				'label'                     => _x( 'Active', 'post status', 'campaignbay' ),
 				'public'                    => true,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => true,
 				/* translators: %s: number of posts. */
-				'label_count'               => _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', WPAB_CB_TEXT_DOMAIN ),
+				'label_count'               => _n_noop( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', 'campaignbay' ),
 			)
 		);
 
 		register_post_status(
 			'wpab_cb_scheduled',
 			array(
-				'label'                     => _x( 'Scheduled', 'post status', WPAB_CB_TEXT_DOMAIN ),
+				'label'                     => _x( 'Scheduled', 'post status', 'campaignbay' ),
 				'public'                    => true,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => true,
 				/* translators: %s: number of posts. */
-				'label_count'               => _n_noop( 'Scheduled <span class="count">(%s)</span>', 'Scheduled <span class="count">(%s)</span>', WPAB_CB_TEXT_DOMAIN ),
+				'label_count'               => _n_noop( 'Scheduled <span class="count">(%s)</span>', 'Scheduled <span class="count">(%s)</span>', 'campaignbay' ),
 			)
 		);
 
 		register_post_status(
 			'wpab_cb_expired',
 			array(
-				'label'                     => _x( 'Expired', 'post status', WPAB_CB_TEXT_DOMAIN ),
+				'label'                     => _x( 'Expired', 'post status', 'campaignbay' ),
 				'public'                    => true,
 				'show_in_admin_all_list'    => false,
 				'show_in_admin_status_list' => true,
 				/* translators: %s: number of posts. */
-				'label_count'               => _n_noop( 'Expired <span class="count">(%s)</span>', 'Expired <span class="count">(%s)</span>', WPAB_CB_TEXT_DOMAIN ),
+				'label_count'               => _n_noop( 'Expired <span class="count">(%s)</span>', 'Expired <span class="count">(%s)</span>', 'campaignbay' ),
 			)
 		);
 	}
@@ -238,15 +238,15 @@ class PostTypes {
 		}
 
 		if ( 'wpab_cb_active' === $post->post_status ) {
-			$post_states['wpab_cb_active'] = __( 'Active', WPAB_CB_TEXT_DOMAIN );
+			$post_states['wpab_cb_active'] = __( 'Active', 'campaignbay' );
 		}
 
 		if ( 'wpab_cb_scheduled' === $post->post_status ) {
-			$post_states['wpab_cb_scheduled'] = __( 'Scheduled', WPAB_CB_TEXT_DOMAIN );
+			$post_states['wpab_cb_scheduled'] = __( 'Scheduled', 'campaignbay' );
 		}
 
 		if ( 'wpab_cb_expired' === $post->post_status ) {
-			$post_states['wpab_cb_expired'] = __( 'Expired', WPAB_CB_TEXT_DOMAIN );
+			$post_states['wpab_cb_expired'] = __( 'Expired', 'campaignbay' );
 		}
 
 		return $post_states;

@@ -227,7 +227,7 @@ class Campaign {
 		if ( ! empty( $field ) ) {
 			$message .= " Field: {$field}";
 		}
-		throw new Exception( $message );
+		throw new Exception( esc_html( $message ) );
 	}
 
 	/**

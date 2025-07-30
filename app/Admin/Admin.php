@@ -90,7 +90,7 @@ class Admin {
 		add_submenu_page(
 				$this->menu_info['menu_slug'],
 				$this->menu_info['page_title'],
-				esc_html__( 'Dashboard', WPAB_CB_TEXT_DOMAIN ),
+				esc_html__( 'Dashboard', 'campaignbay' ),
 				'manage_options',
 				WPAB_CB_TEXT_DOMAIN,
 				array( $this, 'add_setting_root_div' )
@@ -115,7 +115,7 @@ class Admin {
 		foreach ( $submenu_pages as $submenu_page ) {
 			add_submenu_page(
 				$this->menu_info['menu_slug'],
-				esc_html( __($submenu_page['menu_title'] , WPAB_CB_TEXT_DOMAIN) . '-' . $this->menu_info['page_title'] ),
+				esc_html( $submenu_page['menu_title'] . '-' . $this->menu_info['page_title'] ),
 				$submenu_page['menu_title'],
 				'manage_options',
 				WPAB_CB_TEXT_DOMAIN . $submenu_page['menu_slug'],
@@ -225,7 +225,7 @@ class Admin {
 		// wpab_cb_log( '--------------------' );
 		// wpab_cb_log( 'Checking for translations...' );
 		// wpab_cb_log( 'Script Handle: ' . WPAB_CB_PLUGIN_NAME );
-		// wpab_cb_log( 'Text Domain: ' . 'wpab-cb' );
+		// wpab_cb_log( 'Text Domain: ' . 'campaignbay' );
 		// wpab_cb_log( 'Full Path Being Checked: ' . $path_to_check );
 		// wpab_cb_log( 'Does path exist? ' . ( file_exists( $path_to_check ) ? 'Yes' : 'No' ) );
 		// wasted 3 hours on this because of poor documentation, there was no issue here
@@ -233,7 +233,7 @@ class Admin {
 	
 		$result = wp_set_script_translations(
 			WPAB_CB_PLUGIN_NAME,
-			'wpab-cb',
+			'campaignbay',
 			$path_to_check
 		);
 		
@@ -472,7 +472,7 @@ class Admin {
 	 * @return array settings schema for this plugin.
 	 */
 	public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
-		$actions[] = '<a href="' . esc_url( menu_page_url( $this->menu_info['menu_slug'], false ) ) . '">' . esc_html__( 'Settings', WPAB_CB_TEXT_DOMAIN ) . '</a>';
+		$actions[] = '<a href="' . esc_url( menu_page_url( $this->menu_info['menu_slug'], false ) ) . '">' . esc_html__( 'Settings', 'campaignbay' ) . '</a>';
 		return $actions;
 	}
 }

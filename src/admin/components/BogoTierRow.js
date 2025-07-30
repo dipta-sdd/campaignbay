@@ -34,7 +34,7 @@ const BogoTierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst,
                 <div className='wpab-grid-2'>
                     <div className='wpab-tier-input-grid-child'>
                         <span className='wpab-input-label'>
-                            {__('Buy', 'wpab-cb')}
+                            {__('Buy', 'campaignbay')}
                         </span>
                         <SearchSelect
                             className='wpab-bogo-select'
@@ -53,7 +53,7 @@ const BogoTierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst,
                     </div>
                     <div className='wpab-tier-input-grid-child'>
 
-                        <span className='wpab-input-label'>{__('Get ', 'wpab-cb')}</span>
+                        <span className='wpab-input-label'>{__('Get ', 'campaignbay')}</span>
                         <SearchSelect
                             className='wpab-bogo-select'
                             options={products}

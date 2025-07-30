@@ -48,7 +48,7 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			* Product Settings Tab
 			==================================================*/
 			'product_showDiscountedPrice' => true,
-			'product_messageFormat'       => esc_html__( 'You save {percentage_off}!', WPAB_CB_TEXT_DOMAIN ),
+			'product_messageFormat'       => esc_html__( 'You save {percentage_off}!', 'campaignbay' ),
 			'product_enableQuantityTable' => true,
 			'product_excludeSaleItems'    => true,
 			'product_priorityMethod'      => 'apply_highest',
@@ -58,9 +58,9 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			==================================================*/
 			'cart_allowWcCouponStacking'  => false,
 			'cart_allowCampaignStacking'  => false,
-			'cart_savedMessageFormat'     => esc_html__( 'You saved {saved_amount} on this order!', WPAB_CB_TEXT_DOMAIN ),
+			'cart_savedMessageFormat'     => esc_html__( 'You saved {saved_amount} on this order!', 'campaignbay' ),
 			'cart_showNextDiscountBar'    => true,
-			'cart_nextDiscountFormat'     => esc_html__( 'Spend {remaining_amount} more for {discount_percentage} off!', WPAB_CB_TEXT_DOMAIN ),
+			'cart_nextDiscountFormat'     => esc_html__( 'Spend {remaining_amount} more for {discount_percentage} off!', 'campaignbay' ),
 			'cart_showDiscountBreakdown'  => true,
 
 			/*==================================================
@@ -70,7 +70,7 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			'promo_barPosition'           => 'top_of_page',
 			'promo_barBgColor'            => '#000000',
 			'promo_barTextColor'          => '#FFFFFF',
-			'promo_barContent'            => esc_html__( 'FLASH SALE! {percentage_off} on all shirts!', WPAB_CB_TEXT_DOMAIN ),
+			'promo_barContent'            => esc_html__( 'FLASH SALE! {percentage_off} on all shirts!', 'campaignbay' ),
 			'promo_barLinkUrl'            => '',
 			'promo_barDisplayPages'       => array( 'shop_page', 'product_pages' ),
 			'promo_enableCustomBadges'    => true,
@@ -221,15 +221,15 @@ if ( ! function_exists( 'wpab_cb_get_white_label' ) ) :
 	function wpab_cb_get_white_label( $key = '' ) {
 		$plugin_name = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_white_label_plugin_name',
-			esc_html__( 'WP React Plugin Boilerplate', WPAB_CB_TEXT_DOMAIN )
+			esc_html__( 'WP React Plugin Boilerplate', 'campaignbay' )
 		);
 		
 		$options = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_white_label',
 			 array(
-				'plugin_name'      => esc_html( __('WPAB - WooCommerce Smart Campaigns', 'wpab-cb') ),
-				'short_name'       => esc_html__( 'Smart Campaigns', WPAB_CB_TEXT_DOMAIN ),
-				'menu_label'       => esc_html__( 'Campaigns', 'wpab-cb' ),
+				'plugin_name'      => esc_html( __('WPAB - WooCommerce Smart Campaigns', 'campaignbay') ),
+				'short_name'       => esc_html__( 'Smart Campaigns', 'campaignbay' ),
+				'menu_label'       => esc_html__( 'Campaigns', 'campaignbay' ),
 				'custom_icon'  	   => WPAB_CB_URL . 'assets/img/logo-2.svg',
 				'author_name'      => 'WP Anchor Bay',
 				'author_uri'       => 'https://wpanchorbay.com',
@@ -270,20 +270,15 @@ if(! function_exists('wpab_cb_log')) {
 			wp_mkdir_p( $log_dir );
 		}
 		
-		$log_file = $log_dir . 'plugin-log-' . date('Y-m-d') . '.log';
+		$log_file = $log_dir . 'plugin-log-' . gmdate('Y-m-d') . '.log';
 
-		$formatted_message = '';
-		if ( is_array( $message ) || is_object( $message ) ) {
-			$formatted_message = print_r( $message, true );
-		} else {
-			$formatted_message = $message;
-		}
+		
 
 		$log_entry = sprintf(
 			"[%s] [%s]: %s\n",
-			date('Y-m-d H:i:s'),
+			gmdate('Y-m-d H:i:s'),
 			strtoupper( $level ),
-			$formatted_message
+			$message
 		);
 		file_put_contents( $log_file, $log_entry, FILE_APPEND | LOCK_EX );
 	}

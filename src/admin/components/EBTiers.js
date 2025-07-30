@@ -9,11 +9,11 @@ const EBTiers = ({ tiers, setTiers, errors }) => {
     const handleAddTier = (setError) => {
         const lastTier = tiers[tiers.length - 1];
         if (!lastTier.quantity) {
-            setError(__('Please fill in the previous tier\'s quantity first.', 'wpab-cb'));
+            setError(__('Please fill in the previous tier\'s quantity first.', 'campaignbay'));
             return;
         }
         if (!lastTier.value) {
-            setError(__('Please fill in the previous tier\'s value first.', 'wpab-cb'));
+            setError(__('Please fill in the previous tier\'s value first.', 'campaignbay'));
             return;
         }
         const newTier = {
@@ -59,8 +59,8 @@ const EBTiers = ({ tiers, setTiers, errors }) => {
 
     return (
         <div className="cb-form-input-con">
-            <label htmlFor="quantity-discount">{__('DISCOUNT TIERS FOR FIRST SALES', 'wpab-cb')} <Required /></label>
-            <span className='wpab-input-help'>{__('Define discount tiers based on the number of sales of the selected products', 'wpab-cb')}</span>
+            <label htmlFor="quantity-discount">{__('DISCOUNT TIERS FOR FIRST SALES', 'campaignbay')} <Required /></label>
+            <span className='wpab-input-help'>{__('Define discount tiers based on the number of sales of the selected products', 'campaignbay')}</span>
             {tiers.map((tier, index) => (
                 <EBTierRow
                     key={tier.id}

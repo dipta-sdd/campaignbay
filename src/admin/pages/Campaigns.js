@@ -31,33 +31,33 @@ const Campaigns = () => {
         () => [
             {
                 id: 'title',
-                header: __('Title', 'wpab-cb'),
+                header: __('Title', 'campaignbay'),
                 render: ({ item }) => <strong>{item.title}</strong>,
                 enableHiding: true,
             },
             {
                 id: 'status',
-                header: __('Status', 'wpab-cb'),
+                header: __('Status', 'campaignbay'),
                 render: ({ item }) => {
                     // Map internal status codes to human-readable labels and badge types
                     let label = '';
                     let badgeType = '';
                     switch (item.status) {
                         case 'wpab_cb_active':
-                            label = __('Active', 'wpab-cb');
+                            label = __('Active', 'campaignbay');
                             badgeType = 'success';
                             break;
                         case 'wpab_cb_scheduled':
-                            label = __('Scheduled', 'wpab-cb');
+                            label = __('Scheduled', 'campaignbay');
                             badgeType = 'warning';
                             break;
                         case 'wpab_cb_expired':
-                            label = __('Expired', 'wpab-cb');
+                            label = __('Expired', 'campaignbay');
                             badgeType = 'error';
                             break;
                         case 'wpab_cb_draft':
                         default:
-                            label = __('Draft', 'wpab-cb');
+                            label = __('Draft', 'campaignbay');
                             badgeType = 'info';
                             break;
                     }
@@ -73,19 +73,19 @@ const Campaigns = () => {
             },
             {
                 id: 'campaign_type',
-                header: __('Campaign Type', 'wpab-cb'),
+                header: __('Campaign Type', 'campaignbay'),
                 render: ({ item }) => {
                     // Map internal campaign_type to human-readable
                     let label = '';
                     switch (item.campaign_type) {
                         case 'quantity':
-                            label = __('Quantity', 'wpab-cb');
+                            label = __('Quantity', 'campaignbay');
                             break;
                         case 'early_bird':
-                            label = __('Early Bird', 'wpab-cb');
+                            label = __('Early Bird', 'campaignbay');
                             break;
                         case 'bogo':
-                            label = __('BOGO', 'wpab-cb');
+                            label = __('BOGO', 'campaignbay');
                             break;
                         default:
                             label = item.campaign_type;
@@ -96,18 +96,18 @@ const Campaigns = () => {
             },
             {
                 id: 'target',
-                header: __('Target', 'wpab-cb'),
+                header: __('Target', 'campaignbay'),
                 render: ({ item }) => {
                     // Map target_type to human-readable
                     switch (item.target_type) {
                         case 'entire_store':
-                            return __('Entire Store', 'wpab-cb');
+                            return __('Entire Store', 'campaignbay');
                         case 'categories':
-                            return __('Categories', 'wpab-cb');
+                            return __('Categories', 'campaignbay');
                         case 'products':
-                            return __('Products', 'wpab-cb');
+                            return __('Products', 'campaignbay');
                         case 'tags':
-                            return __('Tags', 'wpab-cb');
+                            return __('Tags', 'campaignbay');
                         default:
                             return item.target_type;
                     }
@@ -116,7 +116,7 @@ const Campaigns = () => {
             },
             {
                 id: 'value',
-                header: __('Value', 'wpab-cb'),
+                header: __('Value', 'campaignbay'),
                 render: ({ item }) => {
                     // Show discount value and type
                     if (item.discount_type === 'percentage') {
@@ -130,7 +130,7 @@ const Campaigns = () => {
             },
             {
                 id: 'start_datetime',
-                header: __('Start Date', 'wpab-cb'),
+                header: __('Start Date', 'campaignbay'),
                 render: ({ item }) => {
                     if (!item.start_datetime) return '';
                     const date = new Date(item.start_datetime);
@@ -140,7 +140,7 @@ const Campaigns = () => {
             },
             {
                 id: 'end_datetime',
-                header: __('End Date', 'wpab-cb'),
+                header: __('End Date', 'campaignbay'),
                 render: ({ item }) => {
                     if (!item.end_datetime) return '';
                     const date = new Date(item.end_datetime);
@@ -156,14 +156,14 @@ const Campaigns = () => {
         () => [
             {
                 id: 'edit',
-                label: __('Edit', 'wpab-cb'),
+                label: __('Edit', 'campaignbay'),
                 callback: (item) => {
                     navigate(`./${item[0].id}`);
                 },
             },
             {
                 id: 'delete',
-                label: __('Delete', 'wpab-cb'),
+                label: __('Delete', 'campaignbay'),
                 isDestructive: true,
                 callback: (item) => {
                     setSelectedCampaign(item);
@@ -187,14 +187,14 @@ const Campaigns = () => {
         const fetchCampaigns = async () => {
             try {
                 const response = await apiFetch({
-                    path: '/wpab-cb/v1/campaigns',
+                    path: '/campaignbay/v1/campaigns',
                     method: 'GET',
                 });
                 setCampaigns(response);
                 setIsLoading(false);
             } catch (error) {
                 setIsLoading(false);
-                addToast(__('Something went wrong, please try again later.', 'wpab-cb'), 'error');
+                addToast(__('Something went wrong, please try again later.', 'campaignbay'), 'error');
             }
 
         };
@@ -205,15 +205,15 @@ const Campaigns = () => {
     const handleConfirmDelete = async () => {
         try {
             const response = await apiFetch({
-                path: `/wpab-cb/v1/campaigns/${selectedCampaign[0]?.id}`,
+                path: `/campaignbay/v1/campaigns/${selectedCampaign[0]?.id}`,
                 method: 'DELETE',
             });
-            addToast(__('Campaign deleted successfully', 'wpab-cb'), 'success');
+            addToast(__('Campaign deleted successfully', 'campaignbay'), 'success');
             setCampaigns(campaigns.filter(campaign => campaign.id !== selectedCampaign[0]?.id));
             console.log('campaigns', campaigns);
             console.log('selectedCampaign', selectedCampaign);
         } catch (error) {
-            addToast(__('Error deleting campaign', 'wpab-cb'), 'error');
+            addToast(__('Error deleting campaign', 'campaignbay'), 'error');
         }
         setIsModalOpen(false);
     };
@@ -223,11 +223,11 @@ const Campaigns = () => {
 
         <div className='cb-page'>
             <div className="cb-page-header-container">
-                <div className="cb-page-header-title">{__('Campaigns', 'wpab-cb')}</div>
+                <div className="cb-page-header-title">{__('Campaigns', 'campaignbay')}</div>
                 <div className="cb-page-header-actions">
                     <button className="wpab-cb-btn wpab-cb-btn-primary " onClick={() => navigate('/campaigns/add')}>
                         <Icon icon={plus} fill="currentColor" />
-                        {__('Add Campaign', 'wpab-cb')}
+                        {__('Add Campaign', 'campaignbay')}
                     </button>
                 </div>
             </div>
@@ -257,7 +257,7 @@ const Campaigns = () => {
                 onConfirm={handleConfirmDelete}
                 onCancel={() => setIsModalOpen(false)}
             >
-                {__('Are you sure you want to delete this campaign?', 'wpab-cb')}
+                {__('Are you sure you want to delete this campaign?', 'campaignbay')}
             </ConfirmDialog>
 
         </div>

@@ -5,7 +5,7 @@ import { Button } from '@wordpress/components';
 export default function Page1() {
   const handleClick = () => {
     console.log('Button clicked!');
-    apiFetch({ path: '/wpab-cb/v1/settings'}).then((settings) => {
+    apiFetch({ path: '/campaignbay/v1/settings'}).then((settings) => {
           console.log(settings);
           // alert('Settings fetched successfully!');
         });

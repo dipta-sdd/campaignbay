@@ -103,7 +103,7 @@ class SettingsController extends ApiController {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sorry, you are not allowed to manage campaigns.', WPAB_CB_TEXT_DOMAIN ),
+				__( 'Sorry, you are not allowed to manage campaigns.', 'campaignbay' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
@@ -124,7 +124,7 @@ class SettingsController extends ApiController {
 			// return false;
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sorry, you are not allowed to manage campaigns.', WPAB_CB_TEXT_DOMAIN ),
+				__( 'Sorry, you are not allowed to manage campaigns.', 'campaignbay' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
@@ -138,7 +138,7 @@ class SettingsController extends ApiController {
 		if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 			return new WP_Error(
 				'rest_invalid_nonce',
-				__( 'Invalid or missing nonce.', 'wpab-cb' ),
+				__( 'Invalid or missing nonce.', 'campaignbay' ),
 				array( 'status' => 403 )
 			);
 		}
@@ -195,9 +195,11 @@ class SettingsController extends ApiController {
 		$params = $request->get_params();
 
 		if ( is_wp_error( rest_validate_value_from_schema( $params, $schema ) ) ) {
+			
 			return new WP_Error(
 				'rest_invalid_stored_value',
-				sprintf( __( 'The %s property has an invalid stored value, and cannot be updated to null.', WPA ), WPAB_CB_OPTION_NAME ),
+				/* translators: %s: The name of the plugin setting or property. */
+				sprintf( __( 'The %s property has an invalid stored value, and cannot be updated to null.', 'campaignbay' ), WPAB_CB_OPTION_NAME ),
 				array( 'status' => 500 )
 			);
 		}

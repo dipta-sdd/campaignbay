@@ -57,7 +57,7 @@ const CampaignsAdd = () => {
             })));
         } catch (error) {
             console.error('Error fetching categories:', error);
-            addToast(__('Something went wrong, Please reload the page.', 'wpab-cb'), 'error');
+            addToast(__('Something went wrong, Please reload the page.', 'campaignbay'), 'error');
         }
     }
     const fetchProducts = async () => {
@@ -69,7 +69,7 @@ const CampaignsAdd = () => {
             })));
         } catch (error) {
             console.error('Error fetching Products:', error);
-            addToast(__('Something went wrong, Please reload the page.', 'wpab-cb'), 'error');
+            addToast(__('Something went wrong, Please reload the page.', 'campaignbay'), 'error');
         }
     }
     const fetchTags = async () => {
@@ -81,7 +81,7 @@ const CampaignsAdd = () => {
             })));
         } catch (error) {
             console.error('Error fetching Products:', error);
-            addToast(__('Something went wrong, Please reload the page.', 'wpab-cb'), 'error');
+            addToast(__('Something went wrong, Please reload the page.', 'campaignbay'), 'error');
         }
     }
 
@@ -158,51 +158,51 @@ const CampaignsAdd = () => {
         //     return;
         // }
         try {
-            const response = await apiFetch({ path: '/wpab-cb/v1/campaigns', method: 'POST', data: campaignData });
-            addToast(__('Campaign saved successfully', 'wpab-cb'), 'success');
+            const response = await apiFetch({ path: '/campaignbay/v1/campaigns', method: 'POST', data: campaignData });
+            addToast(__('Campaign saved successfully', 'campaignbay'), 'success');
             navigate(`/campaigns/${response.id}`);
         } catch (error) {
             if (error?.code === 'rest_invalid_param') {
                 setErrors(error?.data?.params);
             }
-            addToast(__('Something went wrong, Please reload the page.', 'wpab-cb'), 'error');
+            addToast(__('Something went wrong, Please reload the page.', 'campaignbay'), 'error');
         }
     }
     return (
         <div className="cb-page">
             <div className="cb-page-header-container">
-                <div className="cb-page-header-title">{__('Add Campaign', 'wpab-cb')}</div>
+                <div className="cb-page-header-title">{__('Add Campaign', 'campaignbay')}</div>
                 <div className="cb-page-header-actions">
                     <button className="wpab-cb-btn wpab-cb-btn-primary " onClick={handleSaveCampaign}>
                         <Icon icon={check} fill="currentColor" />
-                        {__('Save Campaign', 'wpab-cb')}
+                        {__('Save Campaign', 'campaignbay')}
                     </button>
                 </div>
             </div>
             <div className="cb-page-container">
                 <div className="cb-form-input-con">
-                    <label htmlFor="campaign-type">{__('SELECT DISCOUNT TYPE', 'wpab-cb')}   <Required /></label>
+                    <label htmlFor="campaign-type">{__('SELECT DISCOUNT TYPE', 'campaignbay')}   <Required /></label>
                     <select type="text" id="campaign-type" className={`wpab-input w-100 ${errors?.campaign_type ? 'wpab-input-error' : ''}`} value={campaignType} onChange={(e) => handleCampaignTypeChange(e.target.value)}>
-                        <option value="scheduled">{__('Scheduled Discount', 'wpab-cb')}</option>
-                        <option value="quantity">{__('Quantity Based Discount', 'wpab-cb')}</option>
-                        <option value="earlybird">{__('EarlyBird Discount', 'wpab-cb')}</option>
-                        <option value="bogo">{__('Buy X Get Y (BOGO) Discount', 'wpab-cb')}</option>
+                        <option value="scheduled">{__('Scheduled Discount', 'campaignbay')}</option>
+                        <option value="quantity">{__('Quantity Based Discount', 'campaignbay')}</option>
+                        <option value="earlybird">{__('EarlyBird Discount', 'campaignbay')}</option>
+                        <option value="bogo">{__('Buy X Get Y (BOGO) Discount', 'campaignbay')}</option>
                     </select>
                 </div>
 
                 <div className="cb-form-input-con">
-                    <label htmlFor="campaign-title">{__('Campaign Title', 'wpab-cb')}  <Required /></label>
+                    <label htmlFor="campaign-title">{__('Campaign Title', 'campaignbay')}  <Required /></label>
                     <input type="text" id="campaign-title" className={`wpab-input w-100 ${errors?.title ? 'wpab-input-error' : ''}`} value={campaignTitle} onChange={(e) => setCampaignTitle(e.target.value)} />
                 </div>
 
                 {campaignType !== 'bogo' && (
                     <div className="cb-form-input-con">
-                        <label htmlFor="selection-type">{__('SELECT FOR USERS', 'wpab-cb')}  <Required /></label>
+                        <label htmlFor="selection-type">{__('SELECT FOR USERS', 'campaignbay')}  <Required /></label>
                         <select type="text" id="selection-type" className={`wpab-input w-100 ${errors?.target_type ? 'wpab-input-error' : ''}`} value={selectionType} onChange={(e) => handleSelectionTypeChange(e.target.value)}>
-                            {campaignType !== 'bogo' && (<option value="entire_store">{__('Entire Store', 'wpab-cb')}</option>)}
-                            {campaignType !== 'bogo' && (<option value="category">{__('By Product Category', 'wpab-cb')}</option>)}
-                            <option value="product">{__('By Product', 'wpab-cb')}</option>
-                            {campaignType !== 'bogo' && (<option value="tag">{__('By Tags', 'wpab-cb')}</option>)}
+                            {campaignType !== 'bogo' && (<option value="entire_store">{__('Entire Store', 'campaignbay')}</option>)}
+                            {campaignType !== 'bogo' && (<option value="category">{__('By Product Category', 'campaignbay')}</option>)}
+                            <option value="product">{__('By Product', 'campaignbay')}</option>
+                            {campaignType !== 'bogo' && (<option value="tag">{__('By Tags', 'campaignbay')}</option>)}
 
 
                         </select>
@@ -211,7 +211,7 @@ const CampaignsAdd = () => {
                             <div style={{ background: '#ffffff' }} className={`${errors?.target_ids ? 'wpab-input-error' : ''}`}>
                                 <MultiSelect
                                     label={
-                                        selectionType === 'product' ? __('Select Products *', 'wpab-cb') : selectionType === 'tag' ? __('Select Tags *', 'wpab-cb') : selectionType === 'category' ? __('Select Categories *', 'wpab-cb') : ''
+                                        selectionType === 'product' ? __('Select Products *', 'campaignbay') : selectionType === 'tag' ? __('Select Tags *', 'campaignbay') : selectionType === 'category' ? __('Select Categories *', 'campaignbay') : ''
                                     }
                                     options={selectionType === 'product' ? products : selectionType === 'tag' ? tags : selectionType === 'category' ? categories : []}
                                     value={selections}
@@ -239,7 +239,7 @@ const CampaignsAdd = () => {
                 {campaignType === 'scheduled' && (
 
                     <div className="cb-form-input-con">
-                        <label htmlFor="discount-type">{__('How many you want to discount?', 'wpab-cb')}  <Required /></label>
+                        <label htmlFor="discount-type">{__('How many you want to discount?', 'campaignbay')}  <Required /></label>
                         <ToggleGroupControl
                             className={`cb-toggle-group-control ${errors?.discount_type ? 'wpab-input-error' : ''}`}
                             __next40pxDefaultSize
@@ -249,15 +249,15 @@ const CampaignsAdd = () => {
                             onChange={(value) => setDiscountType(value)}
                         >
                             <ToggleGroupControlOption
-                                label={__('Percentage %', 'wpab-cb')}
+                                label={__('Percentage %', 'campaignbay')}
                                 value="percentage"
                             />
                             <ToggleGroupControlOption
-                                label={__('Currency ', 'wpab-cb') + (woocommerce_currency_symbol || '$')}
+                                label={__('Currency ', 'campaignbay') + (woocommerce_currency_symbol || '$')}
                                 value="fixed"
                             />
                         </ToggleGroupControl>
-                        <span className='wpab-input-help'>{__('If you want you will change mode', 'wpab-cb')}</span>
+                        <span className='wpab-input-help'>{__('If you want you will change mode', 'campaignbay')}</span>
 
                         <div className='cb-input-with-suffix'>
                             <input value={discountValue} type="text" name='discount-value' inputMode='numeric' pattern="[0-9]*" className={`wpab-input w-100 ${errors?.discount_value ? 'wpab-input-error' : ''}`} placeholder="Enter Value" onChange={(e) => setDiscountValue(parseInt(e.target.value))} />
@@ -266,17 +266,17 @@ const CampaignsAdd = () => {
                     </div>
                 )}
                 <div className="cb-form-input-con">
-                    <label htmlFor="start-time">{__('SELECT CAMPAIGN DURATION', 'wpab-cb')}  <Required /></label>
+                    <label htmlFor="start-time">{__('SELECT CAMPAIGN DURATION', 'campaignbay')}  <Required /></label>
                     <div className='wpab-grid-2 cb-date-time-fix' style={{ gap: '16px' }}>
                         <div className={`${errors?.start_datetime ? 'wpab-input-error' : ''}`}>
-                            <span className='wpab-input-label' style={{ display: 'block', marginBottom: '10px' }}>{__('Start Time', 'wpab-cb')}</span>
+                            <span className='wpab-input-label' style={{ display: 'block', marginBottom: '10px' }}>{__('Start Time', 'campaignbay')}</span>
                             <TimePicker id="start-time"
                                 currentTime={startDate}
                                 onChange={(date) => { setStartDate(date); }}
                             />
                         </div>
                         <div className={`${errors?.end_datetime ? 'wpab-input-error' : ''}`}>
-                            <span className='wpab-input-label' style={{ display: 'block', marginBottom: '10px' }}>{__('End Time', 'wpab-cb')}</span>
+                            <span className='wpab-input-label' style={{ display: 'block', marginBottom: '10px' }}>{__('End Time', 'campaignbay')}</span>
                             <TimePicker id="end-time"
                                 onChange={(date) => { setEndDate(date); }}
                             />
@@ -289,7 +289,7 @@ const CampaignsAdd = () => {
                 <div className='wpab-btn-bottom-con'>
                     <button className="wpab-cb-btn wpab-cb-btn-primary" onClick={handleSaveCampaign}>
                         <Icon icon={check} fill="currentColor" />
-                        {__('Save Changes', 'wpab-cb')}
+                        {__('Save Changes', 'campaignbay')}
                     </button>
                 </div>
 

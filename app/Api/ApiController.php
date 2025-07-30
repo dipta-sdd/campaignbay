@@ -123,7 +123,7 @@ class ApiController extends WP_REST_Controller {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', WPAB_CB_TEXT_DOMAIN ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'campaignbay' ), '1.0.0' );
 	}
 
 	/**
@@ -135,7 +135,7 @@ class ApiController extends WP_REST_Controller {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', WPAB_CB_TEXT_DOMAIN ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'campaignbay' ), '1.0.0' );
 	}
 }
  

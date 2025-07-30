@@ -9,15 +9,15 @@ const QuantityTiers = ({ tiers, setTiers, errors }) => {
     const handleAddTier = (setError) => {
         const lastTier = tiers[tiers.length - 1];
         if (!lastTier.max) {
-            setError(__('Please fill in the previous tier\'s maximum quantity first.', 'wpab-cb'));
+            setError(__('Please fill in the previous tier\'s maximum quantity first.', 'campaignbay'));
             return;
         }
         if (lastTier.max <= lastTier.min) {
-            setError(__('The maximum quantity must be greater than the minimum quantity.', 'wpab-cb'));
+            setError(__('The maximum quantity must be greater than the minimum quantity.', 'campaignbay'));
             return;
         }
         if (!lastTier.value) {
-            setError(__('Please fill in the previous tier\'s value first.', 'wpab-cb'));
+            setError(__('Please fill in the previous tier\'s value first.', 'campaignbay'));
             return;
         }
 
@@ -49,8 +49,8 @@ const QuantityTiers = ({ tiers, setTiers, errors }) => {
 
     return (
         <div className="cb-form-input-con">
-            <label htmlFor="quantity-discount">{__('DEFINE QUANTITY TIERS', 'wpab-cb')} <Required /></label>
-            <span className='wpab-input-help'>{__('Define quantity tiers for the discount', 'wpab-cb')}</span>
+            <label htmlFor="quantity-discount">{__('DEFINE QUANTITY TIERS', 'campaignbay')} <Required /></label>
+            <span className='wpab-input-help'>{__('Define quantity tiers for the discount', 'campaignbay')}</span>
             {tiers.map((tier, index) => (
                 <TierRow
                     key={tier.id}

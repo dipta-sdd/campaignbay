@@ -10,7 +10,7 @@
  * Author URI:        https://wpanchorbay.com
  * License:           MIT
  * License URI:       MIT
- * Text Domain:       wpab-cb
+ * Text Domain:       campaignbay
  * Domain Path:       /languages
  */
 
@@ -24,8 +24,8 @@ define( 'WPAB_CB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WPAB_CB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPAB_CB_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPAB_CB_VERSION', '0.0.5' );
-define( 'WPAB_CB_PLUGIN_NAME', 'wpab-cb' );
-define( 'WPAB_CB_TEXT_DOMAIN', 'wpab-cb' );
+define( 'WPAB_CB_PLUGIN_NAME', 'campaignbay' );
+define( 'WPAB_CB_TEXT_DOMAIN', 'campaignbay' );
 define( 'WPAB_CB_OPTION_NAME', 'wpab_cb' );
 define( 'WPAB_CB_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'WPAB_CB_DEV_MODE', true );

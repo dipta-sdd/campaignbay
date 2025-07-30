@@ -30,14 +30,14 @@ const Settings = () => {
 
     const fetchSettings = async () => {
         try {
-            const response = await apiFetch({ path: '/wpab-cb/v1/settings' }); ///wc/v3/products/categories
+            const response = await apiFetch({ path: '/campaignbay/v1/settings' }); ///wc/v3/products/categories
             setSettings(response);
             setIsLoading(false);
         } catch (error) {
             console.error('Error fetching settings:', error);
             setError('Failed to load settings');
             // setIsLoading(false);
-            addToast(__('Something went wrong . Please refresh the page.', 'wpab-cb'), 'error');
+            addToast(__('Something went wrong . Please refresh the page.', 'campaignbay'), 'error');
         }
     };
     // {
@@ -161,7 +161,7 @@ const Settings = () => {
             }
             console.log(data);
             const response = await apiFetch({
-                path: '/wpab-cb/v1/settings',
+                path: '/campaignbay/v1/settings',
                 method: 'POST',
                 data: {
                     ...settings,
@@ -170,12 +170,12 @@ const Settings = () => {
             });
             setSettings(response);
             setIsSaving();
-            addToast(__('Settings updated successfully', 'wpab-cb'), 'success');
+            addToast(__('Settings updated successfully', 'campaignbay'), 'success');
         } catch (error) {
             console.log(error);
             setError(error);
             setIsSaving(false);
-            addToast(__('Something went wrong. Please try again.', 'wpab-cb'), 'error');
+            addToast(__('Something went wrong. Please try again.', 'campaignbay'), 'error');
         }
     };
 
@@ -187,10 +187,10 @@ const Settings = () => {
         <div className="wpab-cb-page">
             <div className='wpab-cb-page-header'>
                 <div className='cb-container'>
-                    <h1 className='wpab-cb-page-header-text'> {__('CampaignBay Settings', 'wpab-cb')}</h1>
+                    <h1 className='wpab-cb-page-header-text'> {__('CampaignBay Settings', 'campaignbay')}</h1>
                     <button className='wpab-cb-btn wpab-cb-btn-primary' disabled={isSaving} onClick={updateSettings}>
                         <Icon icon={check} fill="currentColor" />
-                        {__('Save Settings', 'wpab-cb')}</button>
+                        {__('Save Settings', 'campaignbay')}</button>
                 </div>
             </div>
             {/* <div className="wpab-cb-settings-tabs-container"> */}
@@ -249,7 +249,7 @@ const Settings = () => {
                 <div className='cb-container '>
                     <button className="wpab-cb-btn wpab-cb-btn-primary" disabled={isSaving} onClick={updateSettings}>
                         <Icon icon={check} fill="currentColor" />
-                        {__('Save Changes', 'wpab-cb')}
+                        {__('Save Changes', 'campaignbay')}
                     </button>
                 </div>
             </div>

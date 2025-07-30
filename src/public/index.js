@@ -5,7 +5,7 @@ import { createRoot } from '@wordpress/element';
 
 domReady( () => {
 	const root = createRoot(
-		document.getElementById( 'wpab-cb' )
+		document.getElementById( 'campaignbay' )
 	);
 	root.render( <App /> );
 } );
