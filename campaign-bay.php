@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       CampaignBay
- * Plugin URI:        https://wpanchorbay.com/CampaignBay
+ * Plugin URI:        https://campaignbay.github.io
  * Description:       CampaignBay for WooCommerce Product Discount WordPress Plugin.
  * Requires at least: 5.8
  * Requires PHP:      7.0

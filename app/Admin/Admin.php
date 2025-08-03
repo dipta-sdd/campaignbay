@@ -76,6 +76,7 @@ class Admin {
 			'menu_slug'  => WPAB_CB_PLUGIN_NAME,
 			'icon_url'   => $white_label['menu_icon'],
 			'position'   => $white_label['position'],
+			'docs_uri' => $white_label['docs_uri'],
 		);
 
 		add_menu_page(
@@ -314,6 +315,11 @@ class Admin {
 					'sanitize_callback' => 'sanitize_text_field',
 					'default'           => 'You save {percentage_off}!',
 				),
+				'product_bogoMessageFormat'   => array(
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+					'default'           => '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!',
+				),
 				'product_enableQuantityTable' => array(
 					'type'    => 'boolean',
 					'default' => true,
@@ -473,6 +479,7 @@ class Admin {
 	 */
 	public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
 		$actions[] = '<a href="' . esc_url( menu_page_url( $this->menu_info['menu_slug'], false ) ) . '">' . esc_html__( 'Settings', 'campaignbay' ) . '</a>';
+		$actions[] = '<a href="' . esc_url( $this->menu_info['docs_uri'] ) . '" target="_blank">' . esc_html__( 'Documentation', 'campaignbay' ) . '</a>';
 		return $actions;
 	}
 }

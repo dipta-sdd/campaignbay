@@ -25,12 +25,22 @@ const   ProductSettings = ({ productSettings, setProductSettings }) => {
                 />
                 <Input
                     className='w-100'
-                    label={<span className="wpab-input-label">{__('Product Page Discount Message Format', 'campaignbay')}</span>}
+                    label={<span className="wpab-input-label">{__('Product Page Schedule or Early Bird Discount Message Format', 'campaignbay')}</span>}
                     help={__("Use Placeholder like {percentage_off}, {ampount_of} .", 'campaignbay')}
                     value={productSettings.product_messageFormat}
                     onChange={(value) => setProductSettings((prev) => ({
                         ...prev,
                         product_messageFormat: value
+                    }))}
+                />
+                <Input
+                    className='w-100'
+                    label={<span className="wpab-input-label">{__('Product Page BOGO Discount Message Format', 'campaignbay')}</span>}
+                    help={__("Use Placeholder like {campaign_name_strong}, {campaign_name}, {buy_product_quantity}, {buy_product}, {get_product_quantity}, {get_product} .", 'campaignbay')}
+                    value={productSettings.product_bogoMessageFormat}
+                    onChange={(value) => setProductSettings((prev) => ({
+                        ...prev,
+                        product_bogoMessageFormat: value
                     }))}
                 />
 

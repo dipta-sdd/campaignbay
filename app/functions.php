@@ -49,6 +49,7 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			==================================================*/
 			'product_showDiscountedPrice' => true,
 			'product_messageFormat'       => esc_html__( 'You save {percentage_off}!', 'campaignbay' ),
+			'product_bogoMessageFormat'   => esc_html__(  '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!', 'campaignbay' ),
 			'product_enableQuantityTable' => true,
 			'product_excludeSaleItems'    => true,
 			'product_priorityMethod'      => 'apply_highest',
@@ -61,6 +62,7 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			'cart_savedMessageFormat'     => esc_html__( 'You saved {saved_amount} on this order!', 'campaignbay' ),
 			'cart_showNextDiscountBar'    => true,
 			'cart_nextDiscountFormat'     => esc_html__( 'Spend {remaining_amount} more for {discount_percentage} off!', 'campaignbay' ),
+			'cart_bogoMessageFormat'      => esc_html__( 'Buy {buy_quantity} more and get {get_product_quantity} {get_product} for free!', 'campaignbay' ),
 			'cart_showDiscountBreakdown'  => true,
 
 			/*==================================================
@@ -234,7 +236,7 @@ if ( ! function_exists( 'wpab_cb_get_white_label' ) ) :
 				'author_name'      => 'WP Anchor Bay',
 				'author_uri'       => 'https://wpanchorbay.com',
 				'support_uri'      => 'https://wpanchorbay.com/support',
-				'docs_uri'         => 'https://wpanchorbay.com/docs',
+				'docs_uri'         => 'https://campaignbay.github.io/',
 				'menu_icon'        => 'dashicons-awards',
 				'position'         => 57,
 			)
@@ -270,15 +272,21 @@ if(! function_exists('wpab_cb_log')) {
 			wp_mkdir_p( $log_dir );
 		}
 		
-		$log_file = $log_dir . 'plugin-log-' . gmdate('Y-m-d') . '.log';
+		$log_file = $log_dir . 'plugin-log-' . date('Y-m-d') . '.log';
 
-		
+		$formatted_message = '';
+		if ( is_array( $message ) || is_object( $message ) ) {
+			$formatted_message = print_r( $message, true );
+		} else {
+			$formatted_message = $message;
+		}
 
+		$log_level = is_string($level) ? strtoupper($level) : (is_array($level) || is_object($level) ? print_r($level, true) : '');
 		$log_entry = sprintf(
 			"[%s] [%s]: %s\n",
-			gmdate('Y-m-d H:i:s'),
-			strtoupper( $level ),
-			$message
+			date('Y-m-d H:i:s'),
+			$log_level,
+			$formatted_message
 		);
 		file_put_contents( $log_file, $log_entry, FILE_APPEND | LOCK_EX );
 	}

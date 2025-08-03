@@ -17,10 +17,10 @@ const CartSettings = ({ cartSettings, setCartSettings }) => {
                     help="If checked, your campaign discounts can be combined with standard WooCommerce coupons."
                 />
                 <Checkbox
-                    checked={cartSettings.allowStackingWithOtherCampaigns}
+                    checked={cartSettings.cart_allowCampaignStacking}
                     onChange={() => setCartSettings(prev => ({
                         ...prev,
-                        allowStackingWithOtherCampaigns: !prev.allowStackingWithOtherCampaigns
+                        cart_allowCampaignStacking: !prev.cart_allowCampaignStacking
                     }))}
                     label="Allow Stacking with Other Discount Campaigns"
                     help="If checked, multiple active discount campaigns can apply to the same cart."

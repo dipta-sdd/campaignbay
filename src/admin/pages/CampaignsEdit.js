@@ -71,7 +71,6 @@ const CampaignsEdit = () => {
         fetchCategories();
         fetchProducts();
     }, [id]);
-    console.log(quantityTiers);
 
 
     const fetchCategories = async () => {
@@ -148,6 +147,8 @@ const CampaignsEdit = () => {
             timezone_string: timezone.offsetFormatted,
             campaign_tiers: campaignType === 'bogo' ? bogoTiers : campaignType === 'quantity' ? quantityTiers : campaignType === 'earlybird' ? ebTiers : [],
         }
+        console.log('campaignType ', campaignType);
+        console.log('bogoTiers ', bogoTiers);
         console.log(campaignData);
         if (!campaignData?.title) {
             setErrors({ title: 'Title is required' });

@@ -86,6 +86,7 @@ const Settings = () => {
         setProductSettings({
             product_showDiscountedPrice: settings.product_showDiscountedPrice,
             product_messageFormat: settings.product_messageFormat,
+            product_bogoMessageFormat: settings.product_bogoMessageFormat,
             product_enableQuantityTable: settings.product_enableQuantityTable,
             product_excludeSaleItems: settings.product_excludeSaleItems,
             product_priorityMethod: settings.product_priorityMethod,
@@ -159,7 +160,8 @@ const Settings = () => {
                     }
                     break;
             }
-            console.log(data);
+            // console.log(data);
+            console.log(cartSettings);
             const response = await apiFetch({
                 path: '/campaignbay/v1/settings',
                 method: 'POST',
@@ -178,7 +180,7 @@ const Settings = () => {
             addToast(__('Something went wrong. Please try again.', 'campaignbay'), 'error');
         }
     };
-
+    console.log(cartSettings);
     if (isLoading) {
         return <Loader />;
     }

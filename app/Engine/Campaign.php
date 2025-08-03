@@ -104,6 +104,19 @@ class Campaign {
 	 * @access private
 	 */
 	private function load_applicable_product_ids() {
+		if( 'bogo' === $this->get_meta( 'campaign_type' ) ){
+			$tiers = $this->get_meta( 'campaign_tiers' );
+			if( ! is_array( $tiers ) || empty( $tiers ) ){
+				return;
+			}
+			// $this->applicable_product_ids = $tiers[0]['buy_product'];
+			// loop through tiers and add the buy_product to the applicable_product_ids
+			foreach( $tiers as $tier ){
+				$this->applicable_product_ids[] = $tier['buy_product'];
+			}
+			$this->applicable_product_ids = $this->expand_variable_products( $this->applicable_product_ids );
+			return;
+		}
 		$target_type = $this->get_meta( 'target_type' );
 		$target_ids  = $this->get_meta( 'target_ids' );
 
@@ -297,7 +310,6 @@ class Campaign {
 				return $result;
 			}
 		}
-
 		$this->update_meta_from_args( $args );
 
 		return true;
@@ -406,7 +418,23 @@ class Campaign {
 		}
 
 		$sanitized_tier = array();
+		if( isset( $tier['buy_product'] ) ){
+			$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
+			$sanitized_tier['buy_product']   = isset( $tier['buy_product'] ) ? absint( $tier['buy_product'] ) : 0;
+			$sanitized_tier['get_product']   = isset( $tier['get_product'] ) ? absint( $tier['get_product'] ) : 0;
+			$sanitized_tier['buy_quantity']  = isset( $tier['buy_quantity'] ) ? absint( $tier['buy_quantity'] ) : 0;
+			$sanitized_tier['get_quantity']  = isset( $tier['get_quantity'] ) ? absint( $tier['get_quantity'] ) : 0;
 
+		return $sanitized_tier;
+		}
+		if( isset( $tier['quantity'] ) ){
+			$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
+			$sanitized_tier['quantity']  = isset( $tier['quantity'] ) ? absint( $tier['quantity'] ) : 0;
+			$sanitized_tier['value'] = isset( $tier['value'] ) ? floatval( $tier['value'] ) : 0;
+			$sanitized_tier['type']  = isset( $tier['type'] ) ? sanitize_key( $tier['type'] ) : 'percentage';
+			$sanitized_tier['total'] = isset( $tier['total'] ) ? floatval( $tier['total'] ) : 0;
+			return $sanitized_tier;
+		}
 		$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
 		$sanitized_tier['min']   = isset( $tier['min'] ) ? absint( $tier['min'] ) : 0;
 		$sanitized_tier['max']   = isset( $tier['max'] ) ? sanitize_text_field( $tier['max'] ) : ''; // Max can be empty or a number.

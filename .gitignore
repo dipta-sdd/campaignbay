@@ -4,3 +4,4 @@
 routing.json
 wp-cli.phar
 /.ignores
+package-lock.json
