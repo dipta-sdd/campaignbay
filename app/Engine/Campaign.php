@@ -179,7 +179,6 @@ class Campaign {
 		}
 		foreach ( $product_ids as $product_id ) {
 			$product = wc_get_product( $product_id );
-
 			if ( ! $product ) {
 				continue;
 			}
@@ -192,7 +191,7 @@ class Campaign {
 					if ( ! empty( $variation_ids ) ) {
 						$expanded_ids = array_merge( $expanded_ids, $variation_ids );
 				}
-			} 
+			}
 		}
 		// Ensure final list only has unique IDs.
 		return array_unique( array_map( 'absint', $expanded_ids ) );
@@ -216,11 +215,11 @@ class Campaign {
 	 * @return bool True if the campaign applies to the product, false otherwise.
 	 */
 	public function is_applicable_to_product( $product ) {
+		
 		$product_id = is_object( $product ) ? $product->get_id() : absint( $product );
 		if ( !is_numeric( $product_id ) ) {
 			return false;
 		}
-
 		if ( 'entire_store' === $this->get_meta( 'target_type' ) ) {
 			return true;
 		}

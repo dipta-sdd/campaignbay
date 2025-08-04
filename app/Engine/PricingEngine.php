@@ -112,6 +112,11 @@ class PricingEngine {
 		$this->add_action( 'woocommerce_single_product_summary', 'action_single_product_summary', 9, 0 );
 		// load the price html hook
 		$this->add_filter( 'woocommerce_get_price_html', 'display_discounted_price_html');
+		// load the price html hook
+		$this->add_filter( 'woocommerce_variable_price_html', 'display_variable_price_html', 10, 3);
+
+		$this->add_filter( 'woocommerce_variation_prices', 'filter_variation_prices',10,2);
+
 		// load the product is on sale hook
 		$this->add_filter( 'woocommerce_product_is_on_sale', 'filter_is_product_on_sale');
 
@@ -138,6 +143,101 @@ class PricingEngine {
 		$this->add_filter( 'woocommerce_cart_item_price', 'display_cart_item_price', 10, 3);
 		$this->add_filter( 'woocommerce_cart_item_subtotal', 'display_cart_item_subtotal', 10, 3);
 
+
+		// product variation single variation hooks
+		$this->add_filter( 'woocommerce_variation_prices_price', 'filter_variation_prices_price', 10, 3);
+		$this->add_filter( 'woocommerce_variation_prices_sale_price', 'filter_variation_prices_sale_price', 10, 3);
+
+
+	}
+
+	/**
+	 * Filter the variation prices price.
+	 * This is used to apply the simple price to the variation prices.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_variation_prices_price
+	 * @param float $price The original price.
+	 * @param WC_Product_Variation $variation The variation object.
+	 * @param WC_Product_Variable $product The product object.
+	 * @return float The modified price.
+	 */
+	public function filter_variation_prices_price( $price, $variation, $product ){
+		$discount_data = $this->get_or_calculate_product_discount( $variation );
+		if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['simple']['price'] ) ){
+			return $discount_data['discounts']['simple']['price'] < $price ? $discount_data['discounts']['simple']['price'] : $price;
+		}
+		return $price;
+	}
+	
+	/**
+	 * Filter the variation prices sale price.
+	 * This is used to apply the simple price to the variation prices.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_variation_prices_sale_price
+	 * @param float $price The original price.
+	 * @param WC_Product_Variation $variation The variation object.
+	 * @param WC_Product_Variable $product The product object.
+	 * @return float The modified price.
+	 */
+	public function filter_variation_prices_sale_price( $price, $variation, $product ){
+		$discount_data = $this->get_or_calculate_product_discount( $variation );
+		if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['simple']['price'] ) ){
+			return $discount_data['discounts']['simple']['price'] < $price ? $discount_data['discounts']['simple']['price'] : $price;
+		}
+		return $price;
+	}
+
+	/**
+	 * Filter the variable price html.
+	 * This is used to apply the simple price to the variable price html.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_variable_price_html
+	 * @param string $price_html The original price html.
+	 * @param WC_Product_Variable $product The product object.
+	 * @return string The modified price html.
+	 */
+	public function display_variable_price_html( $price_html, $product){
+
+		$prices = $product->get_variation_prices(true);
+		if ( empty( $prices['price'] ) ){
+			return $price_html;
+		}
+		$min_price     = current( $prices['price'] );
+		$max_price     = end( $prices['price'] );
+		$min_reg_price = current( $prices['regular_price'] );
+		$max_reg_price = end( $prices['regular_price'] );
+
+		$sale_price = $min_price !== $max_price ? wc_format_price_range( $min_price, $max_price ) : wc_price( $min_price );
+		$regular_price = $min_reg_price !== $max_reg_price ? wc_format_price_range( $min_reg_price, $max_reg_price ) : wc_price( $min_reg_price );
+		$price_html = wc_format_sale_price( $regular_price, $sale_price );
+		return $price_html;
+	}
+
+	// no need work is done by filter_variation_prices_price & filter_variation_prices_sale_price
+	/**
+	 * Test variation prices filter.
+	 * This is used to  the variation prices.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_variation_prices
+	 * @param array $prices The prices array.
+	 * @param WC_Product $product The product object.
+	 * @return array The modified prices array.
+	 */
+	public function filter_variation_prices( $prices, $product ){
+		foreach( $prices['price'] as $key => $price ){
+			$product_variation = wc_get_product( $key );
+			$discount_data = $this->get_or_calculate_product_discount( $product_variation );
+			if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['simple']['price']) && $discount_data['discounts']['simple']['price'] ){
+				$simple_price = $discount_data['discounts']['simple']['price'];
+				$prices['sale_price'][$key] = $simple_price;
+				$prices['price'][$key] = $simple_price < $prices['price'][$key] ? $simple_price : $prices['price'][$key];
+			}
+		}
+		return $prices;
 	}
 
 	/**
@@ -149,15 +249,15 @@ class PricingEngine {
 	 * @param array $cart_item The cart item data.
 	 * @return array The modified cart item data.
 	 */
-	public function add_to_cart_item_filter( $cart_item ){
-		wpab_cb_log('add_to_cart_item_filter', 'DEBUG' );
-		$allow_campaign_stacking = wpab_cb_get_options('cart_allowCampaignStacking');
-	}
+	// public function add_to_cart_item_filter( $cart_item ){
+	// 	$allow_campaign_stacking = wpab_cb_get_options('cart_allowCampaignStacking');
+	// }
 
 
 	/**
 	 * Cart after calculate totals filter.
 	 * This is used to calculate the total discount and apply it to the cart.
+	 * woocommerce_after_calculate_totals cannot do the job because it is calculated after that hook.
 	 *
 	 * @since 1.0.0
 	 * @hook woocommerce_after_calculate_totals
@@ -174,7 +274,6 @@ class PricingEngine {
         // Loop through the cart to find our "tagged" BOGO items and sum their value.
         foreach ( $cart->get_cart() as $cart_item ) {
             $bogo_free_quantity = (int) ( $cart_item['cb_bogo_free_quantity'] ?? 0 );
-			wpab_cb_log('bogo_free_quantity ' . $bogo_free_quantity, 'DEBUG' );
             if ( $bogo_free_quantity > 0 ) {
                 $product = $cart_item['data'];
                 // Use the item's current price (it might already have a simple/quantity discount).
@@ -196,7 +295,6 @@ class PricingEngine {
             }
         }
 
-		wpab_cb_log('bogo_discount_value ' . $bogo_discount_value, 'DEBUG' );
 
         // If we found a BOGO discount, adjust the cart totals.
         if ( $bogo_discount_value > 0 ) {
@@ -223,8 +321,6 @@ class PricingEngine {
 	 * @param WC_Cart $cart The cart object.
 	 */
 	public function apply_discounts_and_prepare_notices( $cart ) {
-		wpab_cb_log('apply_discounts_and_prepare_notices', 'DEBUG' );
-		// wpab_cb_log('cart ' . print_r($cart, true), 'DEBUG' );
 
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 			return;
@@ -257,8 +353,6 @@ class PricingEngine {
 			$quantity      = $cart_item['quantity'];
 			$discount_data = $this->get_or_calculate_product_discount( $product );
 
-			wpab_cb_log('product ' . $product->get_title(), 'DEBUG' );
-			// wpab_cb_log('discount_data ' . print_r($discount_data, true), 'DEBUG' );
 			// If the product is not on a campaign, skip it.
 			if ( ! $discount_data['on_campaign'] ) {
 				continue;
@@ -375,7 +469,6 @@ class PricingEngine {
 				$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_old_price'] += (float) $base_price * (float) $quantity;
 				$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_new_price'] += (float) $quantity_price * (float) $quantity;
 			}
-
 			// Check if this specific item triggers a BOGO offer.
 			if(
 				$discount_data['discounts']['bogo'] &&
@@ -385,10 +478,8 @@ class PricingEngine {
 					$this->is_better_campaign( $quantity_price, $discount_data['discounts']['bogo']['price'] )
 				)
 			){
-				// wpab_cb_log('bogo campaign', 'DEBUG' );
 				$bogo_tier = $discount_data['discounts']['bogo']['bogo_tier'] ?? null;
 				if($bogo_tier && $bogo_tier['buy_quantity'] > 0 && $bogo_tier['buy_quantity'] <= $quantity ){
-					// wpab_cb_log( 'quantity ' . $quantity . ' buy quantity ' . $bogo_tier['buy_quantity'] , 'DEBUG' );
 					$free_product_id = $bogo_tier['get_product'] ?? null;
 
 					$fulfil_counts = floor($quantity / $bogo_tier['buy_quantity']);
@@ -421,12 +512,20 @@ class PricingEngine {
 					
 				}
 			}	
-			// wpab_cb_log('cart_item ' . print_r($cart->cart_contents[ $cart_item_key ]['cb_discount_data'], true), 'DEBUG' );
 			
 		}
 
 
 		//  lopp for marking free product quantity in cart item
+		if(empty($cart->wpab_cb_bogo_free_products)){
+			return;
+		}
+		$this->apply_bogo_logic($cart);
+		
+
+	}
+
+	private function apply_bogo_logic($cart){
 		foreach( $cart->cart_contents as $cart_item_key => $cart_item ){
 			$product_id = $cart_item['data']->get_id();
 			if( isset( $cart->wpab_cb_bogo_free_products[$product_id] ) ){
@@ -435,9 +534,7 @@ class PricingEngine {
 				$cart->cart_contents[ $cart_item_key ]['cb_bogo_free_quantity'] = 0;
 			}
 		}
-
 	}
-
 
 
 
@@ -501,33 +598,34 @@ class PricingEngine {
 	 * @return string The modified price HTML.
 	 */
 	public function display_discounted_price_html( $price_html, $product ) {
+		
+		// If the product is a variation, use the parent product's price as the regular price.
+		if ( $product->is_type( 'variable' ) ) {
+			return $price_html;
+		}
 		// Get the discount data for the product.
 		$discount_data = $this->get_or_calculate_product_discount( $product );
 		// Get the regular price.
 		$regular_price = (float) $product->get_regular_price( 'edit' );
 		// If the campaign is active and provides the best price, return the formatted price.
 		if ( $discount_data['on_campaign'] && isset( $discount_data['discounts']['best_price'] ) && $discount_data['discounts']['best_price'] < $regular_price ) {
-			wpab_cb_log('product ' . $product->get_name(), 'DEBUG' );
-			wpab_cb_log('best price ' . $discount_data['discounts']['best_price'] . ' regular price ' . $regular_price, 'DEBUG' );
 			// If the option to show the discounted price is enabled, return the formatted price.
 			if( wpab_cb_get_options('product_showDiscountedPrice') && isset( $discount_data['discounts']['best_price'] ) ){
 			
 				$sale_price    = (float) $discount_data['discounts']['best_price'];
 			
 				// Format the price using WooCommerce's standard sale price function.
-				return wc_format_sale_price(
+				$price_html = wc_format_sale_price(
 					wc_price( $regular_price ),
 					wc_price( $sale_price )
 				);
 
 			} else{
-				
 				// If the option to show the discounted price is disabled, return the sale price.
-				return wc_price( $discount_data['discounts']['best_price'] );
+				$price_html = wc_price( $discount_data['discounts']['best_price'] );
 			}
 			
 		}
-
 		// If no discounts are active, return the original price HTML.
 		return $price_html;
 	}
@@ -799,12 +897,10 @@ class PricingEngine {
 				'discounts'  => array(),
 			);
 		}
-		// wpab_cb_log('product ' . $product->get_title() , 'DEBUG' );
 		// Get the product ID.
 		$product_id = $product->get_id();
 		// If the option to exclude sale items is enabled and the product is on sale, return the sale price.
 		if( wpab_cb_get_options('product_excludeSaleItems') && $product->is_on_sale('edit') ) {
-			// wpab_cb_log('product is on sale', 'DEBUG' );
 			return array(
 				'base_price' => (float) $product->get_sale_price('edit'),
 				'on_sale'   => true,
@@ -816,7 +912,6 @@ class PricingEngine {
 		// Check the request-level cache first to avoid recalculating the discount for the same product.
 		if ( isset( $this->product_discount_cache[ $product_id ] ) ) {
 			// Log the cache hit.
-			// wpab_cb_log('Cache hit for product: ' . $product->get_title(), 'DEBUG');
 			return $this->product_discount_cache[ $product_id ];
 		}
 
@@ -824,8 +919,8 @@ class PricingEngine {
 		$campaign_manager = CampaignManager::get_instance();
 		// Get all active campaigns.
 		$active_campaigns = $campaign_manager->get_active_campaigns();
-		// Get the base price of the product.
-		$base_price       = (float) $product->get_price('edit');
+
+		$base_price = (float) $product->get_price('edit');
 		// Initialize the discount data array.
 		$discount_data = array(
 			'base_price' => $base_price,
@@ -850,7 +945,6 @@ class PricingEngine {
 			if( ! $campaign->is_applicable_to_product( $product_id ) ) {
 				continue;
 			}
-
 			// Get the campaign type.
 			$campaign_type = $campaign->get_meta( 'campaign_type' );
 			// Initialize the discounted price.
@@ -890,14 +984,18 @@ class PricingEngine {
 			} 
 			elseif( 'bogo' === $campaign_type ){
 				$tiers = $campaign->get_meta('campaign_tiers');
-				$bogo_tier = $this->get_bogo_tier( $tiers, $product_id );
+				$parent_product_id = null;
+				if($product->is_type('variation')){
+					$parent_product_id = $product->get_parent_id();
+				}
+				$bogo_tier = $this->get_bogo_tier( $tiers, $product_id, $parent_product_id );
 				if( ! $bogo_tier ){
 					continue;
 				}
 				$get_product_id = $bogo_tier['get_product'];
 				$get_product = wc_get_product( $get_product_id );
 				if( ! $get_product ){
-					wpab_cb_log('get_product not found for product: ' . $get_product_id, 'ERROR' );
+					wpab_cb_log('get_product not fund for product: ' . $get_product_id, 'ERROR' );
 					continue;
 				}
 
@@ -994,15 +1092,24 @@ class PricingEngine {
 	 * @param float     $base_price The base price of the product.
 	 * @return float The calculated price.
 	 */
-	private function get_bogo_tier( $tiers, $product_id ) {
+	private function get_bogo_tier( $tiers, $product_id, $parent_product_id ) {
 		if( ! is_array( $tiers ) || empty( $tiers ) ){
 			return null;
 		}
-		foreach( $tiers as $tier ){
-			if( $tier['buy_product'] === $product_id ){
-				return $tier;
+		if( $parent_product_id ){
+			foreach( $tiers as $tier ){
+				if( $tier['buy_product'] === $product_id || $tier['buy_product'] === $parent_product_id ){
+					return $tier;
+				}
+			}
+		}else {
+			foreach( $tiers as $tier ){
+				if( $tier['buy_product'] === $product_id ){
+					return $tier;
+				}
 			}
 		}
+	
 		return null;
 	}
 
