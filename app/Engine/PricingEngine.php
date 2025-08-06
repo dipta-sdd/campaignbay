@@ -280,6 +280,32 @@ class PricingEngine {
             return;
         }
 
+		// wpab_cb_log('cart_after_calculate_totals',print_r($cart, true), 'DEBUG' );
+		if( wpab_cb_get_options('cart_showDiscountBreakdown') ){
+			$discount_breakdown = $cart->wpab_cb_discount_breakdown ?? array();
+			wpab_cb_log('discount_breakdown enabled', 'DEBUG' );
+			foreach( $discount_breakdown as $campaign_id => $campaign_data ){
+				$total_old_price = $campaign_data['total_old_price'];
+				$total_new_price = $campaign_data['total_new_price'];
+				$discount_value = $total_old_price - $total_new_price;
+
+				$current_subtotal = $cart->get_subtotal();
+				$current_total = $cart->get_total('edit');
+				$cart->set_subtotal( $current_subtotal + $discount_value, true );
+				$cart->set_total( $current_total + $discount_value, true );
+
+				if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
+					wpab_cb_log('campaign: ' . $campaign_id . '  ' . $campaign_data['title'] , 'DEBUG' );
+					wpab_cb_log('discount: ' . $discount_value, 'DEBUG' );
+					wpab_cb_log('current_total: ' . $current_total, 'DEBUG' );
+					wpab_cb_log('current_subtotal: ' . $current_subtotal, 'DEBUG' );
+					wpab_cb_log('new_total: ' . $cart->get_total('edit'), 'DEBUG' );
+					wpab_cb_log('new_subtotal: ' . $cart->get_subtotal(), 'DEBUG' );
+				}
+				
+			}
+		}
+
         $bogo_discount_value = 0;
         $bogo_discount_tax   = 0;
 		
@@ -319,6 +345,8 @@ class PricingEngine {
 			$cart->set_total( (int)($current_total - $bogo_discount_value ));
             $cart->set_subtotal_tax( (int)($current_tax_total - $bogo_discount_tax) );
         }
+
+		
 	}
 
 
@@ -346,7 +374,6 @@ class PricingEngine {
 		
 
 		$allow_campaign_stacking = wpab_cb_get_options('cart_allowCampaignStacking');
-		wpab_cb_log('cart', $cart, 'DEBUG' );
 		
 
 
@@ -382,8 +409,7 @@ class PricingEngine {
 			if( isset( $discount_data['discounts']['simple'] ) ){
 				$simple_price = $discount_data['discounts']['simple']['price'] ?? $base_price;
 				// If the campaign stacking is allowed, use the simple price as the base price.
-				$base_price = $allow_campaign_stacking ? $simple_price : $base_price;
-				$best_price = $simple_price;
+				$base_price = $simple_price;
 				$cart_item['data']->set_price( $simple_price );
 			}
 			
@@ -451,14 +477,10 @@ class PricingEngine {
 				}
 			}
 
-			if ( $quantity_price && $quantity_price < $best_price ) {
+			if ( $quantity_price && $quantity_price < $base_price ) {
 
-				// If the discount breakdown is shown, the discount will be applied to the cart total.
-				// So we don't need to set the price of the product to the final price.
-				if( ! wpab_cb_get_options('cart_showDiscountBreakdown') ){
-					$cart_item['data']->set_price( $quantity_price );
-				}
-
+			
+				$cart_item['data']->set_price( $quantity_price );
 				$campaign_id = $discount_data['discounts']['quantity']['campaign_id'];
 
 				// storing the discount data in the cart item array for other actions and filters.
@@ -540,7 +562,18 @@ class PricingEngine {
 					}
 					
 				}
-			}	
+			}
+			
+			if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
+				wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+				wpab_cb_log('cart_item_key: ' . $cart_item_key . ' ' . $product->get_name() . ' ' . $product->get_id(), 'DEBUG' );
+				wpab_cb_log('quantity: ' . $quantity, 'DEBUG' );
+				wpab_cb_log('regular_price: ' . $product->get_regular_price(), 'DEBUG' );
+				wpab_cb_log('campaign_price: ' . $base_price, 'DEBUG' );
+				wpab_cb_log('price: ' . $product->get_price(), 'DEBUG' );
+				wpab_cb_log('quantity_price: ' . $quantity_price, 'DEBUG' );
+				wpab_cb_log('campaign_id: ' . $campaign_id, 'DEBUG' );
+			}
 			
 		}
 
@@ -548,7 +581,9 @@ class PricingEngine {
 
 		
 		$this->apply_bogo_logic($cart, $triggered_bogo_offers);
-		wpab_cb_log('triggered_bogo_offers', $triggered_bogo_offers, 'DEBUG' );
+		// if($triggered_bogo_offers){
+		// 	wpab_cb_log('triggered_bogo_offers', $triggered_bogo_offers, 'DEBUG' );
+		// }
 
 	}
 
@@ -610,7 +645,7 @@ class PricingEngine {
 		$product = wc_get_product($product_id);
 		$regular_price = $product->get_regular_price();
 		if( ! $product || $product->is_type('variable') || $product->is_type('variation') || $product->is_type('grouped') || ! $product->is_purchasable() ){
-			wpab_cb_log('Invalid product type: ' . gettype( $product ), 'ERROR' );
+			wpab_cb_log('Invalid product type . cannot add bogo free product to cart: ' . gettype( $product ), 'ERROR' );
 			return null;
 		}
 
@@ -636,7 +671,7 @@ class PricingEngine {
 			),
 		);
 		if( $quantity < 1 ){
-			wpab_cb_log('removing bogo item ()' . $cart_id, 'DEBUG' );
+			wpab_cb_log('removing bogo item (quantity is less than 1) ' . $cart_id . ' ' . $product_data->get_name(), 'DEBUG' );
 			unset($cart->cart_contents[$cart_id]);
 			return null;
 		}
@@ -654,7 +689,7 @@ class PricingEngine {
 			)
 		);
 
-
+		wpab_cb_log('added bogo free product to cart: ' . $cart_id . ' ' . $product_data->get_name(), 'DEBUG' );
 		return $cart_id;
 		
 	}
@@ -1162,6 +1197,35 @@ class PricingEngine {
 
 		// Store the final, structured result in the cache for this page load.
 		$this->product_discount_cache[ $product_id ] = $discount_data;
+		if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
+			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
+			wpab_cb_log('base_price: ' . $base_price, 'DEBUG' );
+			wpab_cb_log('best_price: ' . $best_price, 'DEBUG' );
+			wpab_cb_log('on_sale: ' . $discount_data['on_sale'], 'DEBUG' );
+			wpab_cb_log('on_campaign: ' . $discount_data['on_campaign'], 'DEBUG' );
+			if( $discount_data['discounts']['simple']['price'] ){
+				$simple = $discount_data['discounts']['simple'];
+				wpab_cb_log('	simple_price: ' . $simple['price'], 'DEBUG' );
+				wpab_cb_log('	simple_campaign_id: ' . $simple['campaign_id'], 'DEBUG' );
+				wpab_cb_log('	simple_campaign_type: ' . $simple['campaign_type'], 'DEBUG' );
+				wpab_cb_log('	simple_campaign_title: ' . $simple['campaign_title'], 'DEBUG' );
+			}
+			if( $discount_data['discounts']['bogo']['price'] ){
+				$bogo = $discount_data['discounts']['bogo'];
+				wpab_cb_log('	bogo_price: ' . $bogo['price'], 'DEBUG' );
+				wpab_cb_log('	bogo_campaign_id: ' . $bogo['campaign_id'], 'DEBUG' );
+				wpab_cb_log('	bogo_campaign_type: ' . $bogo['campaign_type'], 'DEBUG' );
+				wpab_cb_log('	bogo_campaign_title: ' . $bogo['campaign_title'], 'DEBUG' );
+			}
+			if( $discount_data['discounts']['quantity']['price'] ){
+				$quantity = $discount_data['discounts']['quantity'];
+				wpab_cb_log('	quantity_price: ' . $quantity['price'], 'DEBUG' );
+				wpab_cb_log('	quantity_campaign_id: ' . $quantity['campaign_id'], 'DEBUG' );
+				wpab_cb_log('	quantity_campaign_type: ' . $quantity['campaign_type'], 'DEBUG' );
+				wpab_cb_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
+			}
+		}
 		return $discount_data;
 	}
 

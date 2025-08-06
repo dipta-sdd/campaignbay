@@ -3,14 +3,50 @@ import SettingCard from "./SettingCard";
 import Input from "./Input";
 import Select from "./Select";
 import { __ } from '@wordpress/i18n';
-// import { useI18n } from '@wordpress/react-i18n';
+import { useState } from '@wordpress/element';
 
 import Toggle from "./Toggle";
 import { Eye, Save, Trash2 } from "lucide-react";
 import { Icon, seen, trash } from "@wordpress/icons";
+import LogViewerModal from "./LogViewerModal";
+import { useToast } from "../store/toast/use-toast";
+import apiFetch from "@wordpress/api-fetch";
 
 const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
+    const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+    const [isClearingLogs, setIsClearingLogs] = useState(false);
+    const { addToast } = useToast();
+    const openLogViewer = () => {
+        setIsLogModalOpen(true);
+    };
 
+
+    const handleClearLogs = async () => {
+        
+
+        setIsClearingLogs(true);
+        let wasSuccessful = false;
+
+        try {
+            // 2. Make the DELETE request to our endpoint.
+            const response = await apiFetch({
+                path: '/campaignbay/v1/logs',
+                method: 'DELETE',
+            });
+            
+            // 3. Display a success notice.
+            addToast(__('Log files cleared successfully.', 'campaignbay'), 'success');
+            wasSuccessful = true;
+        } catch (error) {
+            // 4. Display an error notice if something goes wrong.
+            const errorMessage = error.message || 'An unknown error occurred.';
+            addToast(__('Error clearing logs: ', 'campaignbay') + errorMessage, 'error');
+            console.error('Clear logs error:', error);
+            wasSuccessful = false;
+        }
+        setIsClearingLogs(false);
+        return wasSuccessful;
+    };
 
     return (
         <div className="wpab-cb-settings-tab">
@@ -103,17 +139,22 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
                     }))}
                 />
                 <div className="wpab-cb-btn-con-bottom">
-                    <button className="wpab-cb-btn wpab-cb-btn-outline-primary">
+                    <button className="wpab-cb-btn wpab-cb-btn-outline-primary" onClick={openLogViewer} handleClearLogs={handleClearLogs} isClearingLogs={isClearingLogs}>
                         <Icon icon={seen} fill="currentColor" />
                         {__('View Logs', 'campaignbay')}
                     </button>
-                    <button className="wpab-cb-btn wpab-cb-btn-outline-danger">
+                    <button className="wpab-cb-btn wpab-cb-btn-outline-danger" onClick={handleClearLogs} disabled={isClearingLogs}>
                         <Icon icon={trash} fill="currentColor" />
                         {__('Clear Log Files', 'campaignbay')}
                     </button>
                 </div>
             </SettingCard>
-
+            <LogViewerModal
+                isLogModalOpen={isLogModalOpen}
+                setIsLogModalOpen={setIsLogModalOpen}
+                handleClearLogs={handleClearLogs}
+                isClearingLogs={isClearingLogs}
+            />
         </div>
     );
 };

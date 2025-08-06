@@ -18,13 +18,13 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}📦 Starting the '${PLUGIN_SLUG}' plugin build process...${NC}"
 
 # 1. Ask for the version number
-read -p "Enter the version number for the plugin zip (e.g., 1.0.0): " VERSION
+# read -p "Enter the version number for the plugin zip (e.g., 1.0.0): " VERSION
 
 # Check if version number is provided
-if [ -z "$VERSION" ]; then
-    echo -e "${RED}❌ Version number cannot be empty. Aborting.${NC}"
-    exit 1
-fi
+# if [ -z "$VERSION" ]; then
+#     echo -e "${RED}❌ Version number cannot be empty. Aborting.${NC}"
+#     exit 1
+# fi
 
 echo -e "\n${YELLOW}⚙️  Step 1: Running the production build command...${NC}"
 echo "    (This will compile your React assets for production)"
@@ -41,7 +41,8 @@ fi
 echo -e "${GREEN}✅ Build complete.${NC}"
 
 # 3. Define the name of the final zip file.
-ZIP_FILE="${PLUGIN_SLUG}-${VERSION}.zip"
+# ZIP_FILE="${PLUGIN_SLUG}-${VERSION}.zip"
+ZIP_FILE="${PLUGIN_SLUG}.zip"
 
 echo -e "\n${YELLOW}🔍 Step 2: Previewing the file structure to be zipped...${NC}"
 
@@ -59,7 +60,9 @@ EXCLUDE_PATTERNS=(
     "package.json"
     "package-lock.json"
     "webpack.config.js"
-    ".DS_Store"
+    ".DS_Store",
+    "all_php_code.txt",
+    "collector.js",
 )
 
 # 5. Check if the 'tree' command is available.

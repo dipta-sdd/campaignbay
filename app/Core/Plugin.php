@@ -15,6 +15,7 @@ use WpabCb\Data\PostTypes;
 use WpabCb\Data\DbManager;
 use WpabCb\Api\SettingsController;
 use WpabCb\Api\CampaignsController;
+use WpabCb\Api\LogsController;
 
 /**
  * The core plugin class.
@@ -107,6 +108,8 @@ class Plugin {
 		SettingsController::get_instance()->run();
 
 		CampaignsController::get_instance()->run();
+
+		LogsController::get_instance()->run();
 
 		// Get instances of components that have hooks
 		$campaign_manager = CampaignManager::get_instance();
