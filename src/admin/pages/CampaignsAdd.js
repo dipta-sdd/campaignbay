@@ -192,7 +192,7 @@ const CampaignsAdd = () => {
                 </div>
 
                 <div className="cb-form-input-con">
-                    <label htmlFor="campaign-type">{__('SELECT DISCOUNT TYPE', 'campaignbay')}   <Required /></label>
+                    <label htmlFor="campaign-type">{__('SELECT STATUS', 'campaignbay')}   <Required /></label>
                     <select type="text" id="campaign-type" className={`wpab-input w-100 ${errors?.campaign_type ? 'wpab-input-error' : ''}`} value={campaignType} onChange={(e) => handleCampaignTypeChange(e.target.value)}>
                         <option value="scheduled">{__('Scheduled Discount', 'campaignbay')}</option>
                         <option value="quantity">{__('Quantity Based Discount', 'campaignbay')}</option>
