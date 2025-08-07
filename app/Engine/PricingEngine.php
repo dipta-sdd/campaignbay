@@ -138,30 +138,23 @@ class PricingEngine {
 		$this->add_filter( 'woocommerce_variation_prices_price', 'filter_variation_prices_price', 10, 3);
 		$this->add_filter( 'woocommerce_variation_prices_sale_price', 'filter_variation_prices_sale_price', 10, 3);
 
-		// remove cart item action hook 
-		// remove bogo free product from cart
-		$this->add_action( 'woocommerce_remove_cart_item', 'remove_bogo_free_product_from_cart', 10, 2);
-		$this->add_action( 'woocommerce_order_details_before_order_table_items', 'order_details_before_order_table_items', 10, 1);
-
+		$this->add_action( 'woocommerce_checkout_create_order', 'save_discount_breakdown_to_order_meta', 10, 2 );
 
 	}
 
-	public function order_details_before_order_table_items( $order ){
-		wpab_cb_log('order', $order, 'DEBUG' );
-	}
 
-	public function remove_bogo_free_product_from_cart( $cart_item_key, $cart ){
-		if( ! isset( $cart->cart_contents[$cart_item_key]['cb_discount_data']['bogo_free_cart_id'] ) ){
-			return;
-		}
-		$free_bogo_product_to_remove = $cart->cart_contents[$cart_item_key]['cb_discount_data']['bogo_free_cart_id'];
-		if( ! isset( $cart->cart_contents[$free_bogo_product_to_remove] ) ){
-			return;
-		}
-		if( isset( $cart->cart_contents[$free_bogo_product_to_remove] ) ){
-			unset( $cart->cart_contents[$free_bogo_product_to_remove] );
-		}
-	}
+	public function save_discount_breakdown_to_order_meta( $order, $data ) {
+        // The cart object is available globally via WC()->cart at this point.
+        if ( WC()->cart && ! empty( WC()->cart->wpab_cb_discount_breakdown ) ) {
+            // Get the breakdown array we created in the previous hook.
+            $breakdown = WC()->cart->wpab_cb_discount_breakdown;
+
+            // Save the entire breakdown array to a single meta key on the order.
+            // The preceding underscore `_` makes it a hidden meta field by default.
+            $order->update_meta_data( '_wpab_cb_discount_breakdown', $breakdown );
+        }
+    }
+
 
 	/**
 	 * Filter the variation prices price.
@@ -279,11 +272,9 @@ class PricingEngine {
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
             return;
         }
-
-		// wpab_cb_log('cart_after_calculate_totals',print_r($cart, true), 'DEBUG' );
 		if( wpab_cb_get_options('cart_showDiscountBreakdown') ){
 			$discount_breakdown = $cart->wpab_cb_discount_breakdown ?? array();
-			wpab_cb_log('discount_breakdown enabled', 'DEBUG' );
+			//wpab_cb_log('discount_breakdown enabled', 'DEBUG' );
 			foreach( $discount_breakdown as $campaign_id => $campaign_data ){
 				$total_old_price = $campaign_data['total_old_price'];
 				$total_new_price = $campaign_data['total_new_price'];
@@ -295,58 +286,16 @@ class PricingEngine {
 				$cart->set_total( $current_total + $discount_value, true );
 
 				if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
-					wpab_cb_log('campaign: ' . $campaign_id . '  ' . $campaign_data['title'] , 'DEBUG' );
-					wpab_cb_log('discount: ' . $discount_value, 'DEBUG' );
-					wpab_cb_log('current_total: ' . $current_total, 'DEBUG' );
-					wpab_cb_log('current_subtotal: ' . $current_subtotal, 'DEBUG' );
-					wpab_cb_log('new_total: ' . $cart->get_total('edit'), 'DEBUG' );
-					wpab_cb_log('new_subtotal: ' . $cart->get_subtotal(), 'DEBUG' );
+					//wpab_cb_log('campaign: ' . $campaign_id . '  ' . $campaign_data['title'] , 'DEBUG' );
+					//wpab_cb_log('discount: ' . $discount_value, 'DEBUG' );
+					//wpab_cb_log('current_total: ' . $current_total, 'DEBUG' );
+					//wpab_cb_log('current_subtotal: ' . $current_subtotal, 'DEBUG' );
+					//wpab_cb_log('new_total: ' . $cart->get_total('edit'), 'DEBUG' );
+					//wpab_cb_log('new_subtotal: ' . $cart->get_subtotal(), 'DEBUG' );
 				}
 				
 			}
 		}
-
-        $bogo_discount_value = 0;
-        $bogo_discount_tax   = 0;
-		
-        // Loop through the cart to find our "tagged" BOGO items and sum their value.
-        foreach ( $cart->get_cart() as $cart_item ) {
-            $bogo_free_quantity = $this->total_bogo_free_quantity($cart_item['cb_bogo_free_quantity']) ?? 0;
-            if ( $bogo_free_quantity > 0 ) {
-                $product = $cart_item['data'];
-                // Use the item's current price (it might already have a simple/quantity discount).
-                $price_per_item = (float) $product->get_price();
-				if( isset( $cart_item['cb_discount_data']['new_price'] ) && $cart_item['cb_discount_data']['new_price']  ){
-					$price_per_item = (float) $cart_item['cb_discount_data']['new_price'];
-				}
-                $quantity = (int) $cart_item['quantity'];
-                // Calculate the value of the free items for this line.
-                $line_discount = $price_per_item * min( $bogo_free_quantity , $quantity);
-                $bogo_discount_value += $line_discount;
-                
-                // Calculate the tax that needs to be removed as well.
-                $line_taxes = $cart_item['line_tax_data']['subtotal'] ?? array();
-                if ( ! empty( $line_taxes ) ) {
-                    $tax_per_item = array_sum( $line_taxes ) / $cart_item['quantity'];
-                    $bogo_discount_tax += $tax_per_item * $bogo_free_quantity;
-                }
-            }
-        }
-
-
-        // If we found a BOGO discount, adjust the cart totals.
-        if ( $bogo_discount_value > 0 ) {
-            // Get the current totals.
-            $current_subtotal = $cart->get_subtotal();
-            $current_tax_total = $cart->get_subtotal_tax();
-			$current_total = $cart->get_total('edit');
-
-            $cart->set_subtotal( (int)($current_subtotal - $bogo_discount_value ));
-			$cart->set_total( (int)($current_total - $bogo_discount_value ));
-            $cart->set_subtotal_tax( (int)($current_tax_total - $bogo_discount_tax) );
-        }
-
-		
 	}
 
 
@@ -361,35 +310,13 @@ class PricingEngine {
 	 * @param WC_Cart $cart The cart object.
 	 */
 	public function apply_discounts_and_prepare_notices( $cart ) {
-
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 			return;
 		}
-
-		// Initialize the discount breakdown array.
-		// This is used to store the discount breakdown for each campaign.
 		$cart->wpab_cb_discount_breakdown = array();
-		$cart->wpab_cb_hidden_discount = 0;
-		$triggered_bogo_offers = array();
-		
-
 		$allow_campaign_stacking = wpab_cb_get_options('cart_allowCampaignStacking');
 		
-
-
 		foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
-			// wpab_cb_log('cart_item', $cart_item, 'DEBUG' );
-			if( isset( $cart_item['cb_discount_data']['is_free_product'] ) && $cart_item['cb_discount_data']['is_free_product'] ){
-				continue;
-			}
-
-			// Initialize our custom notice key for this item.
-			$cart->cart_contents[ $cart_item_key ]['cb_discount_data'] = array(
-				'message' => null,
-				'old_price' => null,
-				'new_price' => null,
-				'bogo_free_quantity' => null,
-			);
 			// Get the product, quantity and discount data.
 			$product       = $cart_item['data'];
 			$quantity      = $cart_item['quantity'];
@@ -397,19 +324,25 @@ class PricingEngine {
 
 			// If the product is not on a campaign, skip it.
 			if ( ! $discount_data['on_campaign'] ) {
+				unset( $cart->cart_contents[ $cart_item_key ]['cb_discount_data'] );
 				continue;
 			}
+			// Initialize our custom notice key for this item.
+			$cart->cart_contents[ $cart_item_key ]['cb_discount_data'] = array(
+				'message' => null,
+				'old_price' => $product->get_regular_price(),
+				'new_price' => null
+			);
 
 			// Price Calculation Logic
 			// Get the base price and the best price for the product.
 			$base_price = $discount_data['base_price'];
-			$best_price = $base_price;
 
 
-			if( isset( $discount_data['discounts']['simple'] ) ){
+			if( isset( $discount_data['discounts']['simple'] ) && $discount_data['discounts']['simple']['is_applied'] ){
 				$simple_price = $discount_data['discounts']['simple']['price'] ?? $base_price;
 				// If the campaign stacking is allowed, use the simple price as the base price.
-				$base_price = $simple_price;
+				$base_price = $allow_campaign_stacking ? $simple_price : $base_price;
 				$cart_item['data']->set_price( $simple_price );
 			}
 			
@@ -488,9 +421,6 @@ class PricingEngine {
 				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['new_price'] = $quantity_price;
 				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['quantity'] = $quantity;
 				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['on_campaign'] = true;
-				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['campaign_type'] = 'quantity';
-				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['campaign_id'] = $campaign_id;
-				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['campaign_title'] = $discount_data['discounts']['quantity']['campaign_title'];
 
 				// Initialize the discount breakdown array if it doesn't exist.
 				if ( ! isset( $cart->wpab_cb_discount_breakdown[ $campaign_id ] ) ) {
@@ -504,195 +434,52 @@ class PricingEngine {
 				// Add the discount to the discount breakdown array.
 				$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_old_price'] += (float) $base_price * (float) $quantity;
 				$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_new_price'] += (float) $quantity_price * (float) $quantity;
-			}
-			// Check if this specific item triggers a BOGO offer.
-			if(
-				$discount_data['discounts']['bogo'] &&
-				(
-					$allow_campaign_stacking ||
-					! $quantity_price ||
-					$this->is_better_campaign( $quantity_price, $discount_data['discounts']['bogo']['price'] )
-				)
-			){
-				$bogo_tier = $discount_data['discounts']['bogo']['bogo_tier'] ?? null;
-				$free_product_id = $bogo_tier['get_product'] ?? null;
-				$campaign_id = $discount_data['discounts']['bogo']['campaign_id'] ?? null;
-				if( ! $free_product_id || ! $bogo_tier || ! $bogo_tier['buy_quantity'] || ! $campaign_id ){
-					continue;
-				}
-				if($bogo_tier && $bogo_tier['buy_quantity'] > 0 && $bogo_tier['buy_quantity'] <= $quantity ){
 
-					$fulfil_counts = floor($quantity / $bogo_tier['buy_quantity']);
-					$cart_id = $this->add_bogo_free_product_to_cart($cart, $free_product_id, $fulfil_counts, $product, $campaign_id);
-					$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['bogo_free_cart_id'] = $cart_id;
-					if( !$cart_id ){
-						$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['bogo_free_cart_id'] = null;
-						if(isset($triggered_bogo_offers[$free_product_id] )){
-							if(isset($triggered_bogo_offers[$free_product_id][$campaign_id])){
-								$triggered_bogo_offers[$free_product_id][$campaign_id] += $fulfil_counts;
-							} else{
-								$triggered_bogo_offers[$free_product_id][$campaign_id] = $fulfil_counts;
-							}
-						} else{
-							$triggered_bogo_offers[$free_product_id] = array(
-								$campaign_id => $fulfil_counts,
-							);
-						}
-						if( ! $allow_campaign_stacking ){
-							$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['message'] = null;
-						}
-					}
-				}else{
-					$bogo_needed_quantity = (int) $bogo_tier['buy_quantity'] - (int) $quantity;
-					wpab_cb_log('removing bogo item', 'DEBUG' );
-					$cart_id = $this->add_bogo_free_product_to_cart($cart, $free_product_id, 0, $product, $campaign_id);
-					$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['bogo_free_cart_id'] = null;
-					if( ! $needed_quantity || $bogo_needed_quantity < $needed_quantity ){
-						$format = wpab_cb_get_options( 'cart_bogoMessageFormat' ) ?? 'Buy {buy_quantity} more and get {get_product_quantity} {get_product} for free!';
-						
-						$get_product = '<a href="' . esc_url( $bogo_tier['get_link'] ) . '"><strong>' . esc_html( $bogo_tier['get_product_title'] ) . '</strong></a>';
-						
-						$replacements = array(
-							'{buy_quantity}' => $bogo_needed_quantity,
-							'{get_product_quantity}' => $bogo_tier['get_quantity'],
-							'{get_product}' => $get_product,
+				if($allow_campaign_stacking && isset( $discount_data['discounts']['simple']['price'] ) ){
+					$campaign_id = $discount_data['discounts']['simple']['campaign_id'];
+					if ( ! isset( $cart->wpab_cb_discount_breakdown[ $campaign_id ] ) ) {
+						$cart->wpab_cb_discount_breakdown[ $campaign_id ] = array(
+							'title'    => $discount_data['discounts']['simple']['campaign_title'],
+							'total_old_price' => 0,
+							'total_new_price' => 0,
 						);
-						$message = str_replace( array_keys( $replacements ), array_values( $replacements ), $format );	
-						$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['message'] = $message;
 					}
-					
+					$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_old_price'] += (float) $discount_data['base_price'] * (float) $quantity;
+					$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_new_price'] += (float) $discount_data['discounts']['simple']['price'] * (float) $quantity;
 				}
+			}elseif( isset( $discount_data['discounts']['simple']['price'] ) ){
+				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['old_price'] = $discount_data['base_price'];
+				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['new_price'] = $discount_data['discounts']['simple']['price'];
+				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['quantity'] = $quantity;
+				$cart->cart_contents[ $cart_item_key ]['cb_discount_data']['on_campaign'] = true;
+				$campaign_id = $discount_data['discounts']['simple']['campaign_id'];
+				if ( ! isset( $cart->wpab_cb_discount_breakdown[ $campaign_id ] ) ) {
+					$cart->wpab_cb_discount_breakdown[ $campaign_id ] = array(
+						'title'    => $discount_data['discounts']['simple']['campaign_title'],
+						'total_old_price' => 0,
+						'total_new_price' => 0,
+					);
+				}
+				$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_old_price'] += (float) $discount_data['base_price'] * (float) $quantity;
+				$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_new_price'] += (float) $discount_data['discounts']['simple']['price'] * (float) $quantity;
 			}
-			
+
 			if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
-				wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-				wpab_cb_log('cart_item_key: ' . $cart_item_key . ' ' . $product->get_name() . ' ' . $product->get_id(), 'DEBUG' );
-				wpab_cb_log('quantity: ' . $quantity, 'DEBUG' );
-				wpab_cb_log('regular_price: ' . $product->get_regular_price(), 'DEBUG' );
-				wpab_cb_log('campaign_price: ' . $base_price, 'DEBUG' );
-				wpab_cb_log('price: ' . $product->get_price(), 'DEBUG' );
-				wpab_cb_log('quantity_price: ' . $quantity_price, 'DEBUG' );
-				wpab_cb_log('campaign_id: ' . $campaign_id, 'DEBUG' );
+				//wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+				//wpab_cb_log('cart_item_key: ' . $cart_item_key . ' ' . $product->get_name() . ' ' . $product->get_id(), 'DEBUG' );
+				//wpab_cb_log('quantity: ' . $quantity, 'DEBUG' );
+				//wpab_cb_log('regular_price: ' . $product->get_regular_price(), 'DEBUG' );
+				//wpab_cb_log('campaign_price: ' . $base_price, 'DEBUG' );
+				//wpab_cb_log('price: ' . $product->get_price(), 'DEBUG' );
+				//wpab_cb_log('quantity_price: ' . $quantity_price, 'DEBUG' );
+				//wpab_cb_log('campaign_id: ' . $campaign_id, 'DEBUG' );
 			}
 			
 		}
 
-		// wpab_cb_log('cart_contents', $cart->cart_contents, 'DEBUG' );
-
-		
-		$this->apply_bogo_logic($cart, $triggered_bogo_offers);
-		// if($triggered_bogo_offers){
-		// 	wpab_cb_log('triggered_bogo_offers', $triggered_bogo_offers, 'DEBUG' );
-		// }
 
 	}
 
-	/**
-	 * Apply the BOGO logic to the cart.
-	 * This function is used to mark the free product quantity in the cart item.
-	 * This quantity will be used to calculate the total quantity of the free products.
-	 *
-	 * @since 1.0.0
-	 * @param WC_Cart $cart The cart object.
-	 * @param array $triggered_bogo_offers The triggered BOGO offers.
-	 */
-	private function apply_bogo_logic($cart , $triggered_bogo_offers){
-		foreach( $cart->cart_contents as $cart_item_key => $cart_item ){
-			$product_id = $cart_item['data']->get_id();
-			$product_parent_id = $cart_item['data']->is_type('variation') ? $cart_item['data']->get_parent_id() : null;
-			if( isset( $triggered_bogo_offers[$product_id] ) ){
-				$cart->cart_contents[ $cart_item_key ]['cb_bogo_free_quantity'] = $triggered_bogo_offers[$product_id];
-				unset($triggered_bogo_offers[$product_id]);
-			}elseif( $product_parent_id && isset( $triggered_bogo_offers[$product_parent_id] ) ){
-				$cart->cart_contents[ $cart_item_key ]['cb_bogo_free_quantity'] = $triggered_bogo_offers[$product_parent_id];
-				unset($triggered_bogo_offers[$product_parent_id]);
-			}
-			else{
-				$cart->cart_contents[ $cart_item_key ]['cb_bogo_free_quantity'] = null;
-			}
-		}
-		// wpab_cb_log('apply_bogo_logic', print_r($triggered_bogo_offers, true), 'DEBUG' );
-		if(empty($triggered_bogo_offers)){
-			return;
-		}
-	}
-
-	/**
-	 * Calculate the total quantity of a free products.
-	 *
-	 * @since 1.0.0
-	 * @param array $quantities The quantities of a free products not all products.
-	 * @return int The total quantity of the free products.
-	 */
-	private function total_bogo_free_quantity($quantities){
-		if( ! $quantities || empty( $quantities ) || ! is_array( $quantities ) ){
-			return 0;
-		}
-		$total= 0;
-		foreach( $quantities as $quantity ){
-			$total += $quantity;
-		}
-		return $total;
-	}
-
-	private function add_bogo_free_product_to_cart($cart, $product_id, $quantity , $buy_product, $campaign_id = null){
-		
-		$product_id = absint($product_id);
-		$quantity = absint($quantity);
-		if( ! $product_id || $quantity === null){
-			return null;
-		}
-		$product = wc_get_product($product_id);
-		$regular_price = $product->get_regular_price();
-		if( ! $product || $product->is_type('variable') || $product->is_type('variation') || $product->is_type('grouped') || ! $product->is_purchasable() ){
-			wpab_cb_log('Invalid product type . cannot add bogo free product to cart: ' . gettype( $product ), 'ERROR' );
-			return null;
-		}
-
-		$product_data = wc_get_product($product_id);
-		$product_data->set_price(0);
-		$product_data->set_sale_price(0);
-		if( ! $product_data->is_purchasable() || ! $product_data->is_in_stock() || !$product_data->has_enough_stock( $quantity )  ){}
-		$cart_id = $cart->generate_cart_id( $product_id, 0, null, array() );
-		$cart_id .= 'cb' . $buy_product->get_id();
-		if( !$cart_id ){
-			return null;
-		}
-
-		$cart_item_data = array(
-			'cb_discount_data' => array(
-				'is_free_product' => true,
-				'message' => null,
-				'on_campaign' => true,
-				'campaign_id' => $campaign_id,
-				'quantity' => $quantity,
-				'old_price' => $regular_price,
-				'new_price' => 0,
-			),
-		);
-		if( $quantity < 1 ){
-			wpab_cb_log('removing bogo item (quantity is less than 1) ' . $cart_id . ' ' . $product_data->get_name(), 'DEBUG' );
-			unset($cart->cart_contents[$cart_id]);
-			return null;
-		}
-
-		$cart->cart_contents[ $cart_id ] = array_merge(
-			$cart_item_data,
-			array(
-				'key'          => $cart_id,
-				'product_id'   => $product_id,
-				'variation_id' => null,
-				'variation'    => array(),
-				'quantity'     => $quantity,
-				'data'         => $product_data,
-				'data_hash'    => wc_get_cart_item_data_hash( $product_data ),
-			)
-		);
-
-		wpab_cb_log('added bogo free product to cart: ' . $cart_id . ' ' . $product_data->get_name(), 'DEBUG' );
-		return $cart_id;
-		
-	}
 
 
 
@@ -708,7 +495,10 @@ class PricingEngine {
 	 */
 	public function display_inline_cart_notice( $cart_item, $cart_item_key ) {
 		// Get the discount data for the cart item.
-		$discount_data = $cart_item['cb_discount_data'];
+		$discount_data = $cart_item['cb_discount_data'] ?? null;
+		if( ! $discount_data ){
+			return;
+		}
 		// If no message is set, return.
 		if ( ! $discount_data['message'] ) {
 			return;
@@ -729,15 +519,15 @@ class PricingEngine {
 	 */
 	public function display_cart_item_price( $price, $cart_item, $cart_item_key ) {
 		// Get the discount data for the cart item.
-		$discount_data = $cart_item['cb_discount_data'];
-		// If no discount data is set, return the original price.
-		// if (  ! $discount_data['new_price'] || ! $discount_data['old_price']) {
-		// 	return $price;
-		// }
-		
-		if ( ! isset( $discount_data['new_price']) || $discount_data['new_price'] === null || !$discount_data['old_price']) {
+		$discount_data = $cart_item['cb_discount_data'] ?? null;
+		if( ! $discount_data ){
 			return $price;
 		}
+		// If no discount data is set, return the original price.
+		if (  ! $discount_data['new_price'] || ! $discount_data['old_price']) {
+			return $price;
+		}
+		
 		// Get the regular price and the sale price.
 		$regular_price = (float) $discount_data['old_price'];
 		$sale_price    = (float) $discount_data['new_price'];
@@ -819,7 +609,7 @@ class PricingEngine {
 		global $product;
 		// If the product is not a valid WC_Product object, log an error and return.
 		if ( ! $product instanceof WC_Product ) {
-			wpab_cb_log('Invalid product type: ' . gettype( $product ), 'ERROR' );
+			//wpab_cb_log('Invalid product type: ' . gettype( $product ), 'ERROR' );
 			return;
 		}
 		// Get the discount data for the product.
@@ -827,47 +617,11 @@ class PricingEngine {
 		// Only show the message if our campaign is active.
 		if ( $discount_data['on_campaign'] ) {
 			$simple_message = $this->generate_product_summary_simple_message( $discount_data );
-			$bogo_message = $this->generate_product_summary_bogo_message( $discount_data );
 			$simple_message ? $this->print_notice( $simple_message ) : null;
-			$bogo_message ? $this->print_notice( $bogo_message ) : null;
-
 		}
 	}
 
-	/**
-	 * Generate the product summary message for the BOGO campaign.
-	 *
-	 * @since 1.0.0
-	 * @param array $discount_data The discount data.
-	 * @return string The message text.
-	 */
-	public function generate_product_summary_bogo_message( $discount_data ) {
-		if( ! isset( $discount_data['discounts']['bogo'] ) || ! $discount_data['discounts']['bogo'] ){
-			return null;
-		}
-		$format = wpab_cb_get_options( 'product_bogoMessageFormat' );
-		if( empty( $format ) ){
-			return null;
-		}
-		$tier = $discount_data['discounts']['bogo']['bogo_tier'];
-		$get_product_quantity = $tier['get_quantity'];
-		$get_product_title = $tier['get_product_title'];
-		$buy_product_quantity = $tier['buy_quantity'];
-		$buy_product_title = $tier['buy_product_title'];
-		$get_product_link = $tier['get_link'];
-		$campaign_title = $discount_data['discounts']['bogo']['campaign_title'];
-		$replacements = array(
-			'{campaign_name_strong}' => '<strong>' . esc_html( $campaign_title ) . '</strong>',
-			'{campaign_name}'        => esc_html( $campaign_title ),
-			'{buy_product_quantity}' => absint( $buy_product_quantity ),
-			'{buy_product}'          => '<strong>' . esc_html( $buy_product_title ) . '</strong>',
-			'{get_product_quantity}' => absint( $get_product_quantity ),
-			'{get_product}'          => '<a href="' . esc_url( $get_product_link ) . '"><strong>' . esc_html( $get_product_title ) . '</strong></a>',
-		);
-		$message = str_replace( array_keys( $replacements ), array_values( $replacements ), $format );
-		// wp_kses_post to allow safe HTML tags (<strong>, <a>) but strip out anything dangerous.
-		return $message;
-	}
+
 
 	/**
 	 * Generate the product summary message for the simple campaign.
@@ -933,27 +687,28 @@ class PricingEngine {
 	 */
 	public function display_cart_item_subtotal( $subtotal, $cart_item, $cart_item_key ) {
 		// Get the discount data for the cart item.
+		if( ! isset( $cart_item['cb_discount_data'] ) ){
+			return $subtotal;
+		}
 		$discount_data = $cart_item['cb_discount_data'];
-		// 
-		$bogo_free_product_quantity = $this->total_bogo_free_quantity($cart_item['cb_bogo_free_quantity']) ?? 0;
+		
 		// If no discount data is set, or the option to show the discounted price is disabled, return the original subtotal.
 		if ( ! $discount_data['new_price'] || ! $discount_data['old_price'] || ! $discount_data['quantity'] || ! wpab_cb_get_options('product_showDiscountedPrice') ) {
 			$quantity = $cart_item['quantity'];
 			$price = $cart_item['data']->get_price();
 			$regular_price = $price * $quantity;
-			$sale_price = $price * max(0, ($quantity - $bogo_free_product_quantity));
-		}
-		if( isset( $discount_data['is_free_product'] ) && $discount_data['is_free_product'] ){
-			$regular_price = (float) $discount_data['old_price'] * (int) $discount_data['quantity'];
-			$sale_price    = 0;
+			$sale_price = $price * $quantity;
 		}
 		else{
 		// Get the regular price and the sale price.
 		$regular_price = (float) $discount_data['old_price'] * (int) $discount_data['quantity'];
-		$sale_price    = (float) $discount_data['new_price'] *  max(0, (int) $discount_data['quantity'] -  $bogo_free_product_quantity);
+		$sale_price    = (float) $discount_data['new_price'] *  (int) $discount_data['quantity'];
 		}
 
 		// Format the price using WooCommerce's standard sale price function.
+		if( $regular_price === $sale_price ){
+			return wc_price( $regular_price );
+		}
 		return wc_format_sale_price(
 			wc_price( $regular_price ),
 			wc_price( $sale_price )
@@ -1045,7 +800,7 @@ class PricingEngine {
 	 * Master calculation method. Gets all applicable discounts for a product, using the cache if available.
 	 *
 	 * This function serves as the single source of truth for a product's potential discounts.
-	 * It categorizes discounts into 'simple' (direct price changes), 'bogo', and 'quantity',
+	 * It categorizes discounts into 'simple' (direct price changes) and 'quantity',
 	 * and finds the single best 'simple' discount while collecting all others.
 	 *
 	 * @since 1.0.0
@@ -1056,7 +811,7 @@ class PricingEngine {
 		// If the product is not a valid WC_Product object, log an error and return.
 		
 		if ( ! $product instanceof WC_Product ) {
-			wpab_cb_log('Invalid product type: ' . gettype( $product ), 'ERROR' );
+			//wpab_cb_log('Invalid product type: ' . gettype( $product ), 'ERROR' );
 			return array(
 				'base_price' => 0,
 				'on_sale'   => false,
@@ -1068,6 +823,7 @@ class PricingEngine {
 		$product_id = $product->get_id();
 		// If the option to exclude sale items is enabled and the product is on sale, return the sale price.
 		if( wpab_cb_get_options('product_excludeSaleItems') && $product->is_on_sale('edit') ) {
+			//wpab_cb_log(' is on sale', 'DEBUG' );
 			return array(
 				'base_price' => (float) $product->get_sale_price('edit'),
 				'on_sale'   => true,
@@ -1087,16 +843,19 @@ class PricingEngine {
 		// Get all active campaigns.
 		$active_campaigns = $campaign_manager->get_active_campaigns();
 
-		$base_price = (float) $product->get_price('edit');
+		$base_price = (float) $product->get_regular_price();
 		// Initialize the discount data array.
 		$discount_data = array(
 			'base_price' => $base_price,
 			'on_sale'   => false,
 			'on_campaign' => false,
 			'discounts'  => array(
-				'simple' => array(),
-				'bogo' => array(),
-				'quantity' => array(),
+				'simple' => array(
+					'is_applied' => false,
+				),
+				'quantity' => array(
+					'is_applied' => false,
+				),
 			),
 		);
 
@@ -1105,15 +864,22 @@ class PricingEngine {
 			$this->product_discount_cache[ $product_id ] = $discount_data;
 			return $discount_data;
 		}
+		$allow_campaign_stacking = wpab_cb_get_options('cart_allowCampaignStacking');
 		
 		// 3. Loop through all active campaigns to categorize and evaluate them.
 		foreach ( $active_campaigns as $campaign ) {
+			
+			// Get the campaign type.
+			$campaign_type = $campaign->get_meta( 'campaign_type' );
+
+			if($campaign_type !== 'simple' && $campaign_type !== 'earlybird'){
+				continue;
+			}
+
 			// If the campaign is not applicable to the product, skip it.
 			if( ! $campaign->is_applicable_to_product( $product_id ) ) {
 				continue;
 			}
-			// Get the campaign type.
-			$campaign_type = $campaign->get_meta( 'campaign_type' );
 			// Initialize the discounted price.
 			$discounted_price = null;
 
@@ -1131,99 +897,138 @@ class PricingEngine {
 				$type_data['discount_type'] = $campaign->get_meta('discount_type');
 
 			}elseif( 'earlybird' === $campaign_type ){
-				$tiers = $campaign->get_meta('campaign_tiers');
-				// If the tiers are empty, skip the campaign.
+				$tiers = $campaign->get_meta( 'campaign_tiers' );
 				if ( ! is_array( $tiers ) || empty( $tiers ) ) {
 					continue;
 				}
-				$discounted_price = $this->calculate_tier_price( $tiers[0], $base_price );
-				$type_data['tiers'] = $tiers;
-			}
-			elseif ( 'quantity' === $campaign_type) {
-				$tiers = $campaign->get_meta('campaign_tiers');
-				// If the tiers are empty, skip the campaign.
-				if ( ! is_array( $tiers ) || empty( $tiers ) ) {
-					continue;
-				}
-				// Calculate the tier price.
-				$discounted_price = $this->calculate_tier_price( $tiers[0], $base_price );
-				$type_data['tiers'] = $tiers;
-			} 
-			elseif( 'bogo' === $campaign_type ){
-				$tiers = $campaign->get_meta('campaign_tiers');
-				$parent_product_id = null;
-				if($product->is_type('variation')){
-					$parent_product_id = $product->get_parent_id();
-				}
-				$bogo_tier = $this->get_bogo_tier( $tiers, $product_id, $parent_product_id );
-				if( ! $bogo_tier ){
-					continue;
-				}
-				$get_product_id = $bogo_tier['get_product'];
-				$get_product = wc_get_product( $get_product_id );
-				if( ! $get_product ){
-					wpab_cb_log('get_product not fund for product: ' . $get_product_id, 'ERROR' );
-					continue;
+				// Find the correct tier based on usage count.
+				$usage_count  = $campaign->get_usage_count();
+				$current_tier = null;
+				// Find the first tier where the current usage is less than the max.
+				foreach ( $tiers as $tier ) {
+					if( ! isset( $tier['quantity'] ) || ! isset( $tier['total'] )){
+						continue;
+					}
+					$tier_quantity = (int) $tier['quantity'];
+					// sum of quantity of previous tiers , precalculated on creation of campaign . its better to calculate it once
+					$tier_max = (int) $tier['total'] + $tier_quantity;
+					if( $tier_quantity === '' || $tier_max === '' || $tier_quantity === 0 ){
+						continue;
+					}
+					if ( $usage_count <= $tier_max ) {
+						$current_tier = $tier;
+						break; // Found the correct tier, no need to search further.
+					}
 				}
 
-				// need to add condition edit or view depending on settings
-				$discounted_price = (float) $product->get_price('edit') - ($get_product->get_price() / $bogo_tier['buy_quantity'] * $bogo_tier['get_quantity']);
-				$bogo_tier['get_product_title'] = $get_product->get_title();
-				$bogo_tier['buy_product_title'] = $product->get_title();
-				$bogo_tier['get_link'] = $get_product->get_permalink();
-				$type_data['bogo_tier'] = $bogo_tier;
+				// If a valid tier was found, calculate the price for it.
+				if ( !$current_tier ) {
+					continue;
+				}
+				$discounted_price = $this->calculate_tier_price( $current_tier, $base_price );
+				$type_data['tiers'] = $tiers; // Still pass all tiers for potential notices.
+				
 			}
-			// If the campaign is a scheduled or earlybird campaign, use the simple key.
-			$campaign_type_key = $campaign_type;
-			if( 'scheduled' === $campaign_type || 'earlybird' === $campaign_type ){
-				$campaign_type_key = 'simple';
-			}
+
 			if( ! $discounted_price ){
 				continue;
 			}
-			if( isset( $discount_data['discounts'][$campaign_type_key]['price'] ) && ! $this->is_better_campaign( $discount_data['discounts'][$campaign_type_key]['price'], $discounted_price )){
+			if( isset( $discount_data['discounts']['simple']['price'] ) && ! $this->is_better_campaign( $discount_data['discounts']['simple']['price'], $discounted_price )){
 				continue;
 			}
 
 			$discount_data['on_campaign'] = true;	
-			$discount_data['discounts'][$campaign_type_key] = $type_data;
-			$discount_data['discounts'][$campaign_type_key]['price'] = $discounted_price;
+			$discount_data['discounts']['simple'] = $type_data;
+			$discount_data['discounts']['simple']['price'] = $discounted_price;
+			$discount_data['discounts']['simple']['discount_per_item'] = $base_price - $discounted_price;
+			$discount_data['discounts']['simple']['is_applied'] = true;
+			$product->set_price( $discounted_price );
+		} 
+		if( $allow_campaign_stacking && isset( $discount_data['discounts']['simple']['price'] ) ){
+			$base_price = $discount_data['discounts']['simple']['price'];
 		}
-		$best_price = $base_price;
-		if( isset( $discount_data['discounts']['simple']['price'] ) && $discount_data['discounts']['simple']['price'] < $best_price ){
-			$best_price = $discount_data['discounts']['simple']['price'];
+
+		foreach ( $active_campaigns as $campaign ) {
+			
+			// Get the campaign type.
+			$campaign_type = $campaign->get_meta( 'campaign_type' );
+
+			if($campaign_type !== 'quantity'){
+				continue;
+			}
+
+			// If the campaign is not applicable to the product, skip it.
+			if( ! $campaign->is_applicable_to_product( $product_id ) ) {
+				continue;
+			}
+			// Initialize the discounted price.
+			$discounted_price = null;
+
+			$type_data = array(
+				'campaign_id' => $campaign->get_id(),
+				'campaign_type' => $campaign_type,
+				'campaign_title' => $campaign->get_title(),
+			);
+
+			$tiers = $campaign->get_meta('campaign_tiers');
+			// If the tiers are empty, skip the campaign.
+			if ( ! is_array( $tiers ) || empty( $tiers ) ) {
+				continue;
+			}
+			// Calculate the tier price.
+			$discounted_price = $this->calculate_tier_price( $tiers[0], $base_price );
+			$type_data['tiers'] = $tiers;
+			if( isset( $discount_data['discounts']['quantity']['price'] ) && ! $this->is_better_campaign( $discount_data['discounts']['quantity']['price'], $discounted_price )){
+				continue;
+			}
+			$discount_data['discounts']['quantity'] = $type_data;
+			$discount_data['discounts']['quantity']['price'] = $discounted_price;
+			$discount_data['discounts']['quantity']['discount_per_item'] = $base_price - $discounted_price;
+			$discount_data['discounts']['quantity']['is_applied'] = false;
 		}
-		$discount_data['discounts']['best_price'] = $best_price;
+		if( $allow_campaign_stacking && isset( $discount_data['discounts']['quantity']['price'] ) ){
+			$product->set_price( $discount_data['discounts']['quantity']['price'] );
+			$discount_data['discounts']['best_price'] = $discount_data['discounts']['quantity']['price'];
+			$discount_data['discounts']['quantity']['is_applied'] = true;
+		}elseif( ! $allow_campaign_stacking && isset( $discount_data['discounts']['quantity']['price'] ) ){
+			$simple_price = $discount_data['discounts']['simple']['price'];
+			$quantity_price = $discount_data['discounts']['quantity']['price'];
+			if(!isset( $discount_data['discounts']['simple']['price'] ) || $this->is_better_campaign( $quantity_price, $simple_price )){
+				if($discount_data['discounts']['quantity']['tiers'][0]['min'] === 1){
+					$product->set_price( $quantity_price );
+					$discount_data['discounts']['best_price'] = $quantity_price;
+					$discount_data['discounts']['quantity']['is_applied'] = true;
+					$discount_data['discounts']['simple']['is_applied'] = false;
+				}
+			}
+		}
 
 		// Store the final, structured result in the cache for this page load.
 		$this->product_discount_cache[ $product_id ] = $discount_data;
 		if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
-			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
-			wpab_cb_log('base_price: ' . $base_price, 'DEBUG' );
-			wpab_cb_log('best_price: ' . $best_price, 'DEBUG' );
-			wpab_cb_log('on_sale: ' . $discount_data['on_sale'], 'DEBUG' );
-			wpab_cb_log('on_campaign: ' . $discount_data['on_campaign'], 'DEBUG' );
-			if( $discount_data['discounts']['simple']['price'] ){
+			// wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			// wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
+			// wpab_cb_log('base_price: ' . $discount_data['base_price'], 'DEBUG' );
+			// wpab_cb_log('on_sale: ' . $discount_data['on_sale'], 'DEBUG' );
+			// wpab_cb_log('on_campaign: ' . $discount_data['on_campaign'], 'DEBUG' );
+			if( isset( $discount_data['discounts']['best_price'] ) ){
+				//wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
+			}
+			if( isset( $discount_data['discounts']['simple']['price'] ) ){
 				$simple = $discount_data['discounts']['simple'];
-				wpab_cb_log('	simple_price: ' . $simple['price'], 'DEBUG' );
-				wpab_cb_log('	simple_campaign_id: ' . $simple['campaign_id'], 'DEBUG' );
-				wpab_cb_log('	simple_campaign_type: ' . $simple['campaign_type'], 'DEBUG' );
-				wpab_cb_log('	simple_campaign_title: ' . $simple['campaign_title'], 'DEBUG' );
+				// wpab_cb_log('	simple_price: ' . $simple['price'], 'DEBUG' );
+				// wpab_cb_log('	simple_campaign_id: ' . $simple['campaign_id'], 'DEBUG' );
+				// wpab_cb_log('	simple_campaign_type: ' . $simple['campaign_type'], 'DEBUG' );
+				// wpab_cb_log('	simple_campaign_title: ' . $simple['campaign_title'], 'DEBUG' );
+				// wpab_cb_log('	simple_is_applied: ' . $simple['is_applied'], 'DEBUG' );
 			}
-			if( $discount_data['discounts']['bogo']['price'] ){
-				$bogo = $discount_data['discounts']['bogo'];
-				wpab_cb_log('	bogo_price: ' . $bogo['price'], 'DEBUG' );
-				wpab_cb_log('	bogo_campaign_id: ' . $bogo['campaign_id'], 'DEBUG' );
-				wpab_cb_log('	bogo_campaign_type: ' . $bogo['campaign_type'], 'DEBUG' );
-				wpab_cb_log('	bogo_campaign_title: ' . $bogo['campaign_title'], 'DEBUG' );
-			}
-			if( $discount_data['discounts']['quantity']['price'] ){
+			if( isset( $discount_data['discounts']['quantity']['price'] ) ){
 				$quantity = $discount_data['discounts']['quantity'];
-				wpab_cb_log('	quantity_price: ' . $quantity['price'], 'DEBUG' );
-				wpab_cb_log('	quantity_campaign_id: ' . $quantity['campaign_id'], 'DEBUG' );
-				wpab_cb_log('	quantity_campaign_type: ' . $quantity['campaign_type'], 'DEBUG' );
-				wpab_cb_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
+				//wpab_cb_log('	quantity_price: ' . $quantity['price'], 'DEBUG' );
+				//wpab_cb_log('	quantity_campaign_id: ' . $quantity['campaign_id'], 'DEBUG' );
+				//wpab_cb_log('	quantity_campaign_type: ' . $quantity['campaign_type'], 'DEBUG' );
+				//wpab_cb_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
+				//wpab_cb_log('	quantity_is_applied: ' . $quantity['is_applied'], 'DEBUG' );
 			}
 		}
 		return $discount_data;
@@ -1278,36 +1083,6 @@ class PricingEngine {
 		return $base_price - $tier_value;
 	}
 
-	/**
-	 * Calculate the price for a BOGO campaign.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param WPAB_CB_Campaign $campaign The campaign object.	
-	 * @param int     $product_id The product ID.
-	 * @param float     $base_price The base price of the product.
-	 * @return float The calculated price.
-	 */
-	private function get_bogo_tier( $tiers, $product_id, $parent_product_id ) {
-		if( ! is_array( $tiers ) || empty( $tiers ) ){
-			return null;
-		}
-		if( $parent_product_id ){
-			foreach( $tiers as $tier ){
-				if( $tier['buy_product'] === $product_id || $tier['buy_product'] === $parent_product_id ){
-					return $tier;
-				}
-			}
-		}else {
-			foreach( $tiers as $tier ){
-				if( $tier['buy_product'] === $product_id ){
-					return $tier;
-				}
-			}
-		}
-	
-		return null;
-	}
 
 	/**
 	 * Check if a campaign is better than the current best campaign.

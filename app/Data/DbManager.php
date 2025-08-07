@@ -56,7 +56,6 @@ class DbManager {
     public function create_tables() {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $this->create_logs_table();
-        $this->create_counters_table();
     }
 
     /**
@@ -78,39 +77,19 @@ class DbManager {
 			order_id BIGINT(20) UNSIGNED DEFAULT 0 NOT NULL,
 			user_id BIGINT(20) UNSIGNED DEFAULT 0 NOT NULL,
 			log_type VARCHAR(20) NOT NULL,
-			log_details TEXT ,
+            base_total DECIMAL(10, 2) DEFAULT 0.00 NOT NULL,
+			total_discount DECIMAL(10, 2) DEFAULT 0.00 NOT NULL,
+			order_total DECIMAL(10, 2) DEFAULT 0.00 NOT NULL,
+			order_status VARCHAR(20) DEFAULT '' NOT NULL,
+            extra_data JSON DEFAULT NULL,
             timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY  (log_id),
 			KEY campaign_id (campaign_id),
-			KEY log_type (log_type),
+			KEY order_status (order_status),
 			KEY timestamp (timestamp)
 		) $charset_collate;";
 
 		dbDelta( $sql );
 	}
 
-	/**
-	 * Create the counters table.
-	 *
-	 * This table handles high-frequency counters like usage limits.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private function create_counters_table() {
-		global $wpdb;
-		$table_name      = $wpdb->prefix . 'wpab_cb_counters';
-		$charset_collate = $wpdb->get_charset_collate();
-
-		$sql = "CREATE TABLE $table_name (
-			campaign_id BIGINT(20) UNSIGNED NOT NULL,
-			counter_key VARCHAR(50) NOT NULL,
-			counter_value INT(11) DEFAULT 0 NOT NULL,
-			last_updated DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL,
-			PRIMARY KEY  (campaign_id, counter_key),
-			KEY campaign_id (campaign_id)
-		) $charset_collate;";
-
-		dbDelta( $sql );
-	}
 }

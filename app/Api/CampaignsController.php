@@ -355,7 +355,7 @@ class CampaignsController extends ApiController {
 				'campaign_type'       => array(
 					'description' => __( 'The core type of the campaign.', 'campaignbay' ),
 					'type'        => 'string',
-					'enum'        => array( 'earlybird', 'bogo', 'scheduled', 'quantity' ),
+					'enum'        => array( 'earlybird', 'scheduled', 'quantity' ),
 					'context'     => array( 'view', 'edit' ),
 					'required'    => true,
 				),

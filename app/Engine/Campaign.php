@@ -73,6 +73,15 @@ class Campaign {
 	private $applicable_product_ids = array();
 
 	/**
+	 * The number of times this campaign has been successfully used.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @var int|null
+	 */
+	private $usage_count = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
@@ -93,8 +102,66 @@ class Campaign {
 
 		$this->load_meta();
 		$this->load_applicable_product_ids(); // Pre-calculate the list of products this campaign applies to.
+		if( 'earlybird' === $this->get_meta( 'campaign_type' ) ){
+			$this->load_usage_count();
+		}
 	}
 
+	/**
+	 * Gets the current usage count for the campaign.
+	 *
+	 * This method uses a "lazy loading" pattern. The database is only queried
+	 * the first time this method is called for the object instance. Subsequent
+	 * calls will return the cached value from the object's property.
+	 *
+	 * @since 1.0.0
+	 * @return int The number of times the campaign has been used on successful orders.
+	 */
+	public function get_usage_count() {
+		
+		// Check if the usage count has already been loaded for this object.
+		if ( null === $this->usage_count ) {
+			// If not, load it now.
+			$this->load_usage_count();
+		}
+		return $this->usage_count;
+	}
+
+	/**
+	 * Loads the usage count from the logs table and caches it in the object's property.
+	 * This method is now only called when needed.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 */
+	private function load_usage_count() {
+		wpab_cb_log('load_usage_count for campaign: ' . $this->get_id(), 'DEBUG' );
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'wpab_cb_logs';
+
+		// Only query if the campaign type is 'earlybird', otherwise, the count is irrelevant.
+		if ( 'earlybird' !== $this->get_meta( 'campaign_type' ) ) {
+			$this->usage_count = 0;
+			return;
+		}
+
+		// Define which order statuses are considered a successful "use".
+		$success_statuses = array( 'processing', 'completed' );
+
+		// Perform a direct, indexed query to count distinct successful orders for this campaign.
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(DISTINCT order_id)
+				 FROM $table_name
+				 WHERE campaign_id = %d
+				 AND log_type = 'sale'
+				 AND order_status IN ('" . implode( "','", array_map( 'esc_sql', $success_statuses ) ) . "')",
+				$this->id
+			)
+		);
+		
+		$this->usage_count = (int) $count;
+	}
 
 	/**
 	 * Populates the applicable_product_ids property based on the campaign's targeting rules.
@@ -104,19 +171,7 @@ class Campaign {
 	 * @access private
 	 */
 	private function load_applicable_product_ids() {
-		if( 'bogo' === $this->get_meta( 'campaign_type' ) ){
-			$tiers = $this->get_meta( 'campaign_tiers' );
-			if( ! is_array( $tiers ) || empty( $tiers ) ){
-				return;
-			}
-			// $this->applicable_product_ids = $tiers[0]['buy_product'];
-			// loop through tiers and add the buy_product to the applicable_product_ids
-			foreach( $tiers as $tier ){
-				$this->applicable_product_ids[] = $tier['buy_product'];
-			}
-			$this->applicable_product_ids = $this->expand_variable_products( $this->applicable_product_ids );
-			return;
-		}
+		
 		$target_type = $this->get_meta( 'target_type' );
 		$target_ids  = $this->get_meta( 'target_ids' );
 
@@ -260,7 +315,7 @@ class Campaign {
 			self::throw_validation_error( 'campaign_type' );
 		}
 
-		$allowed_types = array( 'earlybird', 'bogo', 'scheduled', 'quantity' );
+		$allowed_types = array( 'earlybird', 'scheduled', 'quantity' );
 		if ( ! in_array( $args['campaign_type'], $allowed_types, true ) ) {
 			self::throw_validation_error( 'campaign_type' );
 		}
@@ -281,7 +336,6 @@ class Campaign {
 		// Create the campaign object and update it with the provided arguments.
 		$campaign = new self( $post_id );
 		$campaign->update_meta_from_args( $args );
-
 		return $campaign;
 	}
 
@@ -417,15 +471,6 @@ class Campaign {
 		}
 
 		$sanitized_tier = array();
-		if( isset( $tier['buy_product'] ) ){
-			$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
-			$sanitized_tier['buy_product']   = isset( $tier['buy_product'] ) ? absint( $tier['buy_product'] ) : 0;
-			$sanitized_tier['get_product']   = isset( $tier['get_product'] ) ? absint( $tier['get_product'] ) : 0;
-			$sanitized_tier['buy_quantity']  = isset( $tier['buy_quantity'] ) ? absint( $tier['buy_quantity'] ) : 0;
-			$sanitized_tier['get_quantity']  = isset( $tier['get_quantity'] ) ? absint( $tier['get_quantity'] ) : 0;
-
-		return $sanitized_tier;
-		}
 		if( isset( $tier['quantity'] ) ){
 			$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
 			$sanitized_tier['quantity']  = isset( $tier['quantity'] ) ? absint( $tier['quantity'] ) : 0;

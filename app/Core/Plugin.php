@@ -16,6 +16,7 @@ use WpabCb\Data\DbManager;
 use WpabCb\Api\SettingsController;
 use WpabCb\Api\CampaignsController;
 use WpabCb\Api\LogsController;
+use WpabCb\Engine\OrderManager;
 
 /**
  * The core plugin class.
@@ -88,7 +89,7 @@ class Plugin {
 	 */
 	private function set_locale() {
 		$plugin_i18n = new I18n();
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+		$this->loader->add_action( 'init', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**
@@ -114,10 +115,12 @@ class Plugin {
 		// Get instances of components that have hooks
 		$campaign_manager = CampaignManager::get_instance();
 		$pricing_engine = PricingEngine::get_instance();
+		$order_manager = OrderManager::get_instance();
 
 		$components_with_hooks = array(
 			$campaign_manager,
 			$pricing_engine,
+			$order_manager,
 		);
 
 		foreach ( $components_with_hooks as $component ) {

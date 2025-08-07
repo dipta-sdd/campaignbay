@@ -98,6 +98,8 @@ class CampaignManager {
 	private function define_hooks() {
 		$this->add_action( 'save_post_wpab_cb_campaign', 'clear_cache' );
 		$this->add_action( 'delete_post', 'clear_cache' );
+		// $this->add_action( 'wpab_cb_create_order', 'clear_cache', 10,1);
+
 	}
 
 	/**
@@ -142,11 +144,13 @@ class CampaignManager {
 			
 			return $this->active_campaigns;
 		}
-		// $cached_campaigns = get_transient( 'wpab_cb_active_campaigns' );
-		// if ( false !== $cached_campaigns ) {
-		// 	$this->active_campaigns = $cached_campaigns;
-		// 	return $this->active_campaigns;
-		// }
+		$cached_campaigns = get_transient( 'wpab_cb_active_campaigns' );
+		if ( false !== $cached_campaigns ) {
+			wpab_cb_log('cached_campaigns found', 'DEBUG' );
+			$this->active_campaigns = $cached_campaigns;
+			return $this->active_campaigns;
+		}
+		wpab_cb_log('no cached campaigns found, fetching from database', 'DEBUG' );
 		$campaign_args = array(
 			'post_type'      => 'wpab_cb_campaign',
 			'post_status'    => 'any',
@@ -164,7 +168,7 @@ class CampaignManager {
 			}
 		}
 
-		set_transient( 'wpab_cb_active_campaigns', $campaign_objects, 5 * MINUTE_IN_SECONDS );
+		set_transient( 'wpab_cb_active_campaigns', $campaign_objects, 60 * MINUTE_IN_SECONDS );
 		$this->active_campaigns = $campaign_objects;
 		return $this->active_campaigns;
 	}
@@ -174,7 +178,8 @@ class CampaignManager {
 	 *
 	 * @since 1.0.0
 	 */
-	public function clear_cache() {
+	public function clear_cache($source = 'unknown') {
+		wpab_cb_log('clearing cache from ' . $source, 'DEBUG' );
 		delete_transient( 'wpab_cb_active_campaigns' );
 		$this->active_campaigns = null;
 	}

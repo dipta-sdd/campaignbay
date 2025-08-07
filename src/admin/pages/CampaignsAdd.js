@@ -17,6 +17,7 @@ import BogoTiers from '../components/BogoTiers';
 import { useCbStore } from '../store/cbStore';
 import { getSettings as getDateSettings } from '@wordpress/date';
 import { useNavigate } from 'react-router-dom';
+import Toggle from '../components/Toggle';
 
 
 const CampaignsAdd = () => {
@@ -191,6 +192,16 @@ const CampaignsAdd = () => {
                 </div>
 
                 <div className="cb-form-input-con">
+                    <label htmlFor="campaign-type">{__('SELECT DISCOUNT TYPE', 'campaignbay')}   <Required /></label>
+                    <select type="text" id="campaign-type" className={`wpab-input w-100 ${errors?.campaign_type ? 'wpab-input-error' : ''}`} value={campaignType} onChange={(e) => handleCampaignTypeChange(e.target.value)}>
+                        <option value="scheduled">{__('Scheduled Discount', 'campaignbay')}</option>
+                        <option value="quantity">{__('Quantity Based Discount', 'campaignbay')}</option>
+                        <option value="earlybird">{__('EarlyBird Discount', 'campaignbay')}</option>
+                        <option value="bogo">{__('Buy X Get Y (BOGO) Discount', 'campaignbay')}</option>
+                    </select>
+                </div>
+
+                <div className="cb-form-input-con">
                     <label htmlFor="campaign-title">{__('Campaign Title', 'campaignbay')}  <Required /></label>
                     <input type="text" id="campaign-title" className={`wpab-input w-100 ${errors?.title ? 'wpab-input-error' : ''}`} value={campaignTitle} onChange={(e) => setCampaignTitle(e.target.value)} />
                 </div>
@@ -267,6 +278,12 @@ const CampaignsAdd = () => {
                 )}
                 <div className="cb-form-input-con">
                     <label htmlFor="start-time">{__('SELECT CAMPAIGN DURATION', 'campaignbay')}  <Required /></label>
+                    <Toggle
+                        label={__('Enable Scheduling ', 'campaignbay')}
+                        help={__('Turn off to activate campaign immediately', 'campaignbay')}
+                        checked={true}
+                        onChange={() => {}}
+                    />
                     <div className='wpab-grid-2 cb-date-time-fix' style={{ gap: '16px' }}>
                         <div className={`${errors?.start_datetime ? 'wpab-input-error' : ''}`}>
                             <span className='wpab-input-label' style={{ display: 'block', marginBottom: '10px' }}>{__('Start Time', 'campaignbay')}</span>
