@@ -306,6 +306,7 @@ class Campaign {
 	 * @throws Exception If validation fails.
 	 */
 	public static function create( $args ) {
+		
 		// Validate required fields.
 		if ( empty( $args['title'] ) ) {
 			self::throw_validation_error( 'title' );
@@ -314,11 +315,52 @@ class Campaign {
 		if ( empty( $args['campaign_type'] ) ) {
 			self::throw_validation_error( 'campaign_type' );
 		}
+		// If status is not provided, set it to scheduled if the campaign type is scheduled.
+		if ( empty( $args['status'] ) && 'scheduled' !== $args['campaign_type'] ) {
+			self::throw_validation_error( 'status' );
+		} elseif ( empty( $args['status'] ) && 'scheduled' === $args['campaign_type'] ) {
+			$args['status'] = 'wpab_cb_scheduled';
+		}
+
+		$allowed_statuses = array( 'wpab_cb_active', 'wpab_cb_inactive', 'wpab_cb_scheduled' );
+		if ( ! in_array( $args['status'], $allowed_statuses, true ) ) {
+			self::throw_validation_error( 'status' );
+		}
 
 		$allowed_types = array( 'earlybird', 'scheduled', 'quantity' );
 		if ( ! in_array( $args['campaign_type'], $allowed_types, true ) ) {
 			self::throw_validation_error( 'campaign_type' );
 		}
+
+		if( isset( $args['status'] ) && 'wpab_cb_scheduled' === $args['status'] && empty( $args['start_datetime'] ) ){
+			self::throw_validation_error( 'start_datetime' );
+		}
+		if( isset( $args['status'] ) && 'wpab_cb_scheduled' === $args['status'] && empty( $args['end_datetime'] ) ){
+			self::throw_validation_error( 'end_datetime' );
+		}
+		// if( isset( $args['status'] ) && 'wpab_cb_scheduled' === $args['status'] && empty( $args['timezone_string'] ) ){
+		// 	self::throw_validation_error( 'timezone_string' );
+		// }
+
+		if( 'scheduled' === $args['campaign_type'] && empty( $args['discount_value'] ) ){
+			self::throw_validation_error( 'discount_value' );
+		}
+		if( 'scheduled' === $args['campaign_type'] && empty( $args['discount_type'] ) ){
+			self::throw_validation_error( 'discount_type' );
+		}
+		if( 'scheduled' !== $args['campaign_type'] ){
+			if( !isset( $args['target_type'] ) || empty( $args['target_type'] ) ){
+				self::throw_validation_error( 'target_type' );
+			}
+			$allowed_target_types = array( 'entire_store', 'category', 'product', 'tag' );
+			if( ! in_array( $args['target_type'], $allowed_target_types, true ) ){
+				self::throw_validation_error( 'target_type' );
+			}
+			if( 'entire_store' !== $args['target_type'] && ( empty( $args['target_ids'] ) || !is_array( $args['target_ids'] ) ) ){
+				self::throw_validation_error( 'target_ids' );
+			}
+		}
+		
 
 		// Create the post.
 		$post_data = array(
@@ -336,6 +378,13 @@ class Campaign {
 		// Create the campaign object and update it with the provided arguments.
 		$campaign = new self( $post_id );
 		$campaign->update_meta_from_args( $args );
+		/**
+		 * Fires after a new campaign is created and all its meta is saved.
+		 *
+		 * @param int      $campaign_id The ID of the new campaign.
+		 * @param Campaign $campaign    The campaign object.
+		 */
+		do_action( 'wpab_cb_campaign_save', $campaign->id, $campaign );
 		return $campaign;
 	}
 
@@ -363,8 +412,18 @@ class Campaign {
 				return $result;
 			}
 		}
+		if( $args['status'] !== $this->get_status() ){
+			$this->update_meta( 'status', $args['status'] );
+		}
 		$this->update_meta_from_args( $args );
 
+		/**
+		 * Fires after a campaign is updated and all its meta is saved.
+		 *
+		 * @param int      $campaign_id The ID of the updated campaign.
+		 * @param Campaign $campaign    The campaign object.
+		 */
+		do_action( 'wpab_cb_campaign_save', $this->id, $this );	
 		return true;
 	}
 
@@ -378,6 +437,12 @@ class Campaign {
 	 */
 	public static function delete( $campaign_id, $force_delete = true ) {
 		$result = wp_delete_post( $campaign_id, $force_delete );
+		/**
+		 * Fires after a campaign is deleted.
+		 *
+		 * @param int      $campaign_id The ID of the deleted campaign.
+		 */
+		do_action( 'wpab_cb_campaign_delete', $campaign_id );
 		return ! is_wp_error( $result ) && $result !== false;
 	}
 
@@ -429,11 +494,13 @@ class Campaign {
 				return floatval( $value );
 
 			case 'min_quantity':
-			case 'start_timestamp':
-			case 'end_timestamp':
 			case 'priority':
 			case 'usage_limit':
 				return absint( $value );
+			
+			case 'start_datetime':
+			case 'end_datetime':
+				return sanitize_text_field( $value );
 
 			case 'exclude_sale_items':
 			case 'apply_to_shipping':
@@ -471,6 +538,7 @@ class Campaign {
 		}
 
 		$sanitized_tier = array();
+		// if its a earlybird campaign, we need to sanitize the tier item.
 		if( isset( $tier['quantity'] ) ){
 			$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
 			$sanitized_tier['quantity']  = isset( $tier['quantity'] ) ? absint( $tier['quantity'] ) : 0;
@@ -479,6 +547,7 @@ class Campaign {
 			$sanitized_tier['total'] = isset( $tier['total'] ) ? floatval( $tier['total'] ) : 0;
 			return $sanitized_tier;
 		}
+		// if its a quantity campaign, we need to sanitize the tier item.
 		$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
 		$sanitized_tier['min']   = isset( $tier['min'] ) ? absint( $tier['min'] ) : 0;
 		$sanitized_tier['max']   = isset( $tier['max'] ) ? sanitize_text_field( $tier['max'] ) : ''; // Max can be empty or a number.

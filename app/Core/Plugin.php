@@ -17,6 +17,7 @@ use WpabCb\Api\SettingsController;
 use WpabCb\Api\CampaignsController;
 use WpabCb\Api\LogsController;
 use WpabCb\Engine\OrderManager;
+use WpabCb\Core\Scheduler;
 
 /**
  * The core plugin class.
@@ -116,11 +117,12 @@ class Plugin {
 		$campaign_manager = CampaignManager::get_instance();
 		$pricing_engine = PricingEngine::get_instance();
 		$order_manager = OrderManager::get_instance();
-
+		$scheduler = Scheduler::get_instance();
 		$components_with_hooks = array(
 			$campaign_manager,
 			$pricing_engine,
 			$order_manager,
+			$scheduler,
 		);
 
 		foreach ( $components_with_hooks as $component ) {

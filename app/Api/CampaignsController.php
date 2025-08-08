@@ -349,7 +349,7 @@ class CampaignsController extends ApiController {
 				'status'              => array(
 					'description' => __( 'A named status for the campaign.', 'campaignbay' ),
 					'type'        => 'string',
-					'enum'        => array( 'draft', 'publish', 'wpab_cb_active', 'wpab_cb_scheduled', 'wpab_cb_expired' ),
+					'enum'        => array( 'wpab_cb_active', 'wpab_cb_inactive', 'wpab_cb_scheduled' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'campaign_type'       => array(
@@ -387,16 +387,7 @@ class CampaignsController extends ApiController {
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'apply_to_shipping'   => array(
-					'description' => __( 'Whether the discount applies to shipping costs.', 'campaignbay' ),
-					'type'        => 'boolean',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'schedule_enabled'    => array(
-					'description' => __( 'Whether scheduling is active for this rule.', 'campaignbay' ),
-					'type'        => 'boolean',
-					'context'     => array( 'view', 'edit' ),
-				),
+				
 				'start_datetime'     => array(
 					'description' => __( 'The rule\'s start date/time (ISO 8601 string).', 'campaignbay' ),
 					'type'        => 'string',
