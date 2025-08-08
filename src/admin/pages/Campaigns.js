@@ -1,59 +1,186 @@
-import { useState, useMemo, useEffect } from "@wordpress/element"; // <-- NEW: Import useState
+import { useState, useMemo, useEffect } from "react";
 import { __ } from "@wordpress/i18n";
 import { useNavigate } from "react-router-dom";
-import { check, Icon, plus, search } from "@wordpress/icons";
+import {
+  Icon,
+  plus,
+  search,
+  chevronUp,
+  chevronDown,
+  trash,
+  moreVertical,
+  previous,
+  next,
+  more,
+  arrowLeft,
+  arrowRight,
+  arrowUp,
+  arrowDown,
+  edit,
+} from "@wordpress/icons";
 import apiFetch from "@wordpress/api-fetch";
-import { __experimentalConfirmDialog as ConfirmDialog } from "@wordpress/components";
+import {
+  __experimentalConfirmDialog as ConfirmDialog,
+  ToolbarDropdownMenu,
+} from "@wordpress/components";
 import { useToast } from "../store/toast/use-toast";
-import Checkbox from "../components/Checkbox";
-import CbCheckbox from "../components/CbCheckbox";
+import CbCheckbox from "../components/CbCheckbox"; // Assuming you still use this for the header
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState(null);
   const { addToast } = useToast();
 
+  // --- State for selection, sorting, and modals ---
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null);
+  const [selectedCampaigns, setSelectedCampaigns] = useState([]); // <-- NEW: Tracks selected campaign IDs
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [sortBy, setSortBy] = useState("title");
+  const [sortOrder, setSortOrder] = useState("asc");
+
   const tableHeads = [
-    {
-      label: "Campaign Name",
-      key: "title",
-      isSortable: true,
-    },
-    {
-      label: "Status",
-      key: "status",
-      isSortable: true,
-    },
-    {
-      label: "Discount Type",
-      key: "discount_type",
-      isSortable: true,
-    },
-    {
-      label: "Target",
-      key: "target",
-      isSortable: true,
-    },
-    {
-      label: "Value",
-      key: "value",
-      isSortable: true,
-    },
-    {
-      label: "Start Date",
-      key: "start_date",
-      isSortable: true,
-    },
-    {
-      label: "End Date",
-      key: "end_date",
-      isSortable: true,
-    },
-    
+    { label: "Campaign Name", value: "title", isSortable: true },
+    { label: "Status", value: "status", isSortable: true },
+    { label: "Discount Type", value: "discount_type", isSortable: false },
+    { label: "Target", value: "target", isSortable: false },
+    { label: "Value", value: "value", isSortable: false },
+    { label: "Start Date", value: "start_date", isSortable: true },
+    { label: "End Date", value: "end_date", isSortable: true },
+    { label: "Usage", value: "usage", isSortable: false },
+    { label: "Action", value: "action", isSortable: false },
   ];
+
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchCampaigns = async () => {
+      try {
+        // In a real app, you would add sorting/filtering params here
+        const response = await apiFetch({
+          path: "/campaignbay/v1/campaigns",
+          method: "GET",
+        });
+        setCampaigns(response);
+      } catch (error) {
+        addToast(__("Error fetching campaigns.", "campaignbay"), "error");
+      }
+      setIsLoading(false);
+    };
+    fetchCampaigns();
+  }, []);
+
+  // --- NEW: Checkbox Handlers ---
+  const handleSelectAll = (isChecked) => {
+    if (isChecked) {
+      setSelectedCampaigns(campaigns.map((c) => c.id));
+    } else {
+      setSelectedCampaigns([]);
+    }
+  };
+
+  const handleSelectCampaign = (campaignId, isChecked) => {
+    if (isChecked) {
+      setSelectedCampaigns((prev) => [...prev, campaignId]);
+    } else {
+      setSelectedCampaigns((prev) => prev.filter((id) => id !== campaignId));
+    }
+  };
+
+ 
+  const handleCampaignDelete = async () => {
+    try {
+      await apiFetch({
+        path: `/campaignbay/v1/campaigns/${selectedCampaignId}`,
+        method: "DELETE",
+      });   
+        addToast(__("Campaign deleted successfully", "campaignbay"), "success");
+        setCampaigns((prev) => prev.filter((c) => c.id !== selectedCampaignId));
+        setSelectedCampaigns((prev) => prev.filter((id) => id !== selectedCampaignId));
+        setIsDeleteModalOpen(false);
+    } catch (error) {
+      addToast(__("Error deleting campaign", "campaignbay"), "error");
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const handleCampaignsDelete = async () => {
+    const campaignsToDelete = [...selectedCampaigns]; // Copy the IDs to delete
+    setIsLoading(true);
+    setIsDeleteModalOpen(false);
+
+    try {
+      // This could be a bulk delete endpoint in the future
+      for (const campaignId of campaignsToDelete) {
+        await apiFetch({
+          path: `/campaignbay/v1/campaigns/${campaignId}`,
+          method: "DELETE",
+        });
+      }
+      addToast(
+        __("Campaign(s) deleted successfully", "campaignbay"),
+        "success"
+      );
+      // Update UI by filtering out the deleted campaigns
+      setCampaigns((prev) =>
+        prev.filter((c) => !campaignsToDelete.includes(c.id))
+      );
+      setSelectedCampaigns([]); // Clear selection
+    } catch (error) {
+      addToast(__("Error deleting campaign(s)", "campaignbay"), "error");
+    }
+    setIsLoading(false);
+  };
+
+  const handleSort = (newSortBy) => {
+    if (sortBy === newSortBy) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // If clicking a new column, set it as the sort column and default to ascending.
+      setSortBy(newSortBy);
+      setSortOrder("asc");
+    }
+    // NOTE: In a future step, you would trigger a data re-fetch here.
+    // For now, we are just updating the state.
+  };
+
+  const TableHead = ({ label, isSortable, value, onClick }) => {
+    console.log(isSortable, value);
+    if (isSortable) {
+      return (
+        <th>
+          <span
+            className="campaignbay-table-header campaignbay-table-header-sortable"
+            onClick={onClick}
+          >
+            {label}
+            <SortIndicator value={value} />
+          </span>
+        </th>
+      );
+    }
+    return (
+      <th>
+        <span className="campaignbay-table-header">{label}</span>
+      </th>
+    );
+  };
+
+  const SortIndicator = ({ value }) => {
+    console.log(sortBy, value);
+    if (sortBy !== value) {
+      return null; // Don't show an icon if it's not the active sort column
+    }
+    return (
+      <Icon
+        className="campaignbay-table-header-icon"
+        icon={sortOrder === "asc" ? chevronUp : chevronDown}
+        fill="currentColor"
+      />
+    );
+  };
+
+  const isAllSelected =
+    campaigns.length > 0 && selectedCampaigns.length === campaigns.length;
 
   useEffect(() => {
     setIsLoading(true);
@@ -76,24 +203,6 @@ const Campaigns = () => {
 
     fetchCampaigns();
   }, []);
-
-  const handleConfirmDelete = async () => {
-    try {
-      const response = await apiFetch({
-        path: `/campaignbay/v1/campaigns/${selectedCampaign[0]?.id}`,
-        method: "DELETE",
-      });
-      addToast(__("Campaign deleted successfully", "campaignbay"), "success");
-      setCampaigns(
-        campaigns.filter((campaign) => campaign.id !== selectedCampaign[0]?.id)
-      );
-      console.log("campaigns", campaigns);
-      console.log("selectedCampaign", selectedCampaign);
-    } catch (error) {
-      addToast(__("Error deleting campaign", "campaignbay"), "error");
-    }
-    setIsModalOpen(false);
-  };
 
   return (
     <div className="cb-page campaignbay-campaigns">
@@ -182,176 +291,113 @@ const Campaigns = () => {
               <thead>
                 <tr>
                   <th className="campaignbay-table-checkbox-cell">
-                    <CbCheckbox checked={true} onChange={() => {}} />
+                    <CbCheckbox
+                      checked={isAllSelected}
+                      onChange={handleSelectAll}
+                    />
                   </th>
-                  <th>Campaign Name</th>
-                  <th>Status</th>
-                  <th>Discount Type</th>
-                  <th>Target</th>
-                  <th>Value</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Usage</th>
-                  <th>Action</th>
+                  {tableHeads.map((head) => (
+                    <TableHead
+                      key={head.value}
+                      label={head.label}
+                      isSortable={head.isSortable}
+                      value={head.value}
+                      onClick={() => handleSort(head.value)}
+                    />
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {/* --- Example Row: Active --- */}
-                <tr>
-                  <td className="campaignbay-table-checkbox-cell">
-                    <input type="checkbox" />
-                  </td>
-                  <td>
-                    <a href="#">Summer Sale 2025</a>
-                  </td>
-                  <td>
-                    <span className="campaignbay-status-pill campaignbay-status-active">
-                      Active
-                    </span>
-                  </td>
-                  <td>Schedule Discount</td>
-                  <td>Entire Store</td>
-                  <td>20%</td>
-                  <td>Jun 1, 2025</td>
-                  <td>Aug 30, 2025</td>
-                  <td>1247</td>
-                  <td>
-                    <button className="campaignbay-action-button">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="1"></circle>
-                        <circle cx="19" cy="12" r="1"></circle>
-                        <circle cx="5" cy="12" r="1"></circle>
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-                {/* --- Example Row: Scheduled --- */}
-                <tr>
-                  <td className="campaignbay-table-checkbox-cell">
-                    <input type="checkbox" />
-                  </td>
-                  <td>
-                    <a href="#">Summer Sale 2026</a>
-                  </td>
-                  <td>
-                    <span className="campaignbay-status-pill campaignbay-status-scheduled">
-                      Scheduled
-                    </span>
-                  </td>
-                  <td>Schedule Discount</td>
-                  <td>Entire Store</td>
-                  <td>20%</td>
-                  <td>Jun 1, 2025</td>
-                  <td>Aug 30, 2025</td>
-                  <td>1247</td>
-                  <td>
-                    <button className="campaignbay-action-button">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="1"></circle>
-                        <circle cx="19" cy="12" r="1"></circle>
-                        <circle cx="5" cy="12" r="1"></circle>
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-                {/* --- Example Row: Expired --- */}
-                <tr>
-                  <td className="campaignbay-table-checkbox-cell">
-                    <input type="checkbox" />
-                  </td>
-                  <td>
-                    <a href="#">Summer Sale 2024</a>
-                  </td>
-                  <td>
-                    <span className="campaignbay-status-pill campaignbay-status-expired">
-                      Expired
-                    </span>
-                  </td>
-                  <td>Schedule Discount</td>
-                  <td>Entire Store</td>
-                  <td>20%</td>
-                  <td>Jun 1, 2025</td>
-                  <td>Aug 30, 2025</td>
-                  <td>1247</td>
-                  <td>
-                    <button className="campaignbay-action-button">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="1"></circle>
-                        <circle cx="19" cy="12" r="1"></circle>
-                        <circle cx="5" cy="12" r="1"></circle>
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-                {/* --- Example Row: Inactive --- */}
-                <tr>
-                  <td className="campaignbay-table-checkbox-cell">
-                    <input type="checkbox" />
-                  </td>
-                  <td>
-                    <a href="#">Summer Sale 2025</a>
-                  </td>
-                  <td>
-                    <span className="campaignbay-status-pill campaignbay-status-inactive">
-                      Inactive
-                    </span>
-                  </td>
-                  <td>Schedule Discount</td>
-                  <td>Entire Store</td>
-                  <td>20%</td>
-                  <td>Jun 1, 2025</td>
-                  <td>Aug 30, 2025</td>
-                  <td>1247</td>
-                  <td>
-                    <button className="campaignbay-action-button">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="1"></circle>
-                        <circle cx="19" cy="12" r="1"></circle>
-                        <circle cx="5" cy="12" r="1"></circle>
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
+
+                {isLoading ? (
+                  <tr>
+                    <td colSpan="10" style={{ textAlign: "center" }}>
+                      Loading campaigns...
+                    </td>
+                  </tr>
+                ) : campaigns.length === 0 ? (
+                  <tr>
+                    <td colSpan="10" style={{ textAlign: "center" }}>
+                      No campaigns found.
+                    </td>
+                  </tr>
+                ) : (
+                  campaigns.map((campaign) => (
+                    <tr
+                      key={campaign.id}
+                      className={
+                        selectedCampaigns.includes(campaign.id)
+                          ? "is-selected"
+                          : ""
+                      }
+                    >
+                      <td className="campaignbay-table-checkbox-cell">
+                        {/* --- MODIFIED: Individual Row Checkbox --- */}
+                        <CbCheckbox
+                          checked={selectedCampaigns.includes(campaign.id)}
+                          onChange={(isChecked) =>
+                            handleSelectCampaign(campaign.id, isChecked)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <a href={`#/campaigns/${campaign.id}`}>
+                          {campaign.title}
+                        </a>
+                      </td>
+                      <td>
+                        <span
+                          className={`campaignbay-status-pill campaignbay-status-${campaign.status.replace(
+                            "wpab_cb_",
+                            ""
+                          )}`}
+                        >
+                          {/* Capitalize first letter */}
+                          {campaign.status
+                            .replace("wpab_cb_", "")
+                            .charAt(0)
+                            .toUpperCase() +
+                            campaign.status.slice(1).replace("wpab_cb_", "")}
+                        </span>
+                      </td>
+                      <td>{campaign.campaign_type}</td>
+                      <td>{campaign.target_type}</td>
+                      <td>
+                        {campaign.discount_value}
+                        {campaign.discount_type === "percentage" ? "%" : ""}
+                      </td>
+                      <td>
+                        {new Date(campaign.start_datetime).toLocaleDateString()}
+                      </td>
+                      <td>
+                        {new Date(campaign.end_datetime).toLocaleDateString()}
+                      </td>
+                      <td>{/* Usage data will come from logs */}</td>
+                      <td>
+                        <ToolbarDropdownMenu
+                          icon={moreVertical}
+                          label="Actions"
+                          position="bottom left"
+                          controls={[
+                            {
+                              title: "Edit",
+                              icon: edit,
+                              onClick: () => navigate(`/campaigns/${campaign.id}`),
+                            },
+                            {
+                              title: "Delete",
+                              icon: trash,
+                              onClick: () => {
+                                setSelectedCampaignId(campaign.id);
+                                setIsDeleteModalOpen(true);
+                              },
+                            },
+                          ]}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -361,38 +407,25 @@ const Campaigns = () => {
           {/* ==================================================================== */}
           <div className="campaignbay-table-footer">
             <div className="campaignbay-bulk-actions-footer">
-              <input type="checkbox" checked readOnly />
+              <CbCheckbox checked={true} onChange={() => {}} />
               <span>1 ITEM SELECTED</span>
-              <button className="campaignbay-delete-button">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  <line x1="10" y1="11" x2="10" y2="17"></line>
-                  <line x1="14" y1="11" x2="14" y2="17"></line>
-                </svg>
-              </button>
             </div>
             <div className="campaignbay-pagination">
               <span>PAGE</span>
-              <select className="wpab-select wpab-page-select">
+              <select className="wpab-select campaignbay-hidden-border">
                 <option>1</option>
               </select>
               <span>OF 340</span>
               <div className="campaignbay-pagination-arrows">
-                <button className="campaignbay-arrow-button" disabled>
-                  {"<<"}
+                <button
+                  className="wpab-cb-btn campaignbay-arrow-button"
+                  disabled
+                >
+                  <Icon icon={previous} fill="currentColor" />
                 </button>
-                <button className="campaignbay-arrow-button">{">>"}</button>
+                <button className="wpab-cb-btn campaignbay-arrow-button">
+                  <Icon icon={next} fill="currentColor" />
+                </button>
               </div>
             </div>
           </div>
@@ -400,9 +433,9 @@ const Campaigns = () => {
       </div>
 
       <ConfirmDialog
-        isOpen={isModalOpen}
-        onConfirm={handleConfirmDelete}
-        onCancel={() => setIsModalOpen(false)}
+        isOpen={isDeleteModalOpen}
+        onConfirm={handleCampaignDelete}
+        onCancel={() => setIsDeleteModalOpen(false)}
       >
         {__("Are you sure you want to delete this campaign?", "campaignbay")}
       </ConfirmDialog>

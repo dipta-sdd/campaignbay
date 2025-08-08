@@ -55,7 +55,7 @@
   $bg-gray-darkest: #e8e8e8; // Darkest gray
   $bg-gray-light: #f0f0f0; // Light gray background for sections
   $bg-gray-dark: #e0e0e0; // Darker gray for
-  $bg-primary: #3858e9; // Primary color (WordPress blue)
+  $bg-primary: #183ad6; // Primary color (WordPress blue)
   $bg-error: #d63638; // Error color
 
   // new variables
@@ -90,7 +90,7 @@
 
   $cb-text-secondary: #757575;
 
-  $cb-color-primary: #3858e9;
+  $cb-color-primary: #183ad6;
   $cb-color-white: #ffffff;
   $cb-color-danger: #cc1818;
   $cb-color-black: #1e1e1e;
@@ -1237,7 +1237,9 @@
   //check box start
 
   & .campaignbay-checkbox-single-checkbox-con {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 16px;
     width: 16px;
     position: relative;
@@ -1274,7 +1276,7 @@
       left: 50%;
       pointer-events: none;
       position: absolute;
-      top: 60%;
+      top: 50%;
       transform: translate(-50%, -50%);
       -webkit-user-select: none;
       user-select: none;
@@ -1294,7 +1296,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 20px;
+      padding: var(--cb-p-2);
       margin-bottom: 10px;
       gap: $cb-gap-1;
       flex-wrap: wrap;
@@ -1412,10 +1414,29 @@
     }
     .campaignbay-table th {
       font-weight: 600;
-      color: #4a5568;
+      color: #{$cb-color-black};
+    }
+    .campaignbay-table-header {
+      cursor: default;
+      display: inline-flex;
+      align-items: center;
+    }
+    .campaignbay-table-header-sortable {
+      cursor: pointer;
+      &:hover {
+        color: #{$cb-color-primary}aa;
+      }
+    }
+
+    .campaignbay-table-header-icon {
+      display: inline-block;
+      vertical-align: middle;
     }
     .campaignbay-table td {
       color: #2d3748;
+      &:last-child {
+        text-align: end;
+      }
     }
     .campaignbay-table td a {
       color: #2563eb;
@@ -1464,10 +1485,14 @@
       border: none;
       cursor: pointer;
       padding: 4px;
-      color: #6b7280;
-    }
-    .campaignbay-action-button:hover {
-      color: #111827;
+      font-weight: 600;
+      color: #{$cb-color-black};
+      &:hover {
+        color: #{$cb-color-primary};
+      }
+      &:focus {
+        color: #{$cb-color-primary};
+      }
     }
 
     /* Footer */
@@ -1475,9 +1500,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 20px;
+      padding: var(--cb-p-2) var(--cb-p-3);
       font-size: #{$cb-fs-base};
-      color: #4a5568;
+      color: #{$cb-color-black};
     }
     .campaignbay-bulk-actions-footer,
     .campaignbay-pagination {
@@ -1488,29 +1513,26 @@
     .campaignbay-bulk-actions-footer span {
       font-weight: 500;
     }
-    .campaignbay-delete-button {
-      background: none;
+    .campaignbay-hidden-border {
+      font-weight: inherit;
+      font-size: inherit;
+      line-height: inherit;
       border: none;
-      cursor: pointer;
-      color: #4a5568;
-      padding: 4px;
-    }
-    .campaignbay-delete-button:hover {
-      color: #ef4444;
-    }
-    .campaignbay-page-select {
-      padding: 4px 8px;
     }
     .campaignbay-pagination-arrows {
       display: flex;
-      gap: 4px;
+      gap: 0px;
     }
     .campaignbay-arrow-button {
-      background: #f3f4f6;
-      border: 1px solid #e5e7eb;
-      border-radius: 4px;
+      border: 1px solid transparent;
+      border-radius: 0;
       padding: 4px 8px;
       cursor: pointer;
+      background: none;
+      color: #{$cb-color-black};
+      &:focus {
+        border: 1px solid #{$cb-color-primary};
+      }
     }
     .campaignbay-arrow-button:disabled {
       cursor: not-allowed;
