@@ -14,6 +14,7 @@ use WP_Error;
 use WP_Query;
 use WpabCb\Engine\Campaign;
 use WpabCb\Engine\CampaignManager;
+use WpabCb\Core\Logger;
 
 /**
  * The REST API Controller for Campaigns.
@@ -345,6 +346,16 @@ class CampaignsController extends ApiController {
 			);
 			if ( ! is_wp_error( $result ) ) {
 				$updated_count++;
+				$post = get_post( $id );
+				$title = $post->post_title;
+				// Log the activity.
+				Logger::get_instance()->log(
+					'activity',
+					'updated',
+					array( 'campaign_id' => $id, 'extra_data' => [
+						'title' =>$title,
+					] )
+				);
 			}
 		}
 		
@@ -378,6 +389,7 @@ class CampaignsController extends ApiController {
 		$deleted_count = 0;
 		foreach ( $ids as $id ) {
 			// Using the Campaign::delete method ensures our custom hooks are fired.
+			$campaign = new Campaign( $id );
 			if ( Campaign::delete( $id, true ) ) {
 				$deleted_count++;
 			}

@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use WP_Query;
 use WP_Post;
 use Exception;
+use WpabCb\Core\Logger;
 
 /**
  * The Campaign model class.
@@ -377,6 +378,14 @@ class Campaign {
 		 * @param Campaign $campaign    The campaign object.
 		 */
 		do_action( 'wpab_cb_campaign_save', $campaign->id, $campaign );
+		// Log the activity.
+		Logger::get_instance()->log(
+			'activity',
+			'created',
+			array( 'campaign_id' => $campaign->get_id(), 'extra_data' => [
+				'title' => $campaign->get_title(),
+			] )
+		);
 		return $campaign;
 	}
 
@@ -416,6 +425,14 @@ class Campaign {
 		 * @param Campaign $campaign    The campaign object.
 		 */
 		do_action( 'wpab_cb_campaign_save', $this->id, $this );	
+		// Log the activity.
+		Logger::get_instance()->log(
+			'activity',
+			'updated',
+			array( 'campaign_id' => $this->get_id(), 'extra_data' => [
+				'title' => $this->get_title(),
+			] )
+		);
 		return true;
 	}
 
@@ -428,6 +445,8 @@ class Campaign {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function delete( $campaign_id, $force_delete = true ) {
+		$campaign = new self( $campaign_id );
+		$title = $campaign->get_title();
 		$result = wp_delete_post( $campaign_id, $force_delete );
 		/**
 		 * Fires after a campaign is deleted.
@@ -435,6 +454,14 @@ class Campaign {
 		 * @param int      $campaign_id The ID of the deleted campaign.
 		 */
 		do_action( 'wpab_cb_campaign_delete', $campaign_id );
+		// Log the activity.
+		Logger::get_instance()->log(
+			'activity',
+			'deleted',
+			array( 'campaign_id' => $campaign_id, 'extra_data' => [
+				'title' => $title,
+			] )
+		);
 		return ! is_wp_error( $result ) && $result !== false;
 	}
 
