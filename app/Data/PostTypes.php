@@ -176,6 +176,17 @@ class PostTypes {
 				'label_count'               => _n_noop( 'Expired <span class="count">(%s)</span>', 'Expired <span class="count">(%s)</span>', 'campaignbay' ),
 			)
 		);
+		register_post_status(
+			'wpab_cb_inactive',
+			array(
+				'label'                     => _x( 'Inactive', 'post status', 'campaignbay' ),
+				'public'                    => true,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => true,
+				/* translators: %s: number of posts. */
+				'label_count'               => _n_noop( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', 'campaignbay' ),
+			)
+		);
 	}
 
 

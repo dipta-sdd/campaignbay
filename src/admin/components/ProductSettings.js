@@ -33,25 +33,15 @@ const   ProductSettings = ({ productSettings, setProductSettings }) => {
                         product_messageFormat: value
                     }))}
                 />
-                <Input
-                    className='w-100'
-                    label={<span className="wpab-input-label">{__('Product Page BOGO Discount Message Format', 'campaignbay')}</span>}
-                    help={__("Use Placeholder like {campaign_name_strong}, {campaign_name}, {buy_product_quantity}, {buy_product}, {get_product_quantity}, {get_product} .", 'campaignbay')}
-                    value={productSettings.product_bogoMessageFormat}
-                    onChange={(value) => setProductSettings((prev) => ({
-                        ...prev,
-                        product_bogoMessageFormat: value
-                    }))}
-                />
 
-                <Checkbox checked={productSettings.product_enableQuantityTable}
+                {/* <Checkbox checked={productSettings.product_enableQuantityTable}
                     onChange={() => setProductSettings((prev) => ({
                         ...prev,
                         product_enableQuantityTable: !prev.product_enableQuantityTable
                     }))}
                     label={__('Enable Quantity Discounts Table on Product Page', 'campaignbay')}
                     help={__("Show a table outlining tiered quantity based discounts", 'campaignbay')}
-                />
+                /> */}
             </SettingCard>
 
             <SettingCard title={__('Product Exclusion & Prioritization', 'campaignbay')}>

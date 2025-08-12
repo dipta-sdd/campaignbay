@@ -13,6 +13,7 @@ use WP_REST_Response;
 use WP_Error;
 use WP_Query;
 use WpabCb\Engine\Campaign;
+use WpabCb\Engine\CampaignManager;
 
 /**
  * The REST API Controller for Campaigns.
@@ -79,7 +80,7 @@ class CampaignsController extends ApiController {
 	public function register_routes() {
 		$namespace = $this->namespace . $this->version;
 
-		// Route for getting a collection of campaigns and creating a new one.
+		// campaigns
 		register_rest_route(
 			$namespace,
 			'/' . $this->rest_base,
@@ -100,7 +101,7 @@ class CampaignsController extends ApiController {
 			)
 		);
 
-		// Route for a single campaign.
+		// campaigns/{id}
 		register_rest_route(
 			$namespace,
 			'/' . $this->rest_base . '/(?P<id>[\d]+)',
@@ -140,6 +141,26 @@ class CampaignsController extends ApiController {
 				'schema' => array( $this, 'get_item_schema' ),
 			)
 		);
+
+		// campaigns/bulk
+		register_rest_route(
+			$namespace,
+			'/' . $this->rest_base . '/bulk',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_items' ),
+					'permission_callback' => array( $this, 'permissions_check' ),
+					'args'                => $this->get_bulk_update_args(), // <-- Use specific args
+				),
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_items' ),
+					'permission_callback' => array( $this, 'permissions_check' ),
+					'args'                => $this->get_bulk_delete_args(), // <-- Use specific args
+				),
+			)
+		);
 	}
 
 	/**
@@ -169,11 +190,23 @@ class CampaignsController extends ApiController {
 	public function get_items( $request ) {
 		$args = array(
 			'post_type'      => 'wpab_cb_campaign',
-			'post_status'    => 'any',
-			'posts_per_page' => $request['per_page'],
-			'paged'          => $request['page'],
-			's'              => $request['search'],
+			'post_status'    => $request->get_param( 'status' ) ? 'wpab_cb_'.$request->get_param( 'status' ) : 'any',
+			'posts_per_page' => $request->get_param( 'per_page' ) ?? 10,
+			'paged'          => $request->get_param( 'page' ) ?? 1,
+			's'              => $request->get_param( 'search' ) ?? '',
+			'orderby'        => $request->get_param( 'orderby' ) ?? 'title',
+			'order'          => $request->get_param( 'order' ) ?? 'asc',
 		);
+
+		$campaign_type_filter = $request->get_param( 'type' );
+		if ( ! empty( $campaign_type_filter ) ) {
+			$meta_query[] = array(
+				'key'     => '_wpab_cb_campaign_type',
+				'value'   => sanitize_text_field( $campaign_type_filter ),
+				'compare' => '=',
+			);
+			$args['meta_query'] = $meta_query;
+		}
 
 		$query         = new WP_Query( $args );
 		$response_data = array();
@@ -283,6 +316,84 @@ class CampaignsController extends ApiController {
 		return new WP_REST_Response( null, 204 );
 	}
 
+		/**
+	 * Bulk update campaigns' statuses.
+	 *
+	 * @since 1.0.0
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function update_items( $request ) {
+		$params = $request->get_json_params();
+		$ids    = isset( $params['ids'] ) ? array_map( 'absint', $params['ids'] ) : array();
+		$status = isset( $params['status'] ) ? sanitize_key( $params['status'] ) : '';
+
+		if ( empty( $ids ) ) {
+			return new WP_Error( 'rest_invalid_ids', __( 'Campaign IDs are required.', 'campaignbay' ), array( 'status' => 400 ) );
+		}
+		if ( empty( $status ) ) {
+			return new WP_Error( 'rest_invalid_status', __( 'A valid status is required.', 'campaignbay' ), array( 'status' => 400 ) );
+		}
+		
+		$updated_count = 0;
+		foreach ( $ids as $id ) {
+			$result = wp_update_post(
+				array(
+					'ID'          => $id,
+					'post_status' => $status,
+				)
+			);
+			if ( ! is_wp_error( $result ) ) {
+				$updated_count++;
+			}
+		}
+		
+		// Clear the cache after all updates are done.
+		CampaignManager::get_instance()->clear_cache();
+
+		return new WP_REST_Response(
+			array(
+				'success' => true,
+				'updated' => $updated_count,
+			),
+			200
+		);
+	}
+
+	/**
+	 * Bulk delete campaigns.
+	 *
+	 * @since 1.0.0
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function delete_items( $request ) {
+		$params = $request->get_json_params();
+		$ids    = isset( $params['ids'] ) ? array_map( 'absint', $params['ids'] ) : array();
+		
+		if ( empty( $ids ) ) {
+			return new WP_Error( 'rest_invalid_ids', __( 'Campaign IDs are required.', 'campaignbay' ), array( 'status' => 400 ) );
+		}
+		
+		$deleted_count = 0;
+		foreach ( $ids as $id ) {
+			// Using the Campaign::delete method ensures our custom hooks are fired.
+			if ( Campaign::delete( $id, true ) ) {
+				$deleted_count++;
+			}
+		}
+
+		// Cache is cleared by the `before_delete_post` hook, so no need to do it here.
+
+		return new WP_REST_Response(
+			array(
+				'success' => true,
+				'deleted' => $deleted_count,
+			),
+			200
+		);
+	}
+
 	/**
 	 * Prepare a single campaign output for response.
 	 *
@@ -349,7 +460,7 @@ class CampaignsController extends ApiController {
 				'status'              => array(
 					'description' => __( 'A named status for the campaign.', 'campaignbay' ),
 					'type'        => 'string',
-					'enum'        => array( 'wpab_cb_active', 'wpab_cb_inactive', 'wpab_cb_scheduled' ),
+					'enum'        => array( 'wpab_cb_active', 'wpab_cb_inactive', 'wpab_cb_scheduled', 'wpab_cb_expired' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'campaign_type'       => array(
@@ -400,7 +511,7 @@ class CampaignsController extends ApiController {
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'timezone_string'     => array(
+				'timezone_offset'     => array(
 					'description' => __( 'The timezone identifier.', 'campaignbay' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
@@ -412,7 +523,11 @@ class CampaignsController extends ApiController {
 					'items'       => array( 'type' => 'object' ),
 					'context'     => array( 'view', 'edit' ),
 				),
-				
+				'usage_count'         => array(
+					'description' => __( 'The number of times the campaign has been used.', 'campaignbay' ),
+					'type'        => 'integer',
+					'context'     => array( 'view', 'edit' ),
+				),
 			),
 		);
 
@@ -420,4 +535,45 @@ class CampaignsController extends ApiController {
 
 		return $this->add_additional_fields_schema( $this->schema );
 	}
+
+	/**
+	 * Defines the arguments for the bulk update endpoint.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	private function get_bulk_update_args() {
+		return array(
+			'ids'    => array(
+				'description' => __( 'An array of campaign IDs to update.', 'campaignbay' ),
+				'type'        => 'array',
+				'items'       => array( 'type' => 'integer' ),
+				'required'    => true,
+			),
+			'status' => array(
+				'description' => __( 'The new status to apply to the campaigns.', 'campaignbay' ),
+				'type'        => 'string',
+				'enum'        => array( 'wpab_cb_active', 'wpab_cb_inactive' ),
+				'required'    => true,
+			),
+		);
+	}
+
+	/**
+	 * Defines the arguments for the bulk delete endpoint.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	private function get_bulk_delete_args() {
+		return array(
+			'ids' => array(
+				'description' => __( 'An array of campaign IDs to delete.', 'campaignbay' ),
+				'type'        => 'array',
+				'items'       => array( 'type' => 'integer' ),
+				'required'    => true,
+			),
+		);
+	}
+
 }

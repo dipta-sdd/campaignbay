@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { __ } from "@wordpress/i18n";
+import { __, _n, sprintf } from "@wordpress/i18n";
 import { useNavigate } from "react-router-dom";
 import {
   Icon,
@@ -11,12 +11,9 @@ import {
   moreVertical,
   previous,
   next,
-  more,
-  arrowLeft,
-  arrowRight,
-  arrowUp,
-  arrowDown,
   edit,
+  check,
+  cancelCircleFilled,
 } from "@wordpress/icons";
 import apiFetch from "@wordpress/api-fetch";
 import {
@@ -25,126 +22,139 @@ import {
 } from "@wordpress/components";
 import { useToast } from "../store/toast/use-toast";
 import CbCheckbox from "../components/CbCheckbox"; // Assuming you still use this for the header
+import { addQueryArgs } from "@wordpress/url";
+import { useCbStore } from "../store/cbStore";
+import { date, getDate } from "@wordpress/date";
+import Skeleton from "../components/Skeleton";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { addToast } = useToast();
-
-  // --- State for selection, sorting, and modals ---
+  const { wpSettings } = useCbStore();
   const [selectedCampaignId, setSelectedCampaignId] = useState(null);
-  const [selectedCampaigns, setSelectedCampaigns] = useState([]); // <-- NEW: Tracks selected campaign IDs
+  const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [sortBy, setSortBy] = useState("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [orderby, setOrderby] = useState("post_name");
+  const [order, setOrder] = useState("desc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [bulkAction, setBulkAction] = useState("");
+  const [isBulkActionModalOpen, setIsBulkActionModalOpen] = useState(false);
 
   const tableHeads = [
-    { label: "Campaign Name", value: "title", isSortable: true },
+    { label: "Campaign Name", value: "post_name", isSortable: true },
     { label: "Status", value: "status", isSortable: true },
-    { label: "Discount Type", value: "discount_type", isSortable: false },
+    { label: "Campaign Type", value: "campaign_type", isSortable: true },
     { label: "Target", value: "target", isSortable: false },
     { label: "Value", value: "value", isSortable: false },
     { label: "Start Date", value: "start_date", isSortable: true },
     { label: "End Date", value: "end_date", isSortable: true },
-    { label: "Usage", value: "usage", isSortable: false },
+    { label: "Usage", value: "usage_count", isSortable: true },
     { label: "Action", value: "action", isSortable: false },
   ];
 
   useEffect(() => {
-    setIsLoading(true);
-    const fetchCampaigns = async () => {
-      try {
-        // In a real app, you would add sorting/filtering params here
-        const response = await apiFetch({
-          path: "/campaignbay/v1/campaigns",
-          method: "GET",
-        });
-        setCampaigns(response);
-      } catch (error) {
-        addToast(__("Error fetching campaigns.", "campaignbay"), "error");
-      }
-      setIsLoading(false);
-    };
     fetchCampaigns();
-  }, []);
+  }, [orderby, order, searchQuery, currentPage, itemsPerPage]);
+  const fetchCampaigns = async () => {
+    try {
+      setIsLoading(true);
+      const queryParams = {
+        page: currentPage,
+        per_page: itemsPerPage,
+        orderby: orderby,
+        order: order,
+        search: searchQuery,
+        status: statusFilter,
+        type: typeFilter,
+      };
+      const response = await apiFetch({
+        path: addQueryArgs("/campaignbay/v1/campaigns", queryParams),
+        method: "GET",
+        parse: false,
+      });
 
-  // --- NEW: Checkbox Handlers ---
-  const handleSelectAll = (isChecked) => {
-    if (isChecked) {
-      setSelectedCampaigns(campaigns.map((c) => c.id));
-    } else {
+      setTotalPages(response.headers.get("x-wp-totalpages"));
+      setTotalItems(response.headers.get("x-wp-total"));
+      setCampaigns(await response.json());
+    } catch (error) {
+      addToast(__("Error fetching campaigns.", "campaignbay"), "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatDateTime = (dateTimeString) => {
+    if (
+      !dateTimeString ||
+      new Date(dateTimeString).toString() === "Invalid Date"
+    ) {
+      return "—"; // Return an em-dash for missing dates.
+    }
+
+    // get the date format and time format from the wpSettings
+    const format = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
+
+    // get the date and time from the dateTimeString
+    const dateTime = getDate(dateTimeString);
+
+    // format the date and time
+    return date(format, dateTime, null);
+  };
+
+  const handleSelectAll = () => {
+    if (isAllSelected) {
       setSelectedCampaigns([]);
-    }
-  };
-
-  const handleSelectCampaign = (campaignId, isChecked) => {
-    if (isChecked) {
-      setSelectedCampaigns((prev) => [...prev, campaignId]);
     } else {
-      setSelectedCampaigns((prev) => prev.filter((id) => id !== campaignId));
+      setSelectedCampaigns(campaigns.map((c) => c.id));
     }
   };
 
- 
+  const handleSelectCampaign = (campaignId) => {
+    if (selectedCampaigns.includes(campaignId)) {
+      setSelectedCampaigns((prev) => prev.filter((id) => id !== campaignId));
+    } else {
+      setSelectedCampaigns((prev) => [...prev, campaignId]);
+    }
+  };
+
   const handleCampaignDelete = async () => {
     try {
       await apiFetch({
         path: `/campaignbay/v1/campaigns/${selectedCampaignId}`,
         method: "DELETE",
-      });   
-        addToast(__("Campaign deleted successfully", "campaignbay"), "success");
-        setCampaigns((prev) => prev.filter((c) => c.id !== selectedCampaignId));
-        setSelectedCampaigns((prev) => prev.filter((id) => id !== selectedCampaignId));
-        setIsDeleteModalOpen(false);
+      });
+      addToast(__("Campaign deleted successfully", "campaignbay"), "success");
+      setCampaigns((prev) => prev.filter((c) => c.id !== selectedCampaignId));
+      setSelectedCampaigns((prev) =>
+        prev.filter((id) => id !== selectedCampaignId)
+      );
+      setIsDeleteModalOpen(false);
     } catch (error) {
       addToast(__("Error deleting campaign", "campaignbay"), "error");
       setIsDeleteModalOpen(false);
     }
   };
 
-  const handleCampaignsDelete = async () => {
-    const campaignsToDelete = [...selectedCampaigns]; // Copy the IDs to delete
-    setIsLoading(true);
-    setIsDeleteModalOpen(false);
-
-    try {
-      // This could be a bulk delete endpoint in the future
-      for (const campaignId of campaignsToDelete) {
-        await apiFetch({
-          path: `/campaignbay/v1/campaigns/${campaignId}`,
-          method: "DELETE",
-        });
-      }
-      addToast(
-        __("Campaign(s) deleted successfully", "campaignbay"),
-        "success"
-      );
-      // Update UI by filtering out the deleted campaigns
-      setCampaigns((prev) =>
-        prev.filter((c) => !campaignsToDelete.includes(c.id))
-      );
-      setSelectedCampaigns([]); // Clear selection
-    } catch (error) {
-      addToast(__("Error deleting campaign(s)", "campaignbay"), "error");
-    }
-    setIsLoading(false);
-  };
-
   const handleSort = (newSortBy) => {
-    if (sortBy === newSortBy) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    if (orderby === newSortBy) {
+      setOrder(order === "asc" ? "desc" : "asc");
     } else {
       // If clicking a new column, set it as the sort column and default to ascending.
-      setSortBy(newSortBy);
-      setSortOrder("asc");
+      setOrderby(newSortBy);
+      setOrder("asc");
     }
-    // NOTE: In a future step, you would trigger a data re-fetch here.
-    // For now, we are just updating the state.
+    console.log(orderby, order);
   };
 
   const TableHead = ({ label, isSortable, value, onClick }) => {
-    console.log(isSortable, value);
     if (isSortable) {
       return (
         <th>
@@ -166,43 +176,176 @@ const Campaigns = () => {
   };
 
   const SortIndicator = ({ value }) => {
-    console.log(sortBy, value);
-    if (sortBy !== value) {
+    if (orderby !== value) {
       return null; // Don't show an icon if it's not the active sort column
     }
     return (
       <Icon
         className="campaignbay-table-header-icon"
-        icon={sortOrder === "asc" ? chevronUp : chevronDown}
+        icon={order === "asc" ? chevronUp : chevronDown}
         fill="currentColor"
       />
     );
   };
-
   const isAllSelected =
     campaigns.length > 0 && selectedCampaigns.length === campaigns.length;
 
-  useEffect(() => {
-    setIsLoading(true);
-    const fetchCampaigns = async () => {
-      try {
-        const response = await apiFetch({
-          path: "/campaignbay/v1/campaigns",
-          method: "GET",
-        });
-        setCampaigns(response);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        addToast(
-          __("Something went wrong, please try again later.", "campaignbay"),
-          "error"
-        );
-      }
-    };
+  const getTargetType = (target_type) => {
+    if (target_type === "product") {
+      return "Selected Products";
+    }
+    if (target_type === "category") {
+      return "Selected Categories";
+    }
+    if (target_type === "entire_store") {
+      return "All Products";
+    }
+    return "All Products";
+  };
+  const applyFilters = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      fetchCampaigns();
+    }
+  };
 
-    fetchCampaigns();
-  }, []);
+  const handleBulkAction = (action) => {
+    setBulkAction(action);
+    if (action !== "" && action !== null && action !== undefined) {
+      setIsBulkActionModalOpen(true);
+    }
+  };
+
+  const handleBulkActionModal = () => {
+    if (!selectedCampaigns?.length || !bulkAction || bulkAction === "") {
+      setIsBulkActionModalOpen(false);
+      return;
+    }
+    if (bulkAction === "delete") {
+      handleCampaignsDelete();
+    } else if (bulkAction === "activate") {
+      handleCampaignsStatusUpdate();
+    } else if (bulkAction === "deactivate") {
+      handleCampaignsStatusUpdate();
+    }
+
+    setIsBulkActionModalOpen(false);
+    setIsLoading(false);
+  };
+
+  const bulkActionLabels = {
+    "": __("Select Action", "campaignbay"), // Default
+    activate: __("activate", "campaignbay"),
+    deactivate: __("deactivate", "campaignbay"),
+    delete: __("delete", "campaignbay"),
+  };
+
+  const confirmationMessage = sprintf(
+    /* translators: %1$s: the action to perform (e.g., "delete"), %2$d: the number of campaigns. */
+    _n(
+      "Are you sure you want to %1$s %2$d selected campaign?",
+      "Are you sure you want to %1$s %2$d selected campaigns?",
+      selectedCampaigns.length || 0,
+      "campaignbay"
+    ),
+    bulkActionLabels[bulkAction], // %1$s gets replaced with the action label
+    selectedCampaigns.length || 0 // %2$d gets replaced with the number
+  );
+
+  const handleCampaignsDelete = async () => {
+    // Ensure all campaign IDs are integers
+    const campaignsToDeleteInt = selectedCampaigns
+      .map((id) => parseInt(id, 10))
+      .filter((id) => !isNaN(id));
+    setIsLoading(true);
+    try {
+      await apiFetch({
+        path: `/campaignbay/v1/campaigns/bulk`,
+        method: "DELETE",
+        data: {
+          ids: campaignsToDeleteInt,
+        },
+      });
+      addToast(
+        _n(
+          "Campaign deleted successfully",
+          "Campaigns deleted successfully",
+          campaignsToDeleteInt.length,
+          "campaignbay"
+        ),
+        "success"
+      );
+      setSelectedCampaigns([]);
+      fetchCampaigns();
+    } catch (error) {
+      addToast(
+        _n(
+          "Error deleting campaign",
+          "Error deleting campaigns",
+          campaignsToDeleteInt.length,
+          "campaignbay"
+        ),
+        "error"
+      );
+      console.log(error);
+    }
+  };
+
+    const handleCampaignsStatusUpdate = async () => {
+    const campaignsToUpdateInt = selectedCampaigns
+      .map((id) => parseInt(id, 10))
+      .filter((id) => !isNaN(id));
+    setIsLoading(true);
+    try {
+      await apiFetch({
+        path: `/campaignbay/v1/campaigns/bulk`,
+        method: "PUT",
+        data: {
+          ids: campaignsToUpdateInt,
+          status:
+            bulkAction === "activate" ? "wpab_cb_active" : "wpab_cb_inactive",
+        },
+      });
+      addToast(
+        _n(
+          "Campaign status updated successfully",
+          "Campaigns status updated successfully",
+          campaignsToUpdateInt.length,
+          "campaignbay"
+        ),
+        "success"
+      );
+      setSelectedCampaigns([]);
+      setCampaigns((prev) =>
+        prev.map((c) => {
+          if (campaignsToUpdateInt.includes(c.id)) {
+            return {
+              ...c,
+              status:
+                bulkAction === "activate"
+                  ? "wpab_cb_active"
+                  : "wpab_cb_inactive",
+            };
+          }
+          return { ...c };
+        })
+      );
+      setBulkAction("");
+      setSelectedCampaigns([]);
+    } catch (error) {
+      addToast(
+        _n(
+          "Error updating campaign status",
+          "Error updating campaigns status",
+          campaignsToUpdateInt.length,
+          "campaignbay"
+        ),
+        "error"
+      );
+      console.log(error);
+    }
+  };
 
   return (
     <div className="cb-page campaignbay-campaigns">
@@ -221,21 +364,33 @@ const Campaigns = () => {
         </div>
       </div>
       <div className="cb-page-container">
-        <div className="cb-bg-white">
+        <div className="campaignbay-bg-white">
           {/* ==================================================================== */}
           {/* FILTERS SECTION                                                      */}
           {/* ==================================================================== */}
           <div className="campaignbay-filters">
             <div className="campaignbay-filter-group">
               <div className="campaignbay-filter-group-1">
-                <select className="wpab-select">
-                  <option>Bulk Actions</option>
+                <select
+                  className="wpab-select"
+                  value={bulkAction}
+                  onChange={(e) => {
+                    handleBulkAction(e.target.value);
+                  }}
+                >
+                  <option value="">Bulk Actions</option>
                   <option value="activate">Activate</option>
                   <option value="deactivate">Deactivate</option>
                   <option value="delete">Delete</option>
                 </select>
-                <select className="wpab-select">
-                  <option>Filter by Status</option>
+                <select
+                  className="wpab-select"
+                  value={statusFilter}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+                  }}
+                >
+                  <option value="">Filter by Status</option>
                   <option value="active">Active</option>
                   <option value="scheduled">Scheduled</option>
                   <option value="expired">Expired</option>
@@ -243,13 +398,20 @@ const Campaigns = () => {
                 </select>
               </div>
               <div className="campaignbay-filter-group-2">
-                <select className="wpab-select">
-                  <option>Filter by Discount</option>
+                <select
+                  className="wpab-select"
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                >
+                  <option value="">Filter by Type</option>
                   <option value="scheduled">Schedule Discount</option>
                   <option value="quantity">Quantity Discount</option>
                   <option value="earlybird">EarlyBird Discount</option>
                 </select>
-                <button className="wpab-cb-btn wpab-cb-btn-primary">
+                <button
+                  className="wpab-cb-btn wpab-cb-btn-primary"
+                  onClick={applyFilters}
+                >
                   Apply
                 </button>
               </div>
@@ -257,6 +419,8 @@ const Campaigns = () => {
             <div className="campaignbay-search-box">
               <input
                 type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="wpab-input"
                 placeholder="Search Campaign"
               />
@@ -265,21 +429,6 @@ const Campaigns = () => {
                 fill="currentColor"
                 className="campaignbay-search-icon"
               />
-              {/* <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="campaignbay-search-icon"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg> */}
             </div>
           </div>
 
@@ -308,13 +457,49 @@ const Campaigns = () => {
                 </tr>
               </thead>
               <tbody>
-
                 {isLoading ? (
-                  <tr>
-                    <td colSpan="10" style={{ textAlign: "center" }}>
-                      Loading campaigns...
-                    </td>
-                  </tr>
+                  Array.from({ length: itemsPerPage || 10 }).map((_, index) => (
+                    <tr key={index}>
+                      <td>
+                        <Skeleton />
+                      </td>
+                      <td>
+                        <Skeleton />
+                      </td>
+                      <td>
+                        <Skeleton height="24" width="24" borderRadius="full" />
+                      </td>
+                      <td>
+                        <Skeleton />
+                      </td>
+                      <td>
+                        <Skeleton />
+                      </td>
+                      <td>
+                        <Skeleton>
+                          <span>August 9, 2025 7:04 pm</span>
+                        </Skeleton>
+                      </td>
+                      <td>
+                        <Skeleton>
+                          <span>August 9, 2025 7:04 pm</span>
+                        </Skeleton>
+                      </td>
+                      <td>
+                        <Skeleton />
+                      </td>
+                      <td>
+                        <Skeleton />
+                      </td>
+                      <td>
+                        <Skeleton
+                          width="24"
+                          height="24"
+                          className="campaignbay-m-6"
+                        />
+                      </td>
+                    </tr>
+                  ))
                 ) : campaigns.length === 0 ? (
                   <tr>
                     <td colSpan="10" style={{ textAlign: "center" }}>
@@ -332,47 +517,49 @@ const Campaigns = () => {
                       }
                     >
                       <td className="campaignbay-table-checkbox-cell">
-                        {/* --- MODIFIED: Individual Row Checkbox --- */}
                         <CbCheckbox
                           checked={selectedCampaigns.includes(campaign.id)}
                           onChange={(isChecked) =>
-                            handleSelectCampaign(campaign.id, isChecked)
+                            handleSelectCampaign(campaign.id)
                           }
                         />
                       </td>
                       <td>
-                        <a href={`#/campaigns/${campaign.id}`}>
+                        <a
+                          className="campaignbay-capitalize "
+                          href={`#/campaigns/${campaign.id}`}
+                        >
                           {campaign.title}
                         </a>
                       </td>
                       <td>
                         <span
-                          className={`campaignbay-status-pill campaignbay-status-${campaign.status.replace(
-                            "wpab_cb_",
-                            ""
-                          )}`}
+                          className={`campaignbay-status-pill campaignbay-status-${
+                            campaign?.status?.replace("wpab_cb_", "") || ""
+                          }`}
                         >
-                          {/* Capitalize first letter */}
-                          {campaign.status
-                            .replace("wpab_cb_", "")
-                            .charAt(0)
-                            .toUpperCase() +
-                            campaign.status.slice(1).replace("wpab_cb_", "")}
+                          {campaign?.status?.replace("wpab_cb_", "") || ""}
                         </span>
                       </td>
-                      <td>{campaign.campaign_type}</td>
-                      <td>{campaign.target_type}</td>
+                      <td className="campaignbay-capitalize campaignbay-text-secondary">
+                        {campaign.campaign_type}
+                      </td>
+                      <td className="campaignbay-capitalize campaignbay-text-secondary">
+                        {getTargetType(campaign.target_type)}
+                      </td>
                       <td>
                         {campaign.discount_value}
                         {campaign.discount_type === "percentage" ? "%" : ""}
                       </td>
-                      <td>
-                        {new Date(campaign.start_datetime).toLocaleDateString()}
+                      <td className="campaignbay-text-secondary">
+                        {formatDateTime(campaign.start_datetime)}
                       </td>
-                      <td>
-                        {new Date(campaign.end_datetime).toLocaleDateString()}
+                      <td className="campaignbay-text-secondary">
+                        {formatDateTime(campaign.end_datetime)}
                       </td>
-                      <td>{/* Usage data will come from logs */}</td>
+                      <td className="campaignbay-text-secondary">
+                        {campaign.usage_count || 0}
+                      </td>
                       <td>
                         <ToolbarDropdownMenu
                           icon={moreVertical}
@@ -382,7 +569,8 @@ const Campaigns = () => {
                             {
                               title: "Edit",
                               icon: edit,
-                              onClick: () => navigate(`/campaigns/${campaign.id}`),
+                              onClick: () =>
+                                navigate(`/campaigns/${campaign.id}`),
                             },
                             {
                               title: "Delete",
@@ -407,23 +595,52 @@ const Campaigns = () => {
           {/* ==================================================================== */}
           <div className="campaignbay-table-footer">
             <div className="campaignbay-bulk-actions-footer">
-              <CbCheckbox checked={true} onChange={() => {}} />
-              <span>1 ITEM SELECTED</span>
+              {/* <CbCheckbox checked={isAllSelected} onChange={handleSelectAll} />
+              <span>{selectedCampaigns.length} ITEM SELECTED</span> */}
+              Show Campaigns
+              <select
+                className="wpab-select campaignbay-hidden-border"
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+              >
+                {[10, 25, 50, 100].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+              per page.
             </div>
             <div className="campaignbay-pagination">
               <span>PAGE</span>
-              <select className="wpab-select campaignbay-hidden-border">
-                <option>1</option>
+              <select
+                className="wpab-select campaignbay-hidden-border"
+                value={currentPage}
+                onChange={(e) => setCurrentPage(e.target.value)}
+              >
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    {index + 1}
+                  </option>
+                ))}
               </select>
-              <span>OF 340</span>
-              <div className="campaignbay-pagination-arrows">
+              <span className="campaignbay-w-max">OF {totalPages}</span>
+              <div className="campaignbay-pagination-arrows campaignbay-ml-4">
                 <button
                   className="wpab-cb-btn campaignbay-arrow-button"
-                  disabled
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
                 >
                   <Icon icon={previous} fill="currentColor" />
                 </button>
-                <button className="wpab-cb-btn campaignbay-arrow-button">
+                <button
+                  className="wpab-cb-btn campaignbay-arrow-button"
+                  disabled={currentPage === parseInt(totalPages)}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
                   <Icon icon={next} fill="currentColor" />
                 </button>
               </div>
@@ -438,6 +655,19 @@ const Campaigns = () => {
         onCancel={() => setIsDeleteModalOpen(false)}
       >
         {__("Are you sure you want to delete this campaign?", "campaignbay")}
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        isOpen={isBulkActionModalOpen}
+        onConfirm={handleBulkActionModal}
+        onCancel={() => setIsBulkActionModalOpen(false)}
+      >
+        {selectedCampaigns?.length > 0
+          ? confirmationMessage
+          : __(
+              "Please select campaigns to perform this action.",
+              "campaignbay"
+            )}
       </ConfirmDialog>
     </div>
   );

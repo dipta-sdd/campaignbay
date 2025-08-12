@@ -110,24 +110,33 @@ class Scheduler {
 		// First, always clear any previously scheduled events for this campaign.
 		// This handles cases where a user unschedules a campaign by changing its status to draft or active.
 		$this->clear_campaign_schedules( $campaign_id );
-
-		// Only proceed to schedule new events if the campaign's status is 'wpab_cb_scheduled'.
-		if ( 'wpab_cb_scheduled' !== $campaign->get_status() ) {
+		$status = $campaign->get_status();
+		if ( 'wpab_cb_scheduled' !== $status ) {
 			wpab_cb_log( sprintf( 'Campaign #%d status is "%s", not "scheduled". No new events will be scheduled.', $campaign_id, $campaign->get_status() ), 'DEBUG' );
 			return;
 		}
 
 		$start_datetime = $campaign->get_meta( 'start_datetime' );
 		$end_datetime   = $campaign->get_meta( 'end_datetime' );
+		$site_timezone = wp_timezone_string();
+		wpab_cb_log( 'start_datetime ('. $site_timezone .'): ' . $start_datetime, 'DEBUG' );
+		wpab_cb_log( 'end_datetime ('. $site_timezone .'): ' . $end_datetime, 'DEBUG' );
+		$start_datetime = date( 'Y-m-d H:i:s', strtotime( $start_datetime . ' ' . $site_timezone ) );
+		$end_datetime = date( 'Y-m-d H:i:s', strtotime( $end_datetime . ' ' . $site_timezone ) );
+		wpab_cb_log( 'start_datetime (UTC): ' . $start_datetime, 'DEBUG' );
+		wpab_cb_log( 'end_datetime (UTC): ' . $end_datetime, 'DEBUG' );
 		// // Convert ISO 8601 date strings to Unix timestamps for scheduling.
 		$start_timestamp = $start_datetime ? strtotime( $start_datetime ) : null;
 		$end_timestamp   = $end_datetime ? strtotime( $end_datetime ) : null;
 		$current_time    = time();
-		wpab_cb_log( '__current_time: ' . $current_time, 'DEBUG' );
+	
 		// Schedule the activation event if the start time is in the future.
 		if ( $start_timestamp && $start_timestamp > $current_time ) {
 			wp_schedule_single_event( $start_timestamp, self::ACTIVATION_HOOK, array( 'campaign_id' => $campaign_id ) );
 			wpab_cb_log( sprintf( 'Scheduled activation for campaign #%s at timestamp %s.', $campaign_id, $start_timestamp ), 'INFO' );
+		} elseif ( $start_timestamp && $start_timestamp <= $current_time ) {
+			$this->run_campaign_activation( $campaign_id );
+			wpab_cb_log( sprintf( 'Campaign #%s activation time is in the past, running activation now.', $campaign_id ), 'INFO' );
 		}
 
 		// Schedule the deactivation event if the end time is in the future.

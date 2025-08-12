@@ -7,9 +7,9 @@
     "build": "wp-scripts build",
     "start": "wp-scripts start",
     "browsersync": "browser-sync start --proxy 'localhost' --files 'build/*.js, build/*.css, **/*.php' --no-notify",
-    "dev": "npm-run-all --parallel start browsersync",
-    "makepot": "php wp-cli.phar i18n make-pot . languages/wpab-cb.pot  --domain=wpab-cb",
-    "make-json": "php wp-cli.phar i18n make-json . languages"
+    "dev": "npm-run-all --parallel --print-label browsersync start",
+    "makepot": "wp i18n make-pot . languages/campaignbay.pot --domain=campaignbay --slug=campaignbay --exclude='node_modules,vendor,src'",
+    "make-json":  "wp i18n make-json languages --no-purge && node helper/rename-translations.js"
   },
   "author": "sankarsan das",
   "license": "ISC",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@wordpress/dataviews": "^4.22.0",
+    "@wordpress/date": "^5.28.0",
     "@wordpress/i18n": "^5.26.0",
     "@wordpress/icons": "^10.26.0",
     "@wordpress/react-i18n": "^4.26.0",

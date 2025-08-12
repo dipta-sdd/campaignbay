@@ -42,7 +42,7 @@ const EBTierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst })
                             value={tierData.quantity}
                             className="min-input wpab-input"
                             onChange={handleChange}
-                            min="0"
+                            min="1"
                             placeholder="e.g., 10"
                         />
                         <span className='wpab-input-label'>
@@ -67,7 +67,8 @@ const EBTierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst })
                             value={tierData.value}
                             onChange={handleChange}
                             placeholder="e.g., 10"
-                            className="value-input wpab-input"
+                            className="value-input wpab-input" 
+                            min="0"
                         />
                         <div className="type-toggle">
                             <ToggleGroupControl

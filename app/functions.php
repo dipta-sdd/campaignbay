@@ -41,15 +41,15 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			/*==================================================
 			* Debugging & Logging (from Global Tab)
 			==================================================*/
-			'debug_enableMode'       => false,
+			'debug_enableMode'       => true,
 			'debug_logLevel'         => 'errors_only',
 
 			/*==================================================
 			* Product Settings Tab
 			==================================================*/
 			'product_showDiscountedPrice' => true,
-			'product_messageFormat'       => esc_html__( 'You save {percentage_off}!', 'campaignbay' ),
-			'product_bogoMessageFormat'   => esc_html__(  '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!', 'campaignbay' ),
+			'product_messageFormat'       => esc_html__( 'You save {percentage_off}!', 'campaign___bay' ),
+			'product_bogoMessageFormat'   => esc_html__(  '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!', 'campaign___bay' ),
 			'product_enableQuantityTable' => true,
 			'product_excludeSaleItems'    => true,
 			'product_priorityMethod'      => 'apply_highest',
@@ -59,10 +59,10 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			==================================================*/
 			'cart_allowWcCouponStacking'  => false,
 			'cart_allowCampaignStacking'  => false,
-			'cart_savedMessageFormat'     => esc_html__( 'You saved {saved_amount} on this order!', 'campaignbay' ),
+			'cart_savedMessageFormat'     => esc_html__( 'You saved {saved_amount} on this order!', 'campaign___bay' ),
 			'cart_showNextDiscountBar'    => true,
-			'cart_nextDiscountFormat'     => esc_html__( 'Spend {remaining_amount} more for {discount_percentage} off!', 'campaignbay' ),
-			'cart_bogoMessageFormat'      => esc_html__( 'Buy {buy_quantity} more and get {get_product_quantity} {get_product} for free!', 'campaignbay' ),
+			'cart_nextDiscountFormat'     => esc_html__( 'Spend {remaining_amount} more for {discount_percentage} off!', 'campaign___bay' ),
+			'cart_bogoMessageFormat'      => esc_html__( 'Buy {buy_quantity} more and get {get_product_quantity} {get_product} for free!', 'campaign___bay' ),
 			'cart_showDiscountBreakdown'  => true,
 
 			/*==================================================
@@ -72,7 +72,7 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			'promo_barPosition'           => 'top_of_page',
 			'promo_barBgColor'            => '#000000',
 			'promo_barTextColor'          => '#FFFFFF',
-			'promo_barContent'            => esc_html__( 'FLASH SALE! {percentage_off} on all shirts!', 'campaignbay' ),
+			'promo_barContent'            => esc_html__( 'FLASH SALE! {percentage_off} on all shirts!', 'campaign___bay' ),
 			'promo_barLinkUrl'            => '',
 			'promo_barDisplayPages'       => array( 'shop_page', 'product_pages' ),
 			'promo_enableCustomBadges'    => true,
@@ -223,21 +223,22 @@ if ( ! function_exists( 'wpab_cb_get_white_label' ) ) :
 	function wpab_cb_get_white_label( $key = '' ) {
 		$plugin_name = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_white_label_plugin_name',
-			esc_html__( 'WP React Plugin Boilerplate', 'campaignbay' )
+			esc_html__( 'WP React Plugin Boilerplate', 'campaign___bay' )
 		);
 		
 		$options = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_white_label',
 			 array(
-				'plugin_name'      => esc_html( __('WPAB - WooCommerce Smart Campaigns', 'campaignbay') ),
-				'short_name'       => esc_html__( 'Smart Campaigns', 'campaignbay' ),
-				'menu_label'       => esc_html__( 'Campaigns', 'campaignbay' ),
-				'custom_icon'  	   => WPAB_CB_URL . 'assets/img/logo-2.svg',
+				'plugin_name'      => esc_html( __('WPAB - WooCommerce Smart Campaigns', 'campaign___bay') ),
+				'short_name'       => esc_html__( 'Smart Campaigns', 'campaign___bay' ),
+				'menu_label'       => esc_html__( 'Campaigns', 'campaign___bay' ),
+				'custom_icon'  	   => WPAB_CB_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
+				'menu_icon'  	   => WPAB_CB_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
 				'author_name'      => 'WP Anchor Bay',
 				'author_uri'       => 'https://wpanchorbay.com',
 				'support_uri'      => 'https://wpanchorbay.com/support',
 				'docs_uri'         => 'https://campaignbay.github.io/',
-				'menu_icon'        => 'dashicons-awards',
+				// 'menu_icon'        => 'dashicons-awards',
 				'position'         => 57,
 			)
 		);
@@ -261,8 +262,8 @@ if(! function_exists('wpab_cb_log')) {
 	 * @param bool $dev_mode Whether to log messages in development mode.
 	 */
 	function wpab_cb_log( $message, $level = 'INFO', $dev_mode = true ) {
-		
-		if ( ! $dev_mode || ! defined( 'WPAB_CB_DEV_MODE' ) || ! WPAB_CB_DEV_MODE ) {
+		$enable_logging = wpab_cb_get_options('debug_enableMode');
+		if ( ! $enable_logging || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
 			return;
 		}
 		$upload_dir = wp_upload_dir();
@@ -312,13 +313,11 @@ if ( ! function_exists( 'wpab_cb_get_campaign_meta_keys' ) ) :
 			'discount_value',
 			'target_type',
 			'target_ids',
-			'exclude_sale_items',
-			'apply_to_shipping',
-			'schedule_enabled',
 			'start_datetime',
 			'end_datetime',
-			'timezone_string',
-			'campaign_tiers'
+			'timezone_offset',
+			'campaign_tiers',
+			'usage_count'
 		);
 	}
 endif;

@@ -30,7 +30,8 @@
   $cb-spacing-unit: 4px;
   $cb-border-radius-base: 4px;
   $cb-border-width-base: 1px;
-  $cb-border-color-base: #949494; // Light gray for borders
+  $cb-border-color-base: #949494;
+  $cb-border-color-base-light: #cdcdcd;
   // Typography (using SCSS variables)
 
   $fs-sm: 12px;
@@ -96,12 +97,128 @@
   $cb-color-black: #1e1e1e;
   $cb-color-body: #dddddd; //manually change in line 3 of index.scss
 
+  // --- Utility Classes (Generated with SCSS Maps and Loops) ---
+
+  // Heights
+  $heights: (
+    "0": 0px,
+    "1": 1px,
+    "2": 2px,
+    "4": 4px,
+    "6": 6px,
+    "8": 8px,
+    "12": 12px,
+    "16": 16px,
+    "20": 20px,
+    "24": 24px,
+    "32": 32px,
+    "36": 36px,
+    "40": 40px,
+    "64": 64px,
+  );
+
+  @each $name, $value in $heights {
+    .campaignbay-h-#{$name} {
+      height: $value;
+    }
+    .campaignbay-m-#{$name} {
+      margin: $value;
+    }
+    .campaignbay-mt-#{$name} {
+      margin-top: $value;
+    }
+    .campaignbay-mr-#{$name} {
+      margin-right: $value;
+    }
+    .campaignbay-mb-#{$name} {
+      margin-bottom: $value;
+    }
+    .campaignbay-ml-#{$name} {
+      margin-left: $value;
+    }
+    .campaignbay-mx-#{$name} {
+      margin-left: $value;
+      margin-right: $value;
+    }
+    .campaignbay-my-#{$name} {
+      margin-top: $value;
+      margin-bottom: $value;
+    }
+    .campaignbay-p-#{$name} {
+      padding: $value;
+    }
+    .campaignbay-pt-#{$name} {
+      padding-top: $value;
+    }
+    .campaignbay-pr-#{$name} {
+      padding-right: $value;
+    }
+    .campaignbay-pb-#{$name} {
+      padding-bottom: $value;
+    }
+    .campaignbay-pl-#{$name} {
+      padding-left: $value;
+    }
+    .campaignbay-px-#{$name} {
+      padding-left: $value;
+      padding-right: $value;
+    }
+    .campaignbay-py-#{$name} {
+      padding-top: $value;
+      padding-bottom: $value;
+    }
+  }
+
+  // Widths (supports percentages and fixed units)
+  $widths: (
+    "1-4": 25%,
+    "1-3": 33.333%,
+    "1-2": 50%,
+    "2-3": 66.666%,
+    "3-4": 75%,
+    "full": 100%,
+    "max": max-content,
+    "12": 12px,
+    "16": 16px,
+    "20": 20px,
+    "24": 24px,
+    "32": 32px,
+    "36": 36px,
+    "40": 40px,
+    "64": 64px,
+  );
+
+  @each $name, $value in $widths {
+    .campaignbay-w-#{$name} {
+      width: $value;
+    }
+  }
+
+  // Border Radii (for shape)
+  $border-radii: (
+    "sm": 4px,
+    "md": 8px,
+    "lg": 16px,
+    "full": 9999px // For creating circles or pills,,
+  );
+
+  @each $name, $value in $border-radii {
+    .campaignbay-br-#{$name} {
+      border-radius: $value;
+    }
+  }
+
+  .campaignbay-text-secondary {
+    color: #{$cb-text-secondary};
+  }
+
   --cb-p-1: 10px;
   --cb-p-2: 20px;
   --cb-p-3: 30px;
   --cb-p-4: 40px;
   --cb-p-5: 50px;
   --cb-p-6: 60px;
+  --padding-page-x: 50px;
 
   @media (max-width: 768px) {
     --cb-p-1: 5px;
@@ -110,7 +227,9 @@
     --cb-p-4: 20px;
     --cb-p-5: 25px;
     --cb-p-6: 30px;
+    --padding-page-x: 10px;
   }
+ 
 
   & input::placeholder {
     color: #{$cb-text-secondary}90;
@@ -590,12 +709,8 @@
     }
   }
 
-  // add/edit campaign page
-  --padding-page-x: 50px;
-
-  @media (max-width: 768px) {
-    --padding-page-x: 10px;
-  }
+ 
+  
 
   & .cb-page {
     display: block;
@@ -1229,9 +1344,10 @@
 
   // Campaigns page styles
   /* Main Container */
-  .cb-bg-white {
-    border: 1px solid #e0e0e0;
-    margin-top: 20px;
+  .campaignbay-bg-white {
+    background-color: #{$cb-color-white};
+
+    border: 1px solid #cdcdcd;
   }
 
   //check box start
@@ -1297,7 +1413,6 @@
       justify-content: space-between;
       align-items: center;
       padding: var(--cb-p-2);
-      margin-bottom: 10px;
       gap: $cb-gap-1;
       flex-wrap: wrap;
     }
@@ -1409,7 +1524,7 @@
     .campaignbay-table td {
       padding: 12px 16px;
       text-align: left;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid #{$cb-border-color-base-light};
       white-space: nowrap;
     }
     .campaignbay-table th {
@@ -1442,6 +1557,8 @@
       color: #2563eb;
       text-decoration: none;
       font-weight: 500;
+      white-space: normal;
+      word-break: break-word;
     }
     .campaignbay-table td a:hover {
       text-decoration: underline;
@@ -1454,6 +1571,9 @@
     }
 
     /* Status Pills */
+    .campaignbay-capitalize {
+      text-transform: capitalize;
+    }
     .campaignbay-status-pill {
       display: inline-block;
       padding: 4px 12px;
@@ -1461,22 +1581,23 @@
       font-size: #{$cb-fs-base};
       font-weight: 600;
       line-height: 1.2;
+      text-transform: capitalize;
     }
     .campaignbay-status-active {
-      background-color: #d1fae5;
-      color: #065f46;
+      background-color: #c2ffc9;
+      color: #345b37;
     }
     .campaignbay-status-scheduled {
-      background-color: #fef3c7;
-      color: #92400e;
+      background-color: #ffe6b4;
+      color: #745d2e;
     }
     .campaignbay-status-expired {
-      background-color: #fee2e2;
-      color: #991b1b;
+      background-color: #ffbebe;
+      color: #5d1612;
     }
     .campaignbay-status-inactive {
-      background-color: #f3f4f6;
-      color: #4b5563;
+      background-color: #{$cb-color-body};
+      color: #{$cb-color-black};
     }
 
     /* Action Button */
@@ -1503,12 +1624,17 @@
       padding: var(--cb-p-2) var(--cb-p-3);
       font-size: #{$cb-fs-base};
       color: #{$cb-color-black};
+
+      & .wpab-select {
+        padding: 10px 20px 10px 2px;
+
+      }
     }
     .campaignbay-bulk-actions-footer,
     .campaignbay-pagination {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 4px;
     }
     .campaignbay-bulk-actions-footer span {
       font-weight: 500;
@@ -1517,7 +1643,7 @@
       font-weight: inherit;
       font-size: inherit;
       line-height: inherit;
-      border: none;
+      border: 1px solid #{$cb-border-color-base-light}00;
     }
     .campaignbay-pagination-arrows {
       display: flex;
@@ -1526,17 +1652,70 @@
     .campaignbay-arrow-button {
       border: 1px solid transparent;
       border-radius: 0;
-      padding: 4px 8px;
+      padding: 2px 6px;
       cursor: pointer;
       background: none;
       color: #{$cb-color-black};
+      &:hover:not(:disabled) {
+        border: 1px solid #{$cb-color-primary};
+        color: #{$cb-color-primary};
+      }
       &:focus {
+        cursor: text;
         border: 1px solid #{$cb-color-primary};
       }
     }
     .campaignbay-arrow-button:disabled {
       cursor: not-allowed;
       opacity: 0.5;
+    }
+  }
+
+  // ==========================================================================
+  // Campaign Bay Skeleton Loader Component
+  // ==========================================================================
+
+  // --- Base Keyframes Animation for the Shimmer Effect ---
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  // --- Base Skeleton Class ---
+  .campaignbay-skeleton {
+    display: block;
+    height: #{$cb-lh-base};
+    width: 100%; // Default width
+    background-color: #{$cb-color-body};
+    position: relative;
+    overflow: hidden; // This is crucial for the shimmer effect
+    border-radius: #{$cb-border-radius-base}; // Default border-radius
+
+    // The shimmer pseudo-element
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      // A subtle gradient that creates the "shine"
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: translateX(-100%); // Start off-screen
+      animation: shimmer 1.5s infinite; // Apply the animation
+    }
+
+    & > * {
+      opacity: 0;
     }
   }
 }
@@ -1573,3 +1752,9 @@
 //     font-size: inherit;
 //     line-height: inherit;
 // }
+
+#adminmenu #toplevel_page_campaignbay .wp-menu-image img {
+  width: 20px;
+  height: 20px;
+  padding: 7px 0 0;
+}

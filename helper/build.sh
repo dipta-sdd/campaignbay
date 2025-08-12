@@ -2,6 +2,7 @@
 
 # A robust script to build the production-ready zip file for the CampaignBay plugin.
 # It provides a tree-like preview of the zip contents for verification.
+# This script is designed to be run from within a 'helper/' subdirectory.
 
 # --- Configuration ---
 # The main slug for your plugin. This should match your main directory name.
@@ -17,19 +18,17 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}📦 Starting the '${PLUGIN_SLUG}' plugin build process...${NC}"
 
-# 1. Ask for the version number
-# read -p "Enter the version number for the plugin zip (e.g., 1.0.0): " VERSION
+# --- NEW: Set the project's root directory ---
+# This is the most important change. We navigate up one level from the script's location.
+PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
-# Check if version number is provided
-# if [ -z "$VERSION" ]; then
-#     echo -e "${RED}❌ Version number cannot be empty. Aborting.${NC}"
-#     exit 1
-# fi
+# --- NEW: Navigate to the project root to run commands ---
+cd "$PROJECT_ROOT"
 
 echo -e "\n${YELLOW}⚙️  Step 1: Running the production build command...${NC}"
 echo "    (This will compile your React assets for production)"
 
-# 2. Run the NPM build command.
+# 2. Run the NPM build command from the project root.
 npm run build
 
 # Check if the build command was successful
@@ -41,15 +40,15 @@ fi
 echo -e "${GREEN}✅ Build complete.${NC}"
 
 # 3. Define the name of the final zip file.
-# ZIP_FILE="${PLUGIN_SLUG}-${VERSION}.zip"
 ZIP_FILE="${PLUGIN_SLUG}.zip"
 
 echo -e "\n${YELLOW}🔍 Step 2: Previewing the file structure to be zipped...${NC}"
 
 # 4. Define all files and folders to be excluded.
+# Paths are now relative to the project root.
 EXCLUDE_PATTERNS=(
     "*.zip"
-    "build.sh"
+    "helper"
     ".git"
     ".gitignore"
     "node_modules"
@@ -60,30 +59,28 @@ EXCLUDE_PATTERNS=(
     "package.json"
     "package-lock.json"
     "webpack.config.js"
-    ".DS_Store",
-    "all_php_code.txt",
-    "collector.js",
+    ".DS_Store"
+    "all_php_code.txt"
+    "collector.js"
 )
 
 # 5. Check if the 'tree' command is available.
 if ! command -v tree >/dev/null 2>&1; then
     echo -e "${YELLOW}⚠️  'tree' command not found. Falling back to a simple file list.${NC}"
     echo -e "${YELLOW}    (For a nicer view, install 'tree'. On macOS: 'brew install tree' | On Debian/Ubuntu: 'sudo apt-get install tree')${NC}\n"
-    # Set a flag to use the verbose zip command as a fallback
     USE_VERBOSE_ZIP=true
 else
-    # Build the ignore pattern for the 'tree' command (e.g., "node_modules|src|vendor")
     IGNORE_PATTERN=$(printf "%s|" "${EXCLUDE_PATTERNS[@]}")
-    IGNORE_PATTERN=${IGNORE_PATTERN%|} # Remove the trailing pipe
-
-    # Display the file tree, ignoring the specified patterns.
+    IGNORE_PATTERN=${IGNORE_PATTERN%|}
+    
+    # Run tree from the project root.
     tree -C -I "$IGNORE_PATTERN"
     USE_VERBOSE_ZIP=false
 fi
 
 echo -e "\n${YELLOW}🗜️  Step 3: Creating the zip file: ${ZIP_FILE}...${NC}"
 
-# 6. Build the exclude parameters for the actual zip command (format is different from 'tree').
+# 6. Build the exclude parameters for the zip command.
 ZIP_EXCLUDE_PARAMS=()
 for PATTERN in "${EXCLUDE_PATTERNS[@]}"; do
     # Add '/*' to directory names to exclude their contents.
@@ -93,12 +90,11 @@ for PATTERN in "${EXCLUDE_PATTERNS[@]}"; do
     ZIP_EXCLUDE_PARAMS+=("--exclude" "$PATTERN")
 done
 
-# 7. Create the zip file.
+# 7. Create the zip file from the project root.
+# The zip command will run in the context of the project root.
 if [ "$USE_VERBOSE_ZIP" = true ]; then
-    # If tree command was not found, use the verbose zip command as a fallback preview.
     zip -rv "${ZIP_FILE}" . "${ZIP_EXCLUDE_PARAMS[@]}"
 else
-    # If tree command worked, create the zip quietly.
     zip -rq "${ZIP_FILE}" . "${ZIP_EXCLUDE_PARAMS[@]}"
 fi
 

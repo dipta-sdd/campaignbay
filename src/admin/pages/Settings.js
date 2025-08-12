@@ -86,7 +86,6 @@ const Settings = () => {
         setProductSettings({
             product_showDiscountedPrice: settings.product_showDiscountedPrice,
             product_messageFormat: settings.product_messageFormat,
-            product_bogoMessageFormat: settings.product_bogoMessageFormat,
             product_enableQuantityTable: settings.product_enableQuantityTable,
             product_excludeSaleItems: settings.product_excludeSaleItems,
             product_priorityMethod: settings.product_priorityMethod,

@@ -13,11 +13,9 @@ import { useEffect } from 'react';
 import Required from '../components/Required';
 import QuantityTiers from '../components/QuantityTiers';
 import EBTiers from '../components/EBTiers';
-import BogoTiers from '../components/BogoTiers';
 import { useCbStore } from '../store/cbStore';
 import { getSettings as getDateSettings } from '@wordpress/date';
 import { useNavigate } from 'react-router-dom';
-import Toggle from '../components/Toggle';
 
 
 const CampaignsAdd = () => {
@@ -49,8 +47,6 @@ const CampaignsAdd = () => {
 
 
     const fetchCategories = async () => {
-
-
         try {
             const response = await apiFetch({ path: '/wc/v3/products/categories' , method: 'GET', queryParams: { per_page: -1 } });
             setCategories(response.map(item => ({
@@ -125,7 +121,7 @@ const CampaignsAdd = () => {
             target_ids: selections,
             start_datetime: startDate,
             end_datetime: endDate || null,
-            timezone_string: timezone.offsetFormatted,
+            timezone_offset: timezone.offsetFormatted,
             campaign_tiers: campaignType === 'quantity' ? quantityTiers : campaignType === 'earlybird' ? ebTiers : [],
         }
         // console.log(campaignData);
@@ -276,7 +272,7 @@ const CampaignsAdd = () => {
                         <span className='wpab-input-help'>{__('If you want you will change mode', 'campaignbay')}</span>
 
                         <div className='cb-input-with-suffix'>
-                            <input value={discountValue} type="text" name='discount-value' inputMode='numeric' pattern="[0-9]*" className={`wpab-input w-100 ${errors?.discount_value ? 'wpab-input-error' : ''}`} placeholder="Enter Value" onChange={(e) => setDiscountValue(parseInt(e.target.value))} />
+                            <input value={discountValue ? discountValue : ''} type="text" name='discount-value' inputMode='numeric' pattern="[0-9]*" className={`wpab-input w-100 ${errors?.discount_value ? 'wpab-input-error' : ''}`} placeholder="Enter Value" onChange={(e) => setDiscountValue(parseInt(e.target.value))} />
                             <span className='cb-suffix'>{discountType === 'percentage' ? '%' : (woocommerce_currency_symbol || '$')}</span>
                         </div>
                     </div>
@@ -295,6 +291,7 @@ const CampaignsAdd = () => {
                         <div className={`${errors?.end_datetime ? 'wpab-input-error' : ''}`}>
                             <span className='wpab-input-label' style={{ display: 'block', marginBottom: '10px' }}>{__('End Time', 'campaignbay')}</span>
                             <TimePicker id="end-time"
+                                currentTime={endDate}
                                 onChange={(date) => { setEndDate(date); }}
                             />
                         </div>

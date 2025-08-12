@@ -86,7 +86,9 @@ class PricingEngine {
 	 * @since 1.0.0
 	 */
 	private function __construct() {
-		$this->define_hooks();
+		if(wpab_cb_get_options('global_enableAddon')){
+			$this->define_hooks();
+		}
 	}
 
 	/**
@@ -860,6 +862,7 @@ class PricingEngine {
 		);
 
 		if ( empty( $active_campaigns ) || ! is_array( $active_campaigns ) ) {
+			wpab_cb_log('no active campaigns', 'DEBUG' );
 			// If there are no active campaigns, return the discount data.
 			$this->product_discount_cache[ $product_id ] = $discount_data;
 			return $discount_data;
@@ -872,7 +875,7 @@ class PricingEngine {
 			// Get the campaign type.
 			$campaign_type = $campaign->get_meta( 'campaign_type' );
 
-			if($campaign_type !== 'simple' && $campaign_type !== 'earlybird'){
+			if($campaign_type !== 'scheduled' && $campaign_type !== 'earlybird'){
 				continue;
 			}
 
@@ -891,7 +894,6 @@ class PricingEngine {
 
 			// If the campaign is a scheduled campaign, calculate the simple price.
 			if ( 'scheduled' === $campaign_type ) {
-				
 				$discounted_price = $this->calculate_simple_price( $campaign, $base_price );
 				$type_data['discount_value'] = $campaign->get_meta('discount_value');
 				$type_data['discount_type'] = $campaign->get_meta('discount_type');
@@ -938,6 +940,7 @@ class PricingEngine {
 			}
 
 			$discount_data['on_campaign'] = true;	
+			$discount_data['discounts']['best_price'] = $discounted_price;
 			$discount_data['discounts']['simple'] = $type_data;
 			$discount_data['discounts']['simple']['price'] = $discounted_price;
 			$discount_data['discounts']['simple']['discount_per_item'] = $base_price - $discounted_price;
@@ -987,6 +990,7 @@ class PricingEngine {
 			$discount_data['discounts']['quantity']['is_applied'] = false;
 		}
 		if( $allow_campaign_stacking && isset( $discount_data['discounts']['quantity']['price'] ) ){
+			$discount_data['on_campaign'] = true;
 			$product->set_price( $discount_data['discounts']['quantity']['price'] );
 			$discount_data['discounts']['best_price'] = $discount_data['discounts']['quantity']['price'];
 			$discount_data['discounts']['quantity']['is_applied'] = true;
@@ -996,6 +1000,7 @@ class PricingEngine {
 			if(!isset( $discount_data['discounts']['simple']['price'] ) || $this->is_better_campaign( $quantity_price, $simple_price )){
 				if($discount_data['discounts']['quantity']['tiers'][0]['min'] === 1){
 					$product->set_price( $quantity_price );
+					$discount_data['on_campaign'] = true;
 					$discount_data['discounts']['best_price'] = $quantity_price;
 					$discount_data['discounts']['quantity']['is_applied'] = true;
 					$discount_data['discounts']['simple']['is_applied'] = false;
@@ -1006,29 +1011,31 @@ class PricingEngine {
 		// Store the final, structured result in the cache for this page load.
 		$this->product_discount_cache[ $product_id ] = $discount_data;
 		if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
-			// wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			// wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
-			// wpab_cb_log('base_price: ' . $discount_data['base_price'], 'DEBUG' );
-			// wpab_cb_log('on_sale: ' . $discount_data['on_sale'], 'DEBUG' );
-			// wpab_cb_log('on_campaign: ' . $discount_data['on_campaign'], 'DEBUG' );
+			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
+			wpab_cb_log('base_price: ' . $discount_data['base_price'], 'DEBUG' );
+			wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'] ?? 'null', 'DEBUG' );
+			wpab_cb_log('on_price: ' . $product->get_price(), 'DEBUG' );
+			wpab_cb_log('on_sale: ' . $discount_data['on_sale'], 'DEBUG' );
+			wpab_cb_log('on_campaign: ' . $discount_data['on_campaign'], 'DEBUG' );
 			if( isset( $discount_data['discounts']['best_price'] ) ){
-				//wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
+				wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
 			}
 			if( isset( $discount_data['discounts']['simple']['price'] ) ){
 				$simple = $discount_data['discounts']['simple'];
-				// wpab_cb_log('	simple_price: ' . $simple['price'], 'DEBUG' );
-				// wpab_cb_log('	simple_campaign_id: ' . $simple['campaign_id'], 'DEBUG' );
-				// wpab_cb_log('	simple_campaign_type: ' . $simple['campaign_type'], 'DEBUG' );
-				// wpab_cb_log('	simple_campaign_title: ' . $simple['campaign_title'], 'DEBUG' );
-				// wpab_cb_log('	simple_is_applied: ' . $simple['is_applied'], 'DEBUG' );
+				wpab_cb_log('	simple_price: ' . $simple['price'], 'DEBUG' );
+				wpab_cb_log('	simple_campaign_id: ' . $simple['campaign_id'], 'DEBUG' );
+				wpab_cb_log('	simple_campaign_type: ' . $simple['campaign_type'], 'DEBUG' );
+				wpab_cb_log('	simple_campaign_title: ' . $simple['campaign_title'], 'DEBUG' );
+				wpab_cb_log('	simple_is_applied: ' . $simple['is_applied'], 'DEBUG' );
 			}
 			if( isset( $discount_data['discounts']['quantity']['price'] ) ){
 				$quantity = $discount_data['discounts']['quantity'];
-				//wpab_cb_log('	quantity_price: ' . $quantity['price'], 'DEBUG' );
-				//wpab_cb_log('	quantity_campaign_id: ' . $quantity['campaign_id'], 'DEBUG' );
-				//wpab_cb_log('	quantity_campaign_type: ' . $quantity['campaign_type'], 'DEBUG' );
-				//wpab_cb_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
-				//wpab_cb_log('	quantity_is_applied: ' . $quantity['is_applied'], 'DEBUG' );
+				wpab_cb_log('	quantity_price: ' . $quantity['price'], 'DEBUG' );
+				wpab_cb_log('	quantity_campaign_id: ' . $quantity['campaign_id'], 'DEBUG' );
+				wpab_cb_log('	quantity_campaign_type: ' . $quantity['campaign_type'], 'DEBUG' );
+				wpab_cb_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
+				wpab_cb_log('	quantity_is_applied: ' . $quantity['is_applied'], 'DEBUG' );
 			}
 		}
 		return $discount_data;

@@ -14,7 +14,6 @@
     import Required from "../components/Required";
     import QuantityTiers from "../components/QuantityTiers";
     import EBTiers from "../components/EBTiers";
-    import BogoTiers from "../components/BogoTiers";
     import { useCbStore } from "../store/cbStore";
     import { getSettings as getDateSettings } from "@wordpress/date";
     import Loader from "../components/Loader";
@@ -82,6 +81,12 @@
             fetchCategories();
             fetchProducts();
         }, [id]);
+
+        useEffect(() => {
+            if (campaignType === "scheduled") {
+                setCampaignStatus("wpab_cb_scheduled");
+            }
+        }, [campaignType]);
 
         const fetchCategories = async () => {
             try {
@@ -169,7 +174,7 @@
                 target_ids: selections,
                 start_datetime: startDate,
                 end_datetime: endDate || null,
-                timezone_string: timezone.offsetFormatted,
+                timezone_offset: timezone.offsetFormatted,
                 campaign_tiers:
                     campaignType === "quantity"
                         ? quantityTiers
@@ -177,8 +182,6 @@
                             ? ebTiers
                             : [],
             };
-            console.log("campaignType ", campaignType);
-            console.log(campaignData);
             // console.log(campaignData);
             if (!campaignData?.title) {
                 setErrors({ title: "Title is required" });
@@ -228,6 +231,8 @@
                 setErrors({ end_datetime: "End datetime is required" });
                 return;
             }
+            console.log('start_datetime', campaignData.start_datetime);
+            console.log('end_datetime', campaignData.end_datetime);
             try {
                 setIsSaving(true);
                 const response = await apiFetch({
@@ -246,6 +251,7 @@
                     __("Something went wrong, Please reload the page.", "campaignbay"),
                     "error"
                 );
+                console.log(error);
             }
         };
         return (
@@ -318,8 +324,7 @@
                                 </select>
                             </div>
 
-                            {campaignType !== "scheduled" && (
-                                <div className="cb-form-input-con">
+                            <div className="cb-form-input-con">
                                     <label htmlFor="campaign-status">
                                         {__("SELECT STATUS", "campaignbay")} <Required />
                                     </label>
@@ -340,9 +345,11 @@
                                         <option value="wpab_cb_scheduled">
                                             {__("Scheduled", "campaignbay")}
                                         </option>
+                                        <option value="wpab_cb_expired">
+                                            {__("Expired", "campaignbay")}
+                                        </option>
                                     </select>
                                 </div>
-                            )}
                             <div className="cb-form-input-con">
                                 <label htmlFor="selection-type">
                                     {__("SELECT FOR USERS", "campaignbay")} <Required />

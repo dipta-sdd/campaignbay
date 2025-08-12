@@ -48,6 +48,7 @@ const TierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst }) =
                             type="number"
                             name="max"
                             value={tierData.max}
+                            min={tierData.min}
                             onChange={handleChange}
                             placeholder="e.g., 5"
                             className="max-input wpab-input"
@@ -59,6 +60,7 @@ const TierRow = ({ id, tierData, onUpdate, onRemove, onAdd, isLast, isFirst }) =
                         <input
                             type="number"
                             name="value"
+                            min="0"
                             value={tierData.value}
                             onChange={handleChange}
                             placeholder="e.g., 10"

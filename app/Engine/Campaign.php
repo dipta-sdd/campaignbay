@@ -139,12 +139,6 @@ class Campaign {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'wpab_cb_logs';
 
-		// Only query if the campaign type is 'earlybird', otherwise, the count is irrelevant.
-		if ( 'earlybird' !== $this->get_meta( 'campaign_type' ) ) {
-			$this->usage_count = 0;
-			return;
-		}
-
 		// Define which order statuses are considered a successful "use".
 		$success_statuses = array( 'processing', 'completed' );
 
@@ -161,6 +155,7 @@ class Campaign {
 		);
 		
 		$this->usage_count = (int) $count;
+		$this->update_meta( 'usage_count', $this->usage_count );
 	}
 
 	/**
@@ -332,15 +327,12 @@ class Campaign {
 			self::throw_validation_error( 'campaign_type' );
 		}
 
-		if( isset( $args['status'] ) && 'wpab_cb_scheduled' === $args['status'] && empty( $args['start_datetime'] ) ){
+		if( 'wpab_cb_scheduled' === $args['status'] && empty( $args['start_datetime'] ) ){
 			self::throw_validation_error( 'start_datetime' );
 		}
-		if( isset( $args['status'] ) && 'wpab_cb_scheduled' === $args['status'] && empty( $args['end_datetime'] ) ){
+		if( 'wpab_cb_scheduled' === $args['status'] && empty( $args['end_datetime'] ) ){
 			self::throw_validation_error( 'end_datetime' );
 		}
-		// if( isset( $args['status'] ) && 'wpab_cb_scheduled' === $args['status'] && empty( $args['timezone_string'] ) ){
-		// 	self::throw_validation_error( 'timezone_string' );
-		// }
 
 		if( 'scheduled' === $args['campaign_type'] && empty( $args['discount_value'] ) ){
 			self::throw_validation_error( 'discount_value' );
@@ -495,7 +487,7 @@ class Campaign {
 
 			case 'min_quantity':
 			case 'priority':
-			case 'usage_limit':
+			case 'usage_count':
 				return absint( $value );
 			
 			case 'start_datetime':
@@ -514,7 +506,7 @@ class Campaign {
 			case 'rule_status':
 			case 'discount_type':
 			case 'target_type':
-			case 'timezone_string':
+			case 'timezone_offset':
 				return sanitize_key( $value );
 			case 'campaign_tiers':
 				return is_array( $value ) ? array_map( array( $this, 'sanitize_tier_item' ), $value ) : array();

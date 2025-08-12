@@ -153,7 +153,7 @@ class CampaignManager {
 		wpab_cb_log('no cached campaigns found, fetching from database', 'DEBUG' );
 		$campaign_args = array(
 			'post_type'      => 'wpab_cb_campaign',
-			'post_status'    => 'any',
+			'post_status'    => 'wpab_cb_active',
 			'posts_per_page' => -1,
 			'no_found_rows'  => true,
 		);
@@ -166,6 +166,8 @@ class CampaignManager {
 					$campaign_objects[ $campaign->get_id() ] = $campaign;
 				}
 			}
+		} else {
+			wpab_cb_log('query has no posts', 'DEBUG' );
 		}
 
 		set_transient( 'wpab_cb_active_campaigns', $campaign_objects, 60 * MINUTE_IN_SECONDS );

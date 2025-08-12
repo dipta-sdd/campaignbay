@@ -185,7 +185,7 @@ class Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_resources() {
-
+		$this->enqueue_global_admin_styles();
 		if ( ! $this->is_menu_page() ) {
 			return;
 		}
@@ -215,6 +215,10 @@ class Admin {
 				'rest_url'    => get_rest_url(),
 				'white_label' => Common::get_instance()->get_white_label(),
 				'woocommerce_currency_symbol' => $woocommerce_currency_symbol,
+				'wpSettings' => array(
+					'dateFormat' => get_option( 'date_format' ),
+					'timeFormat' => get_option( 'time_format' ),
+				),
 			)
 		);
 	
@@ -241,6 +245,21 @@ class Admin {
 		// Log the result of the function call
 		// wpab_cb_log( 'Result of wp_set_script_translations: ' . ( $result ? 'True (Success)' : 'False (Failure)' ) );
 
+	}
+
+	/**
+	 * Enqueues CSS that should be present on all admin pages.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 */
+	private function enqueue_global_admin_styles() {
+		wp_enqueue_style(
+			'wpab-cb-admin-menu', // A new, unique handle
+			WPAB_CB_URL . 'assets/css/admin-menu.css',
+			array(),
+			WPAB_CB_VERSION
+		);
 	}
 
 

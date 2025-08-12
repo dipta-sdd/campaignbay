@@ -72,7 +72,7 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
                             global_defaultPriority: parseInt(value, 10)
                         }))}
                     />
-                    <Select
+                    {/* <Select
                         className='w-100'
                         label={__('Discount Calculation Mode', 'campaignbay')}
                         // help={__('Select the calculation mode for the addon', 'campaignbay')}
@@ -85,21 +85,9 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
                             ...prev,
                             global_calculationMode: value
                         }))}
-                    />
+                    /> */}
 
                 </div>
-                <Input
-                    type="number"
-                    label={__('Decimal Places for Discount Values', 'campaignbay')}
-                    value={globalSettings.global_decimalPlaces}
-                    onChange={(value) => setGlobalSettings((prev) => ({
-                        ...prev,
-                        global_decimalPlaces: parseInt(value) || 0
-                    }))}
-
-                    min={0}
-                    max={10}
-                />
             </SettingCard>
             <SettingCard title={__('Performence & Caching', 'campaignbay')}>
                 <Checkbox checked={globalSettings.perf_enableCaching}
@@ -118,15 +106,15 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
                 </div>
             </SettingCard>
             <SettingCard title={__('Debugging & Logging', 'campaignbay')}>
-                <Checkbox checked={globalSettings.debug_enableLogging}
+                <Checkbox checked={globalSettings.debug_enableMode}
                     onChange={() => setGlobalSettings((prev) => ({
                         ...prev,
-                        debug_enableLogging: !prev.debug_enableLogging
+                        debug_enableMode: !prev.debug_enableMode
                     }))}
                     label={__('Enable Debug Mode', 'campaignbay')}
                     help={__('Show detailed error messages and logging for troubleshooting.', 'campaignbay')}
                 />
-                <Select
+                {/* <Select
                     label={__('Log Level', 'campaignbay')}
                     options={[
                         { label: __('Error Only', 'campaignbay'), value: 'error' },
@@ -137,7 +125,7 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
                         ...prev,
                         debug_logLevel: value
                     }))}
-                />
+                /> */}
                 <div className="wpab-cb-btn-con-bottom">
                     <button className="wpab-cb-btn wpab-cb-btn-outline-primary" onClick={openLogViewer} handleClearLogs={handleClearLogs} isClearingLogs={isClearingLogs}>
                         <Icon icon={seen} fill="currentColor" />
