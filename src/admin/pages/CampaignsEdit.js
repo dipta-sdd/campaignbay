@@ -476,7 +476,7 @@
                                     </div>
                                 </div>
                             )}
-                            {campaignType === "scheduled" && (
+                            {campaignStatus === "wpab_cb_scheduled" && (
                             <div className="cb-form-input-con">
                                 <label htmlFor="start-time">
                                     {__("SELECT CAMPAIGN DURATION", "campaignbay")} <Required />

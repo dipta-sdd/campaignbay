@@ -67,16 +67,17 @@ class DashboardController extends ApiController {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_dashboard_data( $request ) {
-		$period = $request->get_param( 'period' );
+		$period     = $request->get_param( 'period' );
 		$start_date = $request->get_param( 'start_date' );
-		$end_date = $request->get_param( 'end_date' );
+		$end_date   = $request->get_param( 'end_date' );
 		
 		list($current_start, $current_end, $previous_start, $previous_end) = $this->parse_date_range( $period, $start_date, $end_date );
 
 		$response = array(
-			'kpis'            => $this->get_kpi_data( $current_start, $current_end, $previous_start, $previous_end ),
-			'charts'          => $this->get_chart_data( $current_start, $current_end ),
-			'recent_activity' => $this->get_recent_activity(),
+			'kpis'                   => $this->get_kpi_data( $current_start, $current_end, $previous_start, $previous_end ),
+			'charts'                 => $this->get_chart_data( $current_start, $current_end ),
+			'recent_activity'        => $this->get_recent_activity(),
+			'live_and_upcoming'      => $this->get_live_and_upcoming_campaigns(),
 		);
 
 		return new WP_REST_Response( $response, 200 );
@@ -100,6 +101,7 @@ class DashboardController extends ApiController {
 		$current_sql = $wpdb->prepare(
 			"SELECT
 				SUM(total_discount) as total_discount_value,
+				SUM(base_total) as base_total_for_discounts, -- <-- NEW: Get the base total
 				SUM(order_total) as sales_from_campaigns,
 				COUNT(DISTINCT order_id) as discounted_orders
 			 FROM {$logs_table}
@@ -136,15 +138,16 @@ class DashboardController extends ApiController {
 				'value' => $active_campaigns_query->found_posts,
 			),
 			'total_discount_value' => array(
-				'value'  => (float) $current_data['total_discount_value'] ?? 0,
-				'change' => $this->calculate_percentage_change( $current_data['total_discount_value'], $previous_data['total_discount_value'] ),
+				'value'      => (float) ( $current_data['total_discount_value'] ?? 0 ),
+				'base_total' => (float) ( $current_data['base_total_for_discounts'] ?? 0 ), // <-- NEW
+				'change'     => $this->calculate_percentage_change( $current_data['total_discount_value'], $previous_data['total_discount_value'] ),
 			),
 			'discounted_orders' => array(
-				'value'  => (int) $current_data['discounted_orders'] ?? 0,
+				'value'  => (int) ( $current_data['discounted_orders'] ?? 0 ),
 				'change' => $this->calculate_percentage_change( $current_data['discounted_orders'], $previous_data['discounted_orders'] ),
 			),
 			'sales_from_campaigns' => array(
-				'value' => (float) $current_data['sales_from_campaigns'] ?? 0,
+				'value' => (float) ( $current_data['sales_from_campaigns'] ?? 0 ),
 			),
 		);
 	}
@@ -161,7 +164,7 @@ class DashboardController extends ApiController {
 		$logs_table = $wpdb->prefix . 'wpab_cb_logs';
 		$success_statuses = "'processing', 'completed'";
 
-		// --- Discount Trends (Line Chart) ---
+		// --- FIX: Discount Trends (Line Chart) ---
 		$trends_sql = $wpdb->prepare(
 			"SELECT DATE(timestamp) as date, SUM(total_discount) as value
 			 FROM {$logs_table}
@@ -174,7 +177,7 @@ class DashboardController extends ApiController {
 		);
 		$discount_trends = $wpdb->get_results( $trends_sql, ARRAY_A );
 
-		// --- Top Campaigns (Bar Chart) ---
+		// --- FIX: Top Campaigns (Bar Chart) ---
 		$top_campaigns_sql = $wpdb->prepare(
 			"SELECT campaign_id, SUM(total_discount) as value
 			 FROM {$logs_table}
@@ -188,19 +191,104 @@ class DashboardController extends ApiController {
 		);
 		$top_campaigns = $wpdb->get_results( $top_campaigns_sql, ARRAY_A );
 		
-		// Add campaign titles to the results
+		// Add campaign titles to the results.
 		foreach ( $top_campaigns as &$campaign_data ) {
 			$campaign_data['name'] = get_the_title( $campaign_data['campaign_id'] );
 		}
 
 		return array(
-			'discount_trends' => $discount_trends,
-			'top_campaigns'   => $top_campaigns,
+			'discount_trends'     => $discount_trends,
+			'top_campaigns'       => $top_campaigns,
+			'most_impactful_types' => $this->get_most_impactful_types( $start_date, $end_date ),
+		);
+	}
+
+	/**
+	 * Gets the data for the "Most Impactful Types" pie chart.
+	 *
+	 * @param string $start_date Start date for the period.
+	 * @param string $end_date   End date for the period.
+	 * @return array
+	 */
+	private function get_most_impactful_types( $start_date, $end_date ) {
+		global $wpdb;
+		$logs_table       = $wpdb->prefix . 'wpab_cb_logs';
+		$meta_table       = $wpdb->prefix . 'postmeta';
+		$success_statuses = "'processing', 'completed'";
+
+		$sql = $wpdb->prepare(
+			"SELECT pm.meta_value as campaign_type, SUM(l.order_total) as total_sales
+			 FROM {$logs_table} l
+			 JOIN {$meta_table} pm ON l.campaign_id = pm.post_id AND pm.meta_key = '_wpab_cb_campaign_type'
+			 WHERE l.log_type = 'sale' AND l.order_status IN ({$success_statuses})
+			 AND l.timestamp BETWEEN %s AND %s
+			 GROUP BY pm.meta_value
+			 ORDER BY total_sales DESC",
+			$start_date,
+			$end_date
+		);
+		
+		return $wpdb->get_results( $sql, ARRAY_A );
+	}
+
+	/**
+	 * Gets the data for the "Live & Upcoming Campaigns" widget.
+	 *
+	 * @return array
+	 */
+	private function get_live_and_upcoming_campaigns() {
+		// Get currently active campaigns.
+		$active_query = new WP_Query(
+			array(
+				'post_type'      => 'wpab_cb_campaign',
+				'post_status'    => 'wpab_cb_active',
+				'posts_per_page' => 5,
+				'orderby'        => 'meta_value',
+				'meta_key'       => '_wpab_cb_end_datetime',
+				'order'          => 'ASC',
+			)
+		);
+
+		$active_campaigns = array();
+		foreach ( $active_query->posts as $post ) {
+			$active_campaigns[] = array(
+				'id'       => $post->ID,
+				'title'    => $post->post_title,
+				'end_date' => get_post_meta( $post->ID, '_wpab_cb_end_datetime', true ),
+				'link'     => get_edit_post_link( $post->ID, 'raw' ),
+			);
+		}
+
+		// Get upcoming scheduled campaigns.
+		$scheduled_query = new WP_Query(
+			array(
+				'post_type'      => 'wpab_cb_campaign',
+				'post_status'    => 'wpab_cb_scheduled',
+				'posts_per_page' => 5,
+				'orderby'        => 'meta_value',
+				'meta_key'       => '_wpab_cb_start_datetime',
+				'order'          => 'ASC',
+			)
+		);
+		
+		$scheduled_campaigns = array();
+		foreach ( $scheduled_query->posts as $post ) {
+			$scheduled_campaigns[] = array(
+				'id'         => $post->ID,
+				'title'      => $post->post_title,
+				'start_date' => get_post_meta( $post->ID, '_wpab_cb_start_datetime', true ),
+				'link'       => get_edit_post_link( $post->ID, 'raw' ),
+			);
+		}
+
+		return array(
+			'active'    => $active_campaigns,
+			'scheduled' => $scheduled_campaigns,
 		);
 	}
 	
-	/**
-	 * Gets the most recent activity logs.
+    /**
+	 * Gets the most recent activity logs, returning raw data for the frontend to format.
 	 *
 	 * @return array
 	 */
@@ -209,23 +297,29 @@ class DashboardController extends ApiController {
 		$table_name = $wpdb->prefix . 'wpab_cb_logs';
 		
 		$results = $wpdb->get_results(
-			"SELECT timestamp, extra_data, user_id, campaign_id FROM {$table_name}
-			 WHERE log_type = 'activity'
-			 ORDER BY timestamp DESC
-			 LIMIT 5",
+			$wpdb->prepare(
+				"SELECT timestamp, extra_data, user_id, campaign_id FROM {$table_name}
+				 WHERE log_type = %s
+				 ORDER BY timestamp DESC
+				 LIMIT 5",
+				'activity'
+			),
 			ARRAY_A
 		);
 
 		$activity_log = array();
 		foreach ( $results as $row ) {
-			$user_info = get_userdata( $row['user_id'] );
+			$user_info  = get_userdata( $row['user_id'] );
 			$extra_data = json_decode( $row['extra_data'], true );
 
+			// --- NEW: Return raw, structured data ---
 			$activity_log[] = array(
-				'timestamp' => $row['timestamp'],
-				'activity'  => sprintf( "Campaign '%s' %s", esc_html($extra_data['title']), esc_html($extra_data['message']) ),
-				'user'      => $user_info ? $user_info->display_name : 'System',
-				'link'      => get_edit_post_link( $row['campaign_id'], 'raw' ),
+				'timestamp'     => $row['timestamp'],
+				'campaign_id'   => (int) $row['campaign_id'],
+				'campaign_title' => $extra_data['title'] ?? 'N/A',
+				'action'        => $extra_data['message'] ?? 'unknown', // e.g., "created", "updated"
+				'user'          => $user_info ? $user_info->display_name : 'System',
+				'link'          => get_edit_post_link( $row['campaign_id'], 'raw' ),
 			);
 		}
 		return $activity_log;
