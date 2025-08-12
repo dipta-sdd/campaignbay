@@ -34,19 +34,21 @@ import { date, getDate } from "@wordpress/date";
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedPeriod, setSelectedPeriod] = useState("7");
+  const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const { wpSettings } = useCbStore();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const params = {
-          period: "7days",
+          period: selectedPeriod,
         };
         const response = await apiFetch({
           path: addQueryArgs("/campaignbay/v1/dashboard", params),
         });
         setDashboardData(response);
+
       } catch (error) {
         console.log(error);
       } finally {
@@ -54,7 +56,7 @@ const Dashboard = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [selectedPeriod]);
 
   if (loading) {
     return (
@@ -320,13 +322,13 @@ const Dashboard = () => {
         </div>
         <div className="cb-page-header-actions">
           <select
-            className="cb-period-selector"
+            className="wpab-select"
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
           >
-            <option value="7">{__("Last 7 Days", "campaignbay")}</option>
-            <option value="30">{__("Last 30 Days", "campaignbay")}</option>
-            <option value="90">{__("Last 90 Days", "campaignbay")}</option>
+            <option value="7days">{__("Last 7 Days", "campaignbay")}</option>
+            <option value="30days">{__("Last 30 Days", "campaignbay")}</option>
+            <option value="1year">{__("Last 1 Year", "campaignbay")}</option>
           </select>
         </div>
       </div>
@@ -342,7 +344,7 @@ const Dashboard = () => {
               {__("Active Campaigns", "campaignbay")}
             </div>
             <div className="cb-kpi-action">
-              <a href="#">{__("View All Campaigns", "campaignbay")}</a>
+              <a href="#/campaigns">{__("View All Campaigns", "campaignbay")}</a>
             </div>
           </div>
 
@@ -354,9 +356,6 @@ const Dashboard = () => {
             </div>
             <div className="cb-kpi-label">
               {__("Total Discount Value", "campaignbay")}
-            </div>
-            <div className="cb-kpi-subtitle">
-              {__("Last 30 Days", "campaignbay")}
             </div>
             {dashboardData?.kpis?.total_discount_value?.change !== 0 && (
               <div
@@ -382,9 +381,6 @@ const Dashboard = () => {
             <div className="cb-kpi-label">
               {__("Discounted Orders", "campaignbay")}
             </div>
-            <div className="cb-kpi-subtitle">
-              {__("Last 30 Days", "campaignbay")}
-            </div>
             {dashboardData?.kpis?.discounted_orders?.change !== 0 && (
               <div
                 className={`cb-kpi-change ${
@@ -408,9 +404,6 @@ const Dashboard = () => {
             </div>
             <div className="cb-kpi-label">
               {__("Sales from Campaigns", "campaignbay")}
-            </div>
-            <div className="cb-kpi-subtitle">
-              {__("Last 30 Days", "campaignbay")}
             </div>
           </div>
         </div>
@@ -486,7 +479,7 @@ const Dashboard = () => {
                       dashboardData.live_and_upcoming.active.map((campaign) => (
                         <tr key={campaign.id}>
                           <td className="">
-                            <a href={`#/campaigns/${campaign.id}`}>
+                            <a href={`#/campaigns/${campaign.id}`} className="campaignbay-dashboard-campaigns-link">
                               {campaign.title}
                             </a>
                           </td>
@@ -543,8 +536,8 @@ const Dashboard = () => {
                             key={campaign.id}
                             className="cb-campaign-row scheduled"
                           >
-                            <td>
-                              <a href={`#/campaigns/${campaign.id}`}>
+                            <td>  
+                              <a href={`#/campaigns/${campaign.id}`} className="campaignbay-dashboard-campaigns-link">
                                 {campaign.title}
                               </a>
                             </td>
@@ -593,7 +586,7 @@ const Dashboard = () => {
                     </div>
                     <div className="cb-activity-content">
                       <span className="cb-activity-campaign">
-                        <a href={`#/campaigns/${activity.campaign_id}`}>
+                        <a href={`#/campaigns/${activity.campaign_id}`} className="campaignbay-dashboard-campaigns-link">
                           {activity.campaign_title}
                         </a>
                       </span>

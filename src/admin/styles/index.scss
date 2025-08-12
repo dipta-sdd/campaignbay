@@ -1972,20 +1972,24 @@
   & .cb-insights-flex {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: var(--cb-p-2);
     margin-bottom: var(--cb-p-3);
+    // @media (max-width: 1100px) {
+    //   flex-direction: column;
+    // }
   }
 
   & .cb-insight-card {
     flex: 1;
-    max-width: max-content;
+    min-width: min-content;
     background: #{$cb-color-white};
     border: 1px solid #{$cb-border-color-base-light};
     border-radius: 8px;
     padding: 24px;
     min-height: 420px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-
+    
     & h3 {
       font-size: 18px;
       font-weight: #{$cb-fw-semibold};
@@ -2019,28 +2023,12 @@
     margin-bottom: 8px;
     background: #f8f9fa;
     border-radius: 8px;
-    border-left: 4px solid transparent;
     transition: all 0.2s ease;
 
     &:hover {
       background: #e9ecef;
       transform: translateX(4px);
     }
-
-    &.active {
-      border-left-color: #28a745;
-      background: #f8fff9;
-      border-left-width: 6px;
-    }
-
-    &.scheduled {
-      border-left-color: #ffc107;
-      background: #fffdf7;
-      border-left-width: 6px;
-    }
-
-  
-
   }
 
   & .cb-dashboard-timestamp {
@@ -2051,7 +2039,7 @@
   }
   // Activity List
   & .cb-activity-list {
-    margin-bottom: 24px;
+    margin-bottom: var(--cb-p-3);
   }
 
   & .cb-activity-item {
@@ -2076,7 +2064,10 @@
 
     & .cb-activity-content {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: space-between;
       gap: 4px;
       flex: 1;
 
@@ -2084,23 +2075,24 @@
         font-size: 14px;
         font-weight: #{$cb-fw-semibold};
         color: #{$cb-color-black};
-        & a{
-          color: #{$cb-color-primary};
-          text-decoration: none;
-          font-weight: #{$cb-fw-semibold};
-          white-space: normal;
-          word-break: break-word;
-        }
       }
 
       & .cb-activity-action {
         font-size: 12px;
         color: #{$cb-text-secondary};
         text-transform: capitalize;
+        width: max-content;
+        min-width: min(100px, 50vw);
       }
     }
   }
-
+  .campaignbay-dashboard-campaigns-link{
+    color: #{$cb-color-primary};
+    text-decoration: none;
+    font-weight: #{$cb-fw-semibold};
+    white-space: normal;
+    word-break: break-word;
+  }
   & .cb-activity-footer {
     text-align: center;
     padding-top: 16px;
