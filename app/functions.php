@@ -229,9 +229,9 @@ if ( ! function_exists( 'wpab_cb_get_white_label' ) ) :
 		$options = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_white_label',
 			 array(
-				'plugin_name'      => esc_html( __('WPAB - WooCommerce Smart Campaigns', 'campaign___bay') ),
-				'short_name'       => esc_html__( 'Smart Campaigns', 'campaign___bay' ),
-				'menu_label'       => esc_html__( 'Campaigns', 'campaign___bay' ),
+				'plugin_name'      => esc_html( __('CampaignBay - WooCommerce Smart Campaigns', 'campaign___bay') ),
+				'short_name'       => esc_html__( 'CampaignBay', 'campaign___bay' ),
+				'menu_label'       => esc_html__( 'CampaignBay', 'campaign___bay' ),
 				'custom_icon'  	   => WPAB_CB_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
 				'menu_icon'  	   => WPAB_CB_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
 				'author_name'      => 'WP Anchor Bay',

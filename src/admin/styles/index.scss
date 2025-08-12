@@ -234,7 +234,9 @@
   & input::placeholder {
     color: #{$cb-text-secondary}90;
   }
-
+  .campaignbay-capitalize {
+    text-transform: capitalize;
+  }
   // matching class for tailwind
   & .font-normal {
     font-weight: #{$cb-fw-normal};
@@ -1404,6 +1406,7 @@
   //check box end
 
   /* Common Form Elements */
+  .campaignbay-dashboard,
   .campaignbay-campaigns {
     $cb-fw-light: 300;
     $cb-gap-1: 12px;
@@ -1571,9 +1574,7 @@
     }
 
     /* Status Pills */
-    .campaignbay-capitalize {
-      text-transform: capitalize;
-    }
+
     .campaignbay-status-pill {
       display: inline-block;
       padding: 4px 12px;
@@ -1757,12 +1758,10 @@
     grid-template-columns: repeat(4, 1fr);
     gap: var(--cb-p-2);
     margin-bottom: var(--cb-p-3);
-
-    @media (max-width: 1200px) {
+    @media (max-width: 1100px) {
       grid-template-columns: repeat(2, 1fr);
     }
-
-    @media (max-width: 768px) {
+    @media (max-width: 500px) {
       grid-template-columns: 1fr;
     }
   }
@@ -1848,13 +1847,19 @@
 
   // Charts Grid
   & .cb-charts-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
+    display: flex;
+    flex-direction: row;
     gap: var(--cb-p-2);
     margin-bottom: var(--cb-p-3);
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
+    & > .cb-chart-card:first-child {
+      flex: 1;
+    }
+    & > .cb-chart-card:last-child {
+      width: clamp(500px, 40%, 700px);
+    }
+    @media (max-width: 1100px) {
+      flex-direction: column;
+      
     }
   }
 
@@ -1863,8 +1868,19 @@
     border: 1px solid #{$cb-border-color-base-light};
     border-radius: 8px;
     padding: 24px;
-    min-height: 320px;
+    min-height: min(500px, 80vw);
+    height: auto;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
+
+    @media (max-width: 1100px) {
+      width: 100%;
+        min-width: 100%;
+        flex: 1;
+    }
 
     & .cb-chart-header {
       display: flex;
@@ -1902,6 +1918,14 @@
           border-color: #{$cb-color-primary};
         }
       }
+    }
+
+    & .cb-chart-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
 
     & .cb-chart-placeholder {
@@ -1945,17 +1969,16 @@
   }
 
   // Insights Grid
-  & .cb-insights-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  & .cb-insights-flex {
+    display: flex;
+    flex-direction: row;
     gap: var(--cb-p-2);
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
+    margin-bottom: var(--cb-p-3);
   }
 
   & .cb-insight-card {
+    flex: 1;
+    max-width: max-content;
     background: #{$cb-color-white};
     border: 1px solid #{$cb-border-color-base-light};
     border-radius: 8px;
@@ -2016,30 +2039,16 @@
       border-left-width: 6px;
     }
 
-    & .cb-campaign-info {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex: 1;
+  
 
-      & .cb-campaign-title {
-        font-size: 14px;
-        font-weight: #{$cb-fw-semibold};
-        color: #{$cb-color-black};
-      }
-
-      & .cb-campaign-date {
-        font-size: 12px;
-        color: #{$cb-text-secondary};
-      }
-    }
-
-    & .cb-campaign-toggle {
-      display: flex;
-      align-items: center;
-    }
   }
 
+  & .cb-dashboard-timestamp {
+    font-size: 12px;
+    color: #{$cb-text-secondary};
+    min-width: 80px;
+    font-weight: #{$cb-fw-semibold};
+  }
   // Activity List
   & .cb-activity-list {
     margin-bottom: 24px;
@@ -2063,12 +2072,7 @@
       border-bottom: none;
     }
 
-    & .cb-activity-timestamp {
-      font-size: 12px;
-      color: #{$cb-text-secondary};
-      min-width: 80px;
-      font-weight: #{$cb-fw-semibold};
-    }
+    
 
     & .cb-activity-content {
       display: flex;
@@ -2080,17 +2084,19 @@
         font-size: 14px;
         font-weight: #{$cb-fw-semibold};
         color: #{$cb-color-black};
+        & a{
+          color: #{$cb-color-primary};
+          text-decoration: none;
+          font-weight: #{$cb-fw-semibold};
+          white-space: normal;
+          word-break: break-word;
+        }
       }
 
       & .cb-activity-action {
         font-size: 12px;
         color: #{$cb-text-secondary};
         text-transform: capitalize;
-      }
-
-      & .cb-activity-user {
-        font-size: 12px;
-        color: #{$cb-text-secondary};
       }
     }
   }
@@ -2220,6 +2226,8 @@
       }
     }
   }
+
+
 }
 
 

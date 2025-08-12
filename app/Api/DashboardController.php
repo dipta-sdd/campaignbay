@@ -237,48 +237,56 @@ class DashboardController extends ApiController {
 	 * @return array
 	 */
 	private function get_live_and_upcoming_campaigns() {
-		// Get currently active campaigns.
+		// --- Get currently active campaigns (ordered by which one will expire first) ---
 		$active_query = new WP_Query(
 			array(
 				'post_type'      => 'wpab_cb_campaign',
 				'post_status'    => 'wpab_cb_active',
 				'posts_per_page' => 5,
 				'orderby'        => 'meta_value',
-				'meta_key'       => '_wpab_cb_end_datetime',
+				'meta_key'       => '_wpab_cb_end_datetime', // Note the underscore for querying meta
 				'order'          => 'ASC',
 			)
 		);
 
 		$active_campaigns = array();
 		foreach ( $active_query->posts as $post ) {
-			$active_campaigns[] = array(
-				'id'       => $post->ID,
-				'title'    => $post->post_title,
-				'end_date' => get_post_meta( $post->ID, '_wpab_cb_end_datetime', true ),
-				'link'     => get_edit_post_link( $post->ID, 'raw' ),
-			);
+			// Use our Campaign class to easily access metadata
+			$campaign = new \WpabCb\Engine\Campaign( $post );
+			if ( $campaign ) {
+				$active_campaigns[] = array(
+					'id'       => $post->ID,
+					'title'    => $post->post_title,
+					'end_date' => $campaign->get_meta( 'end_datetime' ), 
+					'type'     => $campaign->get_meta( 'campaign_type' ),
+				);
+			}
 		}
 
-		// Get upcoming scheduled campaigns.
+		// --- Get upcoming scheduled campaigns (ordered by which one will start first) ---
 		$scheduled_query = new WP_Query(
 			array(
 				'post_type'      => 'wpab_cb_campaign',
 				'post_status'    => 'wpab_cb_scheduled',
 				'posts_per_page' => 5,
 				'orderby'        => 'meta_value',
-				'meta_key'       => '_wpab_cb_start_datetime',
+				'meta_key'       => '_wpab_cb_start_datetime', // Note the underscore
 				'order'          => 'ASC',
 			)
 		);
 		
 		$scheduled_campaigns = array();
 		foreach ( $scheduled_query->posts as $post ) {
-			$scheduled_campaigns[] = array(
-				'id'         => $post->ID,
-				'title'      => $post->post_title,
-				'start_date' => get_post_meta( $post->ID, '_wpab_cb_start_datetime', true ),
-				'link'       => get_edit_post_link( $post->ID, 'raw' ),
-			);
+			// Use our Campaign class here as well for consistency
+			$campaign = new \WpabCb\Engine\Campaign( $post );
+			if ( $campaign ) {
+				$scheduled_campaigns[] = array(
+					'id'         => $post->ID,
+					'title'      => $post->post_title,
+					'start_date' => $campaign->get_meta( 'start_datetime' ), 
+					'type'       => $campaign->get_meta( 'campaign_type' ),
+				);
+			}
 		}
 
 		return array(
