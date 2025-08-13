@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Import WordPress classes
 use WP_Query;
 use WP_Post;
 use Exception;
@@ -193,6 +192,7 @@ class Campaign {
 		$this->applicable_product_ids = $this->expand_variable_products( $product_ids );
 	}
 
+
 	/**
 	 * Gets all product IDs from the specified category IDs.
 	 *
@@ -273,6 +273,19 @@ class Campaign {
 		}
 		if ( 'entire_store' === $this->get_meta( 'target_type' ) ) {
 			return true;
+		}
+		if ( 'tag' === $this->get_meta( 'target_type' ) ) {
+			$product = wc_get_product( $product_id );
+			if ( ! $product ) {
+				return false;
+			}
+			$product_tags = $product->get_tag_ids();
+			foreach ( $product_tags as $product_tag ) {
+				if ( in_array( $product_tag, $this->get_meta( 'target_ids' ), true ) ) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		return in_array( $product_id, $this->applicable_product_ids, true );

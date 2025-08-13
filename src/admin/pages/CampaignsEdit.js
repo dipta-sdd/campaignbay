@@ -4,6 +4,7 @@
     import MultiSelect from "../components/Multiselect";
     import {
         TimePicker,
+        __experimentalConfirmDialog as ConfirmDialog,
         __experimentalToggleGroupControl as ToggleGroupControl,
         __experimentalToggleGroupControlOption as ToggleGroupControlOption,
     } from "@wordpress/components";
@@ -22,6 +23,7 @@
         const { id } = useParams();
         const [isLoading, setIsLoading] = useState(true);
         const [isSaving, setIsSaving] = useState(false);
+        const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
         const { woocommerce_currency_symbol } = useCbStore();
         const [campaignType, setCampaignType] = useState("scheduled");
         const [campaignStatus, setCampaignStatus] = useState("scheduled");
@@ -83,14 +85,12 @@
         }, [id]);
 
         useEffect(() => {
-            if (campaignType === "scheduled") {
-                setCampaignStatus("wpab_cb_scheduled");
-            }
-        }, [campaignType]);
+            Promise.all([fetchCategories(), fetchProducts(), fetchTags()]);
+        }, []);
 
         const fetchCategories = async () => {
             try {
-                const response = await apiFetch({ path: "/wc/v3/products/categories" });
+                const response = await apiFetch({ path: "/wc/v3/products/categories?per_page=-1" });
                 setCategories(
                     response.map((item) => ({
                         label: item.name,
@@ -107,7 +107,7 @@
         };
         const fetchProducts = async () => {
             try {
-                const response = await apiFetch({ path: "/wc/v3/products" });
+                const response = await apiFetch({ path: "/wc/v3/products?per_page=-1" });
                 setProducts(
                     response.map((item) => ({
                         label: item.name,
@@ -124,7 +124,7 @@
         };
         const fetchTags = async () => {
             try {
-                const response = await apiFetch({ path: "/wc/v3/products/tags" });
+                const response = await apiFetch({ path: "/wc/v3/products/tags?per_page=-1" });
                 setTags(
                     response.map((item) => ({
                         label: item.name,
@@ -143,12 +143,6 @@
         const handleSelectionTypeChange = (value) => {
             setSelectionType(value);
             setSelections([]);
-            // if (value === 'product') {
-            //     fetchProducts();
-            // }
-            if (value === "tags") {
-                fetchTags();
-            }
         };
 
         const handleCampaignTypeChange = (value) => {
@@ -254,6 +248,17 @@
                 console.log(error);
             }
         };
+
+        const handleDeleteCampaign = async () => {
+            try {
+                const response = await apiFetch({ path: "/campaignbay/v1/campaigns/" + id, method: "DELETE" });
+                setIsDeleteModalOpen(false);
+                addToast(__("Campaign deleted successfully", "campaignbay"), "success");
+                navigate("/campaigns");
+            } catch (error) {
+                addToast(__("Something went wrong, Please reload the page.", "campaignbay"), "error");
+            }
+        }
         return (
             <>
                 {isLoading ? (
@@ -535,6 +540,17 @@
                         </div>
                     </div>
                 )}
+
+<ConfirmDialog
+            isOpen={isDeleteModalOpen}
+            onConfirm={handleDeleteCampaign}
+            onCancel={() => setIsDeleteModalOpen(false)}
+          >
+            {__(
+              "Are you sure you want to delete this campaign?",
+              "campaignbay"
+            )}
+          </ConfirmDialog>
             </>
         );
     };

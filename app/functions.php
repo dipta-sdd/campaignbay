@@ -57,7 +57,7 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			/*==================================================
 			* Cart Settings Tab
 			==================================================*/
-			'cart_allowWcCouponStacking'  => false,
+			'cart_allowWcCouponStacking'  => true,
 			'cart_allowCampaignStacking'  => false,
 			'cart_savedMessageFormat'     => esc_html__( 'You saved {saved_amount} on this order!', 'campaign___bay' ),
 			'cart_showNextDiscountBar'    => true,

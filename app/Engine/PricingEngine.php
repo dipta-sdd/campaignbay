@@ -4,6 +4,7 @@ namespace WpabCb\Engine;
 
 use WC_Product;
 use \WpabCb\Engine\CampaignManager;
+use WP_Error;
 
 /**
  * The file that defines the Pricing Engine class.
@@ -99,50 +100,86 @@ class PricingEngine {
 	 */
 	private function define_hooks() {
 
+		$default_priority = wpab_cb_get_options('global_defaultPriority') ?? 10;
+
 		// Product hooks for displaying discounts on single product pages.
-		// load the product summary hook
+		/**
+		 * load the product summary hook
+		 * priority 9 is the last hook before the price html hook
+		 * cannot use $default_priority
+		 */
 		$this->add_action( 'woocommerce_single_product_summary', 'action_single_product_summary', 9, 0 );
 		// load the price html hook
-		$this->add_filter( 'woocommerce_get_price_html', 'display_discounted_price_html');
+		$this->add_filter( 'woocommerce_get_price_html', 'display_discounted_price_html', $default_priority, 2);
 		// load the price html hook
-		$this->add_filter( 'woocommerce_variable_price_html', 'display_variable_price_html', 10, 3);
+		$this->add_filter( 'woocommerce_variable_price_html', 'display_variable_price_html', $default_priority, 3);
 
-		$this->add_filter( 'woocommerce_variation_prices', 'filter_variation_prices',10,2);
+		$this->add_filter( 'woocommerce_variation_prices', 'filter_variation_prices', $default_priority, 2);
 
 		// load the product is on sale hook
-		$this->add_filter( 'woocommerce_product_is_on_sale', 'filter_is_product_on_sale');
+		$this->add_filter( 'woocommerce_product_is_on_sale', 'filter_is_product_on_sale', $default_priority, 2);
 
 		// load the before calculate totals hook
-		$this->add_action( 'woocommerce_before_calculate_totals', 'apply_discounts_and_prepare_notices' );
+		$this->add_action( 'woocommerce_before_calculate_totals', 'apply_discounts_and_prepare_notices', $default_priority, 1 );
 
-		$this->add_action( 'woocommerce_after_calculate_totals', 'cart_after_calculate_totals' );
-
-		// do later: add free product auto add to cart
-		// $this->add_filter( 'woocommerce_add_cart_item', 'add_to_cart_item_filter', 20, 1 );
-
+		$this->add_action( 'woocommerce_after_calculate_totals', 'cart_after_calculate_totals', $default_priority, 1 );
 
 		// Conditionally add the hook for the discount breakdown in cart totals, based on settings.
 		if( wpab_cb_get_options('cart_showDiscountBreakdown') ){
-			$this->add_action( 'woocommerce_cart_calculate_fees', 'add_cart_discount_fee', 20, 1 );
+			$this->add_action( 'woocommerce_cart_calculate_fees', 'add_cart_discount_fee', $default_priority, 1 );
 		}
 
 		// Conditionally add the hook for inline "add more" notices in the cart, based on settings.
 		if( wpab_cb_get_options('cart_showNextDiscountBar') ){
-			$this->add_filter( 'woocommerce_after_cart_item_name', 'display_inline_cart_notice', 10, 2 );
+			$this->add_filter( 'woocommerce_after_cart_item_name', 'display_inline_cart_notice', $default_priority, 2 );
 		}
 
 		// Cart item hooks for formatting the price and subtotal columns.
-		$this->add_filter( 'woocommerce_cart_item_price', 'display_cart_item_price', 10, 3);
-		$this->add_filter( 'woocommerce_cart_item_subtotal', 'display_cart_item_subtotal', 10, 3);
+		$this->add_filter( 'woocommerce_cart_item_price', 'display_cart_item_price', $default_priority, 3);
+		$this->add_filter( 'woocommerce_cart_item_subtotal', 'display_cart_item_subtotal', $default_priority, 3);
 
 
 		// product variation single variation hooks
-		$this->add_filter( 'woocommerce_variation_prices_price', 'filter_variation_prices_price', 10, 3);
-		$this->add_filter( 'woocommerce_variation_prices_sale_price', 'filter_variation_prices_sale_price', 10, 3);
+		$this->add_filter( 'woocommerce_variation_prices_price', 'filter_variation_prices_price', $default_priority, 3);
+		$this->add_filter( 'woocommerce_variation_prices_sale_price', 'filter_variation_prices_sale_price', $default_priority, 3);
 
-		$this->add_action( 'woocommerce_checkout_create_order', 'save_discount_breakdown_to_order_meta', 10, 2 );
+		// save the discount breakdown to the order meta
+		$this->add_action( 'woocommerce_checkout_create_order', 'save_discount_breakdown_to_order_meta', $default_priority, 2 );
+
+		// prevent coupon stacking
+		if( ! wpab_cb_get_options('cart_allowWcCouponStacking') ){
+			$this->add_filter( 'woocommerce_coupon_is_valid', 'prevent_coupon_stacking', $default_priority, 3 );
+		}
 
 	}
+
+
+	  /**
+     * Prevents a coupon from being applied if an automatic campaign is active
+     * and the store owner has disabled stacking.
+     *
+     * @since 1.0.0
+     * @hook woocommerce_coupon_is_valid
+     * @param bool       $is_valid  The original validity of the coupon.
+     * @param WC_Coupon  $coupon    The coupon object being applied.
+     * @return bool|WP_Error False if the coupon should be blocked, otherwise the original $is_valid value.
+     */
+    public function prevent_coupon_stacking( $is_valid, $coupon , $wc_discount) {
+        // If the coupon is already invalid for another reason, don't interfere.
+		wpab_cb_log( 'prevent_coupon_stacking', 'DEBUG' );
+
+        if ( ! $is_valid ) {
+            return $is_valid;
+        }
+        //  Check if our plugin's discounts are already active in the cart.
+        // We check the breakdown property that is calculated by our main hook.
+        if ( ! empty( WC()->cart->wpab_cb_discount_breakdown ) ) {
+            $error_message = __( 'A store promotion is already active...', 'campaignbay' );
+			wc_add_notice( $error_message , 'error' );
+			return false;
+        }
+        return true;
+    }
 
 
 	public function save_discount_breakdown_to_order_meta( $order, $data ) {
@@ -620,6 +657,7 @@ class PricingEngine {
 		if ( $discount_data['on_campaign'] ) {
 			$simple_message = $this->generate_product_summary_simple_message( $discount_data );
 			$simple_message ? $this->print_notice( $simple_message ) : null;
+		}else{
 		}
 	}
 

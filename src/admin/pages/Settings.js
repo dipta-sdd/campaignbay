@@ -211,14 +211,14 @@ const Settings = () => {
                         name: 'cart',
                         title: 'Cart Settings'
                     },
-                    {
-                        name: 'promotion',
-                        title: 'Promotion Settings'
-                    },
-                    {
-                        name: 'advanced',
-                        title: 'Advanced Settings'
-                    }
+                    // {
+                    //     name: 'promotion',
+                    //     title: 'Promotion Settings'
+                    // },
+                    // {
+                    //     name: 'advanced',
+                    //     title: 'Advanced Settings'
+                    // }
                 ]}
             >
                 {(tab) => (

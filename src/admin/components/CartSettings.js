@@ -8,10 +8,10 @@ const CartSettings = ({ cartSettings, setCartSettings }) => {
         <div className="wpab-cb-settings-tab">
             <SettingCard title="Cart Discount Options">
                 <Checkbox
-                    checked={cartSettings.allowStackingWithCoupons}
+                    checked={cartSettings.cart_allowWcCouponStacking}
                     onChange={() => setCartSettings(prev => ({
                         ...prev,
-                        allowStackingWithCoupons: !prev.allowStackingWithCoupons
+                        cart_allowWcCouponStacking: !prev.cart_allowWcCouponStacking
                     }))}
                     label="Allow Stacking with WooCommerce Coupons"
                     help="If checked, your campaign discounts can be combined with standard WooCommerce coupons."
@@ -36,14 +36,14 @@ const CartSettings = ({ cartSettings, setCartSettings }) => {
                     }))}
                 /> */}
 
-                <Input label={"'You Saved'Message Format"}
+                {/* <Input label={"'You Saved'Message Format"}
                     className="w-100"
                     value={cartSettings.cart_savedMessageFormat}
                     onChange={value => setCartSettings(prev => ({
                         ...prev,
                         cart_savedMessageFormat: value
                     }))}
-                />
+                /> */}
             </SettingCard>
 
             <SettingCard title="Cart Display & Promotion">
