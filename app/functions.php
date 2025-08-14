@@ -48,8 +48,8 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			* Product Settings Tab
 			==================================================*/
 			'product_showDiscountedPrice' => true,
-			'product_messageFormat'       => esc_html__( 'You save {percentage_off}!', 'campaign___bay' ),
-			'product_bogoMessageFormat'   => esc_html__(  '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!', 'campaign___bay' ),
+			'product_messageFormat'       => esc_html( 'You save {percentage_off}!' ),
+			'product_bogoMessageFormat'   => esc_html( '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!' ),
 			'product_enableQuantityTable' => true,
 			'product_excludeSaleItems'    => true,
 			'product_priorityMethod'      => 'apply_highest',
@@ -59,10 +59,10 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			==================================================*/
 			'cart_allowWcCouponStacking'  => true,
 			'cart_allowCampaignStacking'  => false,
-			'cart_savedMessageFormat'     => esc_html__( 'You saved {saved_amount} on this order!', 'campaign___bay' ),
+			'cart_savedMessageFormat'     => esc_html( 'You saved {saved_amount} on this order!' ),
 			'cart_showNextDiscountBar'    => true,
-			'cart_nextDiscountFormat'     => esc_html__( 'Spend {remaining_amount} more for {discount_percentage} off!', 'campaign___bay' ),
-			'cart_bogoMessageFormat'      => esc_html__( 'Buy {buy_quantity} more and get {get_product_quantity} {get_product} for free!', 'campaign___bay' ),
+			'cart_nextDiscountFormat'     => esc_html( 'Spend {remaining_amount} more for {discount_percentage} off!' ),
+			'cart_bogoMessageFormat'      => esc_html( 'Buy {buy_quantity} more and get {get_product_quantity} {get_product} for free!' ),
 			'cart_showDiscountBreakdown'  => true,
 
 			/*==================================================
@@ -72,7 +72,7 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			'promo_barPosition'           => 'top_of_page',
 			'promo_barBgColor'            => '#000000',
 			'promo_barTextColor'          => '#FFFFFF',
-			'promo_barContent'            => esc_html__( 'FLASH SALE! {percentage_off} on all shirts!', 'campaign___bay' ),
+			'promo_barContent'            => esc_html( 'FLASH SALE! {percentage_off} on all shirts!' ),
 			'promo_barLinkUrl'            => '',
 			'promo_barDisplayPages'       => array( 'shop_page', 'product_pages' ),
 			'promo_enableCustomBadges'    => true,
@@ -223,15 +223,15 @@ if ( ! function_exists( 'wpab_cb_get_white_label' ) ) :
 	function wpab_cb_get_white_label( $key = '' ) {
 		$plugin_name = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_white_label_plugin_name',
-			esc_html__( 'WP React Plugin Boilerplate', 'campaign___bay' )
+			esc_html( 'WP React Plugin Boilerplate' )
 		);
 		
 		$options = apply_filters(
 			WPAB_CB_OPTION_NAME  . '_white_label',
 			 array(
-				'plugin_name'      => esc_html( __('CampaignBay - WooCommerce Smart Campaigns', 'campaign___bay') ),
-				'short_name'       => esc_html__( 'CampaignBay', 'campaign___bay' ),
-				'menu_label'       => esc_html__( 'CampaignBay', 'campaign___bay' ),
+				'plugin_name'      => esc_html( 'CampaignBay - WooCommerce Smart Campaigns'),
+				'short_name'       => esc_html( 'CampaignBay' ),
+				'menu_label'       => esc_html( 'CampaignBay' ),
 				'custom_icon'  	   => WPAB_CB_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
 				'menu_icon'  	   => WPAB_CB_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
 				'author_name'      => 'WP Anchor Bay',
@@ -273,11 +273,11 @@ if(! function_exists('wpab_cb_log')) {
 			wp_mkdir_p( $log_dir );
 		}
 		
-		$log_file = $log_dir . 'plugin-log-' . date('Y-m-d') . '.log';
+		$log_file = $log_dir . 'plugin-log-' . gmdate('Y-m-d') . '.log';
 
 		$formatted_message = '';
 		if ( is_array( $message ) || is_object( $message ) ) {
-			$formatted_message = print_r( $message, true );
+			$formatted_message = json_encode( $message );
 		} else {
 			$formatted_message = $message;
 		}
@@ -285,7 +285,7 @@ if(! function_exists('wpab_cb_log')) {
 		$log_level = is_string($level) ? strtoupper($level) : (is_array($level) || is_object($level) ? print_r($level, true) : '');
 		$log_entry = sprintf(
 			"[%s] [%s]: %s\n",
-			date('Y-m-d H:i:s'),
+			gmdate('Y-m-d H:i:s'),
 			$log_level,
 			$formatted_message
 		);

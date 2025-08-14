@@ -61,7 +61,7 @@
         useEffect(() => {
             const fetchCampaign = async () => {
                 const response = await apiFetch({
-                    path: `/campaignbay/v1/campaigns/${id}`,
+                    path: `/campaignbay/v1/campaigns/${id}?_timestamp=${Date.now()}`,
                 });
                 setCampaignStatus(response.status);
                 setCampaignType(response.campaign_type);
@@ -90,7 +90,7 @@
 
         const fetchCategories = async () => {
             try {
-                const response = await apiFetch({ path: "/wc/v3/products/categories?per_page=-1" });
+                const response = await apiFetch({ path: "/wc/v3/products/categories?per_page=-1&_timestamp="+Date.now() });
                 setCategories(
                     response.map((item) => ({
                         label: item.name,
@@ -107,7 +107,7 @@
         };
         const fetchProducts = async () => {
             try {
-                const response = await apiFetch({ path: "/wc/v3/products?per_page=-1" });
+                const response = await apiFetch({ path: "/wc/v3/products?per_page=-1&_timestamp="+Date.now() });
                 setProducts(
                     response.map((item) => ({
                         label: item.name,
@@ -124,7 +124,7 @@
         };
         const fetchTags = async () => {
             try {
-                const response = await apiFetch({ path: "/wc/v3/products/tags?per_page=-1" });
+                const response = await apiFetch({ path: "/wc/v3/products/tags?per_page=-1&_timestamp="+Date.now() });
                 setTags(
                     response.map((item) => ({
                         label: item.name,

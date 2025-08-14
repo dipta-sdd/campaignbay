@@ -48,7 +48,7 @@ const CampaignsAdd = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await apiFetch({ path: '/wc/v3/products/categories?per_page=-1' , method: 'GET'});
+            const response = await apiFetch({ path: '/wc/v3/products/categories?per_page=-1&_timestamp='+Date.now() , method: 'GET'});
             setCategories(response.map(item => ({
                 label: item.name,
                 value: item.id
@@ -60,7 +60,7 @@ const CampaignsAdd = () => {
     }
     const fetchProducts = async () => {
         try {
-            const response = await apiFetch({ path: '/wc/v3/products?per_page=-1' , method: 'GET'});
+            const response = await apiFetch({ path: '/wc/v3/products?per_page=-1&_timestamp='+Date.now() , method: 'GET'});
             setProducts(response.map(item => ({
                 label: item.name,
                 value: item.id
@@ -72,7 +72,7 @@ const CampaignsAdd = () => {
     }
     const fetchTags = async () => {
         try {
-            const response = await apiFetch({ path: '/wc/v3/products/tags?per_page=-1' , method: 'GET'});
+            const response = await apiFetch({ path: '/wc/v3/products/tags?per_page=-1&_timestamp='+Date.now() , method: 'GET'});
             setTags(response.map(item => ({
                 label: item.name,
                 value: item.id

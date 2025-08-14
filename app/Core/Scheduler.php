@@ -121,11 +121,14 @@ class Scheduler {
 		$site_timezone = wp_timezone_string();
 		wpab_cb_log( 'start_datetime ('. $site_timezone .'): ' . $start_datetime, 'DEBUG' );
 		wpab_cb_log( 'end_datetime ('. $site_timezone .'): ' . $end_datetime, 'DEBUG' );
+		//phpcs:ignore
 		$start_datetime = date( 'Y-m-d H:i:s', strtotime( $start_datetime . ' ' . $site_timezone ) );
+		//phpcs:ignore
 		$end_datetime = date( 'Y-m-d H:i:s', strtotime( $end_datetime . ' ' . $site_timezone ) );
 		wpab_cb_log( 'start_datetime (UTC): ' . $start_datetime, 'DEBUG' );
 		wpab_cb_log( 'end_datetime (UTC): ' . $end_datetime, 'DEBUG' );
-		// // Convert ISO 8601 date strings to Unix timestamps for scheduling.
+		// Convert ISO 8601 date strings to Unix timestamps for scheduling.
+		//phpcs:ignore
 		$start_timestamp = $start_datetime ? strtotime( $start_datetime ) : null;
 		$end_timestamp   = $end_datetime ? strtotime( $end_datetime ) : null;
 		$current_time    = time();

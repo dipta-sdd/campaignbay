@@ -39,6 +39,30 @@ class Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
+
+		// Dependency Check: Is WooCommerce Active? ---
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			// If the WooCommerce class doesn't exist, stop the activation.
+			wp_die(
+				// The message displayed to the user.
+				esc_html__( 'CampaignBay could not be activated. It requires the WooCommerce plugin to be installed and active.', 'campaignbay' ),
+				// The title of the error page.
+				esc_html__( 'Plugin Activation Error', 'campaignbay' ),
+				// Provides a "Go Back" link.
+				array( 'back_link' => true )
+			);
+		}
+
+		// Environment Check: Is WP-Cron Enabled? ---
+		// The `DISABLE_WP_CRON` constant is usually set in wp-config.php.
+		if ( defined( 'DISABLE_WP_CRON' ) && true === DISABLE_WP_CRON ) {
+			// If WP-Cron is disabled, stop the activation and inform the user.
+			wp_die(
+				esc_html__( 'CampaignBay requires WP-Cron to be enabled in order for its scheduling features to work. The "DISABLE_WP_CRON" constant is currently set to true in your wp-config.php file. Please remove it or set it to false to activate this plugin.', 'campaignbay' ),
+				esc_html__( 'Plugin Activation Error', 'campaignbay' ),
+				array( 'back_link' => true )
+			);
+		}
 		// Set up the default options if they don't exist.
 		if ( ! get_option( WPAB_CB_OPTION_NAME ) ) {
 			wpab_cb_update_options( wpab_cb_default_options() );

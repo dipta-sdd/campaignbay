@@ -75,7 +75,7 @@ class LogsController extends ApiController {
         if ( ! current_user_can( 'manage_options' ) ) {
             return new WP_Error(
                 'rest_forbidden',
-                __( 'You do not have permission to manage logs.', 'wpab-cb' ),
+                __( 'You do not have permission to manage logs.', 'campaignbay' ),
                 array( 'status' => rest_authorization_required_code() )
             );
         }
@@ -91,7 +91,7 @@ class LogsController extends ApiController {
 	public function get_log_file_contents( $request ) {
 		$upload_dir = wp_upload_dir();
 		$log_dir    = $upload_dir['basedir'] . '/' . WPAB_CB_TEXT_DOMAIN . '-logs/';
-		$log_file   = $log_dir . 'plugin-log-' . date( 'Y-m-d' ) . '.log';
+		$log_file   = $log_dir . 'plugin-log-' . gmdate( 'Y-m-d' ) . '.log';
 
 		if ( file_exists( $log_file ) ) {
 			// Get the file system object.
@@ -101,7 +101,7 @@ class LogsController extends ApiController {
 			if ( false === $contents ) {
 				return new WP_Error(
 					'rest_log_read_error',
-					__( 'Could not read the log file. Check file permissions.', 'wpab-cb' ),
+					__( 'Could not read the log file. Check file permissions.', 'campaignbay' ),
 					array( 'status' => 500 )
 				);
 			}
@@ -116,7 +116,7 @@ class LogsController extends ApiController {
 
 		} else {
 			// If the file doesn't exist for today, it's not an error.
-			$response = array( 'log_content' => __( 'No logs recorded for today.', 'wpab-cb' ) );
+			$response = array( 'log_content' => __( 'No logs recorded for today.', 'campaignbay' ) );
 			return new WP_REST_Response( $response, 200 );
 		}
 	}
@@ -127,7 +127,7 @@ class LogsController extends ApiController {
 
         if ( ! is_dir( $log_dir ) ) {
             // If the directory doesn't exist, there's nothing to clear.
-            return new WP_REST_Response( array( 'message' => __( 'Log directory does not exist. Nothing to clear.', 'wpab-cb' ) ), 200 );
+            return new WP_REST_Response( array( 'message' => __( 'Log directory does not exist. Nothing to clear.', 'campaignbay' ) ), 200 );
         }
 
         $wp_filesystem = wpab_cb_file_system();
@@ -150,7 +150,7 @@ class LogsController extends ApiController {
                 array(
                     'success' => true,
                     /* translators: %d: number of log files deleted. */
-                    'message' => sprintf( _n( '%d log file cleared.', '%d log files cleared.', $deleted_count, 'wpab-cb' ), $deleted_count ),
+                    'message' => sprintf( _n( '%d log file cleared.', '%d log files cleared.', $deleted_count, 'campaignbay' ), $deleted_count ),
                 ),
                 200
             );
@@ -158,7 +158,7 @@ class LogsController extends ApiController {
             return new WP_REST_Response(
                 array(
                     'success' => true,
-                    'message' => __( 'No log files to clear.', 'wpab-cb' ),
+                    'message' => __( 'No log files to clear.', 'campaignbay' ),
                 ),
                 200
             );

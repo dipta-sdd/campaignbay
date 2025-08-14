@@ -102,9 +102,6 @@ class Campaign {
 
 		$this->load_meta();
 		$this->load_applicable_product_ids(); // Pre-calculate the list of products this campaign applies to.
-		if( 'earlybird' === $this->get_meta( 'campaign_type' ) ){
-			$this->load_usage_count();
-		}
 	}
 
 	/**
@@ -141,15 +138,16 @@ class Campaign {
 
 		// Define which order statuses are considered a successful "use".
 		$success_statuses = array( 'processing', 'completed' );
-
+		$status_placeholders = implode( ', ', array_fill( 0, count( $success_statuses ), '%s' ) );
 		// Perform a direct, indexed query to count distinct successful orders for this campaign.
 		$count = $wpdb->get_var(
+			// phpcs:ignore
 			$wpdb->prepare(
 				"SELECT COUNT(DISTINCT order_id)
 				 FROM $table_name
 				 WHERE campaign_id = %d
 				 AND log_type = 'sale'
-				 AND order_status IN ('" . implode( "','", array_map( 'esc_sql', $success_statuses ) ) . "')",
+				 AND order_status IN ($status_placeholders)", // phpcs:ignore
 				$this->id
 			)
 		);
@@ -279,7 +277,7 @@ class Campaign {
 			if ( ! $product ) {
 				return false;
 			}
-			$product_tags = $product->get_tag_ids();
+			$product_tags = $product->get_tag_ids();	
 			foreach ( $product_tags as $product_tag ) {
 				if ( in_array( $product_tag, $this->get_meta( 'target_ids' ), true ) ) {
 					return true;

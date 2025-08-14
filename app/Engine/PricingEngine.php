@@ -1099,7 +1099,7 @@ class PricingEngine {
 			$discount_value = $base_price * ( $discount_value / 100 ) ;
 		}
 		// Return the calculated price.
-		return $base_price - $discount_value;	
+		return max( 0, $base_price - $discount_value );	
 	}
 
 	/**
@@ -1125,7 +1125,7 @@ class PricingEngine {
 			$tier_value = $base_price * ( $tier_value / 100 ) ;
 		}
 		// Return the calculated price.
-		return $base_price - $tier_value;
+		return max( 0, $base_price - $tier_value );
 	}
 
 

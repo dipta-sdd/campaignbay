@@ -30,7 +30,7 @@ const Settings = () => {
 
     const fetchSettings = async () => {
         try {
-            const response = await apiFetch({ path: '/campaignbay/v1/settings' }); ///wc/v3/products/categories
+            const response = await apiFetch({ path: '/campaignbay/v1/settings?_timestamp='+Date.now() }); 
             setSettings(response);
             setIsLoading(false);
         } catch (error) {

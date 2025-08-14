@@ -43,6 +43,7 @@ const Dashboard = () => {
         setLoading(true);
         const params = {
           period: selectedPeriod,
+          _timestamp: Date.now(),
         };
         const response = await apiFetch({
           path: addQueryArgs("/campaignbay/v1/dashboard", params),

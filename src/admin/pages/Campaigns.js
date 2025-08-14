@@ -32,7 +32,7 @@ const Campaigns = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const { wpSettings } = useCbStore();
+  const { wpSettings, woocommerce_currency_symbol } = useCbStore();
   const [selectedCampaignId, setSelectedCampaignId] = useState(null);
   const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -74,6 +74,7 @@ const Campaigns = () => {
         search: searchQuery,
         status: statusFilter,
         type: typeFilter,
+        _timestamp: Date.now(),
       };
       const response = await apiFetch({
         path: addQueryArgs("/campaignbay/v1/campaigns", queryParams),
@@ -347,6 +348,14 @@ const Campaigns = () => {
     }
   };
 
+  const getCampaignValue = (campaign) => {
+    if (campaign.campaign_type === "scheduled") {
+      return campaign?.discount_value + " " + (campaign?.discount_type === "percentage" ? "%" : woocommerce_currency_symbol);
+    }
+    const tier = campaign?.campaign_tiers[0];
+    return tier?.value + " " + (tier?.type === "percentage" ? "%" : woocommerce_currency_symbol);
+  };
+
   return (
     <div className="cb-page campaignbay-campaigns">
       <div className="cb-page-header-container">
@@ -548,8 +557,8 @@ const Campaigns = () => {
                         {getTargetType(campaign.target_type)}
                       </td>
                       <td>
-                        {campaign.discount_value}
-                        {campaign.discount_type === "percentage" ? "%" : ""}
+                        {getCampaignValue(campaign)}
+                        
                       </td>
                       <td className="campaignbay-text-secondary">
                         {formatDateTime(campaign.start_datetime)}
