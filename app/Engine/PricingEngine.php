@@ -1048,34 +1048,34 @@ class PricingEngine {
 
 		// Store the final, structured result in the cache for this page load.
 		$this->product_discount_cache[ $product_id ] = $discount_data;
-		if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
-			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
-			wpab_cb_log('base_price: ' . $discount_data['base_price'], 'DEBUG' );
-			wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'] ?? 'null', 'DEBUG' );
-			wpab_cb_log('on_price: ' . $product->get_price(), 'DEBUG' );
-			wpab_cb_log('on_sale: ' . $discount_data['on_sale'], 'DEBUG' );
-			wpab_cb_log('on_campaign: ' . $discount_data['on_campaign'], 'DEBUG' );
-			if( isset( $discount_data['discounts']['best_price'] ) ){
-				wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
-			}
-			if( isset( $discount_data['discounts']['simple']['price'] ) ){
-				$simple = $discount_data['discounts']['simple'];
-				wpab_cb_log('	simple_price: ' . $simple['price'], 'DEBUG' );
-				wpab_cb_log('	simple_campaign_id: ' . $simple['campaign_id'], 'DEBUG' );
-				wpab_cb_log('	simple_campaign_type: ' . $simple['campaign_type'], 'DEBUG' );
-				wpab_cb_log('	simple_campaign_title: ' . $simple['campaign_title'], 'DEBUG' );
-				wpab_cb_log('	simple_is_applied: ' . $simple['is_applied'], 'DEBUG' );
-			}
-			if( isset( $discount_data['discounts']['quantity']['price'] ) ){
-				$quantity = $discount_data['discounts']['quantity'];
-				wpab_cb_log('	quantity_price: ' . $quantity['price'], 'DEBUG' );
-				wpab_cb_log('	quantity_campaign_id: ' . $quantity['campaign_id'], 'DEBUG' );
-				wpab_cb_log('	quantity_campaign_type: ' . $quantity['campaign_type'], 'DEBUG' );
-				wpab_cb_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
-				wpab_cb_log('	quantity_is_applied: ' . $quantity['is_applied'], 'DEBUG' );
-			}
-		}
+		// if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
+		// 	wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+		// 	wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
+		// 	wpab_cb_log('base_price: ' . $discount_data['base_price'], 'DEBUG' );
+		// 	wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'] ?? 'null', 'DEBUG' );
+		// 	wpab_cb_log('on_price: ' . $product->get_price(), 'DEBUG' );
+		// 	wpab_cb_log('on_sale: ' . $discount_data['on_sale'], 'DEBUG' );
+		// 	wpab_cb_log('on_campaign: ' . $discount_data['on_campaign'], 'DEBUG' );
+		// 	if( isset( $discount_data['discounts']['best_price'] ) ){
+		// 		wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
+		// 	}
+		// 	if( isset( $discount_data['discounts']['simple']['price'] ) ){
+		// 		$simple = $discount_data['discounts']['simple'];
+		// 		wpab_cb_log('	simple_price: ' . $simple['price'], 'DEBUG' );
+		// 		wpab_cb_log('	simple_campaign_id: ' . $simple['campaign_id'], 'DEBUG' );
+		// 		wpab_cb_log('	simple_campaign_type: ' . $simple['campaign_type'], 'DEBUG' );
+		// 		wpab_cb_log('	simple_campaign_title: ' . $simple['campaign_title'], 'DEBUG' );
+		// 		wpab_cb_log('	simple_is_applied: ' . $simple['is_applied'], 'DEBUG' );
+		// 	}
+		// 	if( isset( $discount_data['discounts']['quantity']['price'] ) ){
+		// 		$quantity = $discount_data['discounts']['quantity'];
+		// 		wpab_cb_log('	quantity_price: ' . $quantity['price'], 'DEBUG' );
+		// 		wpab_cb_log('	quantity_campaign_id: ' . $quantity['campaign_id'], 'DEBUG' );
+		// 		wpab_cb_log('	quantity_campaign_type: ' . $quantity['campaign_type'], 'DEBUG' );
+		// 		wpab_cb_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
+		// 		wpab_cb_log('	quantity_is_applied: ' . $quantity['is_applied'], 'DEBUG' );
+		// 	}
+		// }
 		return $discount_data;
 	}
 

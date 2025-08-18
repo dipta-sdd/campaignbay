@@ -121,6 +121,7 @@ class Plugin {
 		$pricing_engine = PricingEngine::get_instance();
 		$order_manager = OrderManager::get_instance();
 		$scheduler = Scheduler::get_instance();
+		$scheduler->run();
 		$components_with_hooks = array(
 			$campaign_manager,
 			$pricing_engine,

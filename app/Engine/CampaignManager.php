@@ -175,6 +175,8 @@ class CampaignManager {
 		return $this->active_campaigns;
 	}
 
+	
+
 	/**
 	 * Clears the active campaign transient cache.
 	 *

@@ -71,6 +71,10 @@ class Scheduler {
 		$this->define_hooks();
 	}
 
+	public function run() {
+		$this->check_scheduled_campaigns();
+	}
+
 	/**
 	 * Defines all hooks this class needs to run.
 	 *
@@ -119,6 +123,7 @@ class Scheduler {
 		$start_datetime = $campaign->get_meta( 'start_datetime' );
 		$end_datetime   = $campaign->get_meta( 'end_datetime' );
 		$site_timezone = wp_timezone_string();
+		wpab_cb_log( 'site_time: ' . time(), 'DEBUG' );
 		wpab_cb_log( 'start_datetime ('. $site_timezone .'): ' . $start_datetime, 'DEBUG' );
 		wpab_cb_log( 'end_datetime ('. $site_timezone .'): ' . $end_datetime, 'DEBUG' );
 		//phpcs:ignore
@@ -227,5 +232,55 @@ class Scheduler {
 			'priority'      => $priority,
 			'accepted_args' => $accepted_args,
 		);
+	}
+
+	public function check_scheduled_campaigns() {
+		$scheduled_campaigns = get_posts( array(
+			'post_type' => 'wpab_cb_campaign',
+			'post_status' => 'wpab_cb_scheduled',
+			'posts_per_page' => -1,
+
+		) );
+		foreach ( $scheduled_campaigns as $post ) {
+
+			
+			if( $status !== 'wpab_cb_scheduled' && $status !== 'wpab_cb_active' ) {
+				continue;
+			}
+			wpab_cb_log('___________________________' , 'DEBUG' );
+			wpab_cb_log('campaign: ' . $post->post_title, 'DEBUG' );
+			$status = $post->post_status;
+			wpab_cb_log( 'status: ' . $status, 'DEBUG' );
+			$start_datetime = get_post_meta( $post->ID, 'start_datetime', true );
+			$end_datetime   = get_post_meta( $post->ID, 'end_datetime', true );
+			$site_timezone = wp_timezone_string();
+			$current_time    = time();
+
+			wpab_cb_log( 'site_time: ' . $current_time, 'DEBUG' );
+			if( $start_datetime ) {
+				wpab_cb_log( 'start_datetime ('. $site_timezone .'): ' . $start_datetime, 'DEBUG' );
+				$start_datetime = date( 'Y-m-d H:i:s', strtotime( $start_datetime . ' ' . $site_timezone ) );
+				wpab_cb_log( 'start_datetime (UTC): ' . $start_datetime, 'DEBUG' );
+				//phpcs:ignore
+				$start_timestamp = $start_datetime ? strtotime( $start_datetime ) : null;
+				if ( $start_timestamp && $start_timestamp <= $current_time ) {
+					wpab_cb_log( sprintf( 'Campaign #%s activation time is in the past, running activation manually.', $post->ID ), 'INFO' );
+					$this->run_campaign_activation( $post->ID );
+				}
+			}
+			if( $end_datetime ) {
+				wpab_cb_log( 'end_datetime ('. $site_timezone .'): ' . $end_datetime, 'DEBUG' );
+				//phpcs:ignore
+				$end_datetime = date( 'Y-m-d H:i:s', strtotime( $end_datetime . ' ' . $site_timezone ) );
+				wpab_cb_log( 'end_datetime (UTC): ' . $end_datetime, 'DEBUG' );
+				// Convert ISO 8601 date strings to Unix timestamps for scheduling.
+				//phpcs:ignore
+				$end_timestamp   = $end_datetime ? strtotime( $end_datetime ) : null;
+				if ( $end_timestamp && $end_timestamp <= $current_time ) {
+					wpab_cb_log( sprintf( 'Campaign #%s deactivation time is in the past, running deactivation manually.', $post->ID ), 'INFO' );
+					$this->run_campaign_deactivation( $post->ID );
+				}
+			}
+		}
 	}
 }
