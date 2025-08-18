@@ -104,6 +104,7 @@ class Campaign {
 
 		$this->load_meta();
 		$this->load_applicable_product_ids(); // Pre-calculate the list of products this campaign applies to.
+		$this->load_usage_count(); // Load the usage count.
 	}
 
 	/**
@@ -133,14 +134,11 @@ class Campaign {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function load_usage_count() {
+	public function load_usage_count() {
 		wpab_cb_log('load_usage_count for campaign: ' . $this->get_id(), 'DEBUG' );
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'wpab_cb_logs';
 
-		// Define which order statuses are considered a successful "use".
-		$success_statuses = array( 'processing', 'completed' );
-		$status_placeholders = implode( ', ', array_fill( 0, count( $success_statuses ), '%s' ) );
 		// Perform a direct, indexed query to count distinct successful orders for this campaign.
 		$count = $wpdb->get_var(
 			// phpcs:ignore
@@ -149,13 +147,14 @@ class Campaign {
 				 FROM $table_name
 				 WHERE campaign_id = %d
 				 AND log_type = 'sale'
-				 AND order_status IN ($status_placeholders)", // phpcs:ignore
+				 AND order_status IN ('processing', 'completed')", // phpcs:ignore
 				$this->id
 			)
 		);
-		
+		wpab_cb_log( 'Usage count loaded for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - ' . $count, 'DEBUG' );
 		$this->usage_count = (int) $count;
 		$this->update_meta( 'usage_count', $this->usage_count );
+		wpab_cb_log( 'Usage count loaded for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - ' . $this->usage_count, 'DEBUG' );
 	}
 
 	/**

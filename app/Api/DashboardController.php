@@ -105,11 +105,12 @@ class DashboardController extends ApiController {
 				SUM(order_total) as sales_from_campaigns,
 				COUNT(DISTINCT order_id) as discounted_orders
 			 FROM {$logs_table}
-			 WHERE log_type = 'sale' AND order_status IN ({$success_statuses})
+			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
 			 AND timestamp BETWEEN %s AND %s",
 			$current_start,
 			$current_end
-		);
+		); 
+		
 		$current_data = $wpdb->get_row( $current_sql, ARRAY_A );
 
 		// --- Get Previous Period Data for Comparison ---
@@ -118,7 +119,7 @@ class DashboardController extends ApiController {
 				SUM(total_discount) as total_discount_value,
 				COUNT(DISTINCT order_id) as discounted_orders
 			 FROM {$logs_table}
-			 WHERE log_type = 'sale' AND order_status IN ({$success_statuses})
+			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
 			 AND timestamp BETWEEN %s AND %s",
 			$previous_start,
 			$previous_end
@@ -168,7 +169,7 @@ class DashboardController extends ApiController {
 		$trends_sql = $wpdb->prepare(
 			"SELECT DATE(timestamp) as date, SUM(total_discount) as value
 			 FROM {$logs_table}
-			 WHERE log_type = 'sale' AND order_status IN ({$success_statuses})
+			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
 			 AND timestamp BETWEEN %s AND %s
 			 GROUP BY DATE(timestamp)
 			 ORDER BY date ASC",
@@ -181,7 +182,7 @@ class DashboardController extends ApiController {
 		$top_campaigns_sql = $wpdb->prepare(
 			"SELECT campaign_id, SUM(total_discount) as value
 			 FROM {$logs_table}
-			 WHERE log_type = 'sale' AND order_status IN ({$success_statuses})
+			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
 			 AND timestamp BETWEEN %s AND %s
 			 GROUP BY campaign_id
 			 ORDER BY value DESC
@@ -220,7 +221,7 @@ class DashboardController extends ApiController {
 			"SELECT pm.meta_value as campaign_type, SUM(l.order_total) as total_sales
 			 FROM {$logs_table} l
 			 JOIN {$meta_table} pm ON l.campaign_id = pm.post_id AND pm.meta_key = '_wpab_cb_campaign_type'
-			 WHERE l.log_type = 'sale' AND l.order_status IN ({$success_statuses})
+			 WHERE l.log_type = 'sale' AND l.order_status IN ('processing', 'completed')
 			 AND l.timestamp BETWEEN %s AND %s
 			 GROUP BY pm.meta_value
 			 ORDER BY total_sales DESC",
