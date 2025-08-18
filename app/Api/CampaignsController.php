@@ -182,6 +182,7 @@ class CampaignsController extends ApiController {
 		return true;
 	}
 
+
 	/**
 	 * Get a collection of campaigns.
 	 *
@@ -191,18 +192,37 @@ class CampaignsController extends ApiController {
 	public function get_items( $request ) {
 		$args = array(
 			'post_type'      => 'wpab_cb_campaign',
-			'post_status'    => $request->get_param( 'status' ) ? 'wpab_cb_'.$request->get_param( 'status' ) : 'any',
-			'posts_per_page' => $request->get_param( 'per_page' ) ?? 10,
-			'paged'          => $request->get_param( 'page' ) ?? 1,
-			's'              => $request->get_param( 'search' ) ?? '',
-			'orderby'        => $request->get_param( 'orderby' ) ?? 'title',
-			'order'          => $request->get_param( 'order' ) ?? 'asc',
+			'posts_per_page' => $request->get_param( 'per_page' ) ?: 10,
+			'paged'          => $request->get_param( 'page' ) ?: 1,
+			's'              => $request->get_param( 'search' ) ?: '',
+			
+			// --- CHANGED: Update the default sorting parameters ---
+			'orderby'        => $request->get_param( 'orderby' ) ?: 'modified', // Default to sorting by last modified date
+			'order'          => $request->get_param( 'order' ) ?: 'desc',     // Default to descending order (most recent first)
 		);
 
+		// Handle Status Filtering
+		$status = $request->get_param( 'status' );
+		if ( ! empty( $status ) && 'all' !== $status ) {
+			// Prepend the custom status prefix if it's not a built-in status
+			if ( ! in_array( $status, array( 'draft', 'publish', 'trash' ), true ) ) {
+				$args['post_status'] = 'wpab_cb_' . $status;
+			} else {
+				$args['post_status'] = $status;
+			}
+		} else {
+			$args['post_status'] = 'any';
+		}
+
+		// Handle Meta Filtering for campaign_type
 		$campaign_type_filter = $request->get_param( 'type' );
 		if ( ! empty( $campaign_type_filter ) ) {
+			// Initialize the meta_query array correctly
+			$meta_query = array(
+				'relation' => 'AND',
+			);
 			$meta_query[] = array(
-				'key'     => '_wpab_cb_campaign_type',
+				'key'     => '_wpab_cb_campaign_type', // Ensure the key has the underscore prefix
 				'value'   => sanitize_text_field( $campaign_type_filter ),
 				'compare' => '=',
 			);
@@ -220,6 +240,7 @@ class CampaignsController extends ApiController {
 				}
 			}
 		}
+		
 		$response = new WP_REST_Response( $response_data, 200 );
 		$response->header( 'X-WP-Total', $query->found_posts );
 		$response->header( 'X-WP-TotalPages', $query->max_num_pages );
@@ -418,6 +439,7 @@ class CampaignsController extends ApiController {
 			'id'     => $campaign->get_id(),
 			'title'  => $campaign->get_title(),
 			'status' => $campaign->get_status(),
+			'modified' => $campaign->get_date_modified(),
 		);
 
 		$meta_keys = wpab_cb_get_campaign_meta_keys();
@@ -425,8 +447,11 @@ class CampaignsController extends ApiController {
 			$data[ $key ] = $campaign->get_meta( $key );
 		}
 
+
 		return $data;
 	}
+
+	
 
 	/**
 	 * Get the query params for collections.

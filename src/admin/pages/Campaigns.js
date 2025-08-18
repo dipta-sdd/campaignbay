@@ -36,7 +36,7 @@ const Campaigns = () => {
   const [selectedCampaignId, setSelectedCampaignId] = useState(null);
   const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [orderby, setOrderby] = useState("post_name");
+  const [orderby, setOrderby] = useState("modified");
   const [order, setOrder] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -57,7 +57,8 @@ const Campaigns = () => {
     { label: "Start Date", value: "start_date", isSortable: true },
     { label: "End Date", value: "end_date", isSortable: true },
     { label: "Usage", value: "usage_count", isSortable: true },
-    { label: "Action", value: "action", isSortable: false },
+    { label: "Last Modified", value: "modified", isSortable: true },
+    { label: " ", value: "action", isSortable: false },
   ];
 
   useEffect(() => {
@@ -293,7 +294,7 @@ const Campaigns = () => {
     }
   };
 
-    const handleCampaignsStatusUpdate = async () => {
+  const handleCampaignsStatusUpdate = async () => {
     const campaignsToUpdateInt = selectedCampaigns
       .map((id) => parseInt(id, 10))
       .filter((id) => !isNaN(id));
@@ -350,10 +351,20 @@ const Campaigns = () => {
 
   const getCampaignValue = (campaign) => {
     if (campaign.campaign_type === "scheduled") {
-      return campaign?.discount_value + " " + (campaign?.discount_type === "percentage" ? "%" : woocommerce_currency_symbol);
+      return (
+        campaign?.discount_value +
+        " " +
+        (campaign?.discount_type === "percentage"
+          ? "%"
+          : woocommerce_currency_symbol)
+      );
     }
     const tier = campaign?.campaign_tiers[0];
-    return tier?.value + " " + (tier?.type === "percentage" ? "%" : woocommerce_currency_symbol);
+    return (
+      tier?.value +
+      " " +
+      (tier?.type === "percentage" ? "%" : woocommerce_currency_symbol)
+    );
   };
 
   return (
@@ -525,7 +536,7 @@ const Campaigns = () => {
                           : ""
                       }
                     >
-                      <td className="campaignbay-table-checkbox-cell">
+                      <td className="campaignbay-table-checkbox-cell campaignbay-sticky-l-td">
                         <CbCheckbox
                           checked={selectedCampaigns.includes(campaign.id)}
                           onChange={(isChecked) =>
@@ -556,10 +567,7 @@ const Campaigns = () => {
                       <td className="campaignbay-capitalize campaignbay-text-secondary">
                         {getTargetType(campaign.target_type)}
                       </td>
-                      <td>
-                        {getCampaignValue(campaign)}
-                        
-                      </td>
+                      <td>{getCampaignValue(campaign)}</td>
                       <td className="campaignbay-text-secondary">
                         {formatDateTime(campaign.start_datetime)}
                       </td>
@@ -569,7 +577,11 @@ const Campaigns = () => {
                       <td className="campaignbay-text-secondary">
                         {campaign.usage_count || 0}
                       </td>
-                      <td>
+                      <td className="campaignbay-text-secondary">
+                        {formatDateTime(campaign.modified)}
+                      </td>
+                      <td className="campaignbay-sticky-r-td">
+                        {/* <div className="campaignbay-action-button-container"> */}
                         <ToolbarDropdownMenu
                           icon={moreVertical}
                           label="Actions"
@@ -591,6 +603,7 @@ const Campaigns = () => {
                             },
                           ]}
                         />
+                        {/* </div> */}
                       </td>
                     </tr>
                   ))

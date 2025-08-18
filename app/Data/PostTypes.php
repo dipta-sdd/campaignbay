@@ -75,8 +75,8 @@ class PostTypes {
 	 * @since 1.0.0
 	 */
 	public function run() {
-		add_action( 'init', array( $this, 'register_post_type' ) );
-		add_action( 'init', array( $this, 'register_post_statuses' ) );
+		add_action( 'init', array( $this, 'register_post_type' ) , 1);
+		add_action( 'init', array( $this, 'register_post_statuses' ) ,1);
 		// TODO: Add meta fields
 		// add_action( 'init', array( $this, 'register_meta_fields' ) );
 		// This filter is kept for debugging purposes. It will only have an effect
@@ -124,7 +124,7 @@ class PostTypes {
 			'can_export'          => true,
 			'has_archive'         => false,
 			'exclude_from_search' => true,
-			'publicly_queryable'  => false,
+			'publicly_queryable'  => true,
 			'capability_type'     => 'post',
 			'show_in_rest'        => true,  // CRITICAL: This makes the CPT available to the REST API and React app.
 			'rest_base'           => 'campaigns', // The endpoint will be /wp-json/campaignbay/v1/campaigns/

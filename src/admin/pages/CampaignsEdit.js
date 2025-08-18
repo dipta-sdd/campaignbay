@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
 import MultiSelect from "../components/Multiselect";
@@ -8,7 +8,7 @@ import {
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
-import { check, Icon, pencil } from "@wordpress/icons";
+import { check, Icon, pencil, trash } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
 import { useEffect } from "react";
@@ -20,9 +20,11 @@ import { getSettings as getDateSettings } from "@wordpress/date";
 import Loader from "../components/Loader";
 
 const CampaignsEdit = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { woocommerce_currency_symbol } = useCbStore();
   const [campaignType, setCampaignType] = useState("scheduled");
@@ -242,6 +244,7 @@ const CampaignsEdit = () => {
       });
       setIsSaving(false);
       addToast(__("Campaign saved successfully", "campaignbay"), "success");
+      navigate("/campaigns");
     } catch (error) {
       setIsSaving(false);
       if (error?.code === "rest_invalid_param") {
@@ -257,6 +260,7 @@ const CampaignsEdit = () => {
 
   const handleDeleteCampaign = async () => {
     try {
+      setIsDeleting(true);
       const response = await apiFetch({
         path: "/campaignbay/v1/campaigns/" + id,
         method: "DELETE",
@@ -269,6 +273,8 @@ const CampaignsEdit = () => {
         __("Something went wrong, Please reload the page.", "campaignbay"),
         "error"
       );
+    } finally {
+      setIsDeleting(false);
     }
   };
   return (
@@ -307,12 +313,20 @@ const CampaignsEdit = () => {
             </div>
             <div className="cb-page-header-actions">
               <button
+                className="wpab-cb-btn wpab-cb-btn-danger "
+                disabled={isDeleting}
+                onClick={handleDeleteCampaign}
+              >
+                <Icon icon={trash} fill="currentColor" />
+                {__("Delete Campaign", "campaignbay")}
+              </button>
+              <button
                 className="wpab-cb-btn wpab-cb-btn-primary "
                 disabled={isSaving}
                 onClick={handleSaveCampaign}
               >
                 <Icon icon={check} fill="currentColor" />
-                {__("Save Campaign", "campaignbay")}
+                {__("Update Campaign", "campaignbay")}
               </button>
             </div>
           </div>

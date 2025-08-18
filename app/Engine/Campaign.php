@@ -22,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use WP_Query;
 use WP_Post;
 use Exception;
+use DateTime;
+use DateTimeZone;
 use WpabCb\Core\Logger;
 
 /**
@@ -624,6 +626,88 @@ class Campaign {
 
 	public function get_status() {
 		return $this->post->post_status;
+	}
+
+	/**
+	 * Gets the start datetime string and converts it to the UTC timezone.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The start datetime in 'Y-m-d H:i:s' format (UTC), or null if not set.
+	 */
+	public function get_start_datetime_utc() {
+		$start_datetime_site = $this->get_meta( 'start_datetime' );
+
+		if ( empty( $start_datetime_site ) ) {
+			return null;
+		}
+
+		try {
+			// Create a DateTime object from the saved string, specifying the site's timezone.
+			$date = new DateTime( $start_datetime_site, new DateTimeZone( wp_timezone_string() ) );
+			// Change the timezone of the object to UTC.
+			$date->setTimezone( new DateTimeZone( 'UTC' ) );
+			// Return the formatted string.
+			return $date->format( 'Y-m-d H:i:s' );
+		} catch ( Exception $e ) {
+			// Catch potential errors from invalid date formats.
+			wpab_cb_log( 'Invalid start_datetime format for campaign #' . $this->id, 'ERROR' );
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the end datetime string and converts it to the UTC timezone.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The end datetime in 'Y-m-d H:i:s' format (UTC), or null if not set.
+	 */
+	public function get_end_datetime_utc() {
+		$end_datetime_site = $this->get_meta( 'end_datetime' );
+
+		if ( empty( $end_datetime_site ) ) {
+			return null;
+		}
+
+		try {
+			$date = new DateTime( $end_datetime_site, new DateTimeZone( wp_timezone_string() ) );
+			$date->setTimezone( new DateTimeZone( 'UTC' ) );
+			return $date->format( 'Y-m-d H:i:s' );
+		} catch ( Exception $e ) {
+			wpab_cb_log( 'Invalid end_datetime format for campaign #' . $this->id, 'ERROR' );
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the start datetime as a UTC Unix timestamp.
+	 *
+	 * @since 1.0.0
+	 * @return int|null The Unix timestamp, or null if no start date is set.
+	 */
+	public function get_start_timestamp() {
+		$utc_datetime = $this->get_start_datetime_utc();
+		return $utc_datetime ? strtotime( $utc_datetime ) : null;
+	}
+
+	/**
+	 * Gets the end datetime as a UTC Unix timestamp.
+	 *
+	 * @since 1.0.0
+	 * @return int|null The Unix timestamp, or null if no end date is set.
+	 */
+	public function get_end_timestamp() {
+		$utc_datetime = $this->get_end_datetime_utc();
+		return $utc_datetime ? strtotime( $utc_datetime ) : null;
+	}
+
+	/**
+	 * Gets the last modified date of the campaign.
+	 *
+	 * @since 1.0.0
+	 * @return \DateTime|null A DateTime object representing the last modified date in the site's timezone.
+	 */
+	public function get_date_modified() {
+		return $this->post->post_modified ?: null;
 	}
 }
 
