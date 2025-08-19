@@ -315,26 +315,83 @@ class PricingEngine {
         }
 		if( wpab_cb_get_options('cart_showDiscountBreakdown') ){
 			$discount_breakdown = $cart->wpab_cb_discount_breakdown ?? array();
-			//wpab_cb_log('discount_breakdown enabled', 'DEBUG' );
+			
+			wpab_cb_log('fees: ' . print_r($cart->fees_api(), true), 'DEBUG' );
+			// foreach( $fees as $fee ){
+			// 	wpab_cb_log('fee type: ' . gettype($fee), 'DEBUG' );
+			// 	wpab_cb_log('fee: ' . print_r($fee->name, true), 'DEBUG' );
+			// }
+			
+			// wpab_cb_log('discount_breakdown enabled' . print_r($discount_breakdown, true), 'DEBUG' );
+			// wpab_cb_log('fees: ' . print_r($fees, true), 'DEBUG' );
 			foreach( $discount_breakdown as $campaign_id => $campaign_data ){
 				$total_old_price = $campaign_data['total_old_price'];
 				$total_new_price = $campaign_data['total_new_price'];
 				$discount_value = $total_old_price - $total_new_price;
-
+				// $applied_discount = $this->find_fee_by_title( $fees, $campaign_data['title'], $discount_value, $cart );
+				// wpab_cb_log('applied_discount: ' . print_r($applied_discount, true), 'DEBUG' );
 				$current_subtotal = $cart->get_subtotal();
 				$current_total = $cart->get_total('edit');
 				$cart->set_subtotal( $current_subtotal + $discount_value, true );
-				$cart->set_total( $current_total + $discount_value, true );
 
-				if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
-					//wpab_cb_log('campaign: ' . $campaign_id . '  ' . $campaign_data['title'] , 'DEBUG' );
-					//wpab_cb_log('discount: ' . $discount_value, 'DEBUG' );
-					//wpab_cb_log('current_total: ' . $current_total, 'DEBUG' );
-					//wpab_cb_log('current_subtotal: ' . $current_subtotal, 'DEBUG' );
-					//wpab_cb_log('new_total: ' . $cart->get_total('edit'), 'DEBUG' );
-					//wpab_cb_log('new_subtotal: ' . $cart->get_subtotal(), 'DEBUG' );
+				// $cart->set_total( $current_total + $applied_discount, true );
+				$cart->fees_api()->add_fee( array(
+					'name' => $campaign_data['title'],
+					'amount' => 0 - $discount_value,
+					'total' => 0 - $discount_value,
+				));
+
+				if( wpab_cb_get_options( 'debug_enableMode' ) ){
+					wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+					wpab_cb_log('campaign: ' . $campaign_id . '  ' . $campaign_data['title'] , 'DEBUG' );
+					wpab_cb_log('discount: ' . $discount_value, 'DEBUG' );
+					wpab_cb_log('total_old_price: ' . $total_old_price, 'DEBUG' );
+					wpab_cb_log('total_new_price: ' . $total_new_price, 'DEBUG' );
+					wpab_cb_log('current_total: ' . $current_total, 'DEBUG' );
+					wpab_cb_log('current_subtotal: ' . $current_subtotal, 'DEBUG' );
+					wpab_cb_log('new_total: ' . $cart->get_total('edit'), 'DEBUG' );
+					wpab_cb_log('new_subtotal: ' . $cart->get_subtotal(), 'DEBUG' );
+					wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
 				}
 				
+			}
+		}
+	}
+
+	public function find_fee_by_title( $fees, $title , $discount_value, $cart ){
+		foreach( $fees as $fee ){
+			if( $fee->name === $title && floatval($fee->amount) === floatval(0 - $discount_value)  ){
+				$amount = 0 - $fee->total;
+				$cart->get_fees()[$fee->id]->total =$fee->amount;
+				return $amount;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Add a fee to the cart for the discount.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_cart_calculate_fees
+	 * @param WC_Cart $cart The cart object.
+	 */
+	public function add_cart_discount_fee( $cart ) {
+		if( ! is_array( $cart->wpab_cb_discount_breakdown ) || empty( $cart->wpab_cb_discount_breakdown ) ) {
+			return;
+		}
+		// Loop through each campaign's discount breakdown and add a fee for each.	
+		foreach ( $cart->wpab_cb_discount_breakdown as $campaign_id => $campaign_data ) {
+
+			// The fee is negative (discount), so total_new_price - total_old_price is negative.
+			$discount_value = $campaign_data['total_new_price'] -$campaign_data['total_old_price'];
+			
+			// $cart->add_fee( $campaign_data['title'],  $discount_value);
+			if( wpab_cb_get_options( 'debug_enableMode' ) ){
+				wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+				wpab_cb_log('campaign: ' . $campaign_id . '  ' . $campaign_data['title'] , 'DEBUG' );
+				wpab_cb_log('discount: ' . $discount_value, 'DEBUG' );
+				wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
 			}
 		}
 	}
@@ -384,7 +441,7 @@ class PricingEngine {
 				$simple_price = $discount_data['discounts']['simple']['price'] ?? $base_price;
 				// If the campaign stacking is allowed, use the simple price as the base price.
 				$base_price = $allow_campaign_stacking ? $simple_price : $base_price;
-				$cart_item['data']->set_price( $simple_price );
+				$cart_item['data']->set_price( max( 0, $simple_price ) );
 			}
 			
 			// Initialize the quantity price and the next tier.
@@ -398,7 +455,8 @@ class PricingEngine {
 				
 				// Sort the tiers by the minimum quantity.
 				$tiers = $discount_data['discounts']['quantity']['tiers'];
-				usort($tiers, function( $a, $b ) { return (int) ( $a['min'] ?? 0 ) <=> (int) ( $b['min'] ?? 0 ); });
+				// no need to sort the tiers, it is already sorted.
+				// usort($tiers, function( $a, $b ) { return (int) ( $a['min'] ?? 0 ) <=> (int) ( $b['min'] ?? 0 ); });
 				
 				// Initialize the current and next tier.
 				$current_tier = null;
@@ -410,11 +468,12 @@ class PricingEngine {
 					if( (int) $tier['min']  > $quantity ){
 						$next_tier = $tier;
 						$next_tier_price = $this->calculate_tier_price( $next_tier, $base_price );
-						if( $next_tier_price < $simple_price ){
-							break;
-						}
+						// if( $next_tier_price < $simple_price ){
+						// 	break;
+						// }
+						break;
 					}
-					if ( (int) $tier['max']  >= $quantity && (int) $tier['min'] <= $quantity ) {
+					if ( (int) $tier['min'] <= $quantity ) {
 						$current_tier = $tier;
 					}
 				}
@@ -422,10 +481,13 @@ class PricingEngine {
 				// If the current tier is found, calculate the price based on the current tier.
 				if( $current_tier ){
 					$quantity_price = $this->calculate_tier_price( $current_tier, $base_price );
+					if( $quantity_price === $next_tier_price ){
+						$next_tier_price = null;
+					}
 				}
 				
 				// If the next tier is found and the next discount bar is enabled, calculate the price based on the next tier.
-				if( $next_tier_price && $next_tier_price < $simple_price && wpab_cb_get_options('cart_showNextDiscountBar') ){
+				if( $next_tier_price !== null && $next_tier_price < $simple_price && wpab_cb_get_options('cart_showNextDiscountBar') ){
 
 					// Get the format for the next discount bar.
 					$format = wpab_cb_get_options( 'cart_nextDiscountFormat' );
@@ -451,10 +513,10 @@ class PricingEngine {
 				}
 			}
 
-			if ( $quantity_price && $quantity_price < $base_price ) {
+			if ( $quantity_price !== null && $quantity_price < $base_price ) {
 
 			
-				$cart_item['data']->set_price( $quantity_price );
+				$cart_item['data']->set_price( max( 0, $quantity_price ) );
 				$campaign_id = $discount_data['discounts']['quantity']['campaign_id'];
 
 				// storing the discount data in the cart item array for other actions and filters.
@@ -760,23 +822,7 @@ class PricingEngine {
 		);
 	}
 
-	/**
-	 * Add a fee to the cart for the discount.
-	 *
-	 * @since 1.0.0
-	 * @hook woocommerce_cart_calculate_fees
-	 * @param WC_Cart $cart The cart object.
-	 */
-	public function add_cart_discount_fee( $cart ) {
-		if( ! is_array( $cart->wpab_cb_discount_breakdown ) || empty( $cart->wpab_cb_discount_breakdown ) ) {
-			return;
-		}
-		// Loop through each campaign's discount breakdown and add a fee for each.	
-		foreach ( $cart->wpab_cb_discount_breakdown as $campaign_id => $campaign_data ) {
-			// The fee is negative (discount), so total_new_price - total_old_price is negative.
-			$cart->add_fee( $campaign_data['title'],  $campaign_data['total_new_price'] -$campaign_data['total_old_price']);
-		}
-	}
+	
 	
 	
 	
@@ -975,7 +1021,7 @@ class PricingEngine {
 				
 			}
 
-			if( ! $discounted_price ){
+			if( $discounted_price === null ){
 				continue;
 			}
 			if( isset( $discount_data['discounts']['simple']['price'] ) && ! $this->is_better_campaign( $discount_data['discounts']['simple']['price'], $discounted_price )){
@@ -1034,7 +1080,7 @@ class PricingEngine {
 		}
 		if( $allow_campaign_stacking && isset( $discount_data['discounts']['quantity']['price'] ) ){
 			$discount_data['on_campaign'] = true;
-			$product->set_price( $discount_data['discounts']['quantity']['price'] );
+			$product->set_price( max( 0, $discount_data['discounts']['quantity']['price'] ) );
 			$discount_data['discounts']['best_price'] = $discount_data['discounts']['quantity']['price'];
 			$discount_data['discounts']['quantity']['is_applied'] = true;
 		}elseif( ! $allow_campaign_stacking && isset( $discount_data['discounts']['quantity']['price'] ) ){
@@ -1042,7 +1088,7 @@ class PricingEngine {
 			$quantity_price = $discount_data['discounts']['quantity']['price'];
 			if(!isset( $discount_data['discounts']['simple']['price'] ) || $this->is_better_campaign( $quantity_price, $simple_price )){
 				if($discount_data['discounts']['quantity']['tiers'][0]['min'] === 1){
-					$product->set_price( $quantity_price );
+					$product->set_price( max( 0, $quantity_price ) );
 					$discount_data['on_campaign'] = true;
 					$discount_data['discounts']['best_price'] = $quantity_price;
 					$discount_data['discounts']['quantity']['is_applied'] = true;
@@ -1053,7 +1099,9 @@ class PricingEngine {
 
 		// Store the final, structured result in the cache for this page load.
 		$this->product_discount_cache[ $product_id ] = $discount_data;
-		if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
+		if( wpab_cb_get_options( 'debug_enableMode' ) ){
+			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			wpab_cb_log('---------------------------------------------start----------------------------------------------', 'DEBUG' );
 			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
 			wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
 			wpab_cb_log('base_price: ' . $discount_data['base_price'], 'DEBUG' );
@@ -1080,6 +1128,10 @@ class PricingEngine {
 				wpab_cb_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
 				wpab_cb_log('	quantity_is_applied: ' . $quantity['is_applied'], 'DEBUG' );
 			}
+
+			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			wpab_cb_log('---------------------------------------------end----------------------------------------------', 'DEBUG' );
+			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
 		}
 		return $discount_data;
 	}
@@ -1104,7 +1156,7 @@ class PricingEngine {
 			$discount_value = $base_price * ( $discount_value / 100 ) ;
 		}
 		// Return the calculated price.
-		return max( 0, $base_price - $discount_value );	
+		return floatval( max( 0, $base_price - $discount_value ) );	
 	}
 
 	/**
@@ -1130,7 +1182,7 @@ class PricingEngine {
 			$tier_value = $base_price * ( $tier_value / 100 ) ;
 		}
 		// Return the calculated price.
-		return max( 0, $base_price - $tier_value );
+		return floatval( max( 0, $base_price - $tier_value ) );
 	}
 
 
@@ -1145,10 +1197,10 @@ class PricingEngine {
 	 */
 	private function is_better_campaign( $best_price, $tier_price ) {
 		// If the tier price is not set, return false.
-		if( ! $tier_price  ){
+		if( $tier_price === null ){
 			return false;
 		}
-		if( ! $best_price ){
+		if( $best_price === null ){
 			return true;
 		}
 		// If the priority method is set to apply the highest price, return true if the tier price is less than the best price.
