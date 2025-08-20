@@ -133,12 +133,12 @@ class OrderManager {
 			// If it doesn't exist, INSERT a new record.
 			wpab_cb_log( sprintf( 'Creating new log entry for order #%d, campaign #%d. Status: %s', $order_id, $campaign_id, $new_status ), 'DEBUG' );
 			$wpdb->insert( $table_name, $log_data );
-		}
-		$success_statuses = array( 'processing', 'completed' );
-		if( in_array( $new_status, $success_statuses ) ){
 			$campaign = new Campaign( $campaign_id );
 			$campaign->load_usage_count();
+			wpab_cb_log('usage_count: ' . $campaign->get_usage_count(), 'DEBUG' );
+			CampaignManager::get_instance()->clear_cache('order_manager');
 		}
+		
 	}
 
 	/**

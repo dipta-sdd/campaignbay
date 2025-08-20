@@ -104,7 +104,7 @@ class Campaign {
 
 		$this->load_meta();
 		$this->load_applicable_product_ids(); // Pre-calculate the list of products this campaign applies to.
-		$this->load_usage_count(); // Load the usage count.
+		// $this->load_usage_count(); // Load the usage count.
 	}
 
 	/**

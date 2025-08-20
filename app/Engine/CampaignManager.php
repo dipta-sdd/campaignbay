@@ -163,6 +163,7 @@ class CampaignManager {
 			foreach ( $query->get_posts() as $post ) {
 				$campaign = new Campaign( $post );
 				if ( $campaign ) {
+					$campaign->load_usage_count();
 					$campaign_objects[ $campaign->get_id() ] = $campaign;
 				}
 			}

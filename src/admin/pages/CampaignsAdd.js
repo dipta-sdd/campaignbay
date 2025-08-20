@@ -272,32 +272,30 @@ const CampaignsAdd = () => {
           </select>
         </div>
 
-        {campaignType !== "scheduled" && (
-          <div className="cb-form-input-con">
-            <label htmlFor="campaign-status">
-              {__("SELECT STATUS", "campaignbay")} <Required />
-            </label>
-            <select
-              type="text"
-              id="campaign-status"
-              className={`wpab-input w-100 ${
-                errors?.status ? "wpab-input-error" : ""
-              }`}
-              value={campaignStatus}
-              onChange={(e) => handleCampaignStatusChange(e.target.value)}
-            >
-              <option value="wpab_cb_active">
-                {__("Active", "campaignbay")}
-              </option>
-              <option value="wpab_cb_inactive">
-                {__("Inactive", "campaignbay")}
-              </option>
-              <option value="wpab_cb_scheduled">
-                {__("Scheduled", "campaignbay")}
-              </option>
-            </select>
-          </div>
-        )}
+        <div className="cb-form-input-con">
+          <label htmlFor="campaign-status">
+            {__("SELECT STATUS", "campaignbay")} <Required />
+          </label>
+          <select
+            type="text"
+            id="campaign-status"
+            className={`wpab-input w-100 ${
+              errors?.status ? "wpab-input-error" : ""
+            }`}
+            value={campaignStatus}
+            onChange={(e) => handleCampaignStatusChange(e.target.value)}
+          >
+            <option value="wpab_cb_active">
+              {__("Active", "campaignbay")}
+            </option>
+            <option value="wpab_cb_inactive">
+              {__("Inactive", "campaignbay")}
+            </option>
+            <option value="wpab_cb_scheduled">
+              {__("Scheduled", "campaignbay")}
+            </option>
+          </select>
+        </div>
 
         <div className="cb-form-input-con">
           <label htmlFor="campaign-title">

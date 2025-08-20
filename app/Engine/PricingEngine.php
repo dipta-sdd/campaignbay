@@ -102,11 +102,16 @@ class PricingEngine {
 
 		$default_priority = wpab_cb_get_options('global_defaultPriority') ?? 10;
 
+		$enabled_plugin = wpab_cb_get_options('global_enableAddon');
+		if(!$enabled_plugin){
+			return;
+		}
 		/**
 		 * load the product summary hook
 		 * priority 9 is the last hook before the price html hook
 		 * cannot use $default_priority
 		 */
+
 		$this->add_action( 'woocommerce_single_product_summary', 'action_single_product_summary', 9, 0 );
 		// load the price html hook
 		$this->add_filter( 'woocommerce_get_price_html', 'display_discounted_price_html', $default_priority, 2);
@@ -123,10 +128,7 @@ class PricingEngine {
 
 		$this->add_action( 'woocommerce_after_calculate_totals', 'cart_after_calculate_totals', $default_priority, 1 );
 
-		// Conditionally add the hook for the discount breakdown in cart totals, based on settings.
-		if( wpab_cb_get_options('cart_showDiscountBreakdown') ){
-			$this->add_action( 'woocommerce_cart_calculate_fees', 'add_cart_discount_fee', $default_priority, 1 );
-		}
+		
 
 		// Conditionally add the hook for inline "add more" notices in the cart, based on settings.
 		if( wpab_cb_get_options('cart_showNextDiscountBar') ){
@@ -140,6 +142,7 @@ class PricingEngine {
 
 		// product variation single variation hooks
 		$this->add_filter( 'woocommerce_variation_prices_price', 'filter_variation_prices_price', $default_priority, 3);
+		$this->add_filter( 'woocommerce_variation_prices_regular_price', 'filter_variation_prices_regular_price', $default_priority, 3);
 		$this->add_filter( 'woocommerce_variation_prices_sale_price', 'filter_variation_prices_sale_price', $default_priority, 3);
 
 		// save the discount breakdown to the order meta
@@ -209,9 +212,31 @@ class PricingEngine {
 	 * @return float The modified price.
 	 */
 	public function filter_variation_prices_price( $price, $variation, $product ){
+		wpab_cb_log('filter_variation_prices_price ' . $product->get_name() . '_________ ' . $price , 'DEBUG' );
 		$discount_data = $this->get_or_calculate_product_discount( $variation );
-		if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['simple']['price'] ) ){
-			return $discount_data['discounts']['simple']['price'] < $price ? $discount_data['discounts']['simple']['price'] : $price;
+		if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['best_price'] ) ){
+			$price = $discount_data['discounts']['best_price'] < $price ? $discount_data['discounts']['best_price'] : $price;
+		}
+
+		wpab_cb_log('filter_variation_prices_price final ' . $product->get_name() . '_________ ' . $price , 'DEBUG' );
+		return $price;
+	}
+
+	/**
+	 * Filter the variation prices regular price.
+	 * This is used to apply the simple regular price to the variation prices.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_variation_prices_regular_price
+	 * @param float $price The original price.
+	 * @param WC_Product_Variation $variation The variation object.
+	 * @param WC_Product_Variable $product The product object.
+	 * @return float The modified price.
+	 */	
+	public function filter_variation_prices_regular_price( $price, $variation, $product ){
+		$discount_data = $this->get_or_calculate_product_discount( $variation );
+		if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['simple']['regular_price'] ) ){
+			return $discount_data['discounts']['simple']['regular_price'] < $price ? $discount_data['discounts']['simple']['regular_price'] : $price;
 		}
 		return $price;
 	}
@@ -229,8 +254,8 @@ class PricingEngine {
 	 */
 	public function filter_variation_prices_sale_price( $price, $variation, $product ){
 		$discount_data = $this->get_or_calculate_product_discount( $variation );
-		if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['simple']['price'] ) ){
-			return $discount_data['discounts']['simple']['price'] < $price ? $discount_data['discounts']['simple']['price'] : $price;
+		if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['best_price'] ) ){
+			return $discount_data['discounts']['best_price'] < $price ? $discount_data['discounts']['best_price'] : $price;
 		}
 		return $price;
 	}
@@ -246,7 +271,6 @@ class PricingEngine {
 	 * @return string The modified price html.
 	 */
 	public function display_variable_price_html( $price_html, $product){
-
 		$prices = $product->get_variation_prices(true);
 		if ( empty( $prices['price'] ) ){
 			return $price_html;
@@ -262,7 +286,7 @@ class PricingEngine {
 		return $price_html;
 	}
 
-	// no need work is done by filter_variation_prices_price & filter_variation_prices_sale_price
+	// no need work is done by filter_variation_prices_price & filter_variation_prices_sale_price & filter_variation_prices_regular_price
 	/**
 	 * Test variation prices filter.
 	 * This is used to  the variation prices.
@@ -274,11 +298,13 @@ class PricingEngine {
 	 * @return array The modified prices array.
 	 */
 	public function filter_variation_prices( $prices, $product ){
+		wpab_cb_log('_____________________filter_variation_prices_____________________', 'DEBUG' );
+		wpab_cb_log('prices: ' . print_r($prices, true), 'DEBUG' );
 		foreach( $prices['price'] as $key => $price ){
 			$product_variation = wc_get_product( $key );
 			$discount_data = $this->get_or_calculate_product_discount( $product_variation );
-			if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['simple']['price']) && $discount_data['discounts']['simple']['price'] ){
-				$simple_price = $discount_data['discounts']['simple']['price'];
+			if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['best_price']) && $discount_data['discounts']['best_price'] ){
+				$simple_price = $discount_data['discounts']['best_price'];
 				$prices['sale_price'][$key] = $simple_price;
 				$prices['price'][$key] = $simple_price < $prices['price'][$key] ? $simple_price : $prices['price'][$key];
 			}
@@ -286,18 +312,7 @@ class PricingEngine {
 		return $prices;
 	}
 
-	/**
-	 * Add to cart item filter.
-	 * This is used to add the free product to the cart if the quantity is greater than the buy quantity.
-	 *
-	 * @since 1.0.0
-	 * @hook woocommerce_add_cart_item
-	 * @param array $cart_item The cart item data.
-	 * @return array The modified cart item data.
-	 */
-	// public function add_to_cart_item_filter( $cart_item ){
-	// 	$allow_campaign_stacking = wpab_cb_get_options('cart_allowCampaignStacking');
-	// }
+
 
 
 	/**
@@ -315,21 +330,11 @@ class PricingEngine {
         }
 		if( wpab_cb_get_options('cart_showDiscountBreakdown') ){
 			$discount_breakdown = $cart->wpab_cb_discount_breakdown ?? array();
-			
-			wpab_cb_log('fees: ' . print_r($cart->fees_api(), true), 'DEBUG' );
-			// foreach( $fees as $fee ){
-			// 	wpab_cb_log('fee type: ' . gettype($fee), 'DEBUG' );
-			// 	wpab_cb_log('fee: ' . print_r($fee->name, true), 'DEBUG' );
-			// }
-			
-			// wpab_cb_log('discount_breakdown enabled' . print_r($discount_breakdown, true), 'DEBUG' );
-			// wpab_cb_log('fees: ' . print_r($fees, true), 'DEBUG' );
+
 			foreach( $discount_breakdown as $campaign_id => $campaign_data ){
 				$total_old_price = $campaign_data['total_old_price'];
 				$total_new_price = $campaign_data['total_new_price'];
 				$discount_value = $total_old_price - $total_new_price;
-				// $applied_discount = $this->find_fee_by_title( $fees, $campaign_data['title'], $discount_value, $cart );
-				// wpab_cb_log('applied_discount: ' . print_r($applied_discount, true), 'DEBUG' );
 				$current_subtotal = $cart->get_subtotal();
 				$current_total = $cart->get_total('edit');
 				$cart->set_subtotal( $current_subtotal + $discount_value, true );
@@ -358,43 +363,8 @@ class PricingEngine {
 		}
 	}
 
-	public function find_fee_by_title( $fees, $title , $discount_value, $cart ){
-		foreach( $fees as $fee ){
-			if( $fee->name === $title && floatval($fee->amount) === floatval(0 - $discount_value)  ){
-				$amount = 0 - $fee->total;
-				$cart->get_fees()[$fee->id]->total =$fee->amount;
-				return $amount;
-			}
-		}
-		return null;
-	}
 
-	/**
-	 * Add a fee to the cart for the discount.
-	 *
-	 * @since 1.0.0
-	 * @hook woocommerce_cart_calculate_fees
-	 * @param WC_Cart $cart The cart object.
-	 */
-	public function add_cart_discount_fee( $cart ) {
-		if( ! is_array( $cart->wpab_cb_discount_breakdown ) || empty( $cart->wpab_cb_discount_breakdown ) ) {
-			return;
-		}
-		// Loop through each campaign's discount breakdown and add a fee for each.	
-		foreach ( $cart->wpab_cb_discount_breakdown as $campaign_id => $campaign_data ) {
 
-			// The fee is negative (discount), so total_new_price - total_old_price is negative.
-			$discount_value = $campaign_data['total_new_price'] -$campaign_data['total_old_price'];
-			
-			// $cart->add_fee( $campaign_data['title'],  $discount_value);
-			if( wpab_cb_get_options( 'debug_enableMode' ) ){
-				wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-				wpab_cb_log('campaign: ' . $campaign_id . '  ' . $campaign_data['title'] , 'DEBUG' );
-				wpab_cb_log('discount: ' . $discount_value, 'DEBUG' );
-				wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			}
-		}
-	}
 
 
 	/**
@@ -567,15 +537,17 @@ class PricingEngine {
 				$cart->wpab_cb_discount_breakdown[ $campaign_id ]['total_new_price'] += (float) $discount_data['discounts']['simple']['price'] * (float) $quantity;
 			}
 
-			if( defined( 'WP_DEBUG' ) && WP_DEBUG ){
-				//wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-				//wpab_cb_log('cart_item_key: ' . $cart_item_key . ' ' . $product->get_name() . ' ' . $product->get_id(), 'DEBUG' );
-				//wpab_cb_log('quantity: ' . $quantity, 'DEBUG' );
-				//wpab_cb_log('regular_price: ' . $product->get_regular_price(), 'DEBUG' );
-				//wpab_cb_log('campaign_price: ' . $base_price, 'DEBUG' );
-				//wpab_cb_log('price: ' . $product->get_price(), 'DEBUG' );
-				//wpab_cb_log('quantity_price: ' . $quantity_price, 'DEBUG' );
-				//wpab_cb_log('campaign_id: ' . $campaign_id, 'DEBUG' );
+			if( wpab_cb_get_options('debug_enableMode') ){
+				wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+				wpab_cb_log('cart_item_key: ' . $cart_item_key . ' ' . $product->get_name() . ' ' . $product->get_id(), 'DEBUG' );
+				wpab_cb_log('quantity: ' . $quantity, 'DEBUG' );
+				wpab_cb_log('regular_price: ' . $product->get_regular_price(), 'DEBUG' );
+				wpab_cb_log('campaign_price: ' . $base_price, 'DEBUG' );
+				wpab_cb_log('quantity_price: ' . $quantity_price, 'DEBUG' );
+				wpab_cb_log('simple_price: ' . $simple_price, 'DEBUG' );
+				wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
+				wpab_cb_log('price: ' . $product->get_price(), 'DEBUG' );
+				wpab_cb_log('campaign_id: ' . $campaign_id, 'DEBUG' );
 			}
 			
 		}
@@ -653,9 +625,36 @@ class PricingEngine {
 	 * @return string The modified price HTML.
 	 */
 	public function display_discounted_price_html( $price_html, $product ) {
-		
+		wpab_cb_log('_____________________display_discounted_price_html_____________________', 'DEBUG' );
+		wpab_cb_log('product: ' . $product->get_name(), 'DEBUG' );
 		// If the product is a variation, use the parent product's price as the regular price.
 		if ( $product->is_type( 'variable' ) ) {
+			
+			$discount_data = $this->get_or_calculate_product_discount($product);
+			$prices = $product->get_variation_prices( true );
+			wpab_cb_log('prices: ' . print_r($prices, true), 'DEBUG' );
+			$min_price = min($prices['price']);
+			$max_price = max($prices['price']);
+			$min_regular_price = min($prices['regular_price']);
+			$max_regular_price = max($prices['regular_price']);
+			$price_html = '';
+			$regular_price_html = '';
+			if($max_price !== $min_price){
+				$price_html = wc_format_price_range( $max_price, $min_price );
+			} else{
+				$price_html = wc_price( $max_price );
+			}
+			if($max_regular_price != $min_regular_price){
+				$regular_price_html = wc_format_price_range( $max_regular_price, $min_regular_price );
+			} else{
+				$regular_price_html = wc_price( $max_regular_price );
+			}
+			if($discount_data['on_campaign'] ){
+				$price_html = wc_format_sale_price( $regular_price_html, $price_html );
+			} else if( ! $product->is_on_sale('edit') ){
+				$price_html = $regular_price_html;	
+			}
+			wpab_cb_log('price html final: ' . $price_html, 'DEBUG' );
 			return $price_html;
 		}
 		// Get the discount data for the product.
@@ -666,22 +665,20 @@ class PricingEngine {
 		if ( $discount_data['on_campaign'] && isset( $discount_data['discounts']['best_price'] ) && $discount_data['discounts']['best_price'] < $regular_price ) {
 			// If the option to show the discounted price is enabled, return the formatted price.
 			if( wpab_cb_get_options('product_showDiscountedPrice') && isset( $discount_data['discounts']['best_price'] ) ){
-			
 				$sale_price    = (float) $discount_data['discounts']['best_price'];
-			
 				// Format the price using WooCommerce's standard sale price function.
 				$price_html = wc_format_sale_price(
 					wc_price( $regular_price ),
 					wc_price( $sale_price )
 				);
-
 			} else{
+				wpab_cb_log('on campaign and best price is less than regular price - no discounts applied', 'DEBUG' );
 				// If the option to show the discounted price is disabled, return the sale price.
 				$price_html = wc_price( $discount_data['discounts']['best_price'] );
 			}
 			
 		}
-		// If no discounts are active, return the original price HTML.
+
 		return $price_html;
 	}
 
@@ -715,16 +712,24 @@ class PricingEngine {
 		global $product;
 		// If the product is not a valid WC_Product object, log an error and return.
 		if ( ! $product instanceof WC_Product ) {
-			//wpab_cb_log('Invalid product type: ' . gettype( $product ), 'ERROR' );
+			wpab_cb_log('Invalid product type: ' . gettype( $product ), 'ERROR' );
 			return;
 		}
 		// Get the discount data for the product.
 		$discount_data = $this->get_or_calculate_product_discount( $product );
+
+		if($product->is_type('variable')){
+			$children = $product->get_children();
+		}
 		// Only show the message if our campaign is active.
 		if ( $discount_data['on_campaign'] ) {
 			$simple_message = $this->generate_product_summary_simple_message( $discount_data );
 			$simple_message ? $this->print_notice( $simple_message ) : null;
-		}else{
+
+			if( isset( $discount_data['discounts']['quantity']['table'] ) ){
+				$this->print_notice( $discount_data['discounts']['quantity']['table'] );
+			}
+			
 		}
 	}
 
@@ -738,9 +743,11 @@ class PricingEngine {
 	 * @return string The message text.	
 	 */
 	public function generate_product_summary_simple_message( $discount_data ) {
-		if( ! isset( $discount_data['discounts']['simple']['price'] ) || ! $discount_data['discounts']['simple']['price'] ){
+		if( ! $discount_data['on_campaign'] ){
 			return null;
 		}
+		wpab_cb_log('_____________________generate_product_summary_simple_message_____________________', 'DEBUG' );
+		wpab_cb_log('discount_data: ' . print_r($discount_data, true), 'DEBUG' );
 		// Get the format for the product summary message.
 		$format = wpab_cb_get_options( 'product_messageFormat' );
 		if( empty( $format ) ){
@@ -748,7 +755,7 @@ class PricingEngine {
 		}
 		// Get the base price and the best price for the product.
 		$base_price = $discount_data['base_price'];
-		$discounted_price = (float) $discount_data['discounts']['simple']['price'];
+		$discounted_price = (float) $discount_data['discounts']['best_price'] ?? 0;
 		
 		// Don't show if there's no actual saving.
 		if ( $discounted_price >= $base_price ) {
@@ -766,9 +773,6 @@ class PricingEngine {
 		);
 		$message_text = str_replace( array_keys( $replacements ), array_values( $replacements ), $format );
 		
-		// Echo the final HTML with a CSS class for styling.
-		// echo '<div class="wpab-cb-product-save-message">' . esc_html( $message_text ) . '</div>';
-		// echo '<div class="woocommerce-info" style="margin-bottom: 0px; border-top: none;">' . wp_kses_post( $message_text ) . '</div>';
 		return $message_text;
 	}
 
@@ -914,7 +918,7 @@ class PricingEngine {
 		$product_id = $product->get_id();
 		// If the option to exclude sale items is enabled and the product is on sale, return the sale price.
 		if( wpab_cb_get_options('product_excludeSaleItems') && $product->is_on_sale('edit') ) {
-			//wpab_cb_log(' is on sale', 'DEBUG' );
+			wpab_cb_log(' is on sale', 'DEBUG' );
 			return array(
 				'base_price' => (float) $product->get_sale_price('edit'),
 				'on_sale'   => true,
@@ -951,7 +955,7 @@ class PricingEngine {
 		);
 
 		if ( empty( $active_campaigns ) || ! is_array( $active_campaigns ) ) {
-			wpab_cb_log('no active campaigns', 'DEBUG' );
+			wpab_cb_log('no active campaigns (' . $product_id . ' - ' . $product->get_name() . ')', 'DEBUG' );
 			// If there are no active campaigns, return the discount data.
 			$this->product_discount_cache[ $product_id ] = $discount_data;
 			return $discount_data;
@@ -995,6 +999,11 @@ class PricingEngine {
 				// Find the correct tier based on usage count.
 				$usage_count  = $campaign->get_usage_count();
 				$current_tier = null;
+				wpab_cb_log('_________________________________earlybird_________________________________', 'DEBUG' );
+				wpab_cb_log('_________________________________earlybird_________________________________', 'DEBUG' );
+				wpab_cb_log('_________________________________earlybird_________________________________', 'DEBUG' );
+				
+				wpab_cb_log('usage_count: ' . $usage_count, 'DEBUG' );
 				// Find the first tier where the current usage is less than the max.
 				foreach ( $tiers as $tier ) {
 					if( ! isset( $tier['quantity'] ) || ! isset( $tier['total'] )){
@@ -1006,12 +1015,12 @@ class PricingEngine {
 					if( $tier_quantity === '' || $tier_max === '' || $tier_quantity === 0 ){
 						continue;
 					}
-					if ( $usage_count <= $tier_max ) {
+					if ( $usage_count < $tier_max ) {
 						$current_tier = $tier;
 						break; // Found the correct tier, no need to search further.
 					}
 				}
-
+				wpab_cb_log('current_tier: ' . print_r($current_tier, true), 'DEBUG' );
 				// If a valid tier was found, calculate the price for it.
 				if ( !$current_tier ) {
 					continue;
@@ -1073,10 +1082,14 @@ class PricingEngine {
 			if( isset( $discount_data['discounts']['quantity']['price'] ) && ! $this->is_better_campaign( $discount_data['discounts']['quantity']['price'], $discounted_price )){
 				continue;
 			}
+			
 			$discount_data['discounts']['quantity'] = $type_data;
 			$discount_data['discounts']['quantity']['price'] = $discounted_price;
 			$discount_data['discounts']['quantity']['discount_per_item'] = $base_price - $discounted_price;
 			$discount_data['discounts']['quantity']['is_applied'] = false;
+			
+			$discount_data['discounts']['quantity']['table'] = $this->generate_quantity_tier_table( $tiers );
+
 		}
 		if( $allow_campaign_stacking && isset( $discount_data['discounts']['quantity']['price'] ) ){
 			$discount_data['on_campaign'] = true;
@@ -1105,7 +1118,9 @@ class PricingEngine {
 			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
 			wpab_cb_log('product_discount_cache: ' . $product_id . ' ' . $product->get_name(), 'DEBUG' );
 			wpab_cb_log('base_price: ' . $discount_data['base_price'], 'DEBUG' );
-			wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'] ?? 'null', 'DEBUG' );
+			if( isset( $discount_data['discounts']['best_price'] ) ){
+				wpab_cb_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
+			}
 			wpab_cb_log('price: ' . $product->get_price(), 'DEBUG' );
 			wpab_cb_log('on_sale: ' . $discount_data['on_sale'], 'DEBUG' );
 			wpab_cb_log('on_campaign: ' . $discount_data['on_campaign'], 'DEBUG' );
@@ -1134,6 +1149,32 @@ class PricingEngine {
 			wpab_cb_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
 		}
 		return $discount_data;
+	}
+
+	/**
+	 * Generate the quantity tier table.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @param array     $tiers The tiers array.
+	 * @return string The generated table.
+	 */
+	private function generate_quantity_tier_table( $tiers ){
+		if( ! is_array( $tiers ) || empty( $tiers ) ){
+			return '';
+		}
+		$table = '<table class="'. WPAB_CB_PLUGIN_NAME .'-quantity-tier-table">';
+		foreach( $tiers as $tier ){
+			$table .= '<tr><td>Buy minimum ' . $tier['min'] . ' pcs to get ' . $tier['value'] . ' ';
+			if( $tier['type'] === 'percentage' ){
+				$table .= '% off!';
+			}else{
+				$table .= 'off per item!';
+			}
+			$table .= '</td></tr>';
+		}
+		$table .= '</table>';
+		return $table;
 	}
 
 
