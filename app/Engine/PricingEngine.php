@@ -212,13 +212,10 @@ class PricingEngine {
 	 * @return float The modified price.
 	 */
 	public function filter_variation_prices_price( $price, $variation, $product ){
-		wpab_cb_log('filter_variation_prices_price ' . $product->get_name() . '_________ ' . $price , 'DEBUG' );
 		$discount_data = $this->get_or_calculate_product_discount( $variation );
 		if( $discount_data['on_campaign'] && isset( $discount_data['discounts']['best_price'] ) ){
 			$price = $discount_data['discounts']['best_price'] < $price ? $discount_data['discounts']['best_price'] : $price;
 		}
-
-		wpab_cb_log('filter_variation_prices_price final ' . $product->get_name() . '_________ ' . $price , 'DEBUG' );
 		return $price;
 	}
 
@@ -298,8 +295,6 @@ class PricingEngine {
 	 * @return array The modified prices array.
 	 */
 	public function filter_variation_prices( $prices, $product ){
-		wpab_cb_log('_____________________filter_variation_prices_____________________', 'DEBUG' );
-		wpab_cb_log('prices: ' . print_r($prices, true), 'DEBUG' );
 		foreach( $prices['price'] as $key => $price ){
 			$product_variation = wc_get_product( $key );
 			$discount_data = $this->get_or_calculate_product_discount( $product_variation );
@@ -625,14 +620,11 @@ class PricingEngine {
 	 * @return string The modified price HTML.
 	 */
 	public function display_discounted_price_html( $price_html, $product ) {
-		wpab_cb_log('_____________________display_discounted_price_html_____________________', 'DEBUG' );
-		wpab_cb_log('product: ' . $product->get_name(), 'DEBUG' );
 		// If the product is a variation, use the parent product's price as the regular price.
 		if ( $product->is_type( 'variable' ) ) {
 			
 			$discount_data = $this->get_or_calculate_product_discount($product);
 			$prices = $product->get_variation_prices( true );
-			wpab_cb_log('prices: ' . print_r($prices, true), 'DEBUG' );
 			$min_price = min($prices['price']);
 			$max_price = max($prices['price']);
 			$min_regular_price = min($prices['regular_price']);
@@ -654,7 +646,6 @@ class PricingEngine {
 			} else if( ! $product->is_on_sale('edit') ){
 				$price_html = $regular_price_html;	
 			}
-			wpab_cb_log('price html final: ' . $price_html, 'DEBUG' );
 			return $price_html;
 		}
 		// Get the discount data for the product.
@@ -672,7 +663,6 @@ class PricingEngine {
 					wc_price( $sale_price )
 				);
 			} else{
-				wpab_cb_log('on campaign and best price is less than regular price - no discounts applied', 'DEBUG' );
 				// If the option to show the discounted price is disabled, return the sale price.
 				$price_html = wc_price( $discount_data['discounts']['best_price'] );
 			}
@@ -719,7 +709,16 @@ class PricingEngine {
 		$discount_data = $this->get_or_calculate_product_discount( $product );
 
 		if($product->is_type('variable')){
+			wpab_cb_log('variable product___________________________________________---', 'DEBUG' );
 			$children = $product->get_children();
+			foreach ( $children as $child_id ) {
+				$child = wc_get_product( $child_id );
+				$child_discount_data = $this->get_or_calculate_product_discount( $child );
+				if( $child_discount_data['on_campaign'] ){
+					$discount_data = $child_discount_data;
+					break;
+				}
+			}
 		}
 		// Only show the message if our campaign is active.
 		if ( $discount_data['on_campaign'] ) {
@@ -746,8 +745,6 @@ class PricingEngine {
 		if( ! $discount_data['on_campaign'] ){
 			return null;
 		}
-		wpab_cb_log('_____________________generate_product_summary_simple_message_____________________', 'DEBUG' );
-		wpab_cb_log('discount_data: ' . print_r($discount_data, true), 'DEBUG' );
 		// Get the format for the product summary message.
 		$format = wpab_cb_get_options( 'product_messageFormat' );
 		if( empty( $format ) ){
