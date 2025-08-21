@@ -151,40 +151,39 @@ class PricingEngine {
 
 		// prevent coupon stacking
 		if( ! wpab_cb_get_options('cart_allowWcCouponStacking') ){
-			$this->add_filter( 'woocommerce_coupon_is_valid', 'prevent_coupon_stacking', $default_priority, 3 );
+			$this->add_action( 'woocommerce_coupon_is_valid_for_product', 'prevent_coupon_stacking_to_product', $default_priority, 4 );
 		}
 
 	}
 
-
-	  /**
-     * Prevents a coupon from being applied if an automatic campaign is active
-     * and the store owner has disabled stacking.
-     *
-     * @since 1.0.0
-     * @hook woocommerce_coupon_is_valid
-     * @param bool       $is_valid  The original validity of the coupon.
-     * @param WC_Coupon  $coupon    The coupon object being applied.
-     * @return bool|WP_Error False if the coupon should be blocked, otherwise the original $is_valid value.
-     */
-    public function prevent_coupon_stacking( $is_valid, $coupon , $wc_discount) {
-        // If the coupon is already invalid for another reason, don't interfere.
-		wpab_cb_log( 'prevent_coupon_stacking', 'DEBUG' );
-
-        if ( ! $is_valid ) {
-            return $is_valid;
-        }
-        //  Check if our plugin's discounts are already active in the cart.
-        // We check the breakdown property that is calculated by our main hook.
-        if ( ! empty( WC()->cart->wpab_cb_discount_breakdown ) ) {
-            $error_message = __( 'A store promotion is already active...', 'campaignbay' );
-			wc_add_notice( $error_message , 'error' );
+	/**
+	 * Prevent a coupon from being applied if an automatic campaign is active.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_coupon_is_valid_for_product
+	 * @param bool $is_valid The original validity of the coupon.
+	 * @param WC_Product $product The product object.
+	 * @param WC_Coupon $coupon The coupon object.
+	 * @param array $values The values of the cart item.
+	 * @return bool The modified validity of the coupon.
+	 */
+	public function prevent_coupon_stacking_to_product( $is_valid, $product, $coupon, $values ){
+		$discount_data = $this->get_or_calculate_product_discount( $product );
+		if( $discount_data['on_campaign'] ){
 			return false;
-        }
-        return true;
-    }
+		}
+		return $is_valid;
+	}
 
-
+	/**
+	 * Save the discount breakdown to the order meta.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_checkout_create_order
+	 * @hook woocommerce_store_api_checkout_update_order_meta
+	 * @param WC_Order $order The order object.
+	 * @param array $data The order data.
+	 */
 	public function save_discount_breakdown_to_order_meta( $order, $data= null ) {
 		// The cart object is available globally via WC()->cart at this point.
 		$cart = WC()->cart;
@@ -198,7 +197,6 @@ class PricingEngine {
 			wpab_cb_log( sprintf( 'Saved discount breakdown to order #%d (Classic Checkout).', $order->get_id() ), 'INFO' );
 		}
 	}
-
 
 	/**
 	 * Filter the variation prices price.
