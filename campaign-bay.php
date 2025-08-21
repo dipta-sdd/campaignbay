@@ -20,15 +20,15 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 // --- 1. Define all your constants as before ---
-define( 'WPAB_CB_PATH', plugin_dir_path( __FILE__ ) );
-define( 'WPAB_CB_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WPAB_CB_URL', plugin_dir_url( __FILE__ ) );
-define( 'WPAB_CB_VERSION', '0.0.5' );
-define( 'WPAB_CB_PLUGIN_NAME', 'campaignbay' );
-define( 'WPAB_CB_TEXT_DOMAIN', 'campaignbay' );
-define( 'WPAB_CB_OPTION_NAME', 'wpab_cb' );
-define( 'WPAB_CB_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'WPAB_CB_DEV_MODE', true );
+define( 'CAMPAIGNBAY_PATH', plugin_dir_path( __FILE__ ) );
+define( 'CAMPAIGNBAY_DIR', plugin_dir_path( __FILE__ ) );
+define( 'CAMPAIGNBAY_URL', plugin_dir_url( __FILE__ ) );
+define( 'CAMPAIGNBAY_VERSION', '0.0.5' );
+define( 'CAMPAIGNBAY_PLUGIN_NAME', 'campaignbay' );
+define( 'CAMPAIGNBAY_TEXT_DOMAIN', 'campaignbay' );
+define( 'CAMPAIGNBAY_OPTION_NAME', 'campaignbay' );
+define( 'CAMPAIGNBAY_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+define( 'CAMPAIGNBAY_DEV_MODE', true );
 // --- 2. Simple autoloader for our namespaced classes ---
 spl_autoload_register( function ( $class ) {
 	// Only handle our plugin's classes
@@ -37,7 +37,7 @@ spl_autoload_register( function ( $class ) {
 	}
 
 	// Convert namespace to file path
-	$file = WPAB_CB_PATH . 'app/' . str_replace( '\\', '/', substr( $class, 7 ) ) . '.php';
+	$file = CAMPAIGNBAY_PATH . 'app/' . str_replace( '\\', '/', substr( $class, 7 ) ) . '.php';
 	
 	// Load the file if it exists
 	if ( file_exists( $file ) ) {
@@ -46,7 +46,7 @@ spl_autoload_register( function ( $class ) {
 } );
 
 // --- 3. Include helper functions ---
-require_once WPAB_CB_PATH . 'app/functions.php';
+require_once CAMPAIGNBAY_PATH . 'app/functions.php';
 
 
 // --- 4. Update Activation/Deactivation hooks to use the new namespaced classes ---
@@ -58,11 +58,11 @@ register_deactivation_hook( __FILE__, [ \WpabCb\Core\Deactivator::class, 'deacti
  *
  * @since    1.0.0
  */
-function wpab_cb_run() {
+function campaignbay_run() {
 	// --- 5. Instantiate your main plugin class using its full, namespaced name ---
 	$plugin = \WpabCb\Core\Plugin::get_instance();
 	$plugin->run();
 }
-wpab_cb_run();
+campaignbay_run();
 
 // composer dump-autoload -o

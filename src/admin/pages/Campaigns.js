@@ -305,8 +305,7 @@ const Campaigns = () => {
         method: "PUT",
         data: {
           ids: campaignsToUpdateInt,
-          status:
-            bulkAction === "activate" ? "wpab_cb_active" : "wpab_cb_inactive",
+          status: bulkAction === "activate" ? "cb_active" : "cb_inactive",
         },
       });
       addToast(
@@ -324,10 +323,7 @@ const Campaigns = () => {
           if (campaignsToUpdateInt.includes(c.id)) {
             return {
               ...c,
-              status:
-                bulkAction === "activate"
-                  ? "wpab_cb_active"
-                  : "wpab_cb_inactive",
+              status: bulkAction === "activate" ? "cb_active" : "cb_inactive",
             };
           }
           return { ...c };
@@ -555,10 +551,10 @@ const Campaigns = () => {
                       <td>
                         <span
                           className={`campaignbay-status-pill campaignbay-status-${
-                            campaign?.status?.replace("wpab_cb_", "") || ""
+                            campaign?.status?.replace("cb_", "") || ""
                           }`}
                         >
-                          {campaign?.status?.replace("wpab_cb_", "") || ""}
+                          {campaign?.status?.replace("cb_", "") || ""}
                         </span>
                       </td>
                       <td className="campaignbay-capitalize campaignbay-text-secondary">

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-if ( ! function_exists( 'wpab_cb_default_options' ) ) :
+if ( ! function_exists( 'campaignbay_default_options' ) ) :
 	/**
 	 * Get the Plugin Default Options.
 	 *
@@ -23,7 +23,7 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function wpab_cb_default_options() {
+	function campaignbay_default_options() {
 		$default_options = array(
 			/*==================================================
 			* Global Settings Tab
@@ -85,11 +85,11 @@ if ( ! function_exists( 'wpab_cb_default_options' ) ) :
 			'advanced_customJs'             => '',
 		);
 
-		return apply_filters( WPAB_CB_OPTION_NAME  . '_default_options', $default_options );
+		return apply_filters( CAMPAIGNBAY_OPTION_NAME  . '_default_options', $default_options );
 	}
 endif;
 
-if ( ! function_exists( 'wpab_cb_get_options' ) ) :
+if ( ! function_exists( 'campaignbay_get_options' ) ) :
 
 	/**
 	 * Get the Plugin Saved Options.
@@ -102,10 +102,10 @@ if ( ! function_exists( 'wpab_cb_get_options' ) ) :
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function wpab_cb_get_options( $key = '' ) {
-		$options = get_option( WPAB_CB_OPTION_NAME );
+	function campaignbay_get_options( $key = '' ) {
+		$options = get_option( CAMPAIGNBAY_OPTION_NAME );
 
-		$default_options = wpab_cb_default_options();
+		$default_options = campaignbay_default_options();
 		if ( ! empty( $key ) ) {
 			if ( isset( $options[ $key ] ) ) {
 				return $options[ $key ];
@@ -121,7 +121,7 @@ if ( ! function_exists( 'wpab_cb_get_options' ) ) :
 	}
 endif;
 
-if ( ! function_exists( 'wpab_cb_update_options' ) ) :
+if ( ! function_exists( 'campaignbay_update_options' ) ) :
 	/**
 	 * Update the Plugin Options.
 	 *
@@ -134,19 +134,19 @@ if ( ! function_exists( 'wpab_cb_update_options' ) ) :
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function wpab_cb_update_options( $key_or_data, $val = '' ) {
+	function campaignbay_update_options( $key_or_data, $val = '' ) {
 		if ( is_string( $key_or_data ) ) {
-			$options                 = wpab_cb_get_options();
+			$options                 = campaignbay_get_options();
 			$options[ $key_or_data ] = $val;
 		} else {
 			$options = $key_or_data;
 		}
-		update_option( WPAB_CB_OPTION_NAME, $options );
+		update_option( CAMPAIGNBAY_OPTION_NAME, $options );
 	}
 endif;
 
 
-if ( ! function_exists( 'wpab_cb_file_system' ) ) {
+if ( ! function_exists( 'campaignbay_file_system' ) ) {
 	/**
 	 *
 	 * WordPress file system wrapper
@@ -157,7 +157,7 @@ if ( ! function_exists( 'wpab_cb_file_system' ) ) {
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function wpab_cb_file_system() {
+	function campaignbay_file_system() {
 		global $wp_filesystem;
 		if ( ! $wp_filesystem ) {
 			require_once ABSPATH . 'wp-admin' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'file.php';
@@ -168,7 +168,7 @@ if ( ! function_exists( 'wpab_cb_file_system' ) ) {
 	}
 }
 
-if ( ! function_exists( 'wpab_cb_parse_changelog' ) ) {
+if ( ! function_exists( 'campaignbay_parse_changelog' ) ) {
 
 	/**
 	 * Parse changelog
@@ -178,11 +178,11 @@ if ( ! function_exists( 'wpab_cb_parse_changelog' ) ) {
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function wpab_cb_parse_changelog() {
+	function campaignbay_parse_changelog() {
 
-		$wp_filesystem = wpab_cb_file_system();
+		$wp_filesystem = campaignbay_file_system();
 
-		$changelog_file = apply_filters( WPAB_CB_OPTION_NAME  . '_changelog_file', WPAB_CB_PATH . 'readme.txt' );
+		$changelog_file = apply_filters( CAMPAIGNBAY_OPTION_NAME  . '_changelog_file', CAMPAIGNBAY_PATH . 'readme.txt' );
 
 		/*Check if the changelog file exists and is readable.*/
 		if ( ! $changelog_file || ! is_readable( $changelog_file ) ) {
@@ -211,7 +211,7 @@ if ( ! function_exists( 'wpab_cb_parse_changelog' ) ) {
 	}
 }
 
-if ( ! function_exists( 'wpab_cb_get_white_label' ) ) :
+if ( ! function_exists( 'campaignbay_get_white_label' ) ) :
 	/**
 	 * Get white label options for this plugin.
 	 *
@@ -220,20 +220,20 @@ if ( ! function_exists( 'wpab_cb_get_white_label' ) ) :
 	 * @return mixed All Options Array Or Options Value
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function wpab_cb_get_white_label( $key = '' ) {
+	function campaignbay_get_white_label( $key = '' ) {
 		$plugin_name = apply_filters(
-			WPAB_CB_OPTION_NAME  . '_white_label_plugin_name',
+			CAMPAIGNBAY_OPTION_NAME  . '_white_label_plugin_name',
 			esc_html( 'WP React Plugin Boilerplate' )
 		);
 		
 		$options = apply_filters(
-			WPAB_CB_OPTION_NAME  . '_white_label',
+			CAMPAIGNBAY_OPTION_NAME  . '_white_label',
 			 array(
 				'plugin_name'      => esc_html( 'CampaignBay - WooCommerce Smart Campaigns'),
 				'short_name'       => esc_html( 'CampaignBay' ),
 				'menu_label'       => esc_html( 'CampaignBay' ),
-				'custom_icon'  	   => WPAB_CB_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
-				'menu_icon'  	   => WPAB_CB_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
+				'custom_icon'  	   => CAMPAIGNBAY_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
+				'menu_icon'  	   => CAMPAIGNBAY_URL . 'assets/img/dash_icon_campaign_bay_light.svg',
 				'author_name'      => 'WP Anchor Bay',
 				'author_uri'       => 'https://wpanchorbay.com',
 				'support_uri'      => 'https://wpanchorbay.com/support',
@@ -252,7 +252,7 @@ endif;
 
 
 
-if(! function_exists('wpab_cb_log')) {
+if(! function_exists('campaignbay_log')) {
 
 	/**
 	 * Log messages to the debug log.
@@ -261,13 +261,13 @@ if(! function_exists('wpab_cb_log')) {
 	 * @param string $level The log level (e.g.,'DEBUG', 'INFO', 'ERROR', 'NOTICE', 'WARNING', 'CRITICAL', 'ALERT', 'EMERGENCY' ).
 	 * @param bool $dev_mode Whether to log messages in development mode.
 	 */
-	function wpab_cb_log( $message, $level = 'INFO', $dev_mode = true ) {
-		$enable_logging = wpab_cb_get_options('debug_enableMode');
+	function campaignbay_log( $message, $level = 'INFO', $dev_mode = true ) {
+		$enable_logging = campaignbay_get_options('debug_enableMode');
 		if ( ! $enable_logging || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
 			return;
 		}
 		$upload_dir = wp_upload_dir();
-		$log_dir = $upload_dir['basedir'] . '/'. WPAB_CB_TEXT_DOMAIN .'-logs/';
+		$log_dir = $upload_dir['basedir'] . '/'. CAMPAIGNBAY_TEXT_DOMAIN .'-logs/';
 		
 		if ( ! is_dir( $log_dir ) ) {
 			wp_mkdir_p( $log_dir );
@@ -296,7 +296,7 @@ if(! function_exists('wpab_cb_log')) {
 
 // in includes/functions.php
 
-if ( ! function_exists( 'wpab_cb_get_campaign_meta_keys' ) ) :
+if ( ! function_exists( 'campaignbay_get_campaign_meta_keys' ) ) :
 	/**
 	 * Get the campaign meta keys.
 	 *
@@ -306,7 +306,7 @@ if ( ! function_exists( 'wpab_cb_get_campaign_meta_keys' ) ) :
 	 * @since 1.0.0
 	 * @return array Array of meta keys.
 	 */
-	function wpab_cb_get_campaign_meta_keys() {
+	function campaignbay_get_campaign_meta_keys() {
 		return array(
 			'campaign_type',
 			'discount_type',

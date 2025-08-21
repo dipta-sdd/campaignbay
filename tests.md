@@ -3,7 +3,7 @@
 #### **Section 1: Installation, Activation & Dependencies**
 
 - [ ] **TC-1.1:** **Clean Activation:** Activate the plugin for the first time on a clean WordPress install with WooCommerce already active.
-  - **Expected:** Plugin activates without errors. The `wp_wpab_cb_logs` database table is created. Default settings are populated in the `wp_options` table.
+  - **Expected:** Plugin activates without errors. The `wp_campaignbay_logs` database table is created. Default settings are populated in the `wp_options` table.
 - [ ] **TC-1.2:** **Missing WooCommerce Check:** Deactivate the WooCommerce plugin. Attempt to activate CampaignBay.
   - **Expected:** Activation is blocked. A clear, user-friendly error message is displayed, stating that WooCommerce is required.
 - [ ] **TC-1.3:** **Re-activation:** Deactivate and immediately reactivate the plugin.
@@ -145,7 +145,7 @@
 - [x] **TC-5.2.1:** **First Order (First Tier):** With the campaign usage at 0, add any product to the cart and proceed to checkout.
   - **Expected:** A **50% discount** is applied to the product in the cart.
 - [x] **TC-5.2.2:** **Complete First Order:** Complete the purchase.
-  - **Expected:** The order is successful. Check the `wp_wpab_cb_logs` table: a `sale` log has been created for this campaign. The usage count for the campaign is now **1**.
+  - **Expected:** The order is successful. Check the `wp_campaignbay_logs` table: a `sale` log has been created for this campaign. The usage count for the campaign is now **1**.
 - [x] **TC-5.2.3:** **Second Order (Still First Tier):** As a different customer (or in an incognito window), add a product to the cart.
   - **Expected:** A **50% discount** is still applied, as the usage count (1) is less than the tier max (2).
 - [x] **TC-5.2.4:** **Complete Second Order:** Complete the purchase.
@@ -169,9 +169,9 @@
 - [ ] **TC-6.1:** **Filter by Status:**
   1.  On the "All Campaigns" page, use the "Filter by Status" dropdown.
   2.  Select `Active`.
-  - **Expected:** The table updates to show only campaigns with the `wpab_cb_active` status.
+  - **Expected:** The table updates to show only campaigns with the `cb_active` status.
   3.  Select `Scheduled`.
-  - **Expected:** The table updates to show only campaigns with the `wpab_cb_scheduled` status.
+  - **Expected:** The table updates to show only campaigns with the `cb_scheduled` status.
   4.  Repeat for `Expired` and `Inactive` (`draft`).
   - **Expected:** The table filters correctly for each status.
 - [ ] **TC-6.2:** **Filter by Discount Type:**
