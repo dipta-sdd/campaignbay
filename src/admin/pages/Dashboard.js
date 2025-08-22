@@ -8,12 +8,13 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
   ArcElement,
 } from "chart.js";
-import { Line, Doughnut } from "react-chartjs-2";
+import { Line, Doughnut, Bar } from "react-chartjs-2";
 
 // Register Chart.js components
 ChartJS.register(
@@ -21,6 +22,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
@@ -30,12 +32,13 @@ ChartJS.register(
 import { getSettings as getDateSettings } from "@wordpress/date";
 import { useCbStore } from "../store/cbStore";
 import { date, getDate } from "@wordpress/date";
+import Checkbox from "../components/Checkbox";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
-  const { wpSettings } = useCbStore();
+  const [chartType, setChartType] = useState("bar"); // Add chart type state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +52,6 @@ const Dashboard = () => {
           path: addQueryArgs("/campaignbay/v1/dashboard", params),
         });
         setDashboardData(response);
-
       } catch (error) {
         console.log(error);
       } finally {
@@ -171,14 +173,42 @@ const Dashboard = () => {
       }),
       datasets: [
         {
-          label: "Discount Value ($)",
-          data: data.map((item) => parseFloat(item.value)),
+          label: __("Discount Value ($)", "campaignbay"),
+          data: data.map((item) => parseFloat(item.total_discount_value)),
           borderColor: "#183ad6",
           backgroundColor: "rgba(24, 58, 214, 0.1)",
           borderWidth: 3,
           fill: true,
           tension: 0.4,
           pointBackgroundColor: "#183ad6",
+          pointBorderColor: "#ffffff",
+          pointBorderWidth: 2,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+        },
+        {
+          label: __("Orginal Order Value ($)", "campaignbay"),
+          data: data.map((item) => parseFloat(item.total_base)),
+          borderColor: "#ffc107",
+          backgroundColor: "rgba(255, 193, 7, 0.1)",
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          pointBackgroundColor: "#ffc107",
+          pointBorderColor: "#ffffff",
+          pointBorderWidth: 2,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+        },
+        {
+          label: __("Discounted Order Value ($)", "campaignbay"),
+          data: data.map((item) => parseFloat(item.total_sales)),
+          borderColor: "#28a745",
+          backgroundColor: "rgba(40, 167, 69, 0.1)",
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          pointBackgroundColor: "#28a745",
           pointBorderColor: "#ffffff",
           pointBorderWidth: 2,
           pointRadius: 6,
@@ -227,7 +257,7 @@ const Dashboard = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false,
+        display: true,
       },
       tooltip: {
         backgroundColor: "rgba(0, 0, 0, 0.8)",
@@ -239,7 +269,7 @@ const Dashboard = () => {
         displayColors: false,
         callbacks: {
           label: function (context) {
-            return `Discount: ${formatCurrency(context.parsed.y)}`;
+            return `Value: ${formatCurrency(context.parsed.y)}`;
           },
         },
       },
@@ -275,6 +305,58 @@ const Dashboard = () => {
     elements: {
       point: {
         hoverRadius: 8,
+      },
+    },
+  };
+
+  const barChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+      },
+      tooltip: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        titleColor: "#ffffff",
+        bodyColor: "#ffffff",
+        borderColor: "#183ad6",
+        borderWidth: 1,
+        cornerRadius: 8,
+        displayColors: false,
+        callbacks: {
+          label: function (context) {
+            return `Value: ${formatCurrency(context.parsed.y)}`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: "#757575",
+          font: {
+            size: 12,
+          },
+        },
+      },
+      y: {
+        grid: {
+          color: "#e0e0e0",
+          borderDash: [5, 5],
+        },
+        ticks: {
+          color: "#757575",
+          font: {
+            size: 12,
+          },
+          callback: function (value) {
+            return formatCurrency(value);
+          },
+        },
       },
     },
   };
@@ -345,7 +427,9 @@ const Dashboard = () => {
               {__("Active Campaigns", "campaignbay")}
             </div>
             <div className="cb-kpi-action">
-              <a href="#/campaigns">{__("View All Campaigns", "campaignbay")}</a>
+              <a href="#/campaigns">
+                {__("View All Campaigns", "campaignbay")}
+              </a>
             </div>
           </div>
 
@@ -356,7 +440,7 @@ const Dashboard = () => {
               )}
             </div>
             <div className="cb-kpi-label">
-              {__("Total Discount Value", "campaignbay")}
+              {__("Total Discounted Amount", "campaignbay")}
             </div>
             {dashboardData?.kpis?.total_discount_value?.change !== 0 && (
               <div
@@ -406,6 +490,21 @@ const Dashboard = () => {
             <div className="cb-kpi-label">
               {__("Sales from Campaigns", "campaignbay")}
             </div>
+            {dashboardData?.kpis?.sales_from_campaigns?.change !== 0 && (
+              <div
+                className={`cb-kpi-change ${
+                  dashboardData?.kpis?.sales_from_campaigns?.change > 0
+                    ? "positive"
+                    : "negative"
+                }`}
+              >
+                {dashboardData?.kpis?.sales_from_campaigns?.change > 0
+                  ? "+"
+                  : ""}
+                {dashboardData?.kpis?.sales_from_campaigns?.change}% vs. prev
+                period
+              </div>
+            )}
           </div>
         </div>
 
@@ -414,14 +513,45 @@ const Dashboard = () => {
           <div className="cb-chart-card">
             <div className="cb-chart-header">
               <h3>{__("Daily Discount Value Trends", "campaignbay")}</h3>
+
+              <div className="cb-chart-header-actions">
+                <div className="cb-chart-type-toggle">
+                  <button
+                    className={`cb-toggle-btn ${
+                      chartType === "line" ? "active" : ""
+                    }`}
+                    onClick={() => setChartType("line")}
+                    title={__("Line Chart", "campaignbay")}
+                  >
+                    {__("Line", "campaignbay")}
+                  </button>
+                  <button
+                    className={`cb-toggle-btn ${
+                      chartType === "bar" ? "active" : ""
+                    }`}
+                    onClick={() => setChartType("bar")}
+                    title={__("Bar Chart", "campaignbay")}
+                  >
+                    {__("Bar", "campaignbay")}
+                  </button>
+                </div>
+              </div>
             </div>
             <div className="cb-chart-container">
               {dashboardData?.charts?.discount_trends?.length > 0 ? (
-                <Line
-                  data={getDiscountTrendsData()}
-                  options={lineChartOptions}
-                  height={220}
-                />
+                chartType === "line" ? (
+                  <Line
+                    data={getDiscountTrendsData()}
+                    options={lineChartOptions}
+                    height={220}
+                  />
+                ) : (
+                  <Bar
+                    data={getDiscountTrendsData()}
+                    options={barChartOptions}
+                    height={220}
+                  />
+                )
               ) : (
                 <div className="cb-chart-placeholder">
                   <div className="cb-chart-message">
@@ -480,7 +610,10 @@ const Dashboard = () => {
                       dashboardData.live_and_upcoming.active.map((campaign) => (
                         <tr key={campaign.id}>
                           <td className="">
-                            <a href={`#/campaigns/${campaign.id}`} className="campaignbay-dashboard-campaigns-link">
+                            <a
+                              href={`#/campaigns/${campaign.id}`}
+                              className="campaignbay-dashboard-campaigns-link"
+                            >
                               {campaign.title}
                             </a>
                           </td>
@@ -537,8 +670,11 @@ const Dashboard = () => {
                             key={campaign.id}
                             className="cb-campaign-row scheduled"
                           >
-                            <td>  
-                              <a href={`#/campaigns/${campaign.id}`} className="campaignbay-dashboard-campaigns-link">
+                            <td>
+                              <a
+                                href={`#/campaigns/${campaign.id}`}
+                                className="campaignbay-dashboard-campaigns-link"
+                              >
                                 {campaign.title}
                               </a>
                             </td>
@@ -587,7 +723,10 @@ const Dashboard = () => {
                     </div>
                     <div className="cb-activity-content">
                       <span className="cb-activity-campaign">
-                        <a href={`#/campaigns/${activity.campaign_id}`} className="campaignbay-dashboard-campaigns-link">
+                        <a
+                          href={`#/campaigns/${activity.campaign_id}`}
+                          className="campaignbay-dashboard-campaigns-link"
+                        >
                           {activity.campaign_title}
                         </a>
                       </span>

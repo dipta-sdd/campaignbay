@@ -94,14 +94,19 @@ class DashboardController extends ApiController {
 	 */
 	private function get_kpi_data( $current_start, $current_end, $previous_start, $previous_end ) {
 		global $wpdb;
-		$logs_table = $wpdb->prefix . 'campaignbay_logs';
+		$logs_table = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN .'_logs';
 		$success_statuses = "'processing', 'completed'";
 
-		// --- Get Current Period Data ---
+		/**
+		 * base_total_for_discounts is the total of the base price(before discount) of the products in the order.
+		 * sales_from_campaigns is the total of the order_total of the products in the order.
+		 * discounted_orders is the total of the order_id of the products in the order.
+		 * total_discount_value is the total of the total_discount of the products in the order.
+		 */
 		$current_sql = $wpdb->prepare(
 			"SELECT
 				SUM(total_discount) as total_discount_value,
-				SUM(base_total) as base_total_for_discounts, -- <-- NEW: Get the base total
+				SUM(base_total) as base_total_for_discounts,
 				SUM(order_total) as sales_from_campaigns,
 				COUNT(DISTINCT order_id) as discounted_orders
 			 FROM {$logs_table}
@@ -112,11 +117,13 @@ class DashboardController extends ApiController {
 		); 
 		
 		$current_data = $wpdb->get_row( $current_sql, ARRAY_A );
-
+		
 		// --- Get Previous Period Data for Comparison ---
 		$previous_sql = $wpdb->prepare(
 			"SELECT
 				SUM(total_discount) as total_discount_value,
+				SUM(base_total) as base_total_for_discounts,
+				SUM(order_total) as sales_from_campaigns,
 				COUNT(DISTINCT order_id) as discounted_orders
 			 FROM {$logs_table}
 			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
@@ -149,6 +156,7 @@ class DashboardController extends ApiController {
 			),
 			'sales_from_campaigns' => array(
 				'value' => (float) ( $current_data['sales_from_campaigns'] ?? 0 ),
+				'change' => $this->calculate_percentage_change( $current_data['sales_from_campaigns'], $previous_data['sales_from_campaigns'] ),
 			),
 		);
 	}
@@ -162,12 +170,14 @@ class DashboardController extends ApiController {
 	 */
 	private function get_chart_data( $start_date, $end_date ) {
 		global $wpdb;
-		$logs_table = $wpdb->prefix . 'campaignbay_logs';
+		$logs_table = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN .'_logs';
 		$success_statuses = "'processing', 'completed'";
 
 		// --- FIX: Discount Trends (Line Chart) ---
 		$trends_sql = $wpdb->prepare(
-			"SELECT DATE(timestamp) as date, SUM(total_discount) as value
+			"SELECT DATE(timestamp) as date, SUM(total_discount) as total_discount_value,
+			SUM(base_total) as total_base,
+			SUM(order_total) as total_sales
 			 FROM {$logs_table}
 			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
 			 AND timestamp BETWEEN %s AND %s
@@ -177,6 +187,10 @@ class DashboardController extends ApiController {
 			$end_date
 		);
 		$discount_trends = $wpdb->get_results( $trends_sql, ARRAY_A );
+		
+		// Fill in missing dates with zero values
+		$discount_trends = $this->fill_missing_dates($discount_trends, $start_date, $end_date);
+		
 
 		// --- FIX: Top Campaigns (Bar Chart) ---
 		$top_campaigns_sql = $wpdb->prepare(
@@ -213,7 +227,7 @@ class DashboardController extends ApiController {
 	 */
 	private function get_most_impactful_types( $start_date, $end_date ) {
 		global $wpdb;
-		$logs_table       = $wpdb->prefix . 'campaignbay_logs';
+		$logs_table       = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN .'_logs';
 		$meta_table       = $wpdb->prefix . 'postmeta';
 		$success_statuses = "'processing', 'completed'";
 
@@ -303,7 +317,7 @@ class DashboardController extends ApiController {
 	 */
 	private function get_recent_activity() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_logs';
+		$table_name = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN .'_logs';
 		
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
@@ -380,12 +394,59 @@ class DashboardController extends ApiController {
 		$previous_start = clone $previous_end;
 		$previous_start->sub( new DateInterval( 'P' . ($days_diff - 1) . 'D' ) );
 
+		$previous_end->setTime(23, 59, 59);
+
 		return [
 			$current_start_str,
 			$current_end_str,
 			$previous_start->format( 'Y-m-d H:i:s' ),
 			$previous_end->format( 'Y-m-d H:i:s' ),
 		];
+	}
+
+	/**
+	 * Fills in missing dates in the discount trends data with zero values.
+	 *
+	 * @param array $trends_data The existing trends data from database.
+	 * @param string $start_date Start date for the period.
+	 * @param string $end_date End date for the period.
+	 * @return array Complete trends data with all dates filled.
+	 */
+	private function fill_missing_dates($trends_data, $start_date, $end_date) {
+		// Convert dates to DateTime objects for easier manipulation
+		$start = new DateTime($start_date);
+		$end = new DateTime($end_date);
+		
+		// Create a map of existing dates for quick lookup
+		$existing_dates = array();
+		foreach ($trends_data as $trend) {
+			$existing_dates[$trend['date']] = $trend;
+		}
+		
+		// Generate complete date range
+		$complete_trends = array();
+		$current_date = clone $start;
+		
+		while ($current_date <= $end) {
+			$date_string = $current_date->format('Y-m-d');
+			
+			if (isset($existing_dates[$date_string])) {
+				// Use existing data
+				$complete_trends[] = $existing_dates[$date_string];
+			} else {
+				// Fill missing date with zero values
+				$complete_trends[] = array(
+					'date' => $date_string,
+					'total_discount_value' => '0.00',
+					'total_base' => '0.00',
+					'total_sales' => '0.00'
+				);
+			}
+			
+			$current_date->add(new DateInterval('P1D'));
+		}
+		
+		return $complete_trends;
 	}
 
 	/**
@@ -399,7 +460,7 @@ class DashboardController extends ApiController {
 		if ( (float) $previous === 0.0 ) {
 			return (float) $current > 0 ? 100.0 : 0.0;
 		}
-		return round( ( ( $current - $previous ) / $previous ) * 100, 2 );
+		return round( ( ( $current - $previous ) / $previous ) * 100 );
 	}
 
 	/**
