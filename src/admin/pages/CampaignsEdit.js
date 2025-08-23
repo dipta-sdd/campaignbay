@@ -18,9 +18,10 @@ import EBTiers from "../components/EBTiers";
 import { useCbStore } from "../store/cbStore";
 import { getSettings as getDateSettings } from "@wordpress/date";
 import Loader from "../components/Loader";
-
+import Navbar from "../components/Navbar";
 const CampaignsEdit = () => {
   const navigate = useNavigate();
+
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -283,6 +284,7 @@ const CampaignsEdit = () => {
         <Loader />
       ) : (
         <div className="cb-page">
+          <Navbar />
           <div className="cb-page-header-container">
             <div className="cb-page-header-title">
               {!isEditingTitle ? (

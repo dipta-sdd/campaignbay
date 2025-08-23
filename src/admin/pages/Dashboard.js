@@ -29,10 +29,7 @@ ChartJS.register(
   ArcElement
 );
 
-import { getSettings as getDateSettings } from "@wordpress/date";
-import { useCbStore } from "../store/cbStore";
-import { date, getDate } from "@wordpress/date";
-import Checkbox from "../components/Checkbox";
+import Navbar from "../components/Navbar";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -251,6 +248,39 @@ const Dashboard = () => {
     };
   };
 
+  const getTopCampaignTypesData = () => {
+    if (!dashboardData?.charts?.most_impactful_types) {
+      return {
+        labels: [],
+        datasets: [],
+      };
+    }
+
+    const data = dashboardData.charts.most_impactful_types;
+    const colors = [
+      "#183ad6", // Primary blue
+      "#28a745", // Green
+      "#ffc107", // Yellow
+      "#dc3545", // Red
+      "#6f42c1", // Purple
+    ];
+
+    return {
+      labels: data.map((item) => item.campaign_type || "Unknown"),
+      datasets: [
+        {
+          data: data.map((item) => parseFloat(item.total_sales)),
+          backgroundColor: colors.slice(0, data.length),
+          borderColor: colors
+            .slice(0, data.length)
+            .map((color) => color + "80"),
+          borderWidth: 2,
+          hoverOffset: 4,
+        },
+      ],
+    };
+  };
+
   // Chart options
   const lineChartOptions = {
     responsive: true,
@@ -399,6 +429,7 @@ const Dashboard = () => {
   return (
     <div className="cb-page campaignbay-dashboard">
       {/* Header Section */}
+      <Navbar />
       <div className="cb-page-header-container">
         <div className="cb-page-header-title">
           {__("Dashboard", "campaignbay")}
@@ -507,10 +538,8 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-
-        {/* Charts Section */}
-        <div className="cb-charts-grid">
-          <div className="cb-chart-card">
+        <div className="campaignbay-grid campaignbay-grid-cols-12 campaignbay-gap-4 cb-charts-grid">
+          <div className="cb-chart-card campaignbay-col-span-12">
             <div className="cb-chart-header">
               <h3>{__("Daily Discount Value Trends", "campaignbay")}</h3>
 
@@ -565,7 +594,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="cb-chart-card">
+          <div className="cb-chart-card campaignbay-col-span-12 lg:campaignbay-col-span-6">
             <div className="cb-chart-header">
               <h3>{__("Top Performing Campaigns", "campaignbay")}</h3>
             </div>
@@ -573,6 +602,30 @@ const Dashboard = () => {
               {dashboardData?.charts?.top_campaigns?.length > 0 ? (
                 <Doughnut
                   data={getTopCampaignsData()}
+                  options={doughnutChartOptions}
+                  height={220}
+                />
+              ) : (
+                <div className="cb-chart-placeholder">
+                  <div className="cb-chart-message">
+                    {__(
+                      "No campaign performance data available",
+                      "campaignbay"
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="cb-chart-card campaignbay-col-span-12 lg:campaignbay-col-span-6">
+            <div className="cb-chart-header">
+              <h3>{__("Top Performing Types", "campaignbay")}</h3>
+            </div>
+            <div className="cb-chart-container">
+              {dashboardData?.charts?.most_impactful_types?.length > 0 ? (
+                <Doughnut
+                  data={getTopCampaignTypesData()}
                   options={doughnutChartOptions}
                   height={220}
                 />

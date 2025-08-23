@@ -26,6 +26,7 @@ import { addQueryArgs } from "@wordpress/url";
 import { useCbStore } from "../store/cbStore";
 import { date, getDate } from "@wordpress/date";
 import Skeleton from "../components/Skeleton";
+import Navbar from "../components/Navbar";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -365,6 +366,7 @@ const Campaigns = () => {
 
   return (
     <div className="cb-page campaignbay-campaigns">
+      <Navbar />
       <div className="cb-page-header-container">
         <div className="cb-page-header-title">
           {__("Campaigns", "campaignbay")}

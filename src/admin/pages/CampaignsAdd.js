@@ -16,6 +16,7 @@ import EBTiers from "../components/EBTiers";
 import { useCbStore } from "../store/cbStore";
 import { getSettings as getDateSettings } from "@wordpress/date";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const CampaignsAdd = () => {
   const { woocommerce_currency_symbol } = useCbStore();
@@ -232,6 +233,7 @@ const CampaignsAdd = () => {
   };
   return (
     <div className="cb-page">
+      <Navbar />
       <div className="cb-page-header-container">
         <div className="cb-page-header-title">
           {__("Add Campaign", "campaignbay")}

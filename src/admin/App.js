@@ -8,6 +8,7 @@ import CampaignsEdit from "./pages/CampaignsEdit";
 import { ToastProvider } from "./store/toast/toast-provider";
 import { ToastContainer } from "./components/ToastContainer";
 import { CbStoreProvider } from "./store/cbStore";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (

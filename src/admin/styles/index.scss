@@ -1,10 +1,16 @@
-@import "@wordpress/dataviews/build-style/style.css";
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 .toplevel_page_campaignbay #wpcontent {
   padding-left: 0;
   background: #dddddd;
 }
-
+.toplevel_page_campaignbay #wpwrap {
+  background: #dddddd;
+}
+.toplevel_page_campaignbay #wpfooter {
+  display: none;
+}
 #campaignbay *,
 #campaignbay *::before,
 #campaignbay *::after {
@@ -176,8 +182,6 @@
     "1-2": 50%,
     "2-3": 66.666%,
     "3-4": 75%,
-    "full": 100%,
-    "max": max-content,
     "12": 12px,
     "16": 16px,
     "20": 20px,
@@ -325,7 +329,6 @@
     align-items: center;
     justify-content: center;
   }
-
   & .wpab-cb-page-header {
     display: flex;
     align-items: center;
@@ -467,12 +470,13 @@
     gap: 10px;
     flex-wrap: nowrap;
     width: 100%;
-    padding-block: var(--cb-p-2);
+    padding: var(--cb-p-2) var(--padding-page-x);
+
     background: #{$cb-color-body};
   }
 
   & .wpab-cb-settings-card {
-    max-width: #{$cb-max-width-container};
+    // max-width: #{$cb-max-width-container};
     width: 100%;
     background-color: #{$bg-white};
     border: #{$cb-border-width-base} solid #{$cb-border-color-base};
@@ -777,7 +781,8 @@
   & .cb-page-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    // gap: 10px;
+    gap: var(--cb-p-2);
     align-items: stretch;
     justify-content: flex-start;
     padding: var(--cb-p-2) var(--padding-page-x);
@@ -1757,7 +1762,6 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--cb-p-2);
-    margin-bottom: var(--cb-p-3);
     @media (max-width: 1100px) {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -1769,7 +1773,7 @@
   & .cb-kpi-card {
     background: #{$cb-color-white};
     border: 1px solid #{$cb-border-color-base-light};
-    border-radius: 8px;
+    border-radius: #{$cb-border-radius-base};
     padding: 24px 20px;
     text-align: center;
     transition: all 0.2s ease;
@@ -1847,25 +1851,14 @@
 
   // Charts Grid
   & .cb-charts-grid {
-    display: flex;
-    flex-direction: row;
     gap: var(--cb-p-2);
-    margin-bottom: var(--cb-p-3);
-    & > .cb-chart-card:first-child {
-      flex: 1;
-    }
-    & > .cb-chart-card:last-child {
-      width: clamp(500px, 40%, 700px);
-    }
-    @media (max-width: 1100px) {
-      flex-direction: column;
-    }
+    
   }
 
   & .cb-chart-card {
     background: #{$cb-color-white};
     border: 1px solid #{$cb-border-color-base-light};
-    border-radius: 8px;
+    border-radius: #{$cb-border-radius-base};
     padding: 24px;
     min-height: min(500px, 80vw);
     height: auto;
@@ -1984,7 +1977,7 @@
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      border-radius: 8px;
+      border-radius: #{$cb-border-radius-base};
       border: 2px dashed #{$cb-border-color-base-light};
       position: relative;
       overflow: hidden;
@@ -2040,7 +2033,7 @@
     min-width: min-content;
     background: #{$cb-color-white};
     border: 1px solid #{$cb-border-color-base-light};
-    border-radius: 8px;
+    border-radius: #{$cb-border-radius-base};
     padding: 24px;
     min-height: 420px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -2049,7 +2042,7 @@
       font-size: 18px;
       font-weight: #{$cb-fw-semibold};
       color: #{$cb-color-black};
-      margin: 0 0 24px 0;
+      margin: 0 0 0 0;
       padding-bottom: 16px;
       border-bottom: 1px solid #{$cb-border-color-base-light};
     }
@@ -2077,7 +2070,7 @@
     padding: 16px;
     margin-bottom: 8px;
     background: #f8f9fa;
-    border-radius: 8px;
+    border-radius: #{$cb-border-radius-base};
     transition: all 0.2s ease;
 
     &:hover {
@@ -2108,7 +2101,7 @@
       background: #f8f9fa;
       margin: 0 -24px;
       padding: 12px 24px;
-      border-radius: 8px;
+      border-radius: #{$cb-border-radius-base};
     }
 
     &:last-child {
