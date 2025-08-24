@@ -1,9 +1,11 @@
+import { Icon, plus } from "@wordpress/icons";
 import logo_32px from "../../../assets/img/logo-32px.png";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { __ } from "@wordpress/i18n";
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(true);
   const menus = [
     {
       label: "Dashboard",
@@ -15,10 +17,10 @@ export default function Navbar() {
       path: "/campaigns",
     },
 
-    {
-      label: "Add Campaign",
-      path: "/campaigns/add",
-    },
+    // {
+    //   label: "Add Campaign",
+    //   path: "/campaigns/add",
+    // },
 
     {
       label: "Settings",
@@ -45,17 +47,17 @@ export default function Navbar() {
             />
           </div>
           <div
-            className={` campaignbay-flex-1 md:campaignbay-flex-none campaignbay-justify-stretch campaignbay-items-start md:campaignbay-items-center campaignbay-absolute md:campaignbay-relative campaignbay-top-[102%] md:campaignbay-top-auto campaignbay-left-0  campaignbay-w-full md:campaignbay-w-auto ${
+            className={` campaignbay-flex-1 md:campaignbay-flex-none campaignbay-flex-col md:campaignbay-flex-row campaignbay-justify-stretch md:campaignbay-items-center campaignbay-absolute md:campaignbay-relative campaignbay-top-[102%] md:campaignbay-top-auto campaignbay-left-0  campaignbay-w-full md:campaignbay-w-auto campaignbay-gap-0 md:campaignbay-gap-6 campaignbay-bg-white !campaignbay-border-0  ${
               isMobileMenuOpen
                 ? "campaignbay-flex  "
                 : " campaignbay-hidden md:campaignbay-flex"
             }`}
           >
-            <nav className="campaignbay-items-stretch md:campaignbay-items-center campaignbay-bg-white !campaignbay-border-0  campaignbay-gap-0 md:campaignbay-gap-4 campaignbay-flex campaignbay-flex-col md:campaignbay-flex-row campaignbay-w-full">
+            <nav className="campaignbay-items-stretch md:campaignbay-items-center  campaignbay-gap-0 md:campaignbay-gap-0 campaignbay-flex campaignbay-flex-col md:campaignbay-flex-row campaignbay-w-full">
               {menus.map((menu) => (
                 <span
                   key={menu.path}
-                  className={`campaignbay-text-base campaignbay-font-medium campaignbay-cursor-pointer campaignbay-p-6 campaignbay-py-8 campaignbay-pl-8 md:campaignbay-pl-0 campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
+                  className={`campaignbay-text-base campaignbay-font-medium campaignbay-cursor-pointer campaignbay-p-12 md:campaignbay-p-4 campaignbay-py-8 campaignbay-pl-8 md:campaignbay-pl-0 campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
                     activeTab === menu.path
                       ? "campaignbay-text-blue-800"
                       : "campaignbay-text-gray-800 hover:campaignbay-text-blue-800"
@@ -69,6 +71,20 @@ export default function Navbar() {
                 </span>
               ))}
             </nav>
+
+            <button
+              className="campaignbay-flex campaignbay-justify-center
+               campaignbay-items-center campaignbay-p-8 campaignbay-px-12 campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-12 md:campaignbay-m-0"
+              onClick={() => navigate("/campaigns/add")}
+            >
+              {__("Add Campaign", "campaignbay")}
+              <Icon
+                icon={plus}
+                fill="currentColor"
+                size={20}
+                style={{ marginTop: "2px" }}
+              />
+            </button>
           </div>
 
           {/* toggle button for mobile */}
