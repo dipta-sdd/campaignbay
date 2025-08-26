@@ -372,13 +372,13 @@ const Campaigns = () => {
           {__("Campaigns", "campaignbay")}
         </div>
         <div className="cb-page-header-actions">
-          <button
+          {/* <button
             className="wpab-cb-btn wpab-cb-btn-primary "
             onClick={() => navigate("/campaigns/add")}
           >
             <Icon icon={plus} fill="currentColor" />
             {__("Add Campaign", "campaignbay")}
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="cb-page-container">

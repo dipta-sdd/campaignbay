@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menus = [
     {
       label: "Dashboard",

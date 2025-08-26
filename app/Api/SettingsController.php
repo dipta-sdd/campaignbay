@@ -91,60 +91,9 @@ class SettingsController extends ApiController {
 		);
 	}
 
-	/**
-	 * Checks if a given request has access to read and manage settings.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 * @return bool True if the request has read access for the item, otherwise false.
-	 */
-	public function get_item_permissions_check( $request ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'Sorry, you are not allowed to manage campaigns.', 'campaignbay' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
-		}
 
-		return true;
-	}
 
-	/**
-	 * Checks if a given request has access to update settings and verifies nonce.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 * @return bool|WP_Error True if the request has update access for the item and nonce is valid, otherwise false or WP_Error.
-	 */
-	public function update_item_permissions_check( $request ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			// return false;
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'Sorry, you are not allowed to manage campaigns.', 'campaignbay' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
-		}
-
-		$nonce = $request->get_header( 'X-WP-Nonce' );
-
-		if ( ! $nonce ) {
-			$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
-		}
-
-		if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-			return new WP_Error(
-				'rest_invalid_nonce',
-				__( 'Invalid or missing nonce.', 'campaignbay' ),
-				array( 'status' => 403 )
-			);
-		}
-
-		return true;
-	}
+	
 
 	/**
 	 * Retrieves the settings.

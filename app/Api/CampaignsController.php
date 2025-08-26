@@ -89,13 +89,13 @@ class CampaignsController extends ApiController {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
-					'permission_callback' => array( $this, 'permissions_check' ),
+					'permission_callback' => array( $this, 'get_item_permissions_check' ),
 					'args'                => $this->get_collection_params(),
 				),
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'create_item' ),
-					'permission_callback' => array( $this, 'permissions_check' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
 				),
 				'schema' => array( $this, 'get_item_schema' ), // Corrected from get_public_item_schema
@@ -116,7 +116,7 @@ class CampaignsController extends ApiController {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
-					'permission_callback' => array( $this, 'permissions_check' ),
+					'permission_callback' => array( $this, 'get_item_permissions_check' ),
 					'args'                => array(
 						'context' => $this->get_context_param( array( 'default' => 'view' ) ),
 					),
@@ -124,13 +124,13 @@ class CampaignsController extends ApiController {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_item' ),
-					'permission_callback' => array( $this, 'permissions_check' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
 				),
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_item' ),
-					'permission_callback' => array( $this, 'permissions_check' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => array(
 						'force' => array(
 							'type'        => 'boolean',
@@ -151,35 +151,17 @@ class CampaignsController extends ApiController {
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_items' ),
-					'permission_callback' => array( $this, 'permissions_check' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => $this->get_bulk_update_args(), // <-- Use specific args
 				),
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_items' ),
-					'permission_callback' => array( $this, 'permissions_check' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => $this->get_bulk_delete_args(), // <-- Use specific args
 				),
 			)
 		);
-	}
-
-	/**
-	 * Check if a given request has access to read and manage campaigns.
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 * @return bool|WP_Error True if the request has read access for the item, otherwise false or WP_Error object.
-	 */
-	public function permissions_check( $request ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'Sorry, you are not allowed to manage campaigns.', 'campaignbay' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
-		}
-
-		return true;
 	}
 
 
@@ -204,12 +186,7 @@ class CampaignsController extends ApiController {
 		// Handle Status Filtering
 		$status = $request->get_param( 'status' );
 		if ( ! empty( $status ) && 'all' !== $status ) {
-			// Prepend the custom status prefix if it's not a built-in status
-			if ( ! in_array( $status, array( 'draft', 'publish', 'trash' ), true ) ) {
-				$args['post_status'] = 'campaignbay_' . $status;
-			} else {
-				$args['post_status'] = $status;
-			}
+			$args['post_status'] = 'cb_' . $status;
 		} else {
 			$args['post_status'] = 'any';
 		}

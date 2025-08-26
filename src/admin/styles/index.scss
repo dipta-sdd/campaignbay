@@ -737,6 +737,13 @@
     height: 100%;
     padding: 20px var(--padding-page-x);
     background: #{$cb-color-white};
+    gap: 20px;
+    flex-wrap: wrap;
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+      
+    }
   }
 
   & .cb-page-header-title {
@@ -754,6 +761,10 @@
       font-size: #{$cb-fs-xxl};
       line-height: #{$cb-lh-xxl};
       font-weight: #{$cb-fw-normal};
+      @media (min-width: 768px) {
+        width: max-content;
+        min-width: min-content;
+      }
     }
 
     & .cb-page-header-title-icon {
@@ -775,7 +786,8 @@
     flex-direction: row;
     gap: 16px;
     align-items: center;
-    justify-content: center;
+    justify-content: end;
+    margin-left: auto;
   }
 
   & .cb-page-container {
@@ -1528,6 +1540,12 @@
       width: 100%;
       border-collapse: collapse;
       font-size: #{$cb-fs-lg};
+      & tr:has(input[type="checkbox"]:checked) {
+        background-color: #{$cb-color-body};
+        & td {
+          background-color: #{$cb-color-body};
+        }
+      }
     }
     .campaignbay-table th,
     .campaignbay-table td {

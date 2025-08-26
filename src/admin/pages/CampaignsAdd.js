@@ -312,7 +312,7 @@ const CampaignsAdd = () => {
 
         <div className="cb-form-input-con">
           <label htmlFor="selection-type">
-            {__("SELECT FOR USERS", "campaignbay")} <Required />
+            {__("DISCOUNT TARGET", "campaignbay")} <Required />
           </label>
           <select
             type="text"

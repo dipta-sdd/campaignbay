@@ -49,16 +49,13 @@ class DashboardController extends ApiController {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_dashboard_data' ),
-					'permission_callback' => array( $this, 'permissions_check' ),
+					'permission_callback' => array( $this, 'get_item_permissions_check' ),
 					'args'                => $this->get_collection_params(),
 				),
 			)
 		);
 	}
 
-	public function permissions_check( $request ) {
-		return current_user_can( 'manage_options' );
-	}
 
 	/**
 	 * Main callback to fetch all data for the dashboard.

@@ -385,7 +385,7 @@ const CampaignsEdit = () => {
             </div>
             <div className="cb-form-input-con">
               <label htmlFor="selection-type">
-                {__("SELECT FOR USERS", "campaignbay")} <Required />
+                {__("DISCOUNT TARGET", "campaignbay")} <Required />
               </label>
               <select
                 type="text"
@@ -564,7 +564,15 @@ const CampaignsEdit = () => {
                 </div>
               </div>
             )}
-            <div className="wpab-btn-bottom-con">
+            <div className="wpab-btn-bottom-con campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-4">
+              <button
+                className="wpab-cb-btn wpab-cb-btn-danger "
+                disabled={isDeleting}
+                onClick={handleDeleteCampaign}
+              >
+                <Icon icon={trash} fill="currentColor" />
+                {__("Delete Campaign", "campaignbay")}
+              </button>
               <button
                 className="wpab-cb-btn wpab-cb-btn-primary"
                 onClick={handleSaveCampaign}

@@ -53,16 +53,7 @@ class Activator {
 			);
 		}
 
-		// Environment Check: Is WP-Cron Enabled? ---
-		// The `DISABLE_WP_CRON` constant is usually set in wp-config.php.
-		if ( defined( 'DISABLE_WP_CRON' ) && true === DISABLE_WP_CRON ) {
-			// If WP-Cron is disabled, stop the activation and inform the user.
-			wp_die(
-				esc_html__( 'CampaignBay requires WP-Cron to be enabled in order for its scheduling features to work. The "DISABLE_WP_CRON" constant is currently set to true in your wp-config.php file. Please remove it or set it to false to activate this plugin.', 'campaignbay' ),
-				esc_html__( 'Plugin Activation Error', 'campaignbay' ),
-				array( 'back_link' => true )
-			);
-		}
+		
 		// Set up the default options if they don't exist.
 		if ( ! get_option( CAMPAIGNBAY_OPTION_NAME ) ) {
 			campaignbay_update_options( campaignbay_default_options() );

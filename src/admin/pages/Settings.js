@@ -198,7 +198,7 @@ const Settings = () => {
         <div className="cb-container">
           <h1 className="wpab-cb-page-header-text">
             {" "}
-            {__("CampaignBay Settings", "campaignbay")}
+            {__("Settings", "campaignbay")}
           </h1>
           <button
             className="wpab-cb-btn wpab-cb-btn-primary"

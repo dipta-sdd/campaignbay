@@ -59,27 +59,16 @@ class LogsController extends ApiController {
                 array(
                     'methods'             => WP_REST_Server::READABLE,
                     'callback'            => array( $this, 'get_log_file_contents' ),
-                    'permission_callback' => array( $this, 'permissions_check' ),
+                    'permission_callback' => array( $this, 'get_item_permissions_check' ),
                 ),
                 // --- NEW: Add the DELETE route ---
                 array(
                     'methods'             => WP_REST_Server::DELETABLE,
                     'callback'            => array( $this, 'delete_log_files' ),
-                    'permission_callback' => array( $this, 'permissions_check' ),
+                    'permission_callback' => array( $this, 'update_item_permissions_check' ),
                 ),
             )
         );
-    }
-
-    public function permissions_check( $request ) {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return new WP_Error(
-                'rest_forbidden',
-                __( 'You do not have permission to manage logs.', 'campaignbay' ),
-                array( 'status' => rest_authorization_required_code() )
-            );
-        }
-        return true;
     }
 
 	/**
