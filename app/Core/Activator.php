@@ -40,18 +40,18 @@ class Activator {
 	 */
 	public static function activate() {
 
-		// Dependency Check: Is WooCommerce Active? ---
-		if ( ! class_exists( 'WooCommerce' ) ) {
-			// If the WooCommerce class doesn't exist, stop the activation.
-			wp_die(
-				// The message displayed to the user.
-				esc_html__( 'CampaignBay could not be activated. It requires the WooCommerce plugin to be installed and active.', 'campaignbay' ),
-				// The title of the error page.
-				esc_html__( 'Plugin Activation Error', 'campaignbay' ),
-				// Provides a "Go Back" link.
-				array( 'back_link' => true )
-			);
-		}
+		// // Dependency Check: Is WooCommerce Active? ---
+		// if ( ! class_exists( 'WooCommerce' ) ) {
+		// 	// If the WooCommerce class doesn't exist, stop the activation.
+		// 	wp_die(
+		// 		// The message displayed to the user.
+		// 		esc_html__( 'CampaignBay could not be activated. It requires the WooCommerce plugin to be installed and active.', 'campaignbay' ),
+		// 		// The title of the error page.
+		// 		esc_html__( 'Plugin Activation Error', 'campaignbay' ),
+		// 		// Provides a "Go Back" link.
+		// 		array( 'back_link' => true )
+		// 	);
+		// }
 
 		
 		// Set up the default options if they don't exist.

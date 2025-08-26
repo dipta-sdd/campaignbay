@@ -202,7 +202,8 @@ class Plugin {
 		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'register_settings' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 		$plugin_basename = plugin_basename( CAMPAIGNBAY_PATH . 'campaign-bay.php' );
-		$this->loader->add_filter( 'plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_plugin_links', 10, 4 );
+		$this->loader->add_filter( 'plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_plugin_action_links', 10, 4 );
+		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'add_plugin_row_meta', 10, 2 );
 	}
 
 	/**

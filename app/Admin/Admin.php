@@ -496,9 +496,38 @@ class Admin {
 	 *                              'mustuse', 'dropins', and 'search'.
 	 * @return array settings schema for this plugin.
 	 */
-	public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
+	public function add_plugin_action_links( $actions, $plugin_file, $plugin_data, $context ) {
 		$actions[] = '<a href="' . esc_url( menu_page_url( $this->menu_info['menu_slug'], false ) ) . '">' . esc_html__( 'Settings', 'campaignbay' ) . '</a>';
-		$actions[] = '<a href="' . esc_url( $this->menu_info['docs_uri'] ) . '" target="_blank">' . esc_html__( 'Documentation', 'campaignbay' ) . '</a>';
 		return $actions;
+	}
+
+	/**
+	 * Add plugin row meta links.
+	 *
+	 * These are the links that appear in the second row, next to the version number.
+	 *
+	 * @since 1.0.0
+	 * @param array  $links The existing meta links.
+	 * @param string $file  The plugin file name.
+	 * @return array The modified array of meta links.
+	 */
+	public function add_plugin_row_meta( $links, $file ) {
+		if ( CAMPAIGNBAY_PLUGIN_BASENAME !== $file ) {
+			return $links;
+		}
+		
+		// Get the URLs from your white label settings.
+		$white_label = Common::get_instance()->get_white_label();
+		$docs_url    = $white_label['docs_uri'] ?? '#';
+		$support_url = $white_label['support_uri'] ?? '#';
+
+		// Add the new links.
+		$row_meta = array(
+			'docs'    => '<a href="' . esc_url( $docs_url ) . '" target="_blank">' . esc_html__( 'Docs', 'campaignbay' ) . '</a>',
+			'support' => '<a href="' . esc_url( $support_url ) . '" target="_blank">' . esc_html__( 'Support', 'campaignbay' ) . '</a>',
+			// 'reviews' => '<a href="https://wordpress.org/support/plugin/campaignbay/reviews/" target="_blank">' . esc_html__( 'Reviews', 'campaignbay' ) . '</a>', 
+		);
+
+		return array_merge( $links, $row_meta );
 	}
 }

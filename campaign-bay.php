@@ -5,6 +5,7 @@
  * Description:       CampaignBay for WooCommerce Product Discount WordPress Plugin.
  * Requires at least: 5.8
  * Requires PHP:      7.0
+ * Requires Plugins:  woocommerce
  * Version:           1.0.0
  * Author:            WP Anchor Bay
  * Author URI:        https://wpanchorbay.com
