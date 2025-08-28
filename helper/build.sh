@@ -22,7 +22,7 @@ PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd "$PROJECT_ROOT"
 
 echo -e "\n${YELLOW}⚙️  Step 1: Running the production build command...${NC}"
-echo "    (This will compile your React assets for production)"
+echo "    (Compiling React assets for production)"
 
 # 2. Run the NPM build command from the project root.
 npm run build
@@ -55,6 +55,8 @@ EXCLUDE_PATTERNS=(
     "package.json"
     "package-lock.json"
     "webpack.config.js"
+    "postcss.config.js"
+    "tailwind.config.js"
     ".DS_Store"
     "all_php_code.txt"
     "collector.js"

@@ -67,9 +67,6 @@ class Activator {
 
 		// Secure the log directory.
 		self::secure_log_directory();
-
-		// Add custom capabilities.
-		self::add_custom_capabilities();
 	}
 
 	/**
@@ -113,25 +110,6 @@ class Activator {
 		if ( ! file_exists( $index_file ) ) {
 			$index_content = "<?php\n// Silence is golden.\n";
 			file_put_contents( $index_file, $index_content ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
-		}
-	}
-
-	/**
-	 * Adds custom capabilities to the Administrator role.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private static function add_custom_capabilities() {
-		// Get the roles we want to modify.
-		$admin_role       = get_role( 'administrator' );
-
-		// The new capability we are creating.
-		$custom_capability = 'manage_campaignbay';
-
-		// Add the capability to the Administrator role if it exists.
-		if ( $admin_role ) {
-			$admin_role->add_cap( $custom_capability );
 		}
 	}
 }

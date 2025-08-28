@@ -37,30 +37,6 @@ class Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-		self::remove_custom_capabilities();
-	}
 
-	/**
-	 * Removes the custom plugin capabilities from all roles.
-	 *
-	 * This is a cleanup best practice to ensure no orphaned capabilities are
-	 * left in the database after the plugin is deactivated.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private static function remove_custom_capabilities() {
-		// Get all editable roles.
-		$roles = get_editable_roles();
-		
-		$custom_capability = 'manage_campaignbay';
-
-		// Loop through all roles and remove our capability if it exists.
-		foreach ( $roles as $role_name => $role_info ) {
-			$role = get_role( $role_name );
-			if ( $role && $role->has_cap( $custom_capability ) ) {
-				$role->remove_cap( $custom_capability );
-			}
-		}
 	}
 } 

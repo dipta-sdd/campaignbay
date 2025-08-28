@@ -103,7 +103,7 @@ const LogViewerModal = ({
     <Modal
       title="Debug Log Viewer"
       onRequestClose={closeModal}
-      className="wpab-cb-log-viewer-modal campaignbay-w-[90vw] md:campaignbay-w-[80vw] lg:campaignbay-w-[70vw] campaignbay-max-w-5xl campaignbay-overflow-y-auto"
+      className="wpab-cb-log-viewer-modal campaignbay-w-[90vw] md:campaignbay-w-[80vw] lg:campaignbay-w-[70vw] campaignbay-max-w-5xl campaignbay-rounded-none"
     >
       {/* Header section with the date selector and action buttons */}
       <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-mb-4 campaignbay-pb-4 campaignbay-border-b campaignbay-border-gray-200 campaignbay-gap-4">
@@ -155,7 +155,7 @@ const LogViewerModal = ({
       </div>
 
       {/* Log content display */}
-      <pre className="campaignbay-p-4 campaignbay-bg-gray-50 campaignbay-border campaignbay-border-gray-200 campaignbay-rounded-md campaignbay-overflow-auto campaignbay-text-xs campaignbay-h-[60vh]">
+      <pre className="campaignbay-p-4 campaignbay-bg-gray-50 campaignbay-border campaignbay-border-gray-200 campaignbay-overflow-auto campaignbay-text-xs campaignbay-h-[50vh] campaignbay-scrollbar">
         {isLoading ? <Spinner /> : logContent}
       </pre>
 
