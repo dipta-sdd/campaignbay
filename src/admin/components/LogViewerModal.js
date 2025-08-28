@@ -2,41 +2,50 @@ import { useState, useEffect, useCallback } from "@wordpress/element";
 import { Modal, Spinner, Button, ButtonGroup } from "@wordpress/components";
 import apiFetch from "@wordpress/api-fetch";
 
-/**
- * A self-contained modal component for fetching and displaying debug logs.
- *
- * @param {object} props                  Component props.
- * @param {boolean} props.isLogModalOpen         Whether the modal is currently open.
- * @param {Function} props.setIsLogModalOpen      Function to set the modal's open state.
- * @param {boolean} props.isClearingLogs       Whether the clearing action is in progress.
- * @param {Function} props.handleClearLogs      The function to call to clear the logs.
- */
 const LogViewerModal = ({
   isLogModalOpen,
   setIsLogModalOpen,
   isClearingLogs,
   handleClearLogs,
 }) => {
+  const [availableDates, setAvailableDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("today");
   const [logContent, setLogContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * A memoized function to fetch logs from the API.
-   * useCallback ensures the function reference doesn't change on every render.
-   */
+  const fetchAvailableDates = useCallback(async () => {
+    try {
+      const dates = await apiFetch({ path: "/campaignbay/v1/logs/list" });
+      setAvailableDates(dates || []);
+    } catch (error) {
+      console.error("Error fetching log dates:", error);
+      setAvailableDates([]);
+    }
+  }, []);
+
   const fetchLogs = useCallback(async () => {
     setIsLoading(true);
+    let path = "/campaignbay/v1/logs";
+    if (selectedDate !== "today") {
+      path = `/campaignbay/v1/logs/${selectedDate}`;
+    }
     try {
-      const response = await apiFetch({ path: "/campaignbay/v1/logs" });
-      setLogContent(response.log_content || "No logs recorded for today.");
+      const response = await apiFetch({ path });
+      setLogContent(
+        response.log_content || `No logs found for ${selectedDate}.`
+      );
     } catch (error) {
       setLogContent(`Error fetching logs: ${error.message}`);
-      console.error("Log fetch error:", error);
     }
     setIsLoading(false);
-  }, []); // Empty dependency array means this function is created only once.
+  }, [selectedDate]);
 
-  // This effect runs whenever the modal is opened.
+  useEffect(() => {
+    if (isLogModalOpen) {
+      fetchAvailableDates();
+    }
+  }, [isLogModalOpen, fetchAvailableDates]);
+
   useEffect(() => {
     if (isLogModalOpen) {
       fetchLogs();
@@ -47,18 +56,43 @@ const LogViewerModal = ({
     setIsLogModalOpen(false);
   };
 
-  /**
-   * A new handler that calls the parent's clearing function
-   * and then refetches the logs to update the view.
-   */
   const onClearLogsClick = async () => {
-    // The handleClearLogs function from the parent will show the confirmation.
     const success = await handleClearLogs();
-
-    // If the parent function returns true (indicating success), refetch the logs.
     if (success) {
+      setSelectedDate("today");
+      fetchAvailableDates();
       fetchLogs();
     }
+  };
+
+  /**
+   * --- NEW: Handler for the Download button ---
+   * Creates a temporary link to download the current log content as a .log file.
+   */
+  const handleDownloadLog = () => {
+    // Determine the filename.
+    const dateStr =
+      selectedDate === "today"
+        ? new Date().toISOString().slice(0, 10)
+        : selectedDate;
+    const filename = `campaignbay-log-${dateStr}.log`;
+
+    // Create a Blob (Binary Large Object) from the log content.
+    const blob = new Blob([logContent], { type: "text/plain" });
+
+    // Create a temporary URL for the Blob.
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary anchor element to trigger the download.
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a); // Append to the DOM to make it clickable.
+    a.click();
+
+    // Clean up by removing the temporary element and revoking the URL.
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   if (!isLogModalOpen) {
@@ -67,18 +101,47 @@ const LogViewerModal = ({
 
   return (
     <Modal
-      title="Today's Debug Log"
+      title="Debug Log Viewer"
       onRequestClose={closeModal}
-      className="wpab-cb-log-viewer-modal"
+      className="wpab-cb-log-viewer-modal campaignbay-w-[90vw] md:campaignbay-w-[80vw] lg:campaignbay-w-[70vw] campaignbay-max-w-5xl campaignbay-overflow-y-auto"
     >
-      <div className="wpab-cb-log-modal-footer">
-        <ButtonGroup>
+      {/* Header section with the date selector and action buttons */}
+      <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-mb-4 campaignbay-pb-4 campaignbay-border-b campaignbay-border-gray-200 campaignbay-gap-4">
+        <div className="campaignbay-inline-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-4">
+          <label
+            htmlFor="log-date-selector"
+            className="campaignbay-text-sm campaignbay-font-medium campaignbay-text-gray-700"
+          >
+            Select Log Date
+          </label>
+          <select
+            id="log-date-selector"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="campaignbay-mt-1 campaignbay-block campaignbay-w-full md:campaignbay-w-auto campaignbay-pl-3 campaignbay-pr-10 campaignbay-py-2 campaignbay-text-base campaignbay-border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:campaignbay-text-sm campaignbay-rounded-md"
+          >
+            <option value="today">Today</option>
+            {availableDates.map((date) => (
+              <option key={date} value={date}>
+                {date}
+              </option>
+            ))}
+          </select>
+        </div>
+        {/* Your refined header with all buttons */}
+        <div className="campaignbay-inline-flex campaignbay-justify-end campaignbay-gap-3">
+          <Button variant="secondary" onClick={fetchLogs} isBusy={isLoading}>
+            Refresh
+          </Button>
+          {/* --- NEW: Download Button --- */}
           <Button
             variant="secondary"
-            onClick={fetchLogs}
-            isBusy={isLoading} // Show spinner when refreshing
+            onClick={handleDownloadLog}
+            disabled={
+              isLoading || !logContent || logContent.startsWith("No logs")
+            }
           >
-            Refresh
+            Download
           </Button>
           <Button
             variant="secondary"
@@ -88,32 +151,15 @@ const LogViewerModal = ({
           >
             Clear Log Files
           </Button>
-        </ButtonGroup>
+        </div>
       </div>
-      <pre className="wpab-cb-log-content">
+
+      {/* Log content display */}
+      <pre className="campaignbay-p-4 campaignbay-bg-gray-50 campaignbay-border campaignbay-border-gray-200 campaignbay-rounded-md campaignbay-overflow-auto campaignbay-text-xs campaignbay-h-[60vh]">
         {isLoading ? <Spinner /> : logContent}
       </pre>
 
-      {/* Add a footer with the clear button */}
-      {/* <div className="wpab-cb-log-modal-footer">
-        <ButtonGroup>
-          <Button
-            variant="secondary"
-            onClick={fetchLogs}
-            isBusy={isLoading} // Show spinner when refreshing
-          >
-            Refresh
-          </Button>
-          <Button
-            variant="secondary"
-            isDestructive
-            onClick={onClearLogsClick}
-            isBusy={isClearingLogs}
-          >
-            Clear Log Files
-          </Button>
-        </ButtonGroup>
-      </div> */}
+      {/* The footer section is now removed as the buttons are in the header. */}
     </Modal>
   );
 };

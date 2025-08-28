@@ -9,8 +9,8 @@
  * Version:           1.0.0
  * Author:            WP Anchor Bay
  * Author URI:        https://wpanchorbay.com
- * License:           MIT
- * License URI:       MIT
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       campaignbay
  * Domain Path:       /languages
  */

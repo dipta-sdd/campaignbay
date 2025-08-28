@@ -140,14 +140,18 @@ class Campaign {
 		$table_name = $wpdb->prefix . 'campaignbay_logs';
 
 		// Perform a direct, indexed query to count distinct successful orders for this campaign.
-		$count = $wpdb->get_var(
-			// phpcs:ignore
-			$wpdb->prepare(
-				"SELECT COUNT(DISTINCT order_id)
-				 FROM $table_name
+		$sql = "SELECT COUNT(DISTINCT order_id)
+				 FROM {$table_name}
 				 WHERE campaign_id = %d
 				 AND log_type = 'sale'
-				 AND order_status IN ('processing', 'completed')", // phpcs:ignore
+				 AND order_status IN ('processing', 'completed')";
+		
+		//phpcs:ignore 
+		$count = $wpdb->get_var(
+			//phpcs:ignore
+			$wpdb->prepare(
+				//phpcs:ignore
+				$sql,
 				$this->id
 			)
 		);

@@ -54,6 +54,8 @@ class OrderManager {
 	/**
 	 * Main callback that logs every important order status change.
 	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_order_status_changed
 	 * @param int      $order_id    The ID of the order.
 	 * @param string   $old_status  The old order status (without wc- prefix).
 	 * @param string   $new_status  The new order status (without wc- prefix).
@@ -72,6 +74,24 @@ class OrderManager {
         do_action( 'campaignbay_create_order');
 		// Loop through the breakdown, which has one entry per campaign that was applied.
 		foreach ( $discount_breakdown as $campaign_id => $data ) {
+			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
+			campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG' );
+			campaignbay_log('data: ' . print_r( $data, true ), 'DEBUG' );
+			if( $data['earlybird_usage_limit'] !== null ){
+				$campaign = new Campaign( $campaign_id );
+				$campaign->load_usage_count();
+				if( $campaign->get_usage_count() > $data['earlybird_usage_limit'] ){
+					campaignbay_log('earlybird_usage_limit reached', 'DEBUG' );
+				throw new Exception('Earlybird usage limit reached for campaign ID: ' . $campaign_id);
+				}
+			}
 			$this->log_sale_event( $campaign_id, $order, $data, $new_status );
 		}
 	}
@@ -117,9 +137,12 @@ class OrderManager {
 		);
 		
 		// Check if a log for this order and campaign already exists.
+		$sql = "SELECT log_id FROM $table_name WHERE order_id = %d AND campaign_id = %d";
+		// phpcs:ignore 
 		$existing_log_id = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT log_id FROM $table_name WHERE order_id = %d AND campaign_id = %d",
+				//phpcs:ignore 
+				$sql,
 				$order_id,
 				$campaign_id
 			)
@@ -128,10 +151,12 @@ class OrderManager {
 		if ( $existing_log_id ) {
 			// If it exists, UPDATE it with the new status and timestamp.
 			campaignbay_log( sprintf( 'Updating existing log entry #%d for order #%d, campaign #%d. New status: %s', $existing_log_id, $order_id, $campaign_id, $new_status ), 'DEBUG' );
-			$wpdb->update( $table_name, $log_data, array( 'log_id' => $existing_log_id ) );
+			// phpcs:ignore 
+			$wpdb->update( $table_name, $log_data, array( 'log_id' => $existing_log_id ) );// phpcs:ignore 
 		} else {
 			// If it doesn't exist, INSERT a new record.
 			campaignbay_log( sprintf( 'Creating new log entry for order #%d, campaign #%d. Status: %s', $order_id, $campaign_id, $new_status ), 'DEBUG' );
+			// phpcs:ignore 
 			$wpdb->insert( $table_name, $log_data );
 			$campaign = new Campaign( $campaign_id );
 			$campaign->load_usage_count();

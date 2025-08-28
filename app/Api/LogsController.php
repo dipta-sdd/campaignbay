@@ -39,14 +39,90 @@ class LogsController extends ApiController {
 
 	/**
 	 * Initialize the class.
+     * @since 1.0.0
 	 */
 	public function run() {
 		$this->rest_base = 'logs';
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+
+        add_action( 'admin_init', array( $this, 'run_log_cleanup_check' ) );
+	}
+
+
+    /**
+	 * Checks if it's time to run the log cleanup task.
+	 *
+	 * This method is hooked to `admin_init` and uses a transient to ensure
+	 * the actual cleanup logic only runs once per day.
+	 *
+	 * @since 1.0.0
+	 */
+	public function run_log_cleanup_check() {
+		// The transient acts as a "lock" to prevent this from running on every page load.
+		if ( get_transient( CAMPAIGNBAY_TEXT_DOMAIN . '_log_cleanup_check' ) ) {
+			return;
+		}
+
+		// If the transient doesn't exist, it's time to run our cleanup.
+		// We immediately set the transient to "lock" it for the next 24 hours.
+		set_transient( CAMPAIGNBAY_TEXT_DOMAIN . '_log_cleanup_check', true, DAY_IN_SECONDS );
+		
+		// Call the actual cleanup logic.
+		$this->cleanup_old_log_files();
+	}
+
+    /**
+	 * Cleans up log files older than a specified number of days.
+	 * This method is now triggered by our transient-based check.
+	 *
+	 * @since 1.0.0
+	 */
+	public function cleanup_old_log_files() {
+		campaignbay_log( 'Running daily log file cleanup task.', 'INFO' );
+
+		$upload_dir = wp_upload_dir();
+		$log_dir    = $upload_dir['basedir'] . '/' . CAMPAIGNBAY_TEXT_DOMAIN . '-logs/';
+
+		if ( ! is_dir( $log_dir ) ) {
+			return; // Nothing to do if the directory doesn't exist.
+		}
+
+		$wp_filesystem = campaignbay_file_system();
+		$files         = $wp_filesystem->dirlist( $log_dir );
+		$deleted_count = 0;
+		
+		// Define the retention period.
+		$days_to_keep = apply_filters( CAMPAIGNBAY_TEXT_DOMAIN . '_log_retention_days', 7 );
+		// Calculate the cutoff timestamp. Any file older than this will be deleted.
+		$cutoff_timestamp = time() - ( $days_to_keep * DAY_IN_SECONDS );
+
+		if ( ! empty( $files ) ) {
+			foreach ( $files as $file ) {
+				// Security: Only process files that end with .log
+				if ( '.log' !== substr( $file['name'], -4 ) ) {
+					continue;
+				}
+
+				$file_path = $log_dir . $file['name'];
+				
+				// Check the file's last modified time.
+				if ( $wp_filesystem->mtime( $file_path ) < $cutoff_timestamp ) {
+					if ( $wp_filesystem->delete( $file_path ) ) {
+						$deleted_count++;
+						campaignbay_log( sprintf( 'Deleted old log file: %s', $file['name'] ), 'DEBUG' );
+					} else {
+						campaignbay_log( sprintf( 'Failed to delete old log file: %s', $file['name'] ), 'ERROR' );
+					}
+				}
+			}
+		}
+
+		campaignbay_log( sprintf( 'Log cleanup complete. Deleted %d file(s).', $deleted_count ), 'INFO' );
 	}
 
 	/**
 	 * Register the routes for the objects of the controller.
+     * @since 1.0.0
 	 */
 	public function register_routes() {
         $namespace = $this->namespace . $this->version;
@@ -55,13 +131,11 @@ class LogsController extends ApiController {
             $namespace,
             '/' . $this->rest_base,
             array(
-                // This is your existing GET route for viewing logs.
                 array(
                     'methods'             => WP_REST_Server::READABLE,
-                    'callback'            => array( $this, 'get_log_file_contents' ),
+                    'callback'            => array( $this, 'get_todays_log' ),
                     'permission_callback' => array( $this, 'get_item_permissions_check' ),
                 ),
-                // --- NEW: Add the DELETE route ---
                 array(
                     'methods'             => WP_REST_Server::DELETABLE,
                     'callback'            => array( $this, 'delete_log_files' ),
@@ -69,46 +143,124 @@ class LogsController extends ApiController {
                 ),
             )
         );
+
+        // Route to get a list of all available log files.
+        register_rest_route(
+            $namespace,
+            '/' . $this->rest_base . '/list',
+            array(
+                array(
+                    'methods'             => WP_REST_Server::READABLE,
+                    'callback'            => array( $this, 'get_available_log_files' ),
+                    'permission_callback' => array( $this, 'get_item_permissions_check' ),
+                ),
+            )
+        );
+
+        // Route to get a specific log file by days ago
+        register_rest_route(
+            $namespace,
+            '/' . $this->rest_base . '/(?P<date>[\d]{4}-[\d]{2}-[\d]{2})',
+            array(
+                'args' => array(
+                    'date' => array(
+                        'description' => __( 'The date of the log file in YYYY-MM-DD format.', 'campaignbay' ),
+                        'type'        => 'string',
+                        'required'    => true,
+                    ),
+                ),
+                array(
+                    'methods'             => WP_REST_Server::READABLE,
+                    'callback'            => array( $this, 'get_log_by_date' ),
+                    'permission_callback' => array( $this, 'get_item_permissions_check' ),
+                ),
+            )
+        );
     }
 
-	/**
-	 * Get the contents of today's log file.
+    /**
+	 * Get the contents of a log file from a specific number of days ago.
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_log_file_contents( $request ) {
+	public function get_log_by_date( $request ) {
+		$date = $request->get_param( 'date' );
+
+		// Calculate the target date string based on the integer.
+		$target_date = $date;
+		
 		$upload_dir = wp_upload_dir();
 		$log_dir    = $upload_dir['basedir'] . '/' . CAMPAIGNBAY_TEXT_DOMAIN . '-logs/';
+		$log_file   = $log_dir . 'plugin-log-' . $target_date . '.log';
+
+		return $this->read_and_respond_with_log_content( $log_file, sprintf( __( 'No logs found for %d day(s) ago.', 'campaignbay' ), $days_ago ) );
+	}
+
+	/**
+	 * Get the contents of TODAY's log file.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_todays_log( $request ) {
+		$upload_dir = wp_upload_dir();
+		$log_dir    = $upload_dir['basedir'] . '/' . CAMPAIGNBAY_TEXT_DOMAIN . '-logs/';
+		// Use gmdate() to always get the UTC date for today.
 		$log_file   = $log_dir . 'plugin-log-' . gmdate( 'Y-m-d' ) . '.log';
 
-		if ( file_exists( $log_file ) ) {
-			// Get the file system object.
+		return $this->read_and_respond_with_log_content( $log_file, __( 'No logs recorded for today.', 'campaignbay' ) );
+	}
+
+	/**
+	 * Get a list of all available log file dates.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response
+	 */
+	public function get_available_log_files( $request ) {
+		$upload_dir = wp_upload_dir();
+		$log_dir    = $upload_dir['basedir'] . '/' . CAMPAIGNBAY_TEXT_DOMAIN . '-logs/';
+		$log_dates  = array();
+
+		if ( is_dir( $log_dir ) ) {
+			$files = scandir( $log_dir, SCANDIR_SORT_DESCENDING ); // Sort newest first.
+			foreach ( $files as $file ) {
+				if ( preg_match( '/plugin-log-(\d{4}-\d{2}-\d{2})\.log/', $file, $matches ) ) {
+					$log_dates[] = $matches[1]; // Extract the YYYY-MM-DD part.
+				}
+			}
+		}
+		
+		return new WP_REST_Response( $log_dates, 200 );
+	}
+
+	/**
+	 * A reusable helper function to read a log file and return a REST response.
+	 *
+	 * @param string $log_file_path The full path to the log file.
+	 * @param string $not_found_message The message to return if the file doesn't exist.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	private function read_and_respond_with_log_content( $log_file_path, $not_found_message ) {
+		if ( file_exists( $log_file_path ) ) {
 			$wp_filesystem = campaignbay_file_system();
-			$contents      = $wp_filesystem->get_contents( $log_file );
+			$contents      = $wp_filesystem->get_contents( $log_file_path );
 
 			if ( false === $contents ) {
-				return new WP_Error(
-					'rest_log_read_error',
-					__( 'Could not read the log file. Check file permissions.', 'campaignbay' ),
-					array( 'status' => 500 )
-				);
+				return new WP_Error( 'rest_log_read_error', __( 'Could not read the log file.', 'campaignbay' ), array( 'status' => 500 ) );
 			}
 
-			// Reverse the lines so the newest entries appear at the top.
-			$lines = explode( "\n", $contents );
-			$reversed_lines = array_reverse($lines);
-			$reversed_contents = implode("\n", $reversed_lines);
+			$lines             = explode( "\n", $contents );
+			$reversed_lines    = array_reverse( $lines );
+			$reversed_contents = implode( "\n", $reversed_lines );
 
-			$response = array( 'log_content' => $reversed_contents );
-			return new WP_REST_Response( $response, 200 );
-
+			return new WP_REST_Response( array( 'log_content' => $reversed_contents ), 200 );
 		} else {
-			// If the file doesn't exist for today, it's not an error.
-			$response = array( 'log_content' => __( 'No logs recorded for today.', 'campaignbay' ) );
-			return new WP_REST_Response( $response, 200 );
+			return new WP_REST_Response( array( 'log_content' => $not_found_message ), 200 );
 		}
 	}
+
 
     public function delete_log_files( $request ) {
         $upload_dir = wp_upload_dir();

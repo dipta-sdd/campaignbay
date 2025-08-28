@@ -431,9 +431,7 @@ class PricingEngine {
 					if( (int) $tier['min']  > $quantity ){
 						$next_tier = $tier;
 						$next_tier_price = $this->calculate_tier_price( $next_tier, $base_price );
-						// if( $next_tier_price < $simple_price ){
-						// 	break;
-						// }
+						
 						break;
 					}
 					if ( (int) $tier['min'] <= $quantity ) {
@@ -508,6 +506,7 @@ class PricingEngine {
 							'title'    => $discount_data['discounts']['simple']['campaign_title'],
 							'total_old_price' => 0,
 							'total_new_price' => 0,
+							'earlybird_usage_limit' => $discount_data['discounts']['simple']['earlybird_usage_limit'],
 						);
 					}
 					$cart->campaignbay_discount_breakdown[ $campaign_id ]['total_old_price'] += (float) $discount_data['base_price'] * (float) $quantity;
@@ -524,6 +523,7 @@ class PricingEngine {
 						'title'    => $discount_data['discounts']['simple']['campaign_title'],
 						'total_old_price' => 0,
 						'total_new_price' => 0,
+						'earlybird_usage_limit' => $discount_data['discounts']['simple']['earlybird_usage_limit'],
 					);
 				}
 				$cart->campaignbay_discount_breakdown[ $campaign_id ]['total_old_price'] += (float) $discount_data['base_price'] * (float) $quantity;
@@ -541,6 +541,7 @@ class PricingEngine {
 				campaignbay_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
 				campaignbay_log('price: ' . $product->get_price(), 'DEBUG' );
 				campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG' );
+				campaignbay_log('earlybird_usage_limit: ' . $discount_data['discounts']['simple']['earlybird_usage_limit'], 'DEBUG' );
 			}
 			
 		}
@@ -1026,6 +1027,7 @@ class PricingEngine {
 				$type_data['discount_type'] = $campaign->get_meta('discount_type');
 
 			}elseif( 'earlybird' === $campaign_type ){
+				$earlybird_usage_limit = null;
 				$tiers = $campaign->get_meta( 'campaign_tiers' );
 				if ( ! is_array( $tiers ) || empty( $tiers ) ) {
 					continue;
@@ -1048,17 +1050,17 @@ class PricingEngine {
 					}
 					if ( $usage_count < $tier_max ) {
 						$current_tier = $tier;
+						$earlybird_usage_limit = $tier_max;
 						break; // Found the correct tier, no need to search further.
 					}
 				}
-				campaignbay_log('current_tier: ' . print_r($current_tier, true), 'DEBUG' );
 				// If a valid tier was found, calculate the price for it.
 				if ( !$current_tier ) {
 					continue;
 				}
 				$discounted_price = $this->calculate_tier_price( $current_tier, $base_price );
 				$type_data['tiers'] = $tiers; // Still pass all tiers for potential notices.
-				
+				$type_data['earlybird_usage_limit'] = $earlybird_usage_limit;
 			}
 
 			if( $discounted_price === null ){

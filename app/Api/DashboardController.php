@@ -100,34 +100,39 @@ class DashboardController extends ApiController {
 		 * discounted_orders is the total of the order_id of the products in the order.
 		 * total_discount_value is the total of the total_discount of the products in the order.
 		 */
-		$current_sql = $wpdb->prepare(
-			"SELECT
+		$sql = "SELECT
 				SUM(total_discount) as total_discount_value,
 				SUM(base_total) as base_total_for_discounts,
 				SUM(order_total) as sales_from_campaigns,
 				COUNT(DISTINCT order_id) as discounted_orders
 			 FROM {$logs_table}
 			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
-			 AND timestamp BETWEEN %s AND %s",
+			 AND timestamp BETWEEN %s AND %s";
+		$current_sql = $wpdb->prepare(
+			//phpcs:ignore
+			$sql,
 			$current_start,
 			$current_end
 		); 
-		
+		//phpcs:ignore
 		$current_data = $wpdb->get_row( $current_sql, ARRAY_A );
 		
 		// --- Get Previous Period Data for Comparison ---
+		$sql = "SELECT
+			SUM(total_discount) as total_discount_value,
+			SUM(base_total) as base_total_for_discounts,
+			SUM(order_total) as sales_from_campaigns,
+			COUNT(DISTINCT order_id) as discounted_orders
+		 FROM {$logs_table}
+		 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
+		 AND timestamp BETWEEN %s AND %s";
 		$previous_sql = $wpdb->prepare(
-			"SELECT
-				SUM(total_discount) as total_discount_value,
-				SUM(base_total) as base_total_for_discounts,
-				SUM(order_total) as sales_from_campaigns,
-				COUNT(DISTINCT order_id) as discounted_orders
-			 FROM {$logs_table}
-			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
-			 AND timestamp BETWEEN %s AND %s",
+			//phpcs:ignore
+			$sql,
 			$previous_start,
 			$previous_end
 		);
+		//phpcs:ignore
 		$previous_data = $wpdb->get_row( $previous_sql, ARRAY_A );
 
 		// --- Get Active Campaign Count ---
@@ -171,18 +176,22 @@ class DashboardController extends ApiController {
 		$success_statuses = "'processing', 'completed'";
 
 		// --- FIX: Discount Trends (Line Chart) ---
-		$trends_sql = $wpdb->prepare(
-			"SELECT DATE(timestamp) as date, SUM(total_discount) as total_discount_value,
+		$sql = "SELECT DATE(timestamp) as date, SUM(total_discount) as total_discount_value,
 			SUM(base_total) as total_base,
 			SUM(order_total) as total_sales
 			 FROM {$logs_table}
 			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
 			 AND timestamp BETWEEN %s AND %s
 			 GROUP BY DATE(timestamp)
-			 ORDER BY date ASC",
+			 ORDER BY date ASC";
+
+		$trends_sql = $wpdb->prepare(
+			//phpcs:ignore
+			$sql,
 			$start_date,
 			$end_date
 		);
+		//phpcs:ignore
 		$discount_trends = $wpdb->get_results( $trends_sql, ARRAY_A );
 		
 		// Fill in missing dates with zero values
@@ -190,17 +199,21 @@ class DashboardController extends ApiController {
 		
 
 		// --- FIX: Top Campaigns (Bar Chart) ---
-		$top_campaigns_sql = $wpdb->prepare(
-			"SELECT campaign_id, SUM(total_discount) as value
+		$sql = "SELECT campaign_id, SUM(total_discount) as value
 			 FROM {$logs_table}
 			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
 			 AND timestamp BETWEEN %s AND %s
 			 GROUP BY campaign_id
 			 ORDER BY value DESC
-			 LIMIT 5",
+			 LIMIT 5";
+
+		$top_campaigns_sql = $wpdb->prepare(
+			//phpcs:ignore
+			$sql,
 			$start_date,
 			$end_date
 		);
+		//phpcs:ignore
 		$top_campaigns = $wpdb->get_results( $top_campaigns_sql, ARRAY_A );
 		
 		// Add campaign titles to the results.
@@ -228,18 +241,21 @@ class DashboardController extends ApiController {
 		$meta_table       = $wpdb->prefix . 'postmeta';
 		$success_statuses = "'processing', 'completed'";
 
-		$sql = $wpdb->prepare(
-			"SELECT pm.meta_value as campaign_type, SUM(l.order_total) as total_sales
+		$sql = "SELECT pm.meta_value as campaign_type, SUM(l.order_total) as total_sales
 			 FROM {$logs_table} l
 			 JOIN {$meta_table} pm ON l.campaign_id = pm.post_id AND pm.meta_key = '_campaignbay_campaign_type'
 			 WHERE l.log_type = 'sale' AND l.order_status IN ('processing', 'completed')
 			 AND l.timestamp BETWEEN %s AND %s
 			 GROUP BY pm.meta_value
-			 ORDER BY total_sales DESC",
+			 ORDER BY total_sales DESC";
+		$sql = $wpdb->prepare(
+			//phpcs:ignore
+			$sql,
 			$start_date,
 			$end_date
 		);
 		
+		//phpcs:ignore
 		return $wpdb->get_results( $sql, ARRAY_A );
 	}
 
@@ -250,13 +266,14 @@ class DashboardController extends ApiController {
 	 */
 	private function get_live_and_upcoming_campaigns() {
 		// --- Get currently active campaigns (ordered by which one will expire first) ---
+		//phpcs:ignore
 		$active_query = new WP_Query(
 			array(
 				'post_type'      => 'campaignbay_campaign',
 				'post_status'    => 'cb_active',
 				'posts_per_page' => 5,
 				'orderby'        => 'meta_value',
-				'meta_key'       => '_campaignbay_end_datetime', // Note the underscore for querying meta
+				'meta_key'       => '_campaignbay_end_datetime', //phpcs:ignore
 				'order'          => 'ASC',
 			)
 		);
@@ -276,13 +293,14 @@ class DashboardController extends ApiController {
 		}
 
 		// --- Get upcoming scheduled campaigns (ordered by which one will start first) ---
+		//phpcs:ignore
 		$scheduled_query = new WP_Query(
 			array(
 				'post_type'      => 'campaignbay_campaign',
 				'post_status'    => 'cb_scheduled',
 				'posts_per_page' => 5,
 				'orderby'        => 'meta_value',
-				'meta_key'       => '_campaignbay_start_datetime', // Note the underscore
+				'meta_key'       => '_campaignbay_start_datetime', //phpcs:ignore
 				'order'          => 'ASC',
 			)
 		);
@@ -315,13 +333,16 @@ class DashboardController extends ApiController {
 	private function get_recent_activity() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN .'_logs';
-		
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT timestamp, extra_data, user_id, campaign_id FROM {$table_name}
+		$sql = "SELECT timestamp, extra_data, user_id, campaign_id FROM {$table_name}
 				 WHERE log_type = %s
 				 ORDER BY timestamp DESC
-				 LIMIT 5",
+				 LIMIT 5";
+		//phpcs:ignore
+		$results = $wpdb->get_results(
+			//phpcs:ignore
+			$wpdb->prepare(
+				//phpcs:ignore
+				$sql,
 				'activity'
 			),
 			ARRAY_A

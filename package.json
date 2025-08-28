@@ -12,7 +12,7 @@
     "make-json": "wp i18n make-json languages --no-purge && node helper/rename-translations.js"
   },
   "author": "sankarsan das",
-  "license": "ISC",
+  "license": "GPLv2 or later",
   "devDependencies": {
     "@wordpress/babel-plugin-makepot": "^6.26.0",
     "@wordpress/scripts": "^30.19.0",

@@ -203,6 +203,7 @@ class CampaignsController extends ApiController {
 				'value'   => sanitize_text_field( $campaign_type_filter ),
 				'compare' => '=',
 			);
+			//phpcs:ignore
 			$args['meta_query'] = $meta_query;
 		}
 

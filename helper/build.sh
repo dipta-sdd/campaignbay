@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# A robust script to build the production-ready zip file for the CampaignBay plugin.
-# It provides a tree-like preview of the zip contents for verification.
-# This script is designed to be run from within a 'helper/' subdirectory.
-
 # --- Configuration ---
 # The main slug for your plugin. This should match your main directory name.
 PLUGIN_SLUG="campaignbay"
@@ -62,6 +58,7 @@ EXCLUDE_PATTERNS=(
     ".DS_Store"
     "all_php_code.txt"
     "collector.js"
+    "tests.md"
 )
 
 # 5. Check if the 'tree' command is available.

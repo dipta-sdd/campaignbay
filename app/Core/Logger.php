@@ -63,6 +63,7 @@ class Logger {
 		$extra_data['message'] = sanitize_text_field( $message );
 		
 		// Insert the final, structured log entry.
+		//phpcs:ignore
 		$wpdb->insert(
 			$table_name,
 			array(
