@@ -510,8 +510,10 @@ class PricingEngine {
 							'title'    => $discount_data['discounts']['simple']['campaign_title'],
 							'total_old_price' => 0,
 							'total_new_price' => 0,
-							'earlybird_usage_limit' => $discount_data['discounts']['simple']['earlybird_usage_limit'],
 						);
+						if( isset( $discount_data['discounts']['simple']['earlybird_usage_limit'] ) ) {
+							$cart->campaignbay_discount_breakdown[ $campaign_id ]['earlybird_usage_limit'] = $discount_data['discounts']['simple']['earlybird_usage_limit'];
+						}
 					}
 					$cart->campaignbay_discount_breakdown[ $campaign_id ]['total_old_price'] += (float) $discount_data['base_price'] * (float) $quantity;
 					$cart->campaignbay_discount_breakdown[ $campaign_id ]['total_new_price'] += (float) $discount_data['discounts']['simple']['price'] * (float) $quantity;
@@ -527,8 +529,10 @@ class PricingEngine {
 						'title'    => $discount_data['discounts']['simple']['campaign_title'],
 						'total_old_price' => 0,
 						'total_new_price' => 0,
-						'earlybird_usage_limit' => $discount_data['discounts']['simple']['earlybird_usage_limit'],
 					);
+					if( isset( $discount_data['discounts']['simple']['earlybird_usage_limit'] ) ) {
+						$cart->campaignbay_discount_breakdown[ $campaign_id ]['earlybird_usage_limit'] = $discount_data['discounts']['simple']['earlybird_usage_limit'];
+					}
 				}
 				$cart->campaignbay_discount_breakdown[ $campaign_id ]['total_old_price'] += (float) $discount_data['base_price'] * (float) $quantity;
 				$cart->campaignbay_discount_breakdown[ $campaign_id ]['total_new_price'] += (float) $discount_data['discounts']['simple']['price'] * (float) $quantity;
@@ -545,7 +549,9 @@ class PricingEngine {
 				campaignbay_log('best_price: ' . $discount_data['discounts']['best_price'], 'DEBUG' );
 				campaignbay_log('price: ' . $product->get_price(), 'DEBUG' );
 				campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG' );
-				campaignbay_log('earlybird_usage_limit: ' . $discount_data['discounts']['simple']['earlybird_usage_limit'], 'DEBUG' );
+				if( isset( $discount_data['discounts']['simple']['earlybird_usage_limit'] ) ) {
+					campaignbay_log('earlybird_usage_limit: ' . $discount_data['discounts']['simple']['earlybird_usage_limit'], 'DEBUG' );
+				}
 			}
 			
 		}
@@ -646,24 +652,24 @@ class PricingEngine {
 			}
 			$min_price = min($prices['price']);
 			$max_price = max($prices['price']);
-			$min_regular_price = min($prices['regular_price']);
-			$max_regular_price = max($prices['regular_price']);
+			$min_reg_price = min($prices['regular_price']);
+			$max_reg_price = max($prices['regular_price']);
 			$price_html = '';
-			$regular_price_html = '';
+			$reg_price_html = '';
 			if($max_price !== $min_price){
 				$price_html = wc_format_price_range( $max_price, $min_price );
 			} else{
 				$price_html = wc_price( $max_price );
 			}
-			if($max_regular_price != $min_regular_price){
-				$regular_price_html = wc_format_price_range( $max_regular_price, $min_regular_price );
+			if($max_reg_price != $min_reg_price){
+				$reg_price_html = wc_format_price_range( $max_reg_price, $min_reg_price );
 			} else{
-				$regular_price_html = wc_price( $max_regular_price );
+				$reg_price_html = wc_price( $max_reg_price );
 			}
 			if($discount_data['on_campaign']  || ( $min_price !== $min_reg_price || $max_price !== $max_reg_price )){
-				$price_html = wc_format_sale_price( $regular_price_html, $price_html );
+				$price_html = wc_format_sale_price( $reg_price_html, $price_html );
 			} else if( ! $product->is_on_sale('edit') ){
-				$price_html = $regular_price_html;	
+				$price_html = $reg_price_html;	
 			}
 			return $price_html;
 		}
