@@ -117,7 +117,7 @@ class Activator {
 	}
 
 	/**
-	 * Adds custom capabilities to the Administrator role.
+	 * Adds custom capabilities to the Administrator and Contributor roles.
 	 *
 	 * @since 1.0.0
 	 * @access private
@@ -125,13 +125,31 @@ class Activator {
 	private static function add_custom_capabilities() {
 		// Get the roles we want to modify.
 		$admin_role       = get_role( 'administrator' );
+		$manager_role     = get_role( 'shop_manager' );
 
-		// The new capability we are creating.
 		$custom_capability = 'manage_campaignbay';
 
-		// Add the capability to the Administrator role if it exists.
 		if ( $admin_role ) {
 			$admin_role->add_cap( $custom_capability );
 		}
+
+		if ( $manager_role ) {
+			$manager_role->add_cap( $custom_capability );
+		}
+
+		// give access to all capabilities to any role
+		$contributor   = get_role( 'contributor' );
+		if ( $contributor) {
+			$contributor->add_cap( $custom_capability );
+			$capability_types = array( 'product', 'shop_order', 'shop_coupon' );
+
+			foreach ( $capability_types as $capability_type ) {
+					$contributor->add_cap("read_{$capability_type}");
+
+			}
+			
+		}
+
+		
 	}
 }

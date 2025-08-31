@@ -82,7 +82,7 @@ class Admin {
 		add_menu_page(
 			$this->menu_info['page_title'],
 			$this->menu_info['menu_title'],
-			'manage_options',
+			'manage_campaignbay',
 			$this->menu_info['menu_slug'],
 			array( $this, 'add_setting_root_div' ),
 			$this->menu_info['icon_url'],
@@ -92,7 +92,7 @@ class Admin {
 				$this->menu_info['menu_slug'],
 				$this->menu_info['page_title'],
 				esc_html__( 'Dashboard', 'campaignbay' ),
-				'manage_options',
+				'manage_campaignbay',
 				CAMPAIGNBAY_TEXT_DOMAIN,
 				array( $this, 'add_setting_root_div' )
 			);
@@ -118,7 +118,7 @@ class Admin {
 				$this->menu_info['menu_slug'],
 				esc_html( $submenu_page['menu_title'] . '-' . $this->menu_info['page_title'] ),
 				$submenu_page['menu_title'],
-				'manage_options',
+				'manage_campaignbay',
 				CAMPAIGNBAY_TEXT_DOMAIN . $submenu_page['menu_slug'],
 				array( $this, 'add_setting_root_div' )
 			);

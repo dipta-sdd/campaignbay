@@ -146,7 +146,7 @@ class ApiController extends WP_REST_Controller {
 	 * @return bool True if the request has read access for the item, otherwise false.
 	 */
 	public function get_item_permissions_check( $request ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'manage_campaignbay' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sorry, you are not allowed to manage campaigns.', 'campaignbay' ),
@@ -172,7 +172,7 @@ class ApiController extends WP_REST_Controller {
 	 * @return bool|WP_Error True if the request has update access for the item and nonce is valid, otherwise false or WP_Error.
 	 */
 	public function update_item_permissions_check( $request ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'manage_campaignbay' ) ) {
 			// return false;
 			return new WP_Error(
 				'rest_forbidden',

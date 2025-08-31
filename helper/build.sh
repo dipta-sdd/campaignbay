@@ -50,6 +50,7 @@ EXCLUDE_PATTERNS=(
     "node_modules"
     "src"
     "vendor"
+    "docs"
     "composer.json"
     "composer.lock"
     "package.json"
@@ -61,6 +62,10 @@ EXCLUDE_PATTERNS=(
     "all_php_code.txt"
     "collector.js"
     "tests.md"
+    "todo.txt"
+    "Documentation"
+    "Licensing"
+
 )
 
 # 5. Check if the 'tree' command is available.

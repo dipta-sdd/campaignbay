@@ -267,6 +267,10 @@ class PricingEngine {
 	 */
 	public function display_variable_price_html( $price_html, $product){
 		$prices = $product->get_variation_prices(true);
+		if($price_html === null || $price_html === ''){
+			campaignbay_log('No price html - ' . $product->get_id() . ' - ' . $product->get_name(), 'DEBUG');
+			return $price_html;
+		}
 		if ( empty( $prices['price'] ) ){
 			return $price_html;
 		}
@@ -622,6 +626,10 @@ class PricingEngine {
 		// If the product is a variation, use the parent product's price as the regular price.
 		campaignbay_log('display_discounted_price_html', 'DEBUG' );	
 		campaignbay_log($product->get_name(), 'DEBUG' );
+		if($price_html === null || $price_html === ''){
+			campaignbay_log('No price html');
+			return $price_html;
+		}
 
 		// Get the discount data for the product.
 		$discount_data = $this->get_or_calculate_product_discount( $product );
@@ -630,6 +638,12 @@ class PricingEngine {
 		if ( $product->is_type( 'variable' ) ) {
 			campaignbay_log('variable product' . $product->get_name() , 'DEBUG' );
 			$prices = $product->get_variation_prices( true );
+			campaignbay_log('prices', 'DEBUG' );
+			campaignbay_log($prices, 'DEBUG' );
+			if(empty($prices) || empty($prices['price']) || empty($prices['regular_price'])){
+				campaignbay_log('No prices - ' . $product->get_id() . ' - ' . $product->get_name(), 'DEBUG');
+				return $price_html;
+			}
 			$min_price = min($prices['price']);
 			$max_price = max($prices['price']);
 			$min_regular_price = min($prices['regular_price']);

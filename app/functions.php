@@ -237,7 +237,7 @@ if ( ! function_exists( 'campaignbay_get_white_label' ) ) :
 				'author_name'      => 'WP Anchor Bay',
 				'author_uri'       => 'https://wpanchorbay.com',
 				'support_uri'      => 'https://wpanchorbay.com/support',
-				'docs_uri'         => 'https://campaignbay.github.io/',
+				'docs_uri'         => 'https://docs.wpanchorbay.com',
 				// 'menu_icon'        => 'dashicons-awards',
 				'position'         => 57,
 			)

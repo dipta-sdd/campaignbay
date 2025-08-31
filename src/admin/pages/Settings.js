@@ -231,10 +231,10 @@ const Settings = () => {
           //     name: 'promotion',
           //     title: 'Promotion Settings'
           // },
-          // {
-          //     name: 'advanced',
-          //     title: 'Advanced Settings'
-          // }
+          {
+            name: "advanced",
+            title: "Advanced Settings",
+          },
         ]}
       >
         {(tab) =>

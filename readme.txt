@@ -108,6 +108,6 @@ You can find the complete, detailed user guide by navigating to `Campaigns > Hel
 This WordPress plugin is a split-licensed product.
 
 *   The PHP code is licensed under the GPLv2 (or later) as a derivative work of WordPress. You can find the full license text at https://www.gnu.org/licenses/gpl-2.0.html.
-*   All other assets, including but not limited to JavaScript, CSS, images, and design files, are licensed under the Envato Market Split License.
+*   All other assets, including but not limited to JavaScript and CSS, are licensed under the Envato Market Split License.
 
 This product is sold exclusively on the Envato Market (CodeCanyon). Redistribution is strictly prohibited.
