@@ -157,7 +157,7 @@ const CampaignsEdit = () => {
   const handleCampaignTypeChange = (value) => {
     setCampaignType(value);
     if (value === "scheduled") {
-      setCampaignStatus("cb_scheduled");
+      setCampaignStatus("scheduled");
     }
   };
 
@@ -221,14 +221,14 @@ const CampaignsEdit = () => {
       }
     }
     if (
-      campaignData.campaign_status === "cb_scheduled" &&
+      campaignData.campaign_status === "scheduled" &&
       !campaignData?.start_datetime
     ) {
       setErrors({ start_datetime: "Start datetime is required" });
       return;
     }
     if (
-      campaignData.campaign_status === "cb_scheduled" &&
+      campaignData.campaign_status === "scheduled" &&
       !campaignData?.end_datetime
     ) {
       setErrors({ end_datetime: "End datetime is required" });
@@ -371,16 +371,14 @@ const CampaignsEdit = () => {
                 value={campaignStatus}
                 onChange={(e) => handleCampaignStatusChange(e.target.value)}
               >
-                <option value="cb_active">{__("Active", "campaignbay")}</option>
-                <option value="cb_inactive">
+                <option value="active">{__("Active", "campaignbay")}</option>
+                <option value="inactive">
                   {__("Inactive", "campaignbay")}
                 </option>
-                <option value="cb_scheduled">
+                <option value="scheduled">
                   {__("Scheduled", "campaignbay")}
                 </option>
-                <option value="cb_expired">
-                  {__("Expired", "campaignbay")}
-                </option>
+                <option value="expired">{__("Expired", "campaignbay")}</option>
               </select>
             </div>
             <div className="cb-form-input-con">
@@ -514,7 +512,7 @@ const CampaignsEdit = () => {
                 </div>
               </div>
             )}
-            {campaignStatus === "cb_scheduled" && (
+            {campaignStatus === "scheduled" && (
               <div className="cb-form-input-con">
                 <label htmlFor="start-time">
                   {__("SELECT CAMPAIGN DURATION", "campaignbay")} <Required />

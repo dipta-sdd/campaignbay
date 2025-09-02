@@ -11,7 +11,6 @@ use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use WP_Query;
 use WpabCb\Engine\Campaign;
 use WpabCb\Engine\CampaignManager;
 use WpabCb\Core\Logger;
@@ -178,47 +177,79 @@ class CampaignsController extends ApiController {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_items( $request ) {
-		$args = array(
-			'post_type'      => 'campaignbay_campaign',
-			'posts_per_page' => $request->get_param( 'per_page' ) ?: 10,
-			'paged'          => $request->get_param( 'page' ) ?: 1,
-			's'              => $request->get_param( 'search' ) ?: '',
-			
-			// --- CHANGED: Update the default sorting parameters ---
-			'orderby'        => $request->get_param( 'orderby' ) ?: 'modified', // Default to sorting by last modified date
-			'order'          => $request->get_param( 'order' ) ?: 'desc',     // Default to descending order (most recent first)
-		);
-
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+		
+		// Build the query
+		$where_clauses = array();
+		$query_params = array();
+		
 		// Handle Status Filtering
 		$status = $request->get_param( 'status' );
 		if ( ! empty( $status ) && 'all' !== $status ) {
-			$args['post_status'] = 'cb_' . $status;
-		} else {
-			$args['post_status'] = 'any';
+			$where_clauses[] = 'status = %s';
+			$query_params[] = sanitize_key( $status );
 		}
-
-		// Handle Meta Filtering for campaign_type
+		
+		// Handle campaign type filtering
 		$campaign_type_filter = $request->get_param( 'type' );
 		if ( ! empty( $campaign_type_filter ) ) {
-			// Initialize the meta_query array correctly
-			$meta_query = array(
-				'relation' => 'AND',
-			);
-			$meta_query[] = array(
-				'key'     => '_campaignbay_campaign_type', // Ensure the key has the underscore prefix
-				'value'   => sanitize_text_field( $campaign_type_filter ),
-				'compare' => '=',
-			);
-			//phpcs:ignore
-			$args['meta_query'] = $meta_query;
+			$where_clauses[] = 'campaign_type = %s';
+			$query_params[] = sanitize_key( $campaign_type_filter );
 		}
-
-		$query         = new WP_Query( $args );
+		
+		// Handle search
+		$search = $request->get_param( 'search' );
+		if ( ! empty( $search ) ) {
+			$where_clauses[] = 'title LIKE %s';
+			$query_params[] = '%' . $wpdb->esc_like( sanitize_text_field( $search ) ) . '%';
+		}
+		
+		// Build WHERE clause
+		$where_sql = '';
+		if ( ! empty( $where_clauses ) ) {
+			$where_sql = 'WHERE ' . implode( ' AND ', $where_clauses );
+		}
+		
+		// Handle ordering
+		$orderby = $request->get_param( 'orderby' ) ?: 'date_modified';
+		$order = $request->get_param( 'order' ) ?: 'DESC';
+		
+		$allowed_orderby = array( 'id', 'title', 'status', 'campaign_type', 'date_created', 'date_modified', 'priority' );
+		if ( ! in_array( $orderby, $allowed_orderby, true ) ) {
+			$orderby = 'date_modified';
+		}
+		
+		$order = strtoupper( $order ) === 'ASC' ? 'ASC' : 'DESC';
+		
+		// Handle pagination
+		$per_page = $request->get_param( 'per_page' ) ?: 10;
+		$page = $request->get_param( 'page' ) ?: 1;
+		$offset = ( $page - 1 ) * $per_page;
+		
+		// Get total count for headers
+		$count_sql = "SELECT COUNT(*) FROM {$table_name} {$where_sql}";
+		if ( ! empty( $query_params ) ) {
+			$total_items = $wpdb->get_var( $wpdb->prepare( $count_sql, $query_params ) );
+		} else {
+			$total_items = $wpdb->get_var( $count_sql );
+		}
+		
+		// Get the campaigns
+		$sql = "SELECT * FROM {$table_name} {$where_sql} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d";
+		$query_params[] = $per_page;
+		$query_params[] = $offset;
+		
+		$results = $wpdb->get_results( $wpdb->prepare( $sql, $query_params ) );
+		
 		$response_data = array();
-
-		if ( $query->have_posts() ) {
-			foreach ( $query->get_posts() as $post ) {
-				$campaign = new Campaign( $post );
+		if ( $results ) {
+			foreach ( $results as $row ) {
+				// Decode JSON fields
+				$row->target_ids = ! empty( $row->target_ids ) ? json_decode( $row->target_ids, true ) : array();
+				$row->campaign_tiers = ! empty( $row->campaign_tiers ) ? json_decode( $row->campaign_tiers, true ) : array();
+				
+				$campaign = new Campaign( $row );
 				if ( $campaign ) {
 					$response_data[] = $this->prepare_item_for_response( $campaign, $request );
 				}
@@ -226,8 +257,8 @@ class CampaignsController extends ApiController {
 		}
 		
 		$response = new WP_REST_Response( $response_data, 200 );
-		$response->header( 'X-WP-Total', $query->found_posts );
-		$response->header( 'X-WP-TotalPages', $query->max_num_pages );
+		$response->header( 'X-WP-Total', $total_items );
+		$response->header( 'X-WP-TotalPages', ceil( $total_items / $per_page ) );
 
 		return $response;
 	}
@@ -331,7 +362,7 @@ class CampaignsController extends ApiController {
 		return new WP_REST_Response( null, 204 );
 	}
 
-		/**
+	/**
 	 * Bulk update campaigns' statuses.
 	 *
 	 * @since 1.0.0
@@ -353,25 +384,22 @@ class CampaignsController extends ApiController {
 		
 		$updated_count = 0;
 		foreach ( $ids as $id ) {
-			$result = wp_update_post(
-				array(
-					'ID'          => $id,
-					'post_status' => $status,
-				)
-			);
-			if ( ! is_wp_error( $result ) ) {
-				$updated_count++;
-				$post = get_post( $id );
-				$title = $post->post_title;
-				update_post_meta( $id, '_campaignbay_end_datetime', '' );
-				// Log the activity.
-				Logger::get_instance()->log(
-					'activity',
-					'updated',
-					array( 'campaign_id' => $id, 'extra_data' => [
-						'title' =>$title,
-					] )
-				);
+			$campaign = new Campaign( $id );
+			if ( $campaign ) {
+				$title = $campaign->get_title();
+				$result = $campaign->update( array( 'status' => $status ) );
+				
+				if ( $result ) {
+					$updated_count++;
+					// Log the activity.
+					Logger::get_instance()->log(
+						'activity',
+						'updated',
+						array( 'campaign_id' => $id, 'extra_data' => [
+							'title' => $title,
+						] )
+					);
+				}
 			}
 		}
 		
@@ -406,13 +434,12 @@ class CampaignsController extends ApiController {
 		$deleted_count = 0;
 		foreach ( $ids as $id ) {
 			// Using the Campaign::delete method ensures our custom hooks are fired.
-			$campaign = new Campaign( $id );
 			if ( Campaign::delete( $id, true ) ) {
 				$deleted_count++;
 			}
 		}
 
-		// Cache is cleared by the `before_delete_post` hook, so no need to do it here.
+		// Cache is cleared by the delete hooks, so no need to do it here.
 
 		return new WP_REST_Response(
 			array(
@@ -445,11 +472,8 @@ class CampaignsController extends ApiController {
 			$data[ $key ] = $campaign->get_meta( $key );
 		}
 
-
 		return $data;
 	}
-
-	
 
 	/**
 	 * Get the query params for collections.
@@ -499,7 +523,7 @@ class CampaignsController extends ApiController {
 				'status'              => array(
 					'description' => __( 'A named status for the campaign.', 'campaignbay' ),
 					'type'        => 'string',
-					'enum'        => array( 'cb_active', 'cb_inactive', 'cb_scheduled', 'cb_expired' ),
+					'enum'        => array( 'active', 'inactive', 'scheduled' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'campaign_type'       => array(
@@ -537,7 +561,6 @@ class CampaignsController extends ApiController {
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 				),
-				
 				'start_datetime'     => array(
 					'description' => __( 'The rule\'s start date/time (ISO 8601 string).', 'campaignbay' ),
 					'type'        => 'string',
@@ -550,11 +573,10 @@ class CampaignsController extends ApiController {
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'timezone_offset'     => array(
+				'timezone_string'     => array(
 					'description' => __( 'The timezone identifier.', 'campaignbay' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'required'    => true,
 				),
 				'campaign_tiers'      => array(
 					'description' => __( 'The tiers of the campaign.', 'campaignbay' ),
@@ -564,6 +586,11 @@ class CampaignsController extends ApiController {
 				),
 				'usage_count'         => array(
 					'description' => __( 'The number of times the campaign has been used.', 'campaignbay' ),
+					'type'        => 'integer',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'priority'            => array(
+					'description' => __( 'The priority of the campaign.', 'campaignbay' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
@@ -593,7 +620,7 @@ class CampaignsController extends ApiController {
 			'status' => array(
 				'description' => __( 'The new status to apply to the campaigns.', 'campaignbay' ),
 				'type'        => 'string',
-				'enum'        => array( 'cb_active', 'cb_inactive' ),
+				'enum'        => array( 'active', 'inactive', 'scheduled' ),
 				'required'    => true,
 			),
 		);
@@ -616,5 +643,4 @@ class CampaignsController extends ApiController {
 			),
 		);
 	}
-
 }

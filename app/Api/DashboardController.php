@@ -12,9 +12,9 @@ use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use WP_Query;
 use DateTime;
 use DateInterval;
+use WpabCb\Engine\Campaign;
 
 /**
  * The REST API Controller for the Dashboard.
@@ -166,17 +166,18 @@ class DashboardController extends ApiController {
 		//phpcs:ignore
 		$previous_data = $wpdb->get_row( $previous_sql, ARRAY_A );
 
-		// --- Get Active Campaign Count ---
-		$active_campaigns_query = new WP_Query( array(
-			'post_type'      => 'campaignbay_campaign',
-			'post_status'    => 'cb_active',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-		) );
+		// --- Get Active Campaign Count from custom table ---
+		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
+		$active_count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$campaigns_table} WHERE status = %s",
+				'active'
+			)
+		);
 		
 		return array(
 			'active_campaigns' => array(
-				'value' => $active_campaigns_query->found_posts,
+				'value' => (int) $active_count,
 			),
 			'total_discount_value' => array(
 				'value'      => (float) ( $current_data['total_discount_value'] ?? 0 ),
@@ -249,9 +250,16 @@ class DashboardController extends ApiController {
 		//phpcs:ignore
 		$top_campaigns = $wpdb->get_results( $top_campaigns_sql, ARRAY_A );
 		
-		// Add campaign titles to the results.
+		// Add campaign titles to the results using custom table.
+		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 		foreach ( $top_campaigns as &$campaign_data ) {
-			$campaign_data['name'] = get_the_title( $campaign_data['campaign_id'] );
+			$title = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT title FROM {$campaigns_table} WHERE id = %d",
+					$campaign_data['campaign_id']
+				)
+			);
+			$campaign_data['name'] = $title ?: 'Unknown Campaign';
 		}
 
 		return array(
@@ -272,16 +280,16 @@ class DashboardController extends ApiController {
 	 */
 	private function get_most_impactful_types( $start_date, $end_date ) {
 		global $wpdb;
-		$logs_table       = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN .'_logs';
-		$meta_table       = $wpdb->prefix . 'postmeta';
+		$logs_table = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN .'_logs';
+		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 		$success_statuses = "'processing', 'completed'";
 
-		$sql = "SELECT pm.meta_value as campaign_type, SUM(l.order_total) as total_sales
+		$sql = "SELECT c.campaign_type, SUM(l.order_total) as total_sales
 			 FROM {$logs_table} l
-			 JOIN {$meta_table} pm ON l.campaign_id = pm.post_id AND pm.meta_key = '_campaignbay_campaign_type'
+			 JOIN {$campaigns_table} c ON l.campaign_id = c.id
 			 WHERE l.log_type = 'sale' AND l.order_status IN ('processing', 'completed')
 			 AND l.timestamp BETWEEN %s AND %s
-			 GROUP BY pm.meta_value
+			 GROUP BY c.campaign_type
 			 ORDER BY total_sales DESC";
 		$sql = $wpdb->prepare(
 			//phpcs:ignore
@@ -302,58 +310,43 @@ class DashboardController extends ApiController {
 	 * @return array
 	 */
 	private function get_live_and_upcoming_campaigns() {
+		global $wpdb;
+		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
+		
 		// --- Get currently active campaigns (ordered by which one will expire first) ---
-		//phpcs:ignore
-		$active_query = new WP_Query(
-			array(
-				'post_type'      => 'campaignbay_campaign',
-				'post_status'    => 'cb_active',
-				'posts_per_page' => 5,
-				'orderby'        => 'meta_value',
-				'meta_key'       => '_campaignbay_end_datetime', //phpcs:ignore
-				'order'          => 'ASC',
-			)
-		);
+		$active_sql = "SELECT id, title, end_datetime, campaign_type 
+					   FROM {$campaigns_table} 
+					   WHERE status = 'active' 
+					   ORDER BY end_datetime ASC 
+					   LIMIT 5";
+		$active_results = $wpdb->get_results( $active_sql, ARRAY_A );
 
 		$active_campaigns = array();
-		foreach ( $active_query->posts as $post ) {
-			// Use our Campaign class to easily access metadata
-			$campaign = new \WpabCb\Engine\Campaign( $post );
-			if ( $campaign ) {
-				$active_campaigns[] = array(
-					'id'       => $post->ID,
-					'title'    => $post->post_title,
-					'end_date' => $campaign->get_meta( 'end_datetime' ), 
-					'type'     => $campaign->get_meta( 'campaign_type' ),
-				);
-			}
+		foreach ( $active_results as $row ) {
+			$active_campaigns[] = array(
+				'id'       => (int) $row['id'],
+				'title'    => $row['title'],
+				'end_date' => $row['end_datetime'], 
+				'type'     => $row['campaign_type'],
+			);
 		}
 
 		// --- Get upcoming scheduled campaigns (ordered by which one will start first) ---
-		//phpcs:ignore
-		$scheduled_query = new WP_Query(
-			array(
-				'post_type'      => 'campaignbay_campaign',
-				'post_status'    => 'cb_scheduled',
-				'posts_per_page' => 5,
-				'orderby'        => 'meta_value',
-				'meta_key'       => '_campaignbay_start_datetime', //phpcs:ignore
-				'order'          => 'ASC',
-			)
-		);
+		$scheduled_sql = "SELECT id, title, start_datetime, campaign_type 
+						  FROM {$campaigns_table} 
+						  WHERE status = 'scheduled' 
+						  ORDER BY start_datetime ASC 
+						  LIMIT 5";
+		$scheduled_results = $wpdb->get_results( $scheduled_sql, ARRAY_A );
 		
 		$scheduled_campaigns = array();
-		foreach ( $scheduled_query->posts as $post ) {
-			// Use our Campaign class here as well for consistency
-			$campaign = new \WpabCb\Engine\Campaign( $post );
-			if ( $campaign ) {
-				$scheduled_campaigns[] = array(
-					'id'         => $post->ID,
-					'title'      => $post->post_title,
-					'start_date' => $campaign->get_meta( 'start_datetime' ), 
-					'type'       => $campaign->get_meta( 'campaign_type' ),
-				);
-			}
+		foreach ( $scheduled_results as $row ) {
+			$scheduled_campaigns[] = array(
+				'id'         => (int) $row['id'],
+				'title'      => $row['title'],
+				'start_date' => $row['start_datetime'], 
+				'type'       => $row['campaign_type'],
+			);
 		}
 
 		return array(
@@ -376,6 +369,8 @@ class DashboardController extends ApiController {
 				 WHERE log_type = %s
 				 ORDER BY timestamp DESC
 				 LIMIT 5";
+		campaignbay_log( '=========================================', 'DEBUG' );
+		campaignbay_log( 'sql: ' . print_r( $sql, true ), 'DEBUG' );
 		//phpcs:ignore
 		$results = $wpdb->get_results(
 			//phpcs:ignore
@@ -399,7 +394,7 @@ class DashboardController extends ApiController {
 				'campaign_title' => $extra_data['title'] ?? 'N/A',
 				'action'        => $extra_data['message'] ?? 'unknown', // e.g., "created", "updated"
 				'user'          => $user_info ? $user_info->display_name : 'System',
-				'link'          => get_edit_post_link( $row['campaign_id'], 'raw' ),
+				'link'          => admin_url( 'admin.php?page=campaignbay-campaigns&action=edit&id=' . $row['campaign_id'] ),
 			);
 		}
 		return $activity_log;
@@ -448,109 +443,107 @@ class DashboardController extends ApiController {
 		$interval = $end->diff( $start );
 		$days_diff = $interval->days + 1;
 
+		// Calculate previous period
+		$previous_start = clone $start;
+		$previous_start->sub( new DateInterval( 'P' . $days_diff . 'D' ) );
 		$previous_end = clone $start;
 		$previous_end->sub( new DateInterval( 'P1D' ) );
-		$previous_start = clone $previous_end;
-		$previous_start->sub( new DateInterval( 'P' . ($days_diff - 1) . 'D' ) );
-
 		$previous_end->setTime(23, 59, 59);
 
-		return [
+		return array(
 			$current_start_str,
 			$current_end_str,
 			$previous_start->format( 'Y-m-d H:i:s' ),
 			$previous_end->format( 'Y-m-d H:i:s' ),
-		];
+		);
 	}
 
 	/**
-	 * Fills in missing dates in the discount trends data with zero values.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param array $trends_data The existing trends data from database.
-	 * @param string $start_date Start date for the period.
-	 * @param string $end_date End date for the period.
-	 * @return array Complete trends data with all dates filled.
-	 */
-	private function fill_missing_dates($trends_data, $start_date, $end_date) {
-		// Convert dates to DateTime objects for easier manipulation
-		$start = new DateTime($start_date);
-		$end = new DateTime($end_date);
-		
-		// Create a map of existing dates for quick lookup
-		$existing_dates = array();
-		foreach ($trends_data as $trend) {
-			$existing_dates[$trend['date']] = $trend;
-		}
-		
-		// Generate complete date range
-		$complete_trends = array();
-		$current_date = clone $start;
-		
-		while ($current_date <= $end) {
-			$date_string = $current_date->format('Y-m-d');
-			
-			if (isset($existing_dates[$date_string])) {
-				// Use existing data
-				$complete_trends[] = $existing_dates[$date_string];
-			} else {
-				// Fill missing date with zero values
-				$complete_trends[] = array(
-					'date' => $date_string,
-					'total_discount_value' => '0.00',
-					'total_base' => '0.00',
-					'total_sales' => '0.00'
-				);
-			}
-			
-			$current_date->add(new DateInterval('P1D'));
-		}
-		
-		return $complete_trends;
-	}
-
-	/**
-	 * Calculates the percentage change between two numbers.
+	 * Calculates percentage change between two values.
 	 *
 	 * @since 1.0.0
 	 * @access private
 	 * @param float $current Current value.
 	 * @param float $previous Previous value.
-	 * @return float
+	 * @return float Percentage change.
 	 */
 	private function calculate_percentage_change( $current, $previous ) {
-		if ( (float) $previous === 0.0 ) {
-			return (float) $current > 0 ? 100.0 : 0.0;
+		if ( 0 == $previous || $previous === null || $previous === '' || $previous == false ) {
+			return $current > 0 ? 100 : 0;
 		}
-		return round( ( ( $current - $previous ) / $previous ) * 100 );
+		return round( ( ( $current - $previous ) / $previous ) * 100, 2 );
 	}
 
 	/**
-	 * Defines the query parameters the endpoint accepts.
+	 * Fills in missing dates with zero values for chart data.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @param array  $data Array of data with date keys.
+	 * @param string $start_date Start date.
+	 * @param string $end_date End date.
+	 * @return array Data with missing dates filled.
+	 */
+	private function fill_missing_dates( $data, $start_date, $end_date ) {
+		$start = new DateTime( $start_date );
+		$end = new DateTime( $end_date );
+		$filled_data = array();
+		$data_by_date = array();
+
+		// Index existing data by date
+		foreach ( $data as $row ) {
+			$data_by_date[ $row['date'] ] = $row;
+		}
+
+		// Fill in all dates in range
+		$current = clone $start;
+		while ( $current <= $end ) {
+			$date_str = $current->format( 'Y-m-d' );
+			if ( isset( $data_by_date[ $date_str ] ) ) {
+				$filled_data[] = $data_by_date[ $date_str ];
+			} else {
+				$filled_data[] = array(
+					'date' => $date_str,
+					'total_discount_value' => 0,
+					'total_base' => 0,
+					'total_sales' => 0,
+				);
+			}
+			$current->add( new DateInterval( 'P1D' ) );
+		}
+
+		return $filled_data;
+	}
+
+	/**
+	 * Retrieves the query params for collections.
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @return array
+	 * @return array Collection parameters.
 	 */
 	public function get_collection_params() {
-		return array(
-			'period' => array(
-				'description' => __( 'The time period for the report.', 'campaignbay' ),
-				'type'        => 'string',
-				'enum'        => array( '7days', '30days', 'year', 'custom' ),
-				'default'     => '30days',
-			),
-			'start_date' => array(
-				'description' => __( 'Custom start date for the report (Y-m-d).', 'campaignbay' ),
-				'type'        => 'string',
-				'format'      => 'date',
-			),
-			'end_date' => array(
-				'description' => __( 'Custom end date for the report (Y-m-d).', 'campaignbay' ),
-				'type'        => 'string',
-				'format'      => 'date',
-			),
+		$params = parent::get_collection_params();
+
+		$params['period'] = array(
+			'description' => __( 'Time period for the dashboard data.', 'campaignbay' ),
+			'type'        => 'string',
+			'default'     => '30days',
+			'enum'        => array( '7days', '30days', 'year', 'custom' ),
 		);
+
+		$params['start_date'] = array(
+			'description' => __( 'Custom start date (required when period is custom).', 'campaignbay' ),
+			'type'        => 'string',
+			'format'      => 'date',
+		);
+
+		$params['end_date'] = array(
+			'description' => __( 'Custom end date (required when period is custom).', 'campaignbay' ),
+			'type'        => 'string',
+			'format'      => 'date',
+		);
+
+		return $params;
 	}
 }

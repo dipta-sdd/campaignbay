@@ -21,9 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Import WordPress classes
-use WP_Query;
-
 /**
  * The Campaign Manager class.
  *
@@ -55,16 +52,17 @@ class CampaignManager {
 	private $hooks = array();
 
 	/**
-	 * A local cache of the active campaigns for the current page load.
+	 * Array of active campaign objects.
 	 *
 	 * @since 1.0.0
-	 * @var   array|null
 	 * @access private
+	 * @var Campaign[]|null
 	 */
 	private $active_campaigns = null;
 
 	/**
 	 * Gets an instance of this object.
+	 * Prevents duplicate instances which avoid artefacts and improves performance.
 	 *
 	 * @static
 	 * @access public
@@ -74,51 +72,38 @@ class CampaignManager {
 	public static function get_instance() {
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
+
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
+
 		return self::$instance;
 	}
 
 	/**
-	 * Constructor to define and build the hooks array.
+	 * A dummy constructor to prevent the class from being loaded more than once.
+	 *
+	 * @see CampaignManager::get_instance()
 	 *
 	 * @since 1.0.0
+	 * @access private
 	 */
 	private function __construct() {
-		$this->define_hooks();
-	}
-
-	/**
-	 * Defines all hooks this class needs to run using our fluent methods.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private function define_hooks() {
-		$this->add_action( 'save_post_campaignbay_campaign', 'clear_cache' );
-		$this->add_action( 'delete_post', 'clear_cache' );
-		// $this->add_action( 'campaignbay_create_order', 'clear_cache', 10,1);
-
-	}
-
-	/**
-	 * Adds a new action to the hooks array.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param string $hook The hook name.
-	 * @param string $callback The callback method on this object.
-	 * @param int    $priority The priority.
-	 * @param int    $accepted_args The number of accepted arguments.
-	 */
-	private function add_action( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
-		$this->hooks[] = array(
-			'type'          => 'action',
-			'hook'          => $hook,
-			'callback'      => $callback,
-			'priority'      => $priority,
-			'accepted_args' => $accepted_args,
+		$this->hooks = array(
+			array(
+				'hook'     => 'campaignbay_campaign_save',
+				'callback' => 'clear_cache',
+				'priority' => 10,
+				'accepted_args'     => 2,
+				'type'     => 'action',
+			),
+			array(
+				'hook'     => 'campaignbay_campaign_delete',
+				'callback' => 'clear_cache',
+				'priority' => 10,
+				'accepted_args'     => 1,
+				'type'     => 'action',
+			),
 		);
 	}
 
@@ -134,49 +119,55 @@ class CampaignManager {
 
 	/**
 	 * Get all active campaigns, using a multi-level cache.
-	 * (This method and others below remain unchanged)
 	 *
 	 * @since 1.0.0
 	 * @return Campaign[] An array of active campaign objects.
 	 */
 	public function get_active_campaigns() {
 		if ( null !== $this->active_campaigns ) {
-			
 			return $this->active_campaigns;
 		}
+		
 		$cached_campaigns = get_transient( 'campaignbay_active_campaigns' );
 		if ( false !== $cached_campaigns ) {
 			campaignbay_log('cached_campaigns found', 'DEBUG' );
 			$this->active_campaigns = $cached_campaigns;
 			return $this->active_campaigns;
 		}
+		
 		campaignbay_log('no cached campaigns found, fetching from database', 'DEBUG' );
-		$campaign_args = array(
-			'post_type'      => 'campaignbay_campaign',
-			'post_status'    => 'cb_active',
-			'posts_per_page' => -1,
-			'no_found_rows'  => true,
+		
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+		
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table_name} WHERE status = %s ORDER BY priority ASC, date_created ASC",
+				'active'
+			)
 		);
-		$query = new WP_Query( $campaign_args );
+		
 		$campaign_objects = array();
-		if ( $query->have_posts() ) {
-			foreach ( $query->get_posts() as $post ) {
-				$campaign = new Campaign( $post );
+		if ( $results ) {
+			foreach ( $results as $row ) {
+				// Decode JSON fields
+				$row->target_ids = ! empty( $row->target_ids ) ? json_decode( $row->target_ids, true ) : array();
+				$row->campaign_tiers = ! empty( $row->campaign_tiers ) ? json_decode( $row->campaign_tiers, true ) : array();
+				
+				$campaign = new Campaign( $row );
 				if ( $campaign ) {
-					$campaign->load_usage_count();
+					// Usage count is now stored directly in the table, no need to load separately
 					$campaign_objects[ $campaign->get_id() ] = $campaign;
 				}
 			}
 		} else {
-			campaignbay_log('query has no posts', 'DEBUG' );
+			campaignbay_log('query has no campaigns', 'DEBUG' );
 		}
 
 		set_transient( 'campaignbay_active_campaigns', $campaign_objects, 60 * MINUTE_IN_SECONDS );
 		$this->active_campaigns = $campaign_objects;
 		return $this->active_campaigns;
 	}
-
-	
 
 	/**
 	 * Clears the active campaign transient cache.

@@ -164,7 +164,6 @@ const Settings = () => {
           break;
       }
       // console.log(data);
-      console.log(cartSettings);
       const response = await apiFetch({
         path: "/campaignbay/v1/settings",
         method: "POST",

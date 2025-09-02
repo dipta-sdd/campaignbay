@@ -71,7 +71,7 @@ class DbManager {
      */
     private function create_campaigns_table() {
         global $wpdb;
-        $table_name      = $wpdb->prefix . '_campaignbay_campaigns';
+        $table_name      = $wpdb->prefix . 'campaignbay_campaigns';
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE {$table_name} (
@@ -126,7 +126,7 @@ class DbManager {
      */
     private function create_logs_table() {
 		global $wpdb;
-		$table_name      = $wpdb->prefix . '_campaignbay_logs';
+		$table_name      = $wpdb->prefix . 'campaignbay_logs';
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (

@@ -74,19 +74,11 @@ class OrderManager {
         do_action( 'campaignbay_create_order');
 		// Loop through the breakdown, which has one entry per campaign that was applied.
 		foreach ( $discount_breakdown as $campaign_id => $data ) {
-			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
-			campaignbay_log('------------------------------------------------------------------------------------------------', 'DEBUG' );
 			campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG' );
 			campaignbay_log('data: ' . print_r( $data, true ), 'DEBUG' );
 			if( $data['earlybird_usage_limit'] !== null ){
 				$campaign = new Campaign( $campaign_id );
-				$campaign->load_usage_count();
+				// Usage count is now stored directly in the table, no need to load separately
 				if( $campaign->get_usage_count() > $data['earlybird_usage_limit'] ){
 					campaignbay_log('earlybird_usage_limit reached', 'DEBUG' );
 				throw new Exception('Earlybird usage limit reached for campaign ID: ' . $campaign_id);
@@ -158,8 +150,10 @@ class OrderManager {
 			campaignbay_log( sprintf( 'Creating new log entry for order #%d, campaign #%d. Status: %s', $order_id, $campaign_id, $new_status ), 'DEBUG' );
 			// phpcs:ignore 
 			$wpdb->insert( $table_name, $log_data );
+			
+			// Increment the usage count for the campaign
 			$campaign = new Campaign( $campaign_id );
-			$campaign->load_usage_count();
+			$campaign->increment_usage_count();
 			campaignbay_log('usage_count: ' . $campaign->get_usage_count(), 'DEBUG' );
 			CampaignManager::get_instance()->clear_cache('order_manager');
 		}

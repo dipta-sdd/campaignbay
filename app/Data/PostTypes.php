@@ -75,13 +75,16 @@ class PostTypes {
 	 * @since 1.0.0
 	 */
 	public function run() {
-		add_action( 'init', array( $this, 'register_post_type' ) , 1);
-		add_action( 'init', array( $this, 'register_post_statuses' ) ,1);
+		// Post type registration is no longer needed as we're using custom tables
+		// add_action( 'init', array( $this, 'register_post_type' ) , 1);
+		// add_action( 'init', array( $this, 'register_post_statuses' ) ,1);
 		// TODO: Add meta fields
 		// add_action( 'init', array( $this, 'register_meta_fields' ) );
 		// This filter is kept for debugging purposes. It will only have an effect
 		// if a developer temporarily sets 'show_ui' to true.
-		add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
+		// add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
+		
+		// Note: Keeping this class for potential backward compatibility or future use
 	}
 
 	/**

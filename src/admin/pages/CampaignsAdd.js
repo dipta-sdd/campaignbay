@@ -22,7 +22,7 @@ const CampaignsAdd = () => {
   const { woocommerce_currency_symbol } = useCbStore();
   const navigate = useNavigate();
   const [campaignType, setCampaignType] = useState("scheduled");
-  const [campaignStatus, setCampaignStatus] = useState("cb_scheduled");
+  const [campaignStatus, setCampaignStatus] = useState("scheduled");
   const [campaignTitle, setCampaignTitle] = useState("");
   const [selectionType, setSelectionType] = useState("entire_store");
   const [selections, setSelections] = useState([]);
@@ -136,7 +136,7 @@ const CampaignsAdd = () => {
   const handleCampaignTypeChange = (value) => {
     setCampaignType(value);
     if (value === "scheduled") {
-      setCampaignStatus("cb_scheduled");
+      setCampaignStatus("scheduled");
     }
   };
 
@@ -200,14 +200,14 @@ const CampaignsAdd = () => {
       }
     }
     if (
-      campaignData.campaign_status === "cb_scheduled" &&
+      campaignData.campaign_status === "scheduled" &&
       !campaignData?.start_datetime
     ) {
       setErrors({ start_datetime: "Start datetime is required" });
       return;
     }
     if (
-      campaignData.campaign_status === "cb_scheduled" &&
+      campaignData.campaign_status === "scheduled" &&
       !campaignData?.end_datetime
     ) {
       setErrors({ end_datetime: "End datetime is required" });
@@ -287,11 +287,9 @@ const CampaignsAdd = () => {
             value={campaignStatus}
             onChange={(e) => handleCampaignStatusChange(e.target.value)}
           >
-            <option value="cb_active">{__("Active", "campaignbay")}</option>
-            <option value="cb_inactive">{__("Inactive", "campaignbay")}</option>
-            <option value="cb_scheduled">
-              {__("Scheduled", "campaignbay")}
-            </option>
+            <option value="active">{__("Active", "campaignbay")}</option>
+            <option value="inactive">{__("Inactive", "campaignbay")}</option>
+            <option value="scheduled">{__("Scheduled", "campaignbay")}</option>
           </select>
         </div>
 
@@ -434,7 +432,7 @@ const CampaignsAdd = () => {
             </div>
           </div>
         )}
-        {campaignStatus === "cb_scheduled" && (
+        {campaignStatus === "scheduled" && (
           <div className="cb-form-input-con">
             <label htmlFor="start-time">
               {__("SELECT CAMPAIGN DURATION", "campaignbay")} <Required />{" "}

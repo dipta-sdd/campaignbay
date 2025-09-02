@@ -324,13 +324,13 @@ if(! function_exists('campaignbay_log')) {
 
 if ( ! function_exists( 'campaignbay_get_campaign_meta_keys' ) ) :
 	/**
-	 * Get the campaign meta keys.
+	 * Get the campaign field keys.
 	 *
-	 * This function returns an array of meta keys that are used by the campaign post type.
-	 * These keys are registered with the REST API for the React UI.
+	 * This function returns an array of field keys that are used by campaigns.
+	 * These keys are used by the REST API for the React UI.
 	 *
 	 * @since 1.0.0
-	 * @return array Array of meta keys.
+	 * @return array Array of field keys.
 	 */
 	function campaignbay_get_campaign_meta_keys() {
 		return array(
@@ -341,9 +341,12 @@ if ( ! function_exists( 'campaignbay_get_campaign_meta_keys' ) ) :
 			'target_ids',
 			'start_datetime',
 			'end_datetime',
-			'timezone_offset',
+			'timezone_string',
 			'campaign_tiers',
-			'usage_count'
+			'usage_count',
+			'exclude_sale_items',
+			'schedule_enabled',
+			'priority'
 		);
 	}
 endif;

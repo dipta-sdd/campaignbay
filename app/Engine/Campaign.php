@@ -19,8 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use WP_Query;
-use WP_Post;
 use Exception;
 use DateTime;
 use DateTimeZone;
@@ -30,7 +28,7 @@ use WpabCb\Core\Logger;
  * The Campaign model class.
  *
  * This class represents a single discount campaign and provides methods
- * to create, read, update, and delete campaign data.
+ * to create, read, update, and delete campaign data using the custom campaigns table.
  *
  * @since      1.0.0
  * @package    WPAB_CampaignBay
@@ -39,7 +37,7 @@ use WpabCb\Core\Logger;
 class Campaign {
 
 	/**
-	 * The campaign Post ID.
+	 * The campaign ID.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -48,22 +46,13 @@ class Campaign {
 	public $id = 0;
 
 	/**
-	 * The WP_Post object for the campaign.
+	 * The campaign data from the database.
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 * @var WP_Post|null
+	 * @var object|null
 	 */
-	private $post;
-
-	/**
-	 * The campaign's metadata.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @var array
-	 */
-	private $meta = array();
+	private $data;
 
 	/**
 	 * A flat list of all product and variation IDs this campaign applies to.
@@ -75,103 +64,126 @@ class Campaign {
 	private $applicable_product_ids = array();
 
 	/**
-	 * The number of times this campaign has been successfully used.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @var int|null
-	 */
-	private $usage_count = null;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
-	 * @param int|WP_Post $campaign The campaign ID or WP_Post object.
+	 * @param int|object $campaign The campaign ID or campaign data object.
 	 */
 	public function __construct( $campaign ) {
-		if ( $campaign instanceof WP_Post ) {
-			$this->id   = $campaign->ID;
-			$this->post = $campaign;
+		if ( is_object( $campaign ) ) {
+			$this->id = $campaign->id;
+			$this->data = $campaign;
 		} elseif ( is_numeric( $campaign ) ) {
-			$this->id   = absint( $campaign );
-			$this->post = get_post( $this->id );
+			$this->id = absint( $campaign );
+			$this->load_data();
 		}
 
-		if ( ! $this->post || 'campaignbay_campaign' !== $this->post->post_type ) {
+		if ( ! $this->data ) {
 			throw new Exception( 'Invalid campaign provided.' );
 		}
 
-		$this->load_meta();
-		$this->load_applicable_product_ids(); // Pre-calculate the list of products this campaign applies to.
-		// $this->load_usage_count(); // Load the usage count.
+		// Load applicable product IDs if targeting is set
+		if ( ! empty( $this->data->target_type ) ) {
+			$this->load_applicable_product_ids();
+		}
+	}
+
+	/**
+	 * Load campaign data from the database.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 */
+	private function load_data() {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+
+		$this->data = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$table_name} WHERE id = %d",
+				$this->id
+			)
+		);
+
+		// Decode JSON fields
+		if ( $this->data ) {
+			$this->data->target_ids = ! empty( $this->data->target_ids ) ? json_decode( $this->data->target_ids, true ) : array();
+			$this->data->campaign_tiers = ! empty( $this->data->campaign_tiers ) ? json_decode( $this->data->campaign_tiers, true ) : array();
+		}
 	}
 
 	/**
 	 * Gets the current usage count for the campaign.
 	 *
-	 * This method uses a "lazy loading" pattern. The database is only queried
-	 * the first time this method is called for the object instance. Subsequent
-	 * calls will return the cached value from the object's property.
-	 *
 	 * @since 1.0.0
 	 * @return int The number of times the campaign has been used on successful orders.
 	 */
 	public function get_usage_count() {
-		
-		// Check if the usage count has already been loaded for this object.
-		if ( null === $this->usage_count ) {
-			// If not, load it now.
-			$this->load_usage_count();
-		}
-		return $this->usage_count;
+		return (int) $this->data->usage_count;
 	}
 
 	/**
-	 * Loads the usage count from the logs table and caches it in the object's property.
-	 * This method is now only called when needed.
+	 * Loads the usage count from the campaigns table.
 	 *
 	 * @since 1.0.0
-	 * @access private
+	 * @access public
 	 */
 	public function load_usage_count() {
 		campaignbay_log('load_usage_count for campaign: ' . $this->get_id(), 'DEBUG' );
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_logs';
+		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 
-		// Perform a direct, indexed query to count distinct successful orders for this campaign.
-		$sql = "SELECT COUNT(DISTINCT order_id)
-				 FROM {$table_name}
-				 WHERE campaign_id = %d
-				 AND log_type = 'sale'
-				 AND order_status IN ('processing', 'completed')";
-		
-		//phpcs:ignore 
+		// Get the current usage count from the campaigns table
 		$count = $wpdb->get_var(
-			//phpcs:ignore
 			$wpdb->prepare(
-				//phpcs:ignore
-				$sql,
+				"SELECT usage_count FROM {$campaigns_table} WHERE id = %d",
 				$this->id
 			)
 		);
+
 		campaignbay_log( 'Usage count loaded for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - ' . $count, 'DEBUG' );
-		$this->usage_count = (int) $count;
-		$this->update_meta( 'usage_count', $this->usage_count );
-		campaignbay_log( 'Usage count loaded for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - ' . $this->usage_count, 'DEBUG' );
+		
+		$this->data->usage_count = (int) $count;
+	}
+
+	/**
+	 * Increments the usage count for the campaign.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return bool True on success, false on failure.
+	 */
+	public function increment_usage_count() {
+		global $wpdb;
+		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
+
+		// Increment the usage count in the database
+		$result = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$campaigns_table} SET usage_count = usage_count + 1 WHERE id = %d",
+				$this->id
+			)
+		);
+
+		if ( $result !== false ) {
+			// Update the local data
+			$this->data->usage_count = (int) $this->data->usage_count + 1;
+			campaignbay_log( 'Usage count incremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG' );
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
 	 * Populates the applicable_product_ids property based on the campaign's targeting rules.
-	 * This is the core logic for pre-calculating which products are affected.
 	 *
 	 * @since 1.0.0
 	 * @access private
 	 */
 	private function load_applicable_product_ids() {
-		
-		$target_type = $this->get_meta( 'target_type' );
-		$target_ids  = $this->get_meta( 'target_ids' );
+		$target_type = $this->data->target_type;
+		$target_ids = $this->data->target_ids;
 
 		if ( 'entire_store' === $target_type ) {
 			// For store-wide, the list is empty. The pricing engine will interpret this as "applies to all".
@@ -194,7 +206,6 @@ class Campaign {
 		// After getting the initial list, expand any variable products to include their variations.
 		$this->applicable_product_ids = $this->expand_variable_products( $product_ids );
 	}
-
 
 	/**
 	 * Gets all product IDs from the specified category IDs.
@@ -242,8 +253,8 @@ class Campaign {
 			// Add the product variations.
 			if ( $product->is_type( 'variable' ) ) {
 				$variation_ids = $product->get_children();
-					if ( ! empty( $variation_ids ) ) {
-						$expanded_ids = array_merge( $expanded_ids, $variation_ids );
+				if ( ! empty( $variation_ids ) ) {
+					$expanded_ids = array_merge( $expanded_ids, $variation_ids );
 				}
 			}
 		}
@@ -269,22 +280,21 @@ class Campaign {
 	 * @return bool True if the campaign applies to the product, false otherwise.
 	 */
 	public function is_applicable_to_product( $product ) {
-		
 		$product_id = is_object( $product ) ? $product->get_id() : absint( $product );
-		if ( !is_numeric( $product_id ) ) {
+		if ( ! is_numeric( $product_id ) ) {
 			return false;
 		}
-		if ( 'entire_store' === $this->get_meta( 'target_type' ) ) {
+		if ( 'entire_store' === $this->data->target_type ) {
 			return true;
 		}
-		if ( 'tag' === $this->get_meta( 'target_type' ) ) {
+		if ( 'tag' === $this->data->target_type ) {
 			$product = wc_get_product( $product_id );
 			if ( ! $product ) {
 				return false;
 			}
 			$product_tags = $product->get_tag_ids();	
 			foreach ( $product_tags as $product_tag ) {
-				if ( in_array( $product_tag, $this->get_meta( 'target_ids' ), true ) ) {
+				if ( in_array( $product_tag, $this->data->target_ids, true ) ) {
 					return true;
 				}
 			}
@@ -318,7 +328,6 @@ class Campaign {
 	 * @throws Exception If validation fails.
 	 */
 	public static function create( $args ) {
-		
 		// Validate required fields.
 		if ( empty( $args['title'] ) ) {
 			self::throw_validation_error( 'title' );
@@ -327,14 +336,13 @@ class Campaign {
 		if ( empty( $args['campaign_type'] ) ) {
 			self::throw_validation_error( 'campaign_type' );
 		}
-		// If status is not provided, set it to scheduled if the campaign type is scheduled.
-		if ( empty( $args['status'] ) && 'scheduled' !== $args['campaign_type'] ) {
-			self::throw_validation_error( 'status' );
-		} elseif ( empty( $args['status'] ) && 'scheduled' === $args['campaign_type'] ) {
-			$args['status'] = 'cb_scheduled';
+
+		// Set default status
+		if ( empty( $args['status'] ) ) {
+			$args['status'] = 'scheduled' === $args['campaign_type'] ? 'scheduled' : 'active';
 		}
 
-		$allowed_statuses = array( 'cb_active', 'cb_inactive', 'cb_scheduled' );
+		$allowed_statuses = array( 'active', 'inactive', 'scheduled' );
 		if ( ! in_array( $args['status'], $allowed_statuses, true ) ) {
 			self::throw_validation_error( 'status' );
 		}
@@ -344,64 +352,89 @@ class Campaign {
 			self::throw_validation_error( 'campaign_type' );
 		}
 
-		if( 'cb_scheduled' === $args['status'] && empty( $args['start_datetime'] ) ){
+		if ( 'scheduled' === $args['status'] && empty( $args['start_datetime'] ) ) {
 			self::throw_validation_error( 'start_datetime' );
 		}
-		if( 'cb_scheduled' === $args['status'] && empty( $args['end_datetime'] ) ){
+		if ( 'scheduled' === $args['status'] && empty( $args['end_datetime'] ) ) {
 			self::throw_validation_error( 'end_datetime' );
 		}
 
-		if( 'scheduled' === $args['campaign_type'] && empty( $args['discount_value'] ) ){
+		if ( 'scheduled' === $args['campaign_type'] && empty( $args['discount_value'] ) ) {
 			self::throw_validation_error( 'discount_value' );
 		}
-		if( 'scheduled' === $args['campaign_type'] && empty( $args['discount_type'] ) ){
+		if ( 'scheduled' === $args['campaign_type'] && empty( $args['discount_type'] ) ) {
 			self::throw_validation_error( 'discount_type' );
 		}
-		if( 'scheduled' !== $args['campaign_type'] ){
-			if( !isset( $args['target_type'] ) || empty( $args['target_type'] ) ){
+		if ( 'scheduled' !== $args['campaign_type'] ) {
+			if ( ! isset( $args['target_type'] ) || empty( $args['target_type'] ) ) {
 				self::throw_validation_error( 'target_type' );
 			}
 			$allowed_target_types = array( 'entire_store', 'category', 'product', 'tag' );
-			if( ! in_array( $args['target_type'], $allowed_target_types, true ) ){
+			if ( ! in_array( $args['target_type'], $allowed_target_types, true ) ) {
 				self::throw_validation_error( 'target_type' );
 			}
-			if( 'entire_store' !== $args['target_type'] && ( empty( $args['target_ids'] ) || !is_array( $args['target_ids'] ) ) ){
+			if ( 'entire_store' !== $args['target_type'] && ( empty( $args['target_ids'] ) || ! is_array( $args['target_ids'] ) ) ) {
 				self::throw_validation_error( 'target_ids' );
 			}
 		}
-		
 
-		// Create the post.
-		$post_data = array(
-			'post_title'  => sanitize_text_field( $args['title'] ),
-			'post_type'   => 'campaignbay_campaign',
-			'post_status' => sanitize_key( $args['status'] ),
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+
+		// Prepare data for insertion
+		$data = array(
+			'title' => sanitize_text_field( $args['title'] ),
+			'status' => sanitize_key( $args['status'] ),
+			'campaign_type' => sanitize_key( $args['campaign_type'] ),
+			'discount_type' => isset( $args['discount_type'] ) ? sanitize_key( $args['discount_type'] ) : null,
+			'discount_value' => isset( $args['discount_value'] ) ? floatval( $args['discount_value'] ) : null,
+			'target_type' => isset( $args['target_type'] ) ? sanitize_key( $args['target_type'] ) : null,
+			'target_ids' => isset( $args['target_ids'] ) ? wp_json_encode( array_map( 'absint', $args['target_ids'] ) ) : null,
+			'exclude_sale_items' => isset( $args['exclude_sale_items'] ) ? (bool) $args['exclude_sale_items'] : false,
+			'schedule_enabled' => isset( $args['schedule_enabled'] ) ? (bool) $args['schedule_enabled'] : false,
+			'start_datetime' => isset( $args['start_datetime'] ) ? sanitize_text_field( $args['start_datetime'] ) : null,
+			'end_datetime' => isset( $args['end_datetime'] ) ? sanitize_text_field( $args['end_datetime'] ) : null,
+			'timezone_string' => isset( $args['timezone_string'] ) ? sanitize_text_field( $args['timezone_string'] ) : wp_timezone_string(),
+			'campaign_tiers' => isset( $args['campaign_tiers'] ) ? wp_json_encode( $args['campaign_tiers'] ) : null,
+			'usage_count' => 0,
+			'priority' => isset( $args['priority'] ) ? absint( $args['priority'] ) : 10,
+			'date_created' => current_time( 'mysql' ),
+			'date_modified' => current_time( 'mysql' ),
 		);
 
-		$post_id = wp_insert_post( $post_data , true );
+		$formats = array(
+			'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s'
+		);
 
-		if ( is_wp_error( $post_id ) ) {
-			throw new Exception( 'Failed to create campaign post.' );
+		$result = $wpdb->insert( $table_name, $data, $formats );
+
+		if ( false === $result ) {
+			throw new Exception( 'Failed to create campaign.' );
 		}
 
-		// Create the campaign object and update it with the provided arguments.
-		$campaign = new self( $post_id );
-		$campaign->update_meta_from_args( $args );
+		$campaign_id = $wpdb->insert_id;
+		$campaign = new self( $campaign_id );
+
 		/**
-		 * Fires after a new campaign is created and all its meta is saved.
+		 * Fires after a new campaign is created and all its data is saved.
 		 *
 		 * @param int      $campaign_id The ID of the new campaign.
 		 * @param Campaign $campaign    The campaign object.
 		 */
-		do_action( 'campaignbay_campaign_save', $campaign->id, $campaign );
+		do_action( 'campaignbay_campaign_save', $campaign_id, $campaign );
+
 		// Log the activity.
 		Logger::get_instance()->log(
 			'activity',
 			'created',
-			array( 'campaign_id' => $campaign->get_id(), 'extra_data' => [
-				'title' => $campaign->get_title(),
-			] )
+			array(
+				'campaign_id' => $campaign->get_id(),
+				'extra_data' => array(
+					'title' => $campaign->get_title(),
+				)
+			)
 		);
+
 		return $campaign;
 	}
 
@@ -413,42 +446,113 @@ class Campaign {
 	 * @return bool True on success, false on failure.
 	 */
 	public function update( $args ) {
-		// --- Update Post Data (if provided) ---
-		$post_data = array();
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+
+		$data = array();
+		$formats = array();
+
 		if ( isset( $args['title'] ) ) {
-			$post_data['post_title'] = sanitize_text_field( $args['title'] );
+			$data['title'] = sanitize_text_field( $args['title'] );
+			$formats[] = '%s';
 		}
 		if ( isset( $args['status'] ) ) {
-			$post_data['post_status'] = sanitize_key( $args['status'] );
+			$data['status'] = sanitize_key( $args['status'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['campaign_type'] ) ) {
+			$data['campaign_type'] = sanitize_key( $args['campaign_type'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['discount_type'] ) ) {
+			$data['discount_type'] = sanitize_key( $args['discount_type'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['discount_value'] ) ) {
+			$data['discount_value'] = floatval( $args['discount_value'] );
+			$formats[] = '%f';
+		}
+		if ( isset( $args['target_type'] ) ) {
+			$data['target_type'] = sanitize_key( $args['target_type'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['target_ids'] ) ) {
+			$data['target_ids'] = wp_json_encode( array_map( 'absint', $args['target_ids'] ) );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['exclude_sale_items'] ) ) {
+			$data['exclude_sale_items'] = (bool) $args['exclude_sale_items'];
+			$formats[] = '%d';
+		}
+		if ( isset( $args['schedule_enabled'] ) ) {
+			$data['schedule_enabled'] = (bool) $args['schedule_enabled'];
+			$formats[] = '%d';
+		}
+		if ( isset( $args['start_datetime'] ) ) {
+			$data['start_datetime'] = sanitize_text_field( $args['start_datetime'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['end_datetime'] ) ) {
+			$data['end_datetime'] = sanitize_text_field( $args['end_datetime'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['timezone_string'] ) ) {
+			$data['timezone_string'] = sanitize_text_field( $args['timezone_string'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['campaign_tiers'] ) ) {
+			$data['campaign_tiers'] = wp_json_encode( $args['campaign_tiers'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['priority'] ) ) {
+			$data['priority'] = absint( $args['priority'] );
+			$formats[] = '%d';
 		}
 
-		if ( ! empty( $post_data ) ) {
-			$post_data['ID'] = $this->id;
-			$result          = wp_update_post( $post_data, true );
-			if ( is_wp_error( $result ) ) {
-				return $result;
-			}
+		// Always update the modified date
+		$data['date_modified'] = current_time( 'mysql' );
+		$formats[] = '%s';
+		if ( empty( $data ) ) {
+			return true; // Nothing to update
 		}
-		if( $args['status'] !== $this->get_status() ){
-			$this->update_meta( 'status', $args['status'] );
+		$result = $wpdb->update(
+			$table_name,
+			$data,
+			array( 'id' => $this->id ),
+			$formats,
+			array( '%d' )
+		);
+
+		if ( false === $result ) {
+			return false;
 		}
-		$this->update_meta_from_args( $args );
+
+		// Reload data
+		$this->load_data();
+		campaignbay_log( 'data: ' . print_r( $data, true ), 'DEBUG' );
+		campaignbay_log( 'formats: ' . print_r( $formats, true ), 'DEBUG' );
+		campaignbay_log( 'result: ' . print_r( $result, true ), 'DEBUG' );
 
 		/**
-		 * Fires after a campaign is updated and all its meta is saved.
+		 * Fires after a campaign is updated and all its data is saved.
 		 *
 		 * @param int      $campaign_id The ID of the updated campaign.
 		 * @param Campaign $campaign    The campaign object.
 		 */
-		do_action( 'campaignbay_campaign_save', $this->id, $this );	
+		do_action( 'campaignbay_campaign_save', $this->id , $this );
+
 		// Log the activity.
 		Logger::get_instance()->log(
 			'activity',
 			'updated',
-			array( 'campaign_id' => $this->get_id(), 'extra_data' => [
-				'title' => $this->get_title(),
-			] )
+			array(
+				'campaign_id' => $this->get_id(),
+				'extra_data' => array(
+					'title' => $this->get_title(),
+				)
+			)
 		);
+
 		return true;
 	}
 
@@ -457,163 +561,53 @@ class Campaign {
 	 *
 	 * @since 1.0.0
 	 * @param int  $campaign_id The campaign ID to delete.
-	 * @param bool $force_delete Whether to force delete or move to trash.
+	 * @param bool $force_delete Whether to force delete (unused for compatibility).
 	 * @return bool True on success, false on failure.
 	 */
 	public static function delete( $campaign_id, $force_delete = true ) {
 		$campaign = new self( $campaign_id );
 		$title = $campaign->get_title();
-		$result = wp_delete_post( $campaign_id, $force_delete );
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+
+		$result = $wpdb->delete(
+			$table_name,
+			array( 'id' => $campaign_id ),
+			array( '%d' )
+		);
+
 		/**
 		 * Fires after a campaign is deleted.
 		 *
-		 * @param int      $campaign_id The ID of the deleted campaign.
+		 * @param int $campaign_id The ID of the deleted campaign.
 		 */
 		do_action( 'campaignbay_campaign_delete', $campaign_id );
+
 		// Log the activity.
 		Logger::get_instance()->log(
 			'activity',
 			'deleted',
-			array( 'campaign_id' => $campaign_id, 'extra_data' => [
-				'title' => $title,
-			] )
+			array(
+				'campaign_id' => $campaign_id,
+				'extra_data' => array(
+					'title' => $title,
+				)
+			)
 		);
-		return ! is_wp_error( $result ) && $result !== false;
+
+		return false !== $result;
 	}
 
 	/**
-	 * Loads all metadata for this campaign.
+	 * Get a specific piece of data.
 	 *
 	 * @since 1.0.0
-	 * @access private
-	 */
-	private function load_meta() {
-		$meta_keys = campaignbay_get_campaign_meta_keys();
-
-		foreach ( $meta_keys as $key ) {
-			$value = get_post_meta( $this->id, '_campaignbay_' . $key, true );
-			$this->meta[ $key ] = $value;
-		}
-	}
-
-	/**
-	 * Updates metadata from the provided arguments.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param array $args The arguments containing metadata.
-	 */
-	private function update_meta_from_args( $args ) {
-		$meta_keys = campaignbay_get_campaign_meta_keys();
-
-		foreach ( $meta_keys as $key ) {
-			if ( isset( $args[ $key ] ) ) {
-				$sanitized_value = $this->sanitize_meta_value( $key, $args[ $key ] );
-				$this->update_meta( $key, $sanitized_value );
-			}
-		}
-	}
-
-	/**
-	 * Sanitizes a metadata value based on the key.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param string $key The metadata key.
-	 * @param mixed  $value The value to sanitize.
-	 * @return mixed The sanitized value.
-	 */
-	private function sanitize_meta_value( $key, $value ) {
-		switch ( $key ) {
-			case 'discount_value':
-				return floatval( $value );
-
-			case 'min_quantity':
-			case 'priority':
-			case 'usage_count':
-				return absint( $value );
-			
-			case 'start_datetime':
-			case 'end_datetime':
-				return sanitize_text_field( $value );
-
-			case 'exclude_sale_items':
-			case 'apply_to_shipping':
-			case 'schedule_enabled':
-				return (bool) $value;
-
-			case 'target_ids':
-				return is_array( $value ) ? array_map( 'absint', $value ) : array();
-
-			case 'campaign_type':
-			case 'rule_status':
-			case 'discount_type':
-			case 'target_type':
-			case 'timezone_offset':
-				return sanitize_key( $value );
-			case 'campaign_tiers':
-				return is_array( $value ) ? array_map( array( $this, 'sanitize_tier_item' ), $value ) : array();
-
-			default:
-				return sanitize_text_field( $value );
-		}
-	}
-
-	/**
-	 * Sanitizes a single tier item from the campaign_tiers array.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param array $tier The tier array to sanitize.
-	 * @return array The sanitized tier array.
-	 */
-	private function sanitize_tier_item( $tier ) {
-		if ( ! is_array( $tier ) ) {
-			return array();
-		}
-
-		$sanitized_tier = array();
-		// if its a earlybird campaign, we need to sanitize the tier item.
-		if( isset( $tier['quantity'] ) ){
-			$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
-			$sanitized_tier['quantity']  = isset( $tier['quantity'] ) ? absint( $tier['quantity'] ) : 0;
-			$sanitized_tier['value'] = isset( $tier['value'] ) ? floatval( $tier['value'] ) : 0;
-			$sanitized_tier['type']  = isset( $tier['type'] ) ? sanitize_key( $tier['type'] ) : 'percentage';
-			$sanitized_tier['total'] = isset( $tier['total'] ) ? floatval( $tier['total'] ) : 0;
-			return $sanitized_tier;
-		}
-		// if its a quantity campaign, we need to sanitize the tier item.
-		$sanitized_tier['id']    = isset( $tier['id'] ) ? absint( $tier['id'] ) : 0;
-		$sanitized_tier['min']   = isset( $tier['min'] ) ? absint( $tier['min'] ) : 0;
-		$sanitized_tier['max']   = isset( $tier['max'] ) ? sanitize_text_field( $tier['max'] ) : ''; // Max can be empty or a number.
-		$sanitized_tier['value'] = isset( $tier['value'] ) ? floatval( $tier['value'] ) : 0;
-		$sanitized_tier['type']  = isset( $tier['type'] ) ? sanitize_key( $tier['type'] ) : 'percentage';
-
-		return $sanitized_tier;
-	}
-
-
-	/**
-	 * Get a specific piece of metadata.
-	 *
-	 * @since 1.0.0
-	 * @param string $key The meta key (without prefix).
-	 * @return mixed The value of the meta key.
+	 * @param string $key The data key.
+	 * @return mixed The value of the data key.
 	 */
 	public function get_meta( $key ) {
-		return isset( $this->meta[ $key ] ) ? $this->meta[ $key ] : null;
-	}
-
-	/**
-	 * Update a single piece of metadata in the database and in the object.
-	 *
-	 * @since 1.0.0
-	 * @param string $key The meta key (without prefix).
-	 * @param mixed  $value The value to save.
-	 */
-	public function update_meta( $key, $value ) {
-		$this->meta[ $key ] = $value;
-		update_post_meta( $this->id, '_campaignbay_' . $key, $value );
+		return isset( $this->data->$key ) ? $this->data->$key : null;
 	}
 
 	/**
@@ -624,11 +618,11 @@ class Campaign {
 	}
 
 	public function get_title() {
-		return $this->post->post_title;
+		return $this->data->title;
 	}
 
 	public function get_status() {
-		return $this->post->post_status;
+		return $this->data->status;
 	}
 
 	/**
@@ -638,7 +632,7 @@ class Campaign {
 	 * @return string|null The start datetime in 'Y-m-d H:i:s' format (UTC), or null if not set.
 	 */
 	public function get_start_datetime_utc() {
-		$start_datetime_site = $this->get_meta( 'start_datetime' );
+		$start_datetime_site = $this->data->start_datetime;
 
 		if ( empty( $start_datetime_site ) ) {
 			return null;
@@ -665,7 +659,7 @@ class Campaign {
 	 * @return string|null The end datetime in 'Y-m-d H:i:s' format (UTC), or null if not set.
 	 */
 	public function get_end_datetime_utc() {
-		$end_datetime_site = $this->get_meta( 'end_datetime' );
+		$end_datetime_site = $this->data->end_datetime;
 
 		if ( empty( $end_datetime_site ) ) {
 			return null;
@@ -707,10 +701,10 @@ class Campaign {
 	 * Gets the last modified date of the campaign.
 	 *
 	 * @since 1.0.0
-	 * @return \DateTime|null A DateTime object representing the last modified date in the site's timezone.
+	 * @return string|null The last modified date.
 	 */
 	public function get_date_modified() {
-		return $this->post->post_modified ?: null;
+		return $this->data->date_modified ?: null;
 	}
 }
 

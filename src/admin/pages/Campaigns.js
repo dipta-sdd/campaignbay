@@ -306,7 +306,7 @@ const Campaigns = () => {
         method: "PUT",
         data: {
           ids: campaignsToUpdateInt,
-          status: bulkAction === "activate" ? "cb_active" : "cb_inactive",
+          status: bulkAction === "activate" ? "active" : "inactive",
         },
       });
       addToast(
@@ -319,12 +319,14 @@ const Campaigns = () => {
         "success"
       );
       setSelectedCampaigns([]);
+      console.log(campaignsToUpdateInt);
       setCampaigns((prev) =>
         prev.map((c) => {
-          if (campaignsToUpdateInt.includes(c.id)) {
+          console.log(c);
+          if (campaignsToUpdateInt.includes(parseInt(c.id, 10))) {
             return {
               ...c,
-              status: bulkAction === "activate" ? "cb_active" : "cb_inactive",
+              status: bulkAction === "activate" ? "active" : "inactive",
             };
           }
           return { ...c };
@@ -553,10 +555,10 @@ const Campaigns = () => {
                       <td>
                         <span
                           className={`campaignbay-status-pill campaignbay-status-${
-                            campaign?.status?.replace("cb_", "") || ""
+                            campaign?.status?.replace("", "") || ""
                           }`}
                         >
-                          {campaign?.status?.replace("cb_", "") || ""}
+                          {campaign?.status?.replace("", "") || ""}
                         </span>
                       </td>
                       <td className="campaignbay-capitalize campaignbay-text-secondary">

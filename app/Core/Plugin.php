@@ -142,6 +142,7 @@ class Plugin {
 		foreach ( $components_with_hooks as $component ) {
 			$hooks = $component->get_hooks();
 			foreach ( $hooks as $hook ) {
+				// error_log( print_r( $component, true ) );
 				if ( 'action' === $hook['type'] ) {
 					$this->loader->add_action(
 						$hook['hook'],
