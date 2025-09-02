@@ -73,6 +73,8 @@ This plugin is built on a modern, robust architecture that is fully compatible w
 *   PHP 7.0 or higher
 *   WooCommerce 6.0 or higher (must be installed and activated)
 *   WP-Cron must be enabled for scheduling features.
+*   Requires Plugins: woocommerce
+*   WC requires at least: 6.1
 
 == Frequently Asked Questions ==
 

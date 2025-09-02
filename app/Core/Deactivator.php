@@ -34,7 +34,9 @@ class Deactivator {
 	 *
 	 * Removing options and all data related to plugin if user select remove data on deactivate.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public static function deactivate() {
 		self::remove_custom_capabilities();
@@ -48,6 +50,7 @@ class Deactivator {
 	 *
 	 * @since 1.0.0
 	 * @access private
+	 * @return void
 	 */
 	private static function remove_custom_capabilities() {
 		// Get all editable roles.

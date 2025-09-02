@@ -55,7 +55,65 @@ class DbManager {
      */
     public function create_tables() {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        $this->create_campaigns_table();
         $this->create_logs_table();
+    }
+
+    /**
+     * Create the campaigns table.
+    /**
+     * Create the campaigns table.
+     *
+     * This table stores campaign data.
+     *
+     * @since 1.0.0
+     * @access private
+     */
+    private function create_campaigns_table() {
+        global $wpdb;
+        $table_name      = $wpdb->prefix . '_campaignbay_campaigns';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE {$table_name} (
+            id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            title VARCHAR(255) NOT NULL,
+            status VARCHAR(20) NOT NULL DEFAULT 'active',
+            campaign_type VARCHAR(20) NOT NULL,
+        
+            -- Discount Details --
+            discount_type VARCHAR(20) DEFAULT NULL,
+            discount_value DECIMAL(10, 2) DEFAULT NULL,
+        
+            -- Targeting Details --
+            target_type VARCHAR(20) NOT NULL,
+            target_ids LONGTEXT DEFAULT NULL,
+            exclude_sale_items BOOLEAN NOT NULL DEFAULT 0,
+        
+            -- Scheduling Details --
+            schedule_enabled BOOLEAN NOT NULL DEFAULT 0,
+            start_datetime DATETIME DEFAULT NULL,
+            end_datetime DATETIME DEFAULT NULL,
+            timezone_string VARCHAR(100) DEFAULT NULL,
+        
+            -- Tiered Data (for Quantity/Earlybird) --
+            campaign_tiers JSON DEFAULT NULL,
+        
+            -- Usage and Control --
+            usage_count INT(11) DEFAULT 0 NOT NULL,
+            priority INT(11) DEFAULT 10 NOT NULL,
+        
+            -- Timestamps --
+            date_created DATETIME NOT NULL,
+            date_modified DATETIME NOT NULL,
+            
+            PRIMARY KEY (id),
+            KEY status (status),
+            KEY campaign_type (campaign_type),
+            KEY start_datetime (start_datetime),
+            KEY end_datetime (end_datetime)
+        ) $charset_collate;";
+
+        dbDelta( $sql );
     }
 
     /**
@@ -68,7 +126,7 @@ class DbManager {
      */
     private function create_logs_table() {
 		global $wpdb;
-		$table_name      = $wpdb->prefix . 'campaignbay_logs';
+		$table_name      = $wpdb->prefix . '_campaignbay_logs';
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (

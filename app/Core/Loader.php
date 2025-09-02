@@ -45,6 +45,13 @@ class Loader {
 	 */
 	protected $filters;
 
+	/**
+	 * Get the instance of the Loader class.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return Loader
+	 */
 	public static function get_instance() {
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
@@ -58,6 +65,8 @@ class Loader {
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
 	 * @since    1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function __construct() {
 
@@ -105,7 +114,7 @@ class Loader {
 	 * @param    string $callback         The name of the function definition on the $component.
 	 * @param    int    $priority         The priority at which the function should be fired.
 	 * @param    int    $accepted_args    The number of arguments that should be passed to the $callback.
-	 * @return   array                                  The collection of actions and filters registered with WordPress.
+	 * @return   array                    The collection of actions and filters registered with WordPress.
 	 */
 	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
 
@@ -124,6 +133,8 @@ class Loader {
 	 * Register the filters and actions with WordPress.
 	 *
 	 * @since    1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function run() {
 

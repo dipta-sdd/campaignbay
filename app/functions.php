@@ -171,21 +171,16 @@ if ( ! function_exists( 'campaignbay_file_system' ) ) {
 if ( ! function_exists( 'campaignbay_parse_changelog' ) ) {
 
 	/**
-	 * Parse changelog
+	 * Parse the changelog.txt file and convert it to HTML for the update modal.
 	 *
 	 * @since 1.0.0
-	 * @return string
-	 *
-	 * @author     dipta-sdd <sankarsandipta@gmail.com>
+	 * @return string The formatted HTML changelog.
 	 */
 	function campaignbay_parse_changelog() {
-
 		$wp_filesystem = campaignbay_file_system();
+		$changelog_file = apply_filters( CAMPAIGNBAY_OPTION_NAME . '_changelog_file', CAMPAIGNBAY_PATH . 'changelog.txt' );
 
-		$changelog_file = apply_filters( CAMPAIGNBAY_OPTION_NAME  . '_changelog_file', CAMPAIGNBAY_PATH . 'readme.txt' );
-
-		/*Check if the changelog file exists and is readable.*/
-		if ( ! $changelog_file || ! is_readable( $changelog_file ) ) {
+		if ( ! $changelog_file || ! $wp_filesystem->is_readable( $changelog_file ) ) {
 			return '';
 		}
 
@@ -194,20 +189,51 @@ if ( ! function_exists( 'campaignbay_parse_changelog' ) ) {
 		if ( ! $content ) {
 			return '';
 		}
-
-		$matches   = null;
-		$regexp    = '~==\s*Changelog\s*==(.*)($)~Uis';
-		$changelog = '';
-
-		if ( preg_match( $regexp, $content, $matches ) ) {
-			$changes = explode( '\r\n', trim( $matches[1] ) );
-
-			foreach ( $changes as $index => $line ) {
-				$changelog .= wp_kses_post( preg_replace( '~(=\s*Version\s*(\d+(?:\.\d+)+)\s*=|$)~Uis', '', $line ) );
-			}
+		
+		// Find the content specifically under the "== Changelog ==" heading.
+		$matches = null;
+		if ( ! preg_match( '~==\s*Changelog\s*==(.*)($)~Uis', $content, $matches ) ) {
+			return '';
 		}
 
-		return wp_kses_post( $changelog );
+		$raw_changelog = trim( $matches[1] );
+		$lines         = explode( "\n", $raw_changelog );
+		$changelog_html = '';
+		$in_list       = false;
+
+		// --- NEW: A more robust line-by-line parser ---
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+
+			// Check for a version heading (e.g., "= 1.1.0 =")
+			if ( strpos( $line, '= ' ) === 0 ) {
+				if ( $in_list ) {
+					$changelog_html .= "</ul>\n";
+					$in_list = false;
+				}
+				// Extract the version number and wrap it in an <h4> tag.
+				$version = trim( str_replace( '=', '', $line ) );
+				$changelog_html .= "<h4>" . esc_html( "Version " . $version ) . "</h4>\n";
+			} 
+			// Check for a list item (e.g., "* New feature")
+			elseif ( strpos( $line, '* ' ) === 0 ) {
+				if ( ! $in_list ) {
+					$changelog_html .= "<ul>\n";
+					$in_list = true;
+				}
+				// Extract the list item text and wrap it in an <li> tag.
+				$item = trim( substr( $line, 1 ) );
+				$changelog_html .= "<li>" . esc_html( $item ) . "</li>\n";
+			}
+		}
+		
+		// Close the final list if it was open.
+		if ( $in_list ) {
+			$changelog_html .= "</ul>\n";
+		}
+
+		// Sanitize the final HTML to allow only safe tags like <h4>, <ul>, <li>.
+		return wp_kses_post( $changelog_html );
 	}
 }
 

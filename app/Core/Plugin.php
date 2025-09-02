@@ -54,7 +54,13 @@ class Plugin {
 	protected $loader;
 
 
-
+	/**
+	 * Get the instance of the Plugin class.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return Plugin
+	 */
 	public static function get_instance() {
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
@@ -69,6 +75,8 @@ class Plugin {
 	 * the public-facing side of the site.
 	 *
 	 * @since    1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function __construct() {
 		// Initialize the loader first
@@ -88,6 +96,7 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
+	 * @return void
 	 */
 	private function set_locale() {
 		$plugin_i18n = new I18n();
@@ -100,6 +109,7 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
+	 * @return void
 	 */
 	private function define_core_hooks() {
 		// Initialize post types
@@ -159,6 +169,7 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
+	 * @return void
 	 */
 	private function define_public_hooks() {
 		if ( is_admin() ) {
@@ -177,6 +188,7 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
+	 * @return void
 	 */
 	public function enqueue_public_styles() {
 		wp_enqueue_style( 'wpab-cb-public', CAMPAIGNBAY_URL . 'build/public.css', array(), CAMPAIGNBAY_VERSION );
@@ -188,6 +200,7 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
+	 * @return void
 	 */
 	private function define_admin_hooks() {
 		$plugin_admin = Admin::get_instance();
@@ -210,6 +223,8 @@ class Plugin {
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
 	 * @since    1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function run() {
 		$this->loader->run();
@@ -219,6 +234,7 @@ class Plugin {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
+	 * @access public
 	 * @return    Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {

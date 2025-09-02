@@ -24,9 +24,22 @@ use DateInterval;
  * @author     WP Anchor Bay <wpanchorbay@gmail.com>
  */
 class DashboardController extends ApiController {
-
+	/**
+	 * The instance of the DashboardController.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @var DashboardController
+	 */
 	private static $instance = null;
 
+	/**
+	 * Get the instance of the DashboardController.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return DashboardController
+	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -34,11 +47,25 @@ class DashboardController extends ApiController {
 		return self::$instance;
 	}
 
+	/**
+	 * Run the DashboardController.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
+	 */
 	public function run() {
 		$this->rest_base = 'dashboard';
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 
+	/**
+	 * Register the routes for the DashboardController.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
+	 */
 	public function register_routes() {
 		$namespace = $this->namespace . $this->version;
 
@@ -60,6 +87,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Main callback to fetch all data for the dashboard.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error
 	 */
@@ -83,6 +112,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Calculates KPI data for the dashboard.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @param string $current_start  Start date for the current period.
 	 * @param string $current_end    End date for the current period.
 	 * @param string $previous_start Start date for the previous period.
@@ -166,6 +197,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Calculates Chart data for the dashboard.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @param string $start_date Start date for the period.
 	 * @param string $end_date   End date for the period.
 	 * @return array
@@ -231,6 +264,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Gets the data for the "Most Impactful Types" pie chart.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @param string $start_date Start date for the period.
 	 * @param string $end_date   End date for the period.
 	 * @return array
@@ -262,6 +297,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Gets the data for the "Live & Upcoming Campaigns" widget.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @return array
 	 */
 	private function get_live_and_upcoming_campaigns() {
@@ -328,6 +365,8 @@ class DashboardController extends ApiController {
     /**
 	 * Gets the most recent activity logs, returning raw data for the frontend to format.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @return array
 	 */
 	private function get_recent_activity() {
@@ -369,6 +408,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Parses the date range parameters from the request.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @param string $period Preset period ('7days', '30days', 'year').
 	 * @param string $start_date Custom start date.
 	 * @param string $end_date Custom end date.
@@ -425,6 +466,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Fills in missing dates in the discount trends data with zero values.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @param array $trends_data The existing trends data from database.
 	 * @param string $start_date Start date for the period.
 	 * @param string $end_date End date for the period.
@@ -470,6 +513,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Calculates the percentage change between two numbers.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @param float $current Current value.
 	 * @param float $previous Previous value.
 	 * @return float
@@ -484,6 +529,8 @@ class DashboardController extends ApiController {
 	/**
 	 * Defines the query parameters the endpoint accepts.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @return array
 	 */
 	public function get_collection_params() {

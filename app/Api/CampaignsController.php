@@ -67,6 +67,8 @@ class CampaignsController extends ApiController {
 	 * Initialize the class.
 	 *
 	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function run() {
 		$this->rest_base = 'campaigns';
@@ -77,6 +79,8 @@ class CampaignsController extends ApiController {
 	 * Register the routes for the objects of the controller.
 	 *
 	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function register_routes() {
 		$namespace = $this->namespace . $this->version;
@@ -168,6 +172,8 @@ class CampaignsController extends ApiController {
 	/**
 	 * Get a collection of campaigns.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
@@ -229,6 +235,8 @@ class CampaignsController extends ApiController {
 	/**
 	 * Get a single campaign.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
@@ -247,7 +255,10 @@ class CampaignsController extends ApiController {
 	/**
 	 * Create a single campaign.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
+	 * @access public
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function create_item( $request ) {
@@ -264,9 +275,12 @@ class CampaignsController extends ApiController {
 
 		return $response;
 	}
+
 	/**
 	 * Update a single campaign.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
@@ -295,6 +309,7 @@ class CampaignsController extends ApiController {
 	/**
 	 * Delete a single campaign.
 	 *
+	 * @since 1.0.0
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
@@ -320,6 +335,7 @@ class CampaignsController extends ApiController {
 	 * Bulk update campaigns' statuses.
 	 *
 	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
@@ -375,6 +391,7 @@ class CampaignsController extends ApiController {
 	 * Bulk delete campaigns.
 	 *
 	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
@@ -409,6 +426,8 @@ class CampaignsController extends ApiController {
 	/**
 	 * Prepare a single campaign output for response.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param Campaign $campaign Campaign object.
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response Response object.
@@ -435,6 +454,8 @@ class CampaignsController extends ApiController {
 	/**
 	 * Get the query params for collections.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @return array
 	 */
 	public function get_collection_params() {
@@ -449,6 +470,8 @@ class CampaignsController extends ApiController {
 	/**
 	 * Get the campaign schema, conforming to JSON Schema.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @return array
 	 */
 	public function get_item_schema() {
@@ -556,6 +579,7 @@ class CampaignsController extends ApiController {
 	 * Defines the arguments for the bulk update endpoint.
 	 *
 	 * @since 1.0.0
+	 * @access public
 	 * @return array
 	 */
 	private function get_bulk_update_args() {
@@ -579,6 +603,7 @@ class CampaignsController extends ApiController {
 	 * Defines the arguments for the bulk delete endpoint.
 	 *
 	 * @since 1.0.0
+	 * @access private
 	 * @return array
 	 */
 	private function get_bulk_delete_args() {

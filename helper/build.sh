@@ -65,7 +65,7 @@ EXCLUDE_PATTERNS=(
     "todo.txt"
     "Documentation"
     "Licensing"
-
+    "hooks.txt"
 )
 
 # 5. Check if the 'tree' command is available.

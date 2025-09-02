@@ -47,9 +47,8 @@ class Admin {
 	 * Gets an instance of this object.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.
 	 *
-	 * @static
 	 * @access public
-	 * @return object
+	 * @return Admin
 	 * @since 1.0.0
 	 */
 	public static function get_instance() {
@@ -64,9 +63,9 @@ class Admin {
 	/**
 	 * Add Admin Page Menu page.
 	 *
+	 * @since 1.0.0
 	 * @access public
-	 *
-	 * @since    1.0.0
+	 * @return void	
 	 */
 	public function add_admin_menu() {
 		$white_label     = Common::get_instance()->get_white_label();
@@ -130,8 +129,7 @@ class Admin {
 	 * Check if current page is menu page.
 	 *
 	 * @access public
-	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 * @return bool
 	 */
 	public function is_menu_page() {
@@ -142,20 +140,13 @@ class Admin {
 		}
 		return true;
 	}
-	// public function is_menu_page() {
-	// 	$screen = get_current_screen();
-	// 	if ( ! $screen ) {
-	// 		return false;
-	// 	}
-	// 	return strpos( $screen->id, CAMPAIGNBAY_PLUGIN_NAME ) !== false;
-	// }
+
 
 	/**
 	 * Add has sticky header class.
 	 *
+	 * @since 1.0.0
 	 * @access public
-	 *
-	 * @since    1.0.0
 	 * @param string $classes The classes.
 	 * @return string
 	 */
@@ -169,9 +160,9 @@ class Admin {
 	/**
 	 * Add setting root div.
 	 *
+	 * @since 1.0.0
 	 * @access public
-	 *
-	 * @since    1.0.0
+	 * @return void
 	 */
 	public function add_setting_root_div() {
 		echo '<div id="' . esc_attr( CAMPAIGNBAY_PLUGIN_NAME ) . '"></div>';
@@ -180,9 +171,9 @@ class Admin {
 	/**
 	 * Enqueue resources.
 	 *
+	 * @since 1.0.0
 	 * @access public
-	 *
-	 * @since    1.0.0
+	 * @return void
 	 */
 	public function enqueue_resources() {
 		$this->enqueue_global_admin_styles();
@@ -265,10 +256,9 @@ class Admin {
 
 	/**
 	 * Get settings schema.
-	 *
+	 * 	
+	 * @since 1.0.0
 	 * @access public
-	 *
-	 * @since    1.0.0
 	 * @return array settings schema for this plugin.
 	 */
 	public function get_settings_schema() {
@@ -459,7 +449,7 @@ class Admin {
 	 * Common callback function of rest_api_init and admin_init
 	 *
 	 * @since 1.0.0
-	 *
+	 * @access public
 	 * @return void
 	 */
 	public function register_settings() {
@@ -481,9 +471,8 @@ class Admin {
 	/**
 	 * Add plugin menu items.
 	 *
-	 * @access public
-	 *
 	 * @since 1.0.0
+	 * @access public
 	 * @param string[] $actions     An array of plugin action links. By default this can include
 	 *                              'activate', 'deactivate', and 'delete'. With Multisite active
 	 *                              this can also include 'network_active' and 'network_only' items.
@@ -507,6 +496,7 @@ class Admin {
 	 * These are the links that appear in the second row, next to the version number.
 	 *
 	 * @since 1.0.0
+	 * @access public
 	 * @param array  $links The existing meta links.
 	 * @param string $file  The plugin file name.
 	 * @return array The modified array of meta links.

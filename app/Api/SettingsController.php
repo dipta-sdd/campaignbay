@@ -51,6 +51,7 @@ class SettingsController extends ApiController {
 	/**
 	 * Initialize the class and set up actions.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @return void
 	 */
@@ -66,6 +67,8 @@ class SettingsController extends ApiController {
 	 * Register REST API route.
 	 *
 	 * @since    1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function register_routes() {
 		$namespace = $this->namespace . $this->version;
@@ -99,7 +102,7 @@ class SettingsController extends ApiController {
 	 * Retrieves the settings.
 	 *
 	 * @since 1.0.0
-	 *
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return array|WP_Error Array on success, or WP_Error object on failure.
 	 */
@@ -119,7 +122,7 @@ class SettingsController extends ApiController {
 	 * Prepares a value for output based off a schema array.
 	 *
 	 * @since 1.0.0
-	 *
+	 * @access public
 	 * @param mixed $value  Value to prepare.
 	 * @param array $schema Schema to match.
 	 * @return mixed The prepared value.
@@ -135,7 +138,7 @@ class SettingsController extends ApiController {
 	 * Updates settings.
 	 *
 	 * @since 1.0.0
-	 *
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return array|WP_Error Array on success, or error object on failure.
 	 */
@@ -163,7 +166,7 @@ class SettingsController extends ApiController {
 	 * Retrieves all of the registered options for the Settings API.
 	 *
 	 * @since 1.0.0
-	 *
+	 * @access public
 	 * @return array Array of registered options.
 	 */
 	protected function get_registered_schema() {
@@ -188,7 +191,7 @@ class SettingsController extends ApiController {
 	 * Retrieves the site setting schema, conforming to JSON Schema.
 	 *
 	 * @since 1.0.0
-	 *
+	 * @access public
 	 * @return array Item schema data.
 	 */
 	public function get_item_schema() {
@@ -214,13 +217,12 @@ class SettingsController extends ApiController {
 
 
 	/**
-	 * Gets an instance of this object.
+	 * Gets an instance of this class.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.
 	 *
-	 * @static
-	 * @access public
-	 * @return object
 	 * @since 1.0.0
+	 * @access public
+	 * @return SettingsController
 	 */
 	public static function get_instance() {
 		// Store the instance locally to avoid private static replication.

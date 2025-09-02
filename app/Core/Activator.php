@@ -36,24 +36,12 @@ class Activator {
 	 *
 	 * This is fired when the plugin is activated.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public static function activate() {
-
-		// // Dependency Check: Is WooCommerce Active? ---
-		// if ( ! class_exists( 'WooCommerce' ) ) {
-		// 	// If the WooCommerce class doesn't exist, stop the activation.
-		// 	wp_die(
-		// 		// The message displayed to the user.
-		// 		esc_html__( 'CampaignBay could not be activated. It requires the WooCommerce plugin to be installed and active.', 'campaignbay' ),
-		// 		// The title of the error page.
-		// 		esc_html__( 'Plugin Activation Error', 'campaignbay' ),
-		// 		// Provides a "Go Back" link.
-		// 		array( 'back_link' => true )
-		// 	);
-		// }
-
-		
+	
 		// Set up the default options if they don't exist.
 		if ( ! get_option( CAMPAIGNBAY_OPTION_NAME ) ) {
 			campaignbay_update_options( campaignbay_default_options() );
@@ -77,6 +65,7 @@ class Activator {
 	 *
 	 * @since 1.0.0
 	 * @access private
+	 * @return void
 	 */
 	private static function create_custom_tables() {
 		DbManager::get_instance()->create_tables();
@@ -87,6 +76,7 @@ class Activator {
 	 *
 	 * @since    1.0.0
 	 * @access private
+	 * @return void
 	 */
 	private static function secure_log_directory() {
 		$upload_dir = wp_upload_dir();
@@ -121,6 +111,7 @@ class Activator {
 	 *
 	 * @since 1.0.0
 	 * @access private
+	 * @return void
 	 */
 	private static function add_custom_capabilities() {
 		// Get the roles we want to modify.
@@ -138,17 +129,17 @@ class Activator {
 		}
 
 		// give access to all capabilities to any role
-		$contributor   = get_role( 'contributor' );
-		if ( $contributor) {
-			$contributor->add_cap( $custom_capability );
-			$capability_types = array( 'product', 'shop_order', 'shop_coupon' );
+		// $contributor   = get_role( 'contributor' );
+		// if ( $contributor) {
+		// 	$contributor->add_cap( $custom_capability );
+		// 	$capability_types = array( 'product', 'shop_order', 'shop_coupon' );
 
-			foreach ( $capability_types as $capability_type ) {
-					$contributor->add_cap("read_{$capability_type}");
+		// 	foreach ( $capability_types as $capability_type ) {
+		// 			$contributor->add_cap("read_{$capability_type}");
 
-			}
+		// 	}
 			
-		}
+		// }
 
 		
 	}

@@ -24,13 +24,22 @@ class LogsController extends ApiController {
 
 	/**
 	 * The single instance of the class.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @var LogsController
 	 */
 	private static $instance = null;
 
 	/**
 	 * Gets an instance of this object.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return LogsController
 	 */
 	public static function get_instance() {
+		// Store the instance locally to avoid private static replication.
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
@@ -40,6 +49,8 @@ class LogsController extends ApiController {
 	/**
 	 * Initialize the class.
      * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function run() {
 		$this->rest_base = 'logs';
@@ -56,6 +67,8 @@ class LogsController extends ApiController {
 	 * the actual cleanup logic only runs once per day.
 	 *
 	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function run_log_cleanup_check() {
 		// The transient acts as a "lock" to prevent this from running on every page load.
@@ -76,6 +89,8 @@ class LogsController extends ApiController {
 	 * This method is now triggered by our transient-based check.
 	 *
 	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function cleanup_old_log_files() {
 		campaignbay_log( 'Running daily log file cleanup task.', 'INFO' );
@@ -123,6 +138,8 @@ class LogsController extends ApiController {
 	/**
 	 * Register the routes for the objects of the controller.
      * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function register_routes() {
         $namespace = $this->namespace . $this->version;
@@ -181,6 +198,8 @@ class LogsController extends ApiController {
     /**
 	 * Get the contents of a log file from a specific number of days ago.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error
 	 */
@@ -200,6 +219,8 @@ class LogsController extends ApiController {
 	/**
 	 * Get the contents of TODAY's log file.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error
 	 */
@@ -215,6 +236,8 @@ class LogsController extends ApiController {
 	/**
 	 * Get a list of all available log file dates.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response
 	 */
@@ -238,6 +261,8 @@ class LogsController extends ApiController {
 	/**
 	 * A reusable helper function to read a log file and return a REST response.
 	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @param string $log_file_path The full path to the log file.
 	 * @param string $not_found_message The message to return if the file doesn't exist.
 	 * @return WP_REST_Response|WP_Error
@@ -262,6 +287,14 @@ class LogsController extends ApiController {
 	}
 
 
+	/**
+	 * Delete the log files.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error
+	 */
     public function delete_log_files( $request ) {
         $upload_dir = wp_upload_dir();
         $log_dir    = $upload_dir['basedir'] . '/' . CAMPAIGNBAY_TEXT_DOMAIN . '-logs/';

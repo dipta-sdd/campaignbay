@@ -6,6 +6,7 @@
  * Requires at least: 5.8
  * Requires PHP:      7.0
  * Requires Plugins:  woocommerce
+ * WC requires at least: 6.1
  * Version:           1.0.0
  * Author:            WP Anchor Bay
  * Author URI:        https://wpanchorbay.com
@@ -30,13 +31,12 @@ define( 'CAMPAIGNBAY_TEXT_DOMAIN', 'campaignbay' );
 define( 'CAMPAIGNBAY_OPTION_NAME', 'campaignbay' );
 define( 'CAMPAIGNBAY_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'CAMPAIGNBAY_DEV_MODE', true );
-// --- 2. Simple autoloader for our namespaced classes ---
+
 spl_autoload_register( function ( $class ) {
 	// Only handle our plugin's classes
 	if ( strpos( $class, 'WpabCb\\' ) !== 0 ) {
 		return;
 	}
-
 	// Convert namespace to file path
 	$file = CAMPAIGNBAY_PATH . 'app/' . str_replace( '\\', '/', substr( $class, 7 ) ) . '.php';
 	
@@ -46,11 +46,9 @@ spl_autoload_register( function ( $class ) {
 	}
 } );
 
-// --- 3. Include helper functions ---
 require_once CAMPAIGNBAY_PATH . 'app/functions.php';
 
 
-// --- 4. Update Activation/Deactivation hooks to use the new namespaced classes ---
 register_activation_hook( __FILE__, [ \WpabCb\Core\Activator::class, 'activate' ] );
 register_deactivation_hook( __FILE__, [ \WpabCb\Core\Deactivator::class, 'deactivate' ] );
 
@@ -60,10 +58,7 @@ register_deactivation_hook( __FILE__, [ \WpabCb\Core\Deactivator::class, 'deacti
  * @since    1.0.0
  */
 function campaignbay_run() {
-	// --- 5. Instantiate your main plugin class using its full, namespaced name ---
 	$plugin = \WpabCb\Core\Plugin::get_instance();
 	$plugin->run();
 }
 campaignbay_run();
-
-// composer dump-autoload -o

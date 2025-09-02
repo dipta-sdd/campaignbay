@@ -23,6 +23,8 @@ class I18n {
 	 * Load the plugin text domain for translation.
 	 *
 	 * @since    1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function load_plugin_textdomain() {
 

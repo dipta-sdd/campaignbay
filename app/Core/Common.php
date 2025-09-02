@@ -35,8 +35,8 @@ class Common {
 	 * The single instance of the class.
 	 *
 	 * @since 1.0.0
-	 * @var   Common
 	 * @access private
+	 * @var   Common
 	 */
 	private static $instance = null;
 
@@ -44,9 +44,8 @@ class Common {
 	 * Gets an instance of this object.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.
 	 *
-	 * @static
 	 * @access public
-	 * @return object
+	 * @return Common
 	 * @since 1.0.0
 	 */
 	public static function get_instance() {
@@ -60,6 +59,7 @@ class Common {
 	/**
 	 * Get the settings with caching.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @param string $key optional meta key.
 	 * @return array|null
@@ -79,6 +79,7 @@ class Common {
 	/**
 	 * Get options related to white label.
 	 *
+	 * @since 1.0.0
 	 * @access public
 	 * @return array|null
 	 */

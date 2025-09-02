@@ -51,9 +51,8 @@ class Scheduler {
 	/**
 	 * Gets an instance of this object.
 	 *
-	 * @static
-	 * @access public
 	 * @since 1.0.0
+	 * @access public
 	 * @return Scheduler
 	 */
 	public static function get_instance() {
@@ -67,11 +66,20 @@ class Scheduler {
 	 * Private constructor to define hooks and enforce singleton pattern.
 	 *
 	 * @since 1.0.0
+	 * @access private
+	 * @return void
 	 */
 	private function __construct() {
 		$this->define_hooks();
 	}
 
+	/**
+	 * Run the scheduler.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
+	 */
 	public function run() {
 		// $this->check_scheduled_campaigns();
 
@@ -82,6 +90,7 @@ class Scheduler {
 	 *
 	 * @since 1.0.0
 	 * @access private
+	 * @return void
 	 */
 	private function define_hooks() {
 		// The main trigger to set up schedules when a campaign is saved or updated.
@@ -103,6 +112,7 @@ class Scheduler {
 	 * Returns the complete array of hooks to be registered by the main loader.
 	 *
 	 * @since 1.0.0
+	 * @access public
 	 * @return array
 	 */
 	public function get_hooks() {
@@ -113,8 +123,11 @@ class Scheduler {
 	 * Main handler that runs when a campaign post is saved.
 	 * It decides whether to schedule or unschedule events based on the new post status.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param int     $campaign_id The post ID of the campaign.
 	 * @param WP_Post $campaign    The post object.
+	 * @return void
 	 */
 	public function handle_campaign_save( $campaign_id, $campaign ) {
 		$campaign = new Campaign( $campaign_id );
@@ -155,6 +168,8 @@ class Scheduler {
 	 * their status, relying on the Campaign object's internal date logic.
 	 *
 	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 */
 	public function run_scheduled_campaigns_cron() {
 		$campaigns_to_check_query = new WP_Query(
@@ -207,7 +222,10 @@ class Scheduler {
 	/**
 	 * Runs when the activation cron event fires. Changes status to 'active'.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param int $campaign_id The ID of the campaign to activate.
+	 * @return void
 	 */
 	public function run_campaign_activation( $campaign_id ) {
 		campaignbay_log( sprintf( 'WP-Cron: Running activation for campaign #%d.', $campaign_id ), 'INFO' );
@@ -226,7 +244,10 @@ class Scheduler {
 	/**
 	 * Runs when the deactivation cron event fires. Changes status to 'expired'.
 	 *
+	 * @since 1.0.0
+	 * @access public
 	 * @param int $campaign_id The ID of the campaign to expire.
+	 * @return void
 	 */
 	public function run_campaign_deactivation( $campaign_id ) {
 		campaignbay_log( sprintf( 'WP-Cron: Running deactivation for campaign #%d.', $campaign_id ), 'INFO' );
@@ -244,8 +265,12 @@ class Scheduler {
 
 	/**
 	 * Clears schedules when a post is about to be deleted.
-	 *
+	 *	
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 * @param int $campaign_id The post ID being deleted.
+	 * @return void
 	 */
 	public function clear_campaign_schedules_on_delete( $campaign_id ) {
 		if ( 'campaignbay_campaign' === get_post_type( $campaign_id ) ) {
@@ -256,7 +281,11 @@ class Scheduler {
 	/**
 	 * Clears all scheduled cron events associated with a specific campaign.
 	 *
-	 * @param int $campaign_id The post ID of the campaign.
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
+	 * @param int $campaign_id The post ID of the campaign.	
+	 * @return void
 	 */
 	private function clear_campaign_schedules( $campaign_id	 ) {
 		// We must pass the same arguments array we used when scheduling to ensure the correct hook is cleared.
@@ -268,11 +297,15 @@ class Scheduler {
 
 	/**
 	 * Adds a new action to the hooks array.
-	 *
+	 *	
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
 	 * @param string $hook The hook name.
 	 * @param string $callback The callback method on this object.
 	 * @param int    $priority The priority.
 	 * @param int    $accepted_args The number of accepted arguments.
+	 * @return void
 	 */
 	private function add_action( $hook, $callback, $priority = 10, $accepted_args = 2 ) {
 		$this->hooks[] = array(

@@ -19,8 +19,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Logger {
 
+	/**
+	 * The instance of the Logger class.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @var Logger
+	 */
 	private static $instance = null;
 
+	/**
+	 * Gets an instance of the Logger class.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return Logger
+	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -28,6 +42,13 @@ class Logger {
 		return self::$instance;
 	}
 
+	/**
+	 * Constructor for the Logger class.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @return void
+	 */
 	private function __construct() {
 		// Private constructor for singleton
 	}
@@ -36,12 +57,16 @@ class Logger {
 	 * Central logging function for the entire plugin.
 	 *
 	 * @since 1.0.0
+	 * @access public
 	 * @param string $log_type    The category of the log entry (e.g., 'sale', 'activity', 'error').
 	 * @param string $message     A short, human-readable message describing the event.
 	 * @param array  $context     An associative array of contextual data.
+	 * @return void
 	 */
 	public function log( $log_type, $message, $context = array() ) {
 		global $wpdb;
+		
+		// Get the table name.
 		$table_name = $wpdb->prefix . 'campaignbay_logs';
 
 		// --- Prepare core, indexed columns ---
@@ -78,7 +103,6 @@ class Logger {
 				'extra_data'     => wp_json_encode( $extra_data ),
 				'timestamp'      => current_time( 'mysql' ),
 			),
-			// Define the format for each column value for security.
 			array( '%d', '%d', '%d', '%s', '%f', '%f', '%f', '%s', '%s', '%s' )
 		);
 	}
