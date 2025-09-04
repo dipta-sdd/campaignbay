@@ -77,40 +77,52 @@ class DbManager {
         $sql = "CREATE TABLE {$table_name} (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             title VARCHAR(255) NOT NULL,
-            status VARCHAR(20) NOT NULL DEFAULT 'active',
-            campaign_type VARCHAR(20) NOT NULL,
-        
-            -- Discount Details --
+            status VARCHAR(20) NOT NULL DEFAULT 'draft',
+            campaign_type VARCHAR(20) ENUM(
+                'scheduled_sales',
+                'quantity_tiered',
+                'early_bird',
+                'bogo',
+                'bundle',
+                'free_shipping_gift',
+                'storewide',
+                'category_product_tag',
+                'user_role',
+                'purchase_history',
+                'cart_checkout',
+                'location_based',
+                'nth_order',
+                'next_buy_bonus',
+                'day_based'
+            ) NOT NULL,
+            
             discount_type VARCHAR(20) DEFAULT NULL,
             discount_value DECIMAL(10, 2) DEFAULT NULL,
-        
-            -- Targeting Details --
-            target_type VARCHAR(20) NOT NULL,
+            campaign_tiers JSON DEFAULT NULL,
+            
+            target_type VARCHAR(20) DEFAULT NULL,
             target_ids LONGTEXT DEFAULT NULL,
+            is_exclude BOOLEAN NOT NULL DEFAULT 0,
             exclude_sale_items BOOLEAN NOT NULL DEFAULT 0,
-        
-            -- Scheduling Details --
+            
             schedule_enabled BOOLEAN NOT NULL DEFAULT 0,
             start_datetime DATETIME DEFAULT NULL,
             end_datetime DATETIME DEFAULT NULL,
-            timezone_string VARCHAR(100) DEFAULT NULL,
-        
-            -- Tiered Data (for Quantity/Earlybird) --
-            campaign_tiers JSON DEFAULT NULL,
-        
-            -- Usage and Control --
-            usage_count INT(11) DEFAULT 0 NOT NULL,
-            priority INT(11) DEFAULT 10 NOT NULL,
-        
-            -- Timestamps --
+            
+            usage_count INT(11) NOT NULL DEFAULT 0,
+            usage_limit INT(11) DEFAULT NULL,
+            priority INT(11) NOT NULL DEFAULT 10,
+            
             date_created DATETIME NOT NULL,
             date_modified DATETIME NOT NULL,
+
+            created_by BIGINT(20) UNSIGNED DEFAULT 0 NOT NULL,
+            updated_by BIGINT(20) UNSIGNED DEFAULT 0 NOT NULL,
             
-            PRIMARY KEY (id),
-            KEY status (status),
-            KEY campaign_type (campaign_type),
-            KEY start_datetime (start_datetime),
-            KEY end_datetime (end_datetime)
+            PRIMARY KEY  (id),
+            KEY `status` (`status`),
+            KEY `campaign_type` (`campaign_type`),
+            KEY `date_range` (start_datetime, end_datetime)
         ) $charset_collate;";
 
         dbDelta( $sql );
