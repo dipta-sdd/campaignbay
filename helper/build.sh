@@ -49,6 +49,7 @@ EXCLUDE_PATTERNS=(
     ".gitignore"
     "node_modules"
     "src"
+    ".dist"
     "vendor"
     "docs"
     "composer.json"
@@ -61,11 +62,15 @@ EXCLUDE_PATTERNS=(
     ".DS_Store"
     "all_php_code.txt"
     "collector.js"
-    "tests.md"
-    "todo.txt"
     "Documentation"
     "Licensing"
+    "tests.md"
+    "tests.txt"
+    "todo.md"
+    "todo.txt"
+    "hooks.md"
     "hooks.txt"
+
 )
 
 # 5. Check if the 'tree' command is available.

@@ -30,12 +30,14 @@ ChartJS.register(
 );
 
 import Navbar from "../components/Navbar";
+import ActivityLogModal from "../components/ActivityLogModal";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
-  const [chartType, setChartType] = useState("bar"); // Add chart type state
+  const [chartType, setChartType] = useState("bar");
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -791,9 +793,19 @@ const Dashboard = () => {
                 ))}
             </div>
             <div className="cb-activity-footer">
-              <a href="#" className="cb-view-all-link">
+              <button
+                onClick={() => setIsActivityModalOpen(true)}
+                className="cb-view-all-link"
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "inherit",
+                  textDecoration: "underline",
+                }}
+              >
                 {__("View Full Activity Log", "campaignbay")}
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -808,6 +820,12 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
+
+      {/* Activity Log Modal */}
+      <ActivityLogModal
+        isActivityModalOpen={isActivityModalOpen}
+        setIsActivityModalOpen={setIsActivityModalOpen}
+      />
     </div>
   );
 };

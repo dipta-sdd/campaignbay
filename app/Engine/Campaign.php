@@ -320,6 +320,30 @@ class Campaign {
 	}
 
 	/**
+	 * Validates a datetime string and returns null if invalid.
+	 *
+	 * @since 1.0.0
+	 * @param string $datetime The datetime string to validate.
+	 * @return string|null The validated datetime string or null if invalid.
+	 */
+	private static function validate_datetime( $datetime ) {
+		if ( empty( $datetime ) ) {
+			return null;
+		}
+
+		// Try to create a DateTime object to validate the format
+		try {
+			$date = new DateTime( $datetime );
+			// If successful, return the original string
+			return $datetime;
+		} catch ( Exception $e ) {
+			// If invalid, log the error and return null
+			campaignbay_log( 'Invalid datetime format: ' . $datetime, 'WARNING' );
+			return null;
+		}
+	}
+
+	/**
 	 * Creates a new campaign.
 	 *
 	 * @since 1.0.0
@@ -351,6 +375,10 @@ class Campaign {
 		if ( ! in_array( $args['campaign_type'], $allowed_types, true ) ) {
 			self::throw_validation_error( 'campaign_type' );
 		}
+
+		// Validate datetime fields
+		$args['start_datetime'] = self::validate_datetime( $args['start_datetime'] ?? null );
+		$args['end_datetime'] = self::validate_datetime( $args['end_datetime'] ?? null );
 
 		if ( 'scheduled' === $args['status'] && empty( $args['start_datetime'] ) ) {
 			self::throw_validation_error( 'start_datetime' );
@@ -392,8 +420,8 @@ class Campaign {
 			'target_ids' => isset( $args['target_ids'] ) ? wp_json_encode( array_map( 'absint', $args['target_ids'] ) ) : null,
 			'exclude_sale_items' => isset( $args['exclude_sale_items'] ) ? (bool) $args['exclude_sale_items'] : false,
 			'schedule_enabled' => isset( $args['schedule_enabled'] ) ? (bool) $args['schedule_enabled'] : false,
-			'start_datetime' => isset( $args['start_datetime'] ) ? sanitize_text_field( $args['start_datetime'] ) : null,
-			'end_datetime' => isset( $args['end_datetime'] ) ? sanitize_text_field( $args['end_datetime'] ) : null,
+			'start_datetime' => $args['start_datetime'],
+			'end_datetime' => $args['end_datetime'],
 			'timezone_string' => isset( $args['timezone_string'] ) ? sanitize_text_field( $args['timezone_string'] ) : wp_timezone_string(),
 			'campaign_tiers' => isset( $args['campaign_tiers'] ) ? wp_json_encode( $args['campaign_tiers'] ) : null,
 			'usage_count' => 0,
@@ -425,7 +453,7 @@ class Campaign {
 
 		// Log the activity.
 		Logger::get_instance()->log(
-			'activity',
+			'campaign_created',
 			'created',
 			array(
 				'campaign_id' => $campaign->get_id(),
@@ -489,11 +517,11 @@ class Campaign {
 			$formats[] = '%d';
 		}
 		if ( isset( $args['start_datetime'] ) ) {
-			$data['start_datetime'] = sanitize_text_field( $args['start_datetime'] );
+			$data['start_datetime'] = self::validate_datetime( $args['start_datetime'] );
 			$formats[] = '%s';
 		}
 		if ( isset( $args['end_datetime'] ) ) {
-			$data['end_datetime'] = sanitize_text_field( $args['end_datetime'] );
+			$data['end_datetime'] = self::validate_datetime( $args['end_datetime'] );
 			$formats[] = '%s';
 		}
 		if ( isset( $args['timezone_string'] ) ) {
@@ -543,7 +571,7 @@ class Campaign {
 
 		// Log the activity.
 		Logger::get_instance()->log(
-			'activity',
+			'campaign_updated',
 			'updated',
 			array(
 				'campaign_id' => $this->get_id(),
@@ -586,7 +614,7 @@ class Campaign {
 
 		// Log the activity.
 		Logger::get_instance()->log(
-			'activity',
+			'campaign_deleted',
 			'deleted',
 			array(
 				'campaign_id' => $campaign_id,

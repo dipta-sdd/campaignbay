@@ -151,3 +151,61 @@ class DbManager {
 	}
 
 }
+
+
+
+
+
+// CREATE TABLE {$wpdb->prefix}campaignbay_campaigns (
+//     -- Core Fields --
+//     id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+//     title VARCHAR(255) NOT NULL,
+//     status VARCHAR(20) NOT NULL DEFAULT 'draft',
+//     campaign_type VARCHAR(20) ENUM(
+//     'scheduled_sales',
+//     'quantity_tiered',
+//     'early_bird',
+//     'bogo',
+//     'bundle',
+//     'free_shipping_gift',
+//     'storewide',
+//     'category_product_tag',
+//     'user_role',
+//     'purchase_history',
+//     'cart_checkout',
+//     'location_based',
+//     'nth_order',
+//     'next_buy_bonus',
+//     'day_based'
+//   ) NOT NULL,
+    
+//     -- Discount Action Details (The "THEN" part of the rule) --
+//     discount_type VARCHAR(20) DEFAULT NULL,
+//     discount_value DECIMAL(10, 2) DEFAULT NULL,
+//     campaign_tiers JSON DEFAULT NULL,
+    
+//     -- Conditions & Targeting (The "IF" part of the rule) --
+//     target_type VARCHAR(20) DEFAULT NULL,
+//     target_ids LONGTEXT DEFAULT NULL,
+//     is_exclude BOOLEAN NOT NULL DEFAULT 0, -- <-- NEW COLUMN
+//     exclude_sale_items BOOLEAN NOT NULL DEFAULT 0,
+    
+//     -- Scheduling Details --
+//     schedule_enabled BOOLEAN NOT NULL DEFAULT 0,
+//     start_datetime DATETIME DEFAULT NULL,
+//     end_datetime DATETIME DEFAULT NULL,
+    
+//     -- Usage & Control --
+//     usage_count INT(11) NOT NULL DEFAULT 0,
+//     usage_limit INT(11) DEFAULT NULL,
+//     priority INT(11) NOT NULL DEFAULT 10,
+    
+//     -- Timestamps --
+//     date_created DATETIME NOT NULL,
+//     date_modified DATETIME NOT NULL,
+    
+//     PRIMARY KEY  (id),
+//     KEY `status` (`status`),
+//     KEY `campaign_type` (`campaign_type`),
+//     KEY `date_range` (start_datetime, end_datetime)
+// ) {$wpdb->get_charset_collate()};

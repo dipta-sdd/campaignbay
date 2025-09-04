@@ -16,6 +16,7 @@ use WpabCb\Data\DbManager;
 use WpabCb\Api\SettingsController;
 use WpabCb\Api\CampaignsController;
 use WpabCb\Api\LogsController;
+use WpabCb\Api\ActivityLogController;
 use WpabCb\Api\DashboardController;
 use WpabCb\Engine\OrderManager;
 use WpabCb\Core\Scheduler;
@@ -123,6 +124,8 @@ class Plugin {
 		CampaignsController::get_instance()->run();
 
 		LogsController::get_instance()->run();
+
+		ActivityLogController::get_instance()->run();
 
 		DashboardController::get_instance()->run(); 
 

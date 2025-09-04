@@ -170,11 +170,9 @@ class DashboardController extends ApiController {
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 		$active_count = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$campaigns_table} WHERE status = %s",
-				'active'
+				"SELECT COUNT(*) FROM {$campaigns_table} WHERE status = 'active'"
 			)
 		);
-		
 		return array(
 			'active_campaigns' => array(
 				'value' => (int) $active_count,
@@ -366,18 +364,15 @@ class DashboardController extends ApiController {
 		global $wpdb;
 		$table_name = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN .'_logs';
 		$sql = "SELECT timestamp, extra_data, user_id, campaign_id FROM {$table_name}
-				 WHERE log_type = %s
+				 WHERE log_type IN ( 'campaign_created', 'campaign_updated', 'campaign_deleted' )
 				 ORDER BY timestamp DESC
 				 LIMIT 5";
-		campaignbay_log( '=========================================', 'DEBUG' );
-		campaignbay_log( 'sql: ' . print_r( $sql, true ), 'DEBUG' );
 		//phpcs:ignore
 		$results = $wpdb->get_results(
 			//phpcs:ignore
 			$wpdb->prepare(
 				//phpcs:ignore
 				$sql,
-				'activity'
 			),
 			ARRAY_A
 		);
@@ -468,7 +463,7 @@ class DashboardController extends ApiController {
 	 * @return float Percentage change.
 	 */
 	private function calculate_percentage_change( $current, $previous ) {
-		if ( 0 == $previous || $previous === null || $previous === '' || $previous == false ) {
+		if ( 0 == $previous || $previous === null || $previous === '' || $previous == false || $previous == 0 ) {
 			return $current > 0 ? 100 : 0;
 		}
 		return round( ( ( $current - $previous ) / $previous ) * 100, 2 );
