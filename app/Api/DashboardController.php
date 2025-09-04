@@ -282,12 +282,12 @@ class DashboardController extends ApiController {
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 		$success_statuses = "'processing', 'completed'";
 
-		$sql = "SELECT c.campaign_type, SUM(l.order_total) as total_sales
+		$sql = "SELECT c.type, SUM(l.order_total) as total_sales
 			 FROM {$logs_table} l
 			 JOIN {$campaigns_table} c ON l.campaign_id = c.id
 			 WHERE l.log_type = 'sale' AND l.order_status IN ('processing', 'completed')
 			 AND l.timestamp BETWEEN %s AND %s
-			 GROUP BY c.campaign_type
+			 GROUP BY c.type
 			 ORDER BY total_sales DESC";
 		$sql = $wpdb->prepare(
 			//phpcs:ignore
@@ -312,7 +312,7 @@ class DashboardController extends ApiController {
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 		
 		// --- Get currently active campaigns (ordered by which one will expire first) ---
-		$active_sql = "SELECT id, title, end_datetime, campaign_type 
+		$active_sql = "SELECT id, title, end_datetime, type 
 					   FROM {$campaigns_table} 
 					   WHERE status = 'active' 
 					   ORDER BY end_datetime ASC 
@@ -325,12 +325,12 @@ class DashboardController extends ApiController {
 				'id'       => (int) $row['id'],
 				'title'    => $row['title'],
 				'end_date' => $row['end_datetime'], 
-				'type'     => $row['campaign_type'],
+				'type'     => $row['type'],
 			);
 		}
 
 		// --- Get upcoming scheduled campaigns (ordered by which one will start first) ---
-		$scheduled_sql = "SELECT id, title, start_datetime, campaign_type 
+		$scheduled_sql = "SELECT id, title, start_datetime, type 
 						  FROM {$campaigns_table} 
 						  WHERE status = 'scheduled' 
 						  ORDER BY start_datetime ASC 
@@ -343,7 +343,7 @@ class DashboardController extends ApiController {
 				'id'         => (int) $row['id'],
 				'title'      => $row['title'],
 				'start_date' => $row['start_datetime'], 
-				'type'       => $row['campaign_type'],
+				'type'       => $row['type'],
 			);
 		}
 

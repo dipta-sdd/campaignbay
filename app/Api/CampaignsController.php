@@ -192,10 +192,10 @@ class CampaignsController extends ApiController {
 		}
 		
 		// Handle campaign type filtering
-		$campaign_type_filter = $request->get_param( 'type' );
-		if ( ! empty( $campaign_type_filter ) ) {
-			$where_clauses[] = 'campaign_type = %s';
-			$query_params[] = sanitize_key( $campaign_type_filter );
+		$type_filter = $request->get_param( 'type' );
+		if ( ! empty( $type_filter ) ) {
+			$where_clauses[] = 'type = %s';
+			$query_params[] = sanitize_key( $type_filter );
 		}
 		
 		// Handle search
@@ -215,7 +215,7 @@ class CampaignsController extends ApiController {
 		$orderby = $request->get_param( 'orderby' ) ?: 'date_modified';
 		$order = $request->get_param( 'order' ) ?: 'DESC';
 		
-		$allowed_orderby = array( 'id', 'title', 'status', 'campaign_type', 'date_created', 'date_modified', 'priority' );
+		$allowed_orderby = array( 'id', 'title', 'status', 'type', 'date_created', 'date_modified', 'priority' );
 		if ( ! in_array( $orderby, $allowed_orderby, true ) ) {
 			$orderby = 'date_modified';
 		}
@@ -247,7 +247,7 @@ class CampaignsController extends ApiController {
 			foreach ( $results as $row ) {
 				// Decode JSON fields
 				$row->target_ids = ! empty( $row->target_ids ) ? json_decode( $row->target_ids, true ) : array();
-				$row->campaign_tiers = ! empty( $row->campaign_tiers ) ? json_decode( $row->campaign_tiers, true ) : array();
+				$row->tiers = ! empty( $row->tiers ) ? json_decode( $row->tiers, true ) : array();
 				
 				$campaign = new Campaign( $row );
 				if ( $campaign ) {
@@ -460,17 +460,7 @@ class CampaignsController extends ApiController {
 	 * @return WP_REST_Response Response object.
 	 */
 	public function prepare_item_for_response( $campaign, $request ) {
-		$data = array(
-			'id'     => $campaign->get_id(),
-			'title'  => $campaign->get_title(),
-			'status' => $campaign->get_status(),
-			'modified' => $campaign->get_date_modified(),
-		);
-
-		$meta_keys = campaignbay_get_campaign_meta_keys();
-		foreach ( $meta_keys as $key ) {
-			$data[ $key ] = $campaign->get_meta( $key );
-		}
+		$data = $campaign->get_data();
 
 		return $data;
 	}
@@ -500,7 +490,7 @@ class CampaignsController extends ApiController {
 	 */
 	public function get_item_schema() {
 		if ( isset( $this->schema ) ) {
-			return $this->add_additional_fields_schema( $this->schema );
+			return $this->add_additional_fields_schema( apply_filters( 'campaignbay_campaign_schema', $this->schema ));
 		}
 
 		$schema = array(
@@ -523,25 +513,36 @@ class CampaignsController extends ApiController {
 				'status'              => array(
 					'description' => __( 'A named status for the campaign.', 'campaignbay' ),
 					'type'        => 'string',
-					'enum'        => array( 'active', 'inactive', 'scheduled' ),
+					'enum'        => array( 'active', 'inactive', 'scheduled', 'expired' ),
 					'context'     => array( 'view', 'edit' ),
 				),
-				'campaign_type'       => array(
+				'type'       => array(
 					'description' => __( 'The core type of the campaign.', 'campaignbay' ),
 					'type'        => 'string',
-					'enum'        => array( 'earlybird', 'scheduled', 'quantity' ),
+					'enum'        => array(
+						'scheduled',
+						'quantity',
+						'earlybird',
+						'bogo',
+					),
 					'context'     => array( 'view', 'edit' ),
 					'required'    => true,
 				),
 				'discount_type'       => array(
-					'description' => __( 'The type of discount (percentage, fixed).', 'campaignbay' ),
+					'description' => __( 'The type of discount (percentage, fixed, fixed_per_item).', 'campaignbay' ),
 					'type'        => 'string',
-					'enum'        => array( 'percentage', 'fixed' ),
+					'enum'        => array( 'percentage', 'fixed', 'fixed_per_item' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'discount_value'      => array(
 					'description' => __( 'The numeric value of the discount.', 'campaignbay' ),
 					'type'        => 'number',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'tiers'      => array(
+					'description' => __( 'The tiers of the campaign.', 'campaignbay' ),
+					'type'        => 'array',
+					'items'       => array( 'type' => 'object' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'target_type'         => array(
@@ -556,50 +557,76 @@ class CampaignsController extends ApiController {
 					'items'       => array( 'type' => 'integer' ),
 					'context'     => array( 'view', 'edit' ),
 				),
+				'is_exclude'          => array(
+					'description' => __( 'Whether to exclude the specified targets.', 'campaignbay' ),
+					'type'        => 'boolean',
+					'context'     => array( 'view', 'edit' ),
+				),
 				'exclude_sale_items'  => array(
 					'description' => __( 'Prevent double-discounting.', 'campaignbay' ),
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'start_datetime'     => array(
+				'schedule_enabled'    => array(
+					'description' => __( 'Whether scheduling is enabled for the campaign.', 'campaignbay' ),
+					'type'        => 'boolean',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'start_datetime'      => array(
 					'description' => __( 'The rule\'s start date/time (ISO 8601 string).', 'campaignbay' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'end_datetime'       => array(
+				'end_datetime'        => array(
 					'description' => __( 'The rule\'s end date/time (ISO 8601 string).', 'campaignbay' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'timezone_string'     => array(
-					'description' => __( 'The timezone identifier.', 'campaignbay' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'campaign_tiers'      => array(
-					'description' => __( 'The tiers of the campaign.', 'campaignbay' ),
-					'type'        => 'array',
-					'items'       => array( 'type' => 'object' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'usage_count'         => array(
 					'description' => __( 'The number of times the campaign has been used.', 'campaignbay' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
 				),
-				'priority'            => array(
-					'description' => __( 'The priority of the campaign.', 'campaignbay' ),
+				'usage_limit'         => array(
+					'description' => __( 'The maximum number of times the campaign can be used.', 'campaignbay' ),
+					'type'        => array( 'integer', 'null' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'date_created'        => array(
+					'description' => __( 'The date the campaign was created.', 'campaignbay' ),
+					'type'        => 'string',
+					'format'      => 'date-time',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'date_modified'       => array(
+					'description' => __( 'The date the campaign was last modified.', 'campaignbay' ),
+					'type'        => 'string',
+					'format'      => 'date-time',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'created_by'          => array(
+					'description' => __( 'User ID who created the campaign.', 'campaignbay' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'updated_by'          => array(
+					'description' => __( 'User ID who last updated the campaign.', 'campaignbay' ),
+					'type'        => 'integer',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
 				),
 			),
 		);
 
 		$this->schema = $schema;
 
-		return $this->add_additional_fields_schema( $this->schema );
+		return $this->add_additional_fields_schema( apply_filters( 'campaignbay_campaign_schema', $this->schema ));
 	}
 
 	/**

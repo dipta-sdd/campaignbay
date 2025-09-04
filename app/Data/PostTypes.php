@@ -222,7 +222,7 @@ class PostTypes {
 		// Special handling for the tiers array
 		register_post_meta(
 			'campaignbay_campaign',
-			'_campaignbay_campaign_tiers',
+			'_campaignbay_tiers',
 			array(
 				'show_in_rest'  => true,
 				'single'        => true,

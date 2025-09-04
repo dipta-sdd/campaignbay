@@ -67,7 +67,7 @@ const CampaignsEdit = () => {
         path: `/campaignbay/v1/campaigns/${id}?_timestamp=${Date.now()}`,
       });
       setCampaignStatus(response.status);
-      setCampaignType(response.campaign_type);
+      setCampaignType(response.type);
       setCampaignTitle(response.title);
       setSelectionType(response.target_type);
       setSelections(response.target_ids);
@@ -75,10 +75,10 @@ const CampaignsEdit = () => {
       setDiscountValue(response.discount_value);
       setStartDate(response.start_datetime);
       setEndDate(response.end_datetime);
-      if (response.campaign_type === "quantity") {
-        setQuantityTiers([...response.campaign_tiers]);
-      } else if (response.campaign_type === "earlybird") {
-        setEBTiers([...response.campaign_tiers]);
+      if (response.type === "quantity") {
+        setQuantityTiers([...response.tiers]);
+      } else if (response.type === "earlybird") {
+        setEBTiers([...response.tiers]);
       }
       setIsLoading(false);
     };
@@ -170,7 +170,7 @@ const CampaignsEdit = () => {
     const campaignData = {
       title: campaignTitle,
       status: campaignStatus,
-      campaign_type: campaignType,
+      type: campaignType,
       discount_type: discountType,
       discount_value: discountValue || 0,
       target_type: selectionType,
@@ -178,7 +178,7 @@ const CampaignsEdit = () => {
       start_datetime: startDate,
       end_datetime: endDate || null,
       timezone_offset: timezone.offsetFormatted,
-      campaign_tiers:
+      tiers:
         campaignType === "quantity"
           ? quantityTiers
           : campaignType === "earlybird"
@@ -194,11 +194,11 @@ const CampaignsEdit = () => {
       setErrors({ status: "Status is required" });
       return;
     }
-    if (!campaignData?.campaign_type) {
-      setErrors({ campaign_type: "Campaign type is required" });
+    if (!campaignData?.type) {
+      setErrors({ type: "Campaign type is required" });
       return;
     }
-    if (campaignData.campaign_type === "scheduled") {
+    if (campaignData.type === "scheduled") {
       if (!campaignData?.discount_type) {
         setErrors({ discount_type: "Discount type is required" });
         return;
@@ -341,7 +341,7 @@ const CampaignsEdit = () => {
                 type="text"
                 id="campaign-type"
                 className={`wpab-input w-100 ${
-                  errors?.campaign_type ? "wpab-input-error" : ""
+                  errors?.type ? "wpab-input-error" : ""
                 }`}
                 value={campaignType}
                 onChange={(e) => handleCampaignTypeChange(e.target.value)}
@@ -440,7 +440,7 @@ const CampaignsEdit = () => {
             {campaignType === "quantity" && (
               <QuantityTiers
                 className={`${
-                  errors?.campaign_tiers ? "wpab-input-error" : ""
+                  errors?.tiers ? "wpab-input-error" : ""
                 }`}
                 tiers={quantityTiers}
                 setTiers={setQuantityTiers}
@@ -451,7 +451,7 @@ const CampaignsEdit = () => {
             {campaignType === "earlybird" && (
               <EBTiers
                 className={`${
-                  errors?.campaign_tiers ? "wpab-input-error" : ""
+                  errors?.tiers ? "wpab-input-error" : ""
                 }`}
                 tiers={ebTiers}
                 setTiers={setEBTiers}

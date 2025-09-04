@@ -52,7 +52,7 @@ const Campaigns = () => {
   const tableHeads = [
     { label: "Campaign Name", value: "post_name", isSortable: true },
     { label: "Status", value: "status", isSortable: true },
-    { label: "Campaign Type", value: "campaign_type", isSortable: true },
+    { label: "Campaign Type", value: "type", isSortable: true },
     { label: "Target", value: "target", isSortable: false },
     { label: "Value", value: "value", isSortable: false },
     { label: "Start Date", value: "start_date", isSortable: true },
@@ -349,7 +349,7 @@ const Campaigns = () => {
   };
 
   const getCampaignValue = (campaign) => {
-    if (campaign.campaign_type === "scheduled") {
+    if (campaign.type === "scheduled") {
       return (
         campaign?.discount_value +
         " " +
@@ -358,7 +358,7 @@ const Campaigns = () => {
           : woocommerce_currency_symbol)
       );
     }
-    const tier = campaign?.campaign_tiers[0];
+    const tier = campaign?.tiers[0];
     return (
       tier?.value +
       " " +
@@ -562,7 +562,7 @@ const Campaigns = () => {
                         </span>
                       </td>
                       <td className="campaignbay-capitalize campaignbay-text-secondary">
-                        {campaign.campaign_type}
+                        {campaign.type}
                       </td>
                       <td className="campaignbay-capitalize campaignbay-text-secondary">
                         {getTargetType(campaign.target_type)}

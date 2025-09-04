@@ -177,7 +177,7 @@
 - [ ] **TC-6.2:** **Filter by Discount Type:**
   1.  Use the "Filter by Discount" dropdown.
   2.  Select `Quantity Based Discount`.
-  - **Expected:** The table updates to show only campaigns with `campaign_type = 'quantity'`.
+  - **Expected:** The table updates to show only campaigns with `type = 'quantity'`.
   3.  Repeat for `Scheduled Discount` and `EarlyBird Discount`.
   - **Expected:** The table filters correctly for each type.
 - [ ] **TC-6.3:** **Combined Filtering:**

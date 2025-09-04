@@ -88,6 +88,567 @@ class Campaign {
 		}
 	}
 
+	
+
+	/**
+	 * Throws a validation error with a specific field message.
+	 *
+	 * @since 1.0.0
+	 * @param string $field The field name that failed validation.
+	 * @throws Exception Always throws an exception.
+	 */
+	public static function throw_validation_error( $field = '' ) {
+		$message = 'Campaign validation failed.';
+		if ( ! empty( $field ) ) {
+			$message .= " Field: {$field}";
+		}
+		throw new Exception( esc_html( $message ) );
+	}
+
+	/**
+	 * Validates a datetime string and returns null if invalid.
+	 *
+	 * @since 1.0.0
+	 * @param string $datetime The datetime string to validate.
+	 * @return string|null The validated datetime string or null if invalid.
+	 */
+	private static function validate_datetime( $datetime ) {
+		if ( empty( $datetime ) ) {
+			return null;
+		}
+
+		// Try to create a DateTime object to validate the format
+		try {
+			$date = new DateTime( $datetime );
+			// If successful, return the original string
+			return $datetime;
+		} catch ( Exception $e ) {
+			// If invalid, log the error and return null
+			campaignbay_log( 'Invalid datetime format: ' . $datetime, 'WARNING' );
+			return null;
+		}
+	}
+
+	/**
+	 * Creates a new campaign.
+	 *
+	 * @since 1.0.0
+	 * @param array $args The campaign arguments.
+	 * @return Campaign The created campaign object.
+	 * @throws Exception If validation fails.
+	 */
+	public static function create( $args ) {
+		// Validate required fields.
+		if ( empty( $args['title'] ) ) {
+			self::throw_validation_error( 'title' );
+		}
+
+		if ( empty( $args['type'] ) ) {
+			self::throw_validation_error( 'type' );
+		}
+
+		// Set default status
+		if ( empty( $args['status'] ) ) {
+			$args['status'] = 'scheduled' === $args['type'] ? 'scheduled' : 'active';
+		}
+
+		$allowed_statuses = array( 'active', 'inactive', 'scheduled' );
+		if ( ! in_array( $args['status'], $allowed_statuses, true ) ) {
+			self::throw_validation_error( 'status' );
+		}
+
+		$allowed_types = array( 'earlybird', 'scheduled', 'quantity' );
+		if ( ! in_array( $args['type'], $allowed_types, true ) ) {
+			self::throw_validation_error( 'type' );
+		}
+
+		$args['start_datetime'] = self::validate_datetime( $args['start_datetime'] ?? null );
+		$args['end_datetime'] = self::validate_datetime( $args['end_datetime'] ?? null );
+
+		if ( 'scheduled' === $args['status'] && empty( $args['start_datetime'] ) ) {
+			self::throw_validation_error( 'start_datetime' );
+		}
+		if ( 'scheduled' === $args['status'] && empty( $args['end_datetime'] ) ) {
+			self::throw_validation_error( 'end_datetime' );
+		}
+
+		if ( 'scheduled' === $args['type'] && empty( $args['discount_value'] ) ) {
+			self::throw_validation_error( 'discount_value' );
+		}
+		if ( 'scheduled' === $args['type'] && empty( $args['discount_type'] ) ) {
+			self::throw_validation_error( 'discount_type' );
+		}
+		if ( 'scheduled' !== $args['type'] ) {
+			if ( ! isset( $args['target_type'] ) || empty( $args['target_type'] ) ) {
+				self::throw_validation_error( 'target_type' );
+			}
+			$allowed_target_types = array( 'entire_store', 'category', 'product', 'tag' );
+			if ( ! in_array( $args['target_type'], $allowed_target_types, true ) ) {
+				self::throw_validation_error( 'target_type' );
+			}
+			if ( 'entire_store' !== $args['target_type'] && ( empty( $args['target_ids'] ) || ! is_array( $args['target_ids'] ) ) ) {
+				self::throw_validation_error( 'target_ids' );
+			}
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+
+		// Prepare data for insertion
+		$data = array(
+			'title' => sanitize_text_field( $args['title'] ),
+			'status' => sanitize_key( $args['status'] ),
+			'type' => sanitize_key( $args['type'] ),
+			'discount_type' => isset( $args['discount_type'] ) ? sanitize_key( $args['discount_type'] ) : null,
+			'discount_value' => isset( $args['discount_value'] ) ? floatval( $args['discount_value'] ) : null,
+			'target_type' => isset( $args['target_type'] ) ? sanitize_key( $args['target_type'] ) : null,
+			'target_ids' => isset( $args['target_ids'] ) ? wp_json_encode( array_map( 'absint', $args['target_ids'] ) ) : null,
+			'exclude_sale_items' => isset( $args['exclude_sale_items'] ) ? (bool) $args['exclude_sale_items'] : false,
+			'schedule_enabled' => isset( $args['schedule_enabled'] ) ? (bool) $args['schedule_enabled'] : false,
+			'tiers' => isset( $args['tiers'] ) ? wp_json_encode( $args['tiers'] ) : null,
+			'conditions' => isset( $args['conditions'] ) ? wp_json_encode( $args['conditions'] ) : null,
+			'settings' => isset( $args['settings'] ) ? wp_json_encode( $args['settings'] ) : null,
+			'is_exclude' => isset( $args['is_exclude'] ) ? (bool) $args['is_exclude'] : false,
+
+			'schedule_enabled' => isset( $args['schedule_enabled'] ) ? (bool) $args['schedule_enabled'] : false,
+			'start_datetime' => $args['start_datetime'],
+			'end_datetime' => $args['end_datetime'],
+			'usage_count' => 0,
+			'date_created' => current_time( 'mysql' ),
+			'date_modified' => current_time( 'mysql' ),
+		);
+
+		$formats = array(
+			'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s'
+		);
+
+		$result = $wpdb->insert( $table_name, $data, $formats );
+
+		if ( false === $result ) {
+			throw new Exception( 'Failed to create campaign.' );
+		}
+
+		$campaign_id = $wpdb->insert_id;
+		$campaign = new self( $campaign_id );
+
+		/**
+		 * Fires after a new campaign is created and all its data is saved.
+		 *
+		 * @param int      $campaign_id The ID of the new campaign.
+		 * @param Campaign $campaign    The campaign object.
+		 */
+		do_action( 'campaignbay_campaign_save', $campaign_id, $campaign );
+
+		// Log the activity.
+		Logger::get_instance()->log(
+			'campaign_created',
+			'created',
+			array(
+				'campaign_id' => $campaign->get_id(),
+				'extra_data' => array(
+					'title' => $campaign->get_title(),
+				)
+			)
+		);
+
+		return $campaign;
+	}
+
+	/**
+	 * Updates the campaign with new data.
+	 *
+	 * @since 1.0.0
+	 * @param array $args The campaign arguments to update.
+	 * @return bool True on success, false on failure.
+	 */
+	public function update( $args ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+
+		$data = array();
+		$formats = array();
+
+		if ( isset( $args['title'] ) ) {
+			$data['title'] = sanitize_text_field( $args['title'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['status'] ) ) {
+			$data['status'] = sanitize_key( $args['status'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['type'] ) ) {
+			$data['type'] = sanitize_key( $args['type'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['discount_type'] ) ) {
+			$data['discount_type'] = sanitize_key( $args['discount_type'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['discount_value'] ) ) {
+			$data['discount_value'] = floatval( $args['discount_value'] );
+			$formats[] = '%f';
+		}
+		if ( isset( $args['target_type'] ) ) {
+			$data['target_type'] = sanitize_key( $args['target_type'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['target_ids'] ) ) {
+			$data['target_ids'] = wp_json_encode( array_map( 'absint', $args['target_ids'] ) );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['exclude_sale_items'] ) ) {
+			$data['exclude_sale_items'] = (bool) $args['exclude_sale_items'];
+			$formats[] = '%d';
+		}
+		if ( isset( $args['schedule_enabled'] ) ) {
+			$data['schedule_enabled'] = (bool) $args['schedule_enabled'];
+			$formats[] = '%d';
+		}
+		if ( isset( $args['start_datetime'] ) ) {
+			$data['start_datetime'] = self::validate_datetime( $args['start_datetime'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['end_datetime'] ) ) {
+			$data['end_datetime'] = self::validate_datetime( $args['end_datetime'] );
+			$formats[] = '%s';
+		}
+		if ( isset( $args['tiers'] ) ) {
+			$data['tiers'] = wp_json_encode( $args['tiers'] );
+			$formats[] = '%s';
+		}
+
+		// Always update the modified date
+		$data['date_modified'] = current_time( 'mysql' );
+		$formats[] = '%s';
+		if ( empty( $data ) ) {
+			return true; // Nothing to update
+		}
+		$result = $wpdb->update(
+			$table_name,
+			$data,
+			array( 'id' => $this->id ),
+			$formats,
+			array( '%d' )
+		);
+
+		if ( false === $result ) {
+			return false;
+		}
+
+		// Reload data
+		$this->load_data();
+		campaignbay_log( 'data: ' . print_r( $data, true ), 'DEBUG' );
+		campaignbay_log( 'formats: ' . print_r( $formats, true ), 'DEBUG' );
+		campaignbay_log( 'result: ' . print_r( $result, true ), 'DEBUG' );
+
+		/**
+		 * Fires after a campaign is updated and all its data is saved.
+		 *
+		 * @param int      $campaign_id The ID of the updated campaign.
+		 * @param Campaign $campaign    The campaign object.
+		 */
+		do_action( 'campaignbay_campaign_save', $this->id , $this );
+
+		// Log the activity.
+		Logger::get_instance()->log(
+			'campaign_updated',
+			'updated',
+			array(
+				'campaign_id' => $this->get_id(),
+				'extra_data' => array(
+					'title' => $this->get_title(),
+				)
+			)
+		);
+
+		return true;
+	}
+
+	/**
+	 * Deletes a campaign.
+	 *
+	 * @since 1.0.0
+	 * @param int  $campaign_id The campaign ID to delete.
+	 * @param bool $force_delete Whether to force delete (unused for compatibility).
+	 * @return bool True on success, false on failure.
+	 */
+	public static function delete( $campaign_id, $force_delete = true ) {
+		$campaign = new self( $campaign_id );
+		$title = $campaign->get_title();
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+
+		do_action('campaignbay_before_campaign_delete', $campaign_id );
+
+		$result = $wpdb->delete(
+			$table_name,
+			array( 'id' => $campaign_id ),
+			array( '%d' )
+		);
+
+		/**
+		 * Fires after a campaign is deleted.
+		 *
+		 * @param int $campaign_id The ID of the deleted campaign.
+		 */
+		do_action( 'campaignbay_campaign_delete', $campaign_id );
+
+		// Log the activity.
+		Logger::get_instance()->log(
+			'campaign_deleted',
+			'deleted',
+			array(
+				'campaign_id' => $campaign_id,
+				'extra_data' => array(
+					'title' => $title,
+				)
+			)
+		);
+
+		return false !== $result;
+	}
+
+
+
+	/**
+	 * Getters for core properties.
+	 */
+	/**
+	 * Gets the raw campaign data object.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return object|null The campaign data object.
+	 */
+	public function get_data() {
+		return $this->data;
+	}
+	/**
+	 * Gets the campaign ID.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return int The campaign ID.
+	 */
+	public function get_id() {
+		return $this->id;
+	}
+
+	/**
+	 * Gets the campaign title.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return int The campaign title.
+	 */
+	public function get_title() {
+		return $this->data->title;
+	}
+
+	/**
+	 * Gets the campaign status.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return int The campaign status.
+	 */
+	public function get_status() {
+		return $this->data->status;
+	}
+
+	/**
+	 * Gets the campaign type.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return int The campaign type.
+	 */
+	public function get_type() {
+		return $this->data->type;
+	}
+
+	/**
+	 * Gets the discount type.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The discount type.
+	 */
+	public function get_discount_type() {
+		return $this->data->discount_type ?? null;
+	}
+
+	/**
+	 * Gets the discount value.
+	 *
+	 * @since 1.0.0
+	 * @return float|null The discount value.
+	 */
+	public function get_discount_value() {
+		return isset( $this->data->discount_value ) ? floatval( $this->data->discount_value ) : null;
+	}
+
+	/**
+	 * Gets the campaign tiers.
+	 *
+	 * @since 1.0.0
+	 * @return array The campaign tiers.
+	 */
+	public function get_tiers() {
+		return $this->data->tiers ?? array();
+	}
+
+	/**
+	 * Gets the campaign conditions.
+	 *
+	 * @since 1.0.0
+	 * @return array The campaign conditions.
+	 */
+	public function get_conditions() {
+		return $this->data->conditions ?? array();
+	}
+
+	/**
+	 * Gets the campaign settings.
+	 *
+	 * @since 1.0.0
+	 * @return array The campaign settings.
+	 */
+	public function get_settings() {
+		return $this->data->settings ?? array();
+	}
+
+	/**
+	 * Gets the target type.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The target type.
+	 */
+	public function get_target_type() {
+		return $this->data->target_type ?? null;
+	}
+
+	/**
+	 * Gets the target IDs.
+	 *
+	 * @since 1.0.0
+	 * @return array The target IDs.
+	 */
+	public function get_target_ids() {
+		return $this->data->target_ids ?? array();
+	}
+
+	/**
+	 * Gets whether sale items are excluded.
+	 *
+	 * @since 1.0.0
+	 * @return bool True if sale items are excluded, false otherwise.
+	 */
+	public function get_exclude_sale_items() {
+		return !empty( $this->data->exclude_sale_items );
+	}
+
+	/**
+	 * Gets whether products are excluded (is_exclude).
+	 *
+	 * @since 1.0.0
+	 * @return bool True if products are excluded, false otherwise.
+	 */
+	public function get_is_exclude() {
+		return !empty( $this->data->is_exclude );
+	}
+
+
+
+	/**
+	 * Gets the start datetime string and converts it to the UTC timezone.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The start datetime in 'Y-m-d H:i:s' format (UTC), or null if not set.
+	 */
+	public function get_start_datetime_utc() {
+		$start_datetime_site = $this->data->start_datetime;
+
+		if ( empty( $start_datetime_site ) ) {
+			return null;
+		}
+
+		try {
+			$date = new DateTime( $start_datetime_site, new DateTimeZone( wp_timezone_string() ) );
+			$date->setTimezone( new DateTimeZone( 'UTC' ) );
+			return $date->format( 'Y-m-d H:i:s' );
+		} catch ( Exception $e ) {
+			campaignbay_log( 'Invalid start_datetime format for campaign #' . $this->id, 'ERROR' );
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the end datetime string and converts it to the UTC timezone.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The end datetime in 'Y-m-d H:i:s' format (UTC), or null if not set.
+	 */
+	public function get_end_datetime_utc() {
+		$end_datetime_site = $this->data->end_datetime;
+
+		if ( empty( $end_datetime_site ) ) {
+			return null;
+		}
+
+		try {
+			$date = new DateTime( $end_datetime_site, new DateTimeZone( wp_timezone_string() ) );
+			$date->setTimezone( new DateTimeZone( 'UTC' ) );
+			return $date->format( 'Y-m-d H:i:s' );
+		} catch ( Exception $e ) {
+			campaignbay_log( 'Invalid end_datetime format for campaign #' . $this->id, 'ERROR' );
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the start datetime as a UTC Unix timestamp.
+	 *
+	 * @since 1.0.0
+	 * @return int|null The Unix timestamp, or null if no start date is set.
+	 */
+	public function get_start_timestamp() {
+		$utc_datetime = $this->get_start_datetime_utc();
+		return $utc_datetime ? strtotime( $utc_datetime ) : null;
+	}
+
+	/**
+	 * Gets the end datetime as a UTC Unix timestamp.
+	 *
+	 * @since 1.0.0
+	 * @return int|null The Unix timestamp, or null if no end date is set.
+	 */
+	public function get_end_timestamp() {
+		$utc_datetime = $this->get_end_datetime_utc();
+		return $utc_datetime ? strtotime( $utc_datetime ) : null;
+	}
+
+	/**
+	 * Gets the last modified date of the campaign.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The last modified date.
+	 */
+	public function get_date_modified() {
+		return $this->data->date_modified ?: null;
+	}
+
+	/**
+	 * Gets the current usage count for the campaign.
+	 *
+	 * @since 1.0.0
+	 * @return int The number of times the campaign has been used on successful orders.
+	 */
+	public function get_usage_count() {
+		return (int) $this->data->usage_count;
+	}
+
+
 	/**
 	 * Load campaign data from the database.
 	 *
@@ -108,43 +669,15 @@ class Campaign {
 		// Decode JSON fields
 		if ( $this->data ) {
 			$this->data->target_ids = ! empty( $this->data->target_ids ) ? json_decode( $this->data->target_ids, true ) : array();
-			$this->data->campaign_tiers = ! empty( $this->data->campaign_tiers ) ? json_decode( $this->data->campaign_tiers, true ) : array();
+			$this->data->tiers = ! empty( $this->data->tiers ) ? json_decode( $this->data->tiers, true ) : array();
+			$this->data->conditions = ! empty( $this->data->conditions ) ? json_decode( $this->data->conditions, true ) : array();
+			$this->data->settings = ! empty( $this->data->settings ) ? json_decode( $this->data->settings, true ) : array();
 		}
 	}
 
-	/**
-	 * Gets the current usage count for the campaign.
-	 *
-	 * @since 1.0.0
-	 * @return int The number of times the campaign has been used on successful orders.
-	 */
-	public function get_usage_count() {
-		return (int) $this->data->usage_count;
-	}
+	
 
-	/**
-	 * Loads the usage count from the campaigns table.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function load_usage_count() {
-		campaignbay_log('load_usage_count for campaign: ' . $this->get_id(), 'DEBUG' );
-		global $wpdb;
-		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 
-		// Get the current usage count from the campaigns table
-		$count = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT usage_count FROM {$campaigns_table} WHERE id = %d",
-				$this->id
-			)
-		);
-
-		campaignbay_log( 'Usage count loaded for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - ' . $count, 'DEBUG' );
-		
-		$this->data->usage_count = (int) $count;
-	}
 
 	/**
 	 * Increments the usage count for the campaign.
@@ -302,437 +835,6 @@ class Campaign {
 		}
 
 		return in_array( $product_id, $this->applicable_product_ids, true );
-	}
-
-	/**
-	 * Throws a validation error with a specific field message.
-	 *
-	 * @since 1.0.0
-	 * @param string $field The field name that failed validation.
-	 * @throws Exception Always throws an exception.
-	 */
-	public static function throw_validation_error( $field = '' ) {
-		$message = 'Campaign validation failed.';
-		if ( ! empty( $field ) ) {
-			$message .= " Field: {$field}";
-		}
-		throw new Exception( esc_html( $message ) );
-	}
-
-	/**
-	 * Validates a datetime string and returns null if invalid.
-	 *
-	 * @since 1.0.0
-	 * @param string $datetime The datetime string to validate.
-	 * @return string|null The validated datetime string or null if invalid.
-	 */
-	private static function validate_datetime( $datetime ) {
-		if ( empty( $datetime ) ) {
-			return null;
-		}
-
-		// Try to create a DateTime object to validate the format
-		try {
-			$date = new DateTime( $datetime );
-			// If successful, return the original string
-			return $datetime;
-		} catch ( Exception $e ) {
-			// If invalid, log the error and return null
-			campaignbay_log( 'Invalid datetime format: ' . $datetime, 'WARNING' );
-			return null;
-		}
-	}
-
-	/**
-	 * Creates a new campaign.
-	 *
-	 * @since 1.0.0
-	 * @param array $args The campaign arguments.
-	 * @return Campaign The created campaign object.
-	 * @throws Exception If validation fails.
-	 */
-	public static function create( $args ) {
-		// Validate required fields.
-		if ( empty( $args['title'] ) ) {
-			self::throw_validation_error( 'title' );
-		}
-
-		if ( empty( $args['campaign_type'] ) ) {
-			self::throw_validation_error( 'campaign_type' );
-		}
-
-		// Set default status
-		if ( empty( $args['status'] ) ) {
-			$args['status'] = 'scheduled' === $args['campaign_type'] ? 'scheduled' : 'active';
-		}
-
-		$allowed_statuses = array( 'active', 'inactive', 'scheduled' );
-		if ( ! in_array( $args['status'], $allowed_statuses, true ) ) {
-			self::throw_validation_error( 'status' );
-		}
-
-		$allowed_types = array( 'earlybird', 'scheduled', 'quantity' );
-		if ( ! in_array( $args['campaign_type'], $allowed_types, true ) ) {
-			self::throw_validation_error( 'campaign_type' );
-		}
-
-		// Validate datetime fields
-		$args['start_datetime'] = self::validate_datetime( $args['start_datetime'] ?? null );
-		$args['end_datetime'] = self::validate_datetime( $args['end_datetime'] ?? null );
-
-		if ( 'scheduled' === $args['status'] && empty( $args['start_datetime'] ) ) {
-			self::throw_validation_error( 'start_datetime' );
-		}
-		if ( 'scheduled' === $args['status'] && empty( $args['end_datetime'] ) ) {
-			self::throw_validation_error( 'end_datetime' );
-		}
-
-		if ( 'scheduled' === $args['campaign_type'] && empty( $args['discount_value'] ) ) {
-			self::throw_validation_error( 'discount_value' );
-		}
-		if ( 'scheduled' === $args['campaign_type'] && empty( $args['discount_type'] ) ) {
-			self::throw_validation_error( 'discount_type' );
-		}
-		if ( 'scheduled' !== $args['campaign_type'] ) {
-			if ( ! isset( $args['target_type'] ) || empty( $args['target_type'] ) ) {
-				self::throw_validation_error( 'target_type' );
-			}
-			$allowed_target_types = array( 'entire_store', 'category', 'product', 'tag' );
-			if ( ! in_array( $args['target_type'], $allowed_target_types, true ) ) {
-				self::throw_validation_error( 'target_type' );
-			}
-			if ( 'entire_store' !== $args['target_type'] && ( empty( $args['target_ids'] ) || ! is_array( $args['target_ids'] ) ) ) {
-				self::throw_validation_error( 'target_ids' );
-			}
-		}
-
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-
-		// Prepare data for insertion
-		$data = array(
-			'title' => sanitize_text_field( $args['title'] ),
-			'status' => sanitize_key( $args['status'] ),
-			'campaign_type' => sanitize_key( $args['campaign_type'] ),
-			'discount_type' => isset( $args['discount_type'] ) ? sanitize_key( $args['discount_type'] ) : null,
-			'discount_value' => isset( $args['discount_value'] ) ? floatval( $args['discount_value'] ) : null,
-			'target_type' => isset( $args['target_type'] ) ? sanitize_key( $args['target_type'] ) : null,
-			'target_ids' => isset( $args['target_ids'] ) ? wp_json_encode( array_map( 'absint', $args['target_ids'] ) ) : null,
-			'exclude_sale_items' => isset( $args['exclude_sale_items'] ) ? (bool) $args['exclude_sale_items'] : false,
-			'schedule_enabled' => isset( $args['schedule_enabled'] ) ? (bool) $args['schedule_enabled'] : false,
-			'start_datetime' => $args['start_datetime'],
-			'end_datetime' => $args['end_datetime'],
-			'timezone_string' => isset( $args['timezone_string'] ) ? sanitize_text_field( $args['timezone_string'] ) : wp_timezone_string(),
-			'campaign_tiers' => isset( $args['campaign_tiers'] ) ? wp_json_encode( $args['campaign_tiers'] ) : null,
-			'usage_count' => 0,
-			'priority' => isset( $args['priority'] ) ? absint( $args['priority'] ) : 10,
-			'date_created' => current_time( 'mysql' ),
-			'date_modified' => current_time( 'mysql' ),
-		);
-
-		$formats = array(
-			'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s'
-		);
-
-		$result = $wpdb->insert( $table_name, $data, $formats );
-
-		if ( false === $result ) {
-			throw new Exception( 'Failed to create campaign.' );
-		}
-
-		$campaign_id = $wpdb->insert_id;
-		$campaign = new self( $campaign_id );
-
-		/**
-		 * Fires after a new campaign is created and all its data is saved.
-		 *
-		 * @param int      $campaign_id The ID of the new campaign.
-		 * @param Campaign $campaign    The campaign object.
-		 */
-		do_action( 'campaignbay_campaign_save', $campaign_id, $campaign );
-
-		// Log the activity.
-		Logger::get_instance()->log(
-			'campaign_created',
-			'created',
-			array(
-				'campaign_id' => $campaign->get_id(),
-				'extra_data' => array(
-					'title' => $campaign->get_title(),
-				)
-			)
-		);
-
-		return $campaign;
-	}
-
-	/**
-	 * Updates the campaign with new data.
-	 *
-	 * @since 1.0.0
-	 * @param array $args The campaign arguments to update.
-	 * @return bool True on success, false on failure.
-	 */
-	public function update( $args ) {
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-
-		$data = array();
-		$formats = array();
-
-		if ( isset( $args['title'] ) ) {
-			$data['title'] = sanitize_text_field( $args['title'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['status'] ) ) {
-			$data['status'] = sanitize_key( $args['status'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['campaign_type'] ) ) {
-			$data['campaign_type'] = sanitize_key( $args['campaign_type'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['discount_type'] ) ) {
-			$data['discount_type'] = sanitize_key( $args['discount_type'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['discount_value'] ) ) {
-			$data['discount_value'] = floatval( $args['discount_value'] );
-			$formats[] = '%f';
-		}
-		if ( isset( $args['target_type'] ) ) {
-			$data['target_type'] = sanitize_key( $args['target_type'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['target_ids'] ) ) {
-			$data['target_ids'] = wp_json_encode( array_map( 'absint', $args['target_ids'] ) );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['exclude_sale_items'] ) ) {
-			$data['exclude_sale_items'] = (bool) $args['exclude_sale_items'];
-			$formats[] = '%d';
-		}
-		if ( isset( $args['schedule_enabled'] ) ) {
-			$data['schedule_enabled'] = (bool) $args['schedule_enabled'];
-			$formats[] = '%d';
-		}
-		if ( isset( $args['start_datetime'] ) ) {
-			$data['start_datetime'] = self::validate_datetime( $args['start_datetime'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['end_datetime'] ) ) {
-			$data['end_datetime'] = self::validate_datetime( $args['end_datetime'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['timezone_string'] ) ) {
-			$data['timezone_string'] = sanitize_text_field( $args['timezone_string'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['campaign_tiers'] ) ) {
-			$data['campaign_tiers'] = wp_json_encode( $args['campaign_tiers'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['priority'] ) ) {
-			$data['priority'] = absint( $args['priority'] );
-			$formats[] = '%d';
-		}
-
-		// Always update the modified date
-		$data['date_modified'] = current_time( 'mysql' );
-		$formats[] = '%s';
-		if ( empty( $data ) ) {
-			return true; // Nothing to update
-		}
-		$result = $wpdb->update(
-			$table_name,
-			$data,
-			array( 'id' => $this->id ),
-			$formats,
-			array( '%d' )
-		);
-
-		if ( false === $result ) {
-			return false;
-		}
-
-		// Reload data
-		$this->load_data();
-		campaignbay_log( 'data: ' . print_r( $data, true ), 'DEBUG' );
-		campaignbay_log( 'formats: ' . print_r( $formats, true ), 'DEBUG' );
-		campaignbay_log( 'result: ' . print_r( $result, true ), 'DEBUG' );
-
-		/**
-		 * Fires after a campaign is updated and all its data is saved.
-		 *
-		 * @param int      $campaign_id The ID of the updated campaign.
-		 * @param Campaign $campaign    The campaign object.
-		 */
-		do_action( 'campaignbay_campaign_save', $this->id , $this );
-
-		// Log the activity.
-		Logger::get_instance()->log(
-			'campaign_updated',
-			'updated',
-			array(
-				'campaign_id' => $this->get_id(),
-				'extra_data' => array(
-					'title' => $this->get_title(),
-				)
-			)
-		);
-
-		return true;
-	}
-
-	/**
-	 * Deletes a campaign.
-	 *
-	 * @since 1.0.0
-	 * @param int  $campaign_id The campaign ID to delete.
-	 * @param bool $force_delete Whether to force delete (unused for compatibility).
-	 * @return bool True on success, false on failure.
-	 */
-	public static function delete( $campaign_id, $force_delete = true ) {
-		$campaign = new self( $campaign_id );
-		$title = $campaign->get_title();
-
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-
-		$result = $wpdb->delete(
-			$table_name,
-			array( 'id' => $campaign_id ),
-			array( '%d' )
-		);
-
-		/**
-		 * Fires after a campaign is deleted.
-		 *
-		 * @param int $campaign_id The ID of the deleted campaign.
-		 */
-		do_action( 'campaignbay_campaign_delete', $campaign_id );
-
-		// Log the activity.
-		Logger::get_instance()->log(
-			'campaign_deleted',
-			'deleted',
-			array(
-				'campaign_id' => $campaign_id,
-				'extra_data' => array(
-					'title' => $title,
-				)
-			)
-		);
-
-		return false !== $result;
-	}
-
-	/**
-	 * Get a specific piece of data.
-	 *
-	 * @since 1.0.0
-	 * @param string $key The data key.
-	 * @return mixed The value of the data key.
-	 */
-	public function get_meta( $key ) {
-		return isset( $this->data->$key ) ? $this->data->$key : null;
-	}
-
-	/**
-	 * Getters for core properties.
-	 */
-	public function get_id() {
-		return $this->id;
-	}
-
-	public function get_title() {
-		return $this->data->title;
-	}
-
-	public function get_status() {
-		return $this->data->status;
-	}
-
-	/**
-	 * Gets the start datetime string and converts it to the UTC timezone.
-	 *
-	 * @since 1.0.0
-	 * @return string|null The start datetime in 'Y-m-d H:i:s' format (UTC), or null if not set.
-	 */
-	public function get_start_datetime_utc() {
-		$start_datetime_site = $this->data->start_datetime;
-
-		if ( empty( $start_datetime_site ) ) {
-			return null;
-		}
-
-		try {
-			// Create a DateTime object from the saved string, specifying the site's timezone.
-			$date = new DateTime( $start_datetime_site, new DateTimeZone( wp_timezone_string() ) );
-			// Change the timezone of the object to UTC.
-			$date->setTimezone( new DateTimeZone( 'UTC' ) );
-			// Return the formatted string.
-			return $date->format( 'Y-m-d H:i:s' );
-		} catch ( Exception $e ) {
-			// Catch potential errors from invalid date formats.
-			campaignbay_log( 'Invalid start_datetime format for campaign #' . $this->id, 'ERROR' );
-			return null;
-		}
-	}
-
-	/**
-	 * Gets the end datetime string and converts it to the UTC timezone.
-	 *
-	 * @since 1.0.0
-	 * @return string|null The end datetime in 'Y-m-d H:i:s' format (UTC), or null if not set.
-	 */
-	public function get_end_datetime_utc() {
-		$end_datetime_site = $this->data->end_datetime;
-
-		if ( empty( $end_datetime_site ) ) {
-			return null;
-		}
-
-		try {
-			$date = new DateTime( $end_datetime_site, new DateTimeZone( wp_timezone_string() ) );
-			$date->setTimezone( new DateTimeZone( 'UTC' ) );
-			return $date->format( 'Y-m-d H:i:s' );
-		} catch ( Exception $e ) {
-			campaignbay_log( 'Invalid end_datetime format for campaign #' . $this->id, 'ERROR' );
-			return null;
-		}
-	}
-
-	/**
-	 * Gets the start datetime as a UTC Unix timestamp.
-	 *
-	 * @since 1.0.0
-	 * @return int|null The Unix timestamp, or null if no start date is set.
-	 */
-	public function get_start_timestamp() {
-		$utc_datetime = $this->get_start_datetime_utc();
-		return $utc_datetime ? strtotime( $utc_datetime ) : null;
-	}
-
-	/**
-	 * Gets the end datetime as a UTC Unix timestamp.
-	 *
-	 * @since 1.0.0
-	 * @return int|null The Unix timestamp, or null if no end date is set.
-	 */
-	public function get_end_timestamp() {
-		$utc_datetime = $this->get_end_datetime_utc();
-		return $utc_datetime ? strtotime( $utc_datetime ) : null;
-	}
-
-	/**
-	 * Gets the last modified date of the campaign.
-	 *
-	 * @since 1.0.0
-	 * @return string|null The last modified date.
-	 */
-	public function get_date_modified() {
-		return $this->data->date_modified ?: null;
 	}
 }
 

@@ -149,7 +149,7 @@ const CampaignsAdd = () => {
     const campaignData = {
       title: campaignTitle,
       status: campaignStatus,
-      campaign_type: campaignType,
+      type: campaignType,
       discount_type: discountType,
       discount_value: discountValue || 0,
       target_type: selectionType,
@@ -157,7 +157,7 @@ const CampaignsAdd = () => {
       start_datetime: startDate,
       end_datetime: endDate || null,
       timezone_offset: timezone.offsetFormatted,
-      campaign_tiers:
+      tiers:
         campaignType === "quantity"
           ? quantityTiers
           : campaignType === "earlybird"
@@ -173,11 +173,11 @@ const CampaignsAdd = () => {
       setErrors({ status: "Status is required" });
       return;
     }
-    if (!campaignData?.campaign_type) {
-      setErrors({ campaign_type: "Campaign type is required" });
+    if (!campaignData?.type) {
+      setErrors({ type: "Campaign type is required" });
       return;
     }
-    if (campaignData.campaign_type === "scheduled") {
+    if (campaignData.type === "scheduled") {
       if (!campaignData?.discount_type) {
         setErrors({ discount_type: "Discount type is required" });
         return;
@@ -257,7 +257,7 @@ const CampaignsAdd = () => {
             type="text"
             id="campaign-type"
             className={`wpab-input w-100 ${
-              errors?.campaign_type ? "wpab-input-error" : ""
+              errors?.type ? "wpab-input-error" : ""
             }`}
             value={campaignType}
             onChange={(e) => handleCampaignTypeChange(e.target.value)}
@@ -364,7 +364,7 @@ const CampaignsAdd = () => {
 
         {campaignType === "quantity" && (
           <QuantityTiers
-            className={`${errors?.campaign_tiers ? "wpab-input-error" : ""}`}
+            className={`${errors?.tiers ? "wpab-input-error" : ""}`}
             tiers={quantityTiers}
             setTiers={setQuantityTiers}
             errors={errors}
@@ -373,7 +373,7 @@ const CampaignsAdd = () => {
 
         {campaignType === "earlybird" && (
           <EBTiers
-            className={`${errors?.campaign_tiers ? "wpab-input-error" : ""}`}
+            className={`${errors?.tiers ? "wpab-input-error" : ""}`}
             tiers={ebTiers}
             setTiers={setEBTiers}
             errors={errors}

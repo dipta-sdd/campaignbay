@@ -268,7 +268,7 @@ const Dashboard = () => {
     ];
 
     return {
-      labels: data.map((item) => item.campaign_type || "Unknown"),
+      labels: data.map((item) => item.type || "Unknown"),
       datasets: [
         {
           data: data.map((item) => parseFloat(item.total_sales)),

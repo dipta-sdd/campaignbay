@@ -1021,9 +1021,9 @@ class PricingEngine {
 		foreach ( $active_campaigns as $campaign ) {
 			
 			// Get the campaign type.
-			$campaign_type = $campaign->get_meta( 'campaign_type' );
+			$type = $campaign->get_meta( 'type' );
 
-			if($campaign_type !== 'scheduled' && $campaign_type !== 'earlybird'){
+			if($type !== 'scheduled' && $type !== 'earlybird'){
 				continue;
 			}
 
@@ -1036,19 +1036,19 @@ class PricingEngine {
 
 			$type_data = array(
 				'campaign_id' => $campaign->get_id(),
-				'campaign_type' => $campaign_type,
+				'type' => $type,
 				'campaign_title' => $campaign->get_title(),
 			);
 
 			// If the campaign is a scheduled campaign, calculate the simple price.
-			if ( 'scheduled' === $campaign_type ) {
+			if ( 'scheduled' === $type ) {
 				$discounted_price = $this->calculate_simple_price( $campaign, $base_price );
 				$type_data['discount_value'] = $campaign->get_meta('discount_value');
 				$type_data['discount_type'] = $campaign->get_meta('discount_type');
 
-			}elseif( 'earlybird' === $campaign_type ){
+			}elseif( 'earlybird' === $type ){
 				$earlybird_usage_limit = null;
-				$tiers = $campaign->get_meta( 'campaign_tiers' );
+				$tiers = $campaign->get_meta( 'tiers' );
 				if ( ! is_array( $tiers ) || empty( $tiers ) ) {
 					continue;
 				}
@@ -1105,9 +1105,9 @@ class PricingEngine {
 		foreach ( $active_campaigns as $campaign ) {
 			
 			// Get the campaign type.
-			$campaign_type = $campaign->get_meta( 'campaign_type' );
+			$type = $campaign->get_meta( 'type' );
 
-			if($campaign_type !== 'quantity'){
+			if($type !== 'quantity'){
 				continue;
 			}
 
@@ -1120,11 +1120,11 @@ class PricingEngine {
 
 			$type_data = array(
 				'campaign_id' => $campaign->get_id(),
-				'campaign_type' => $campaign_type,
+				'type' => $type,
 				'campaign_title' => $campaign->get_title(),
 			);
 
-			$tiers = $campaign->get_meta('campaign_tiers');
+			$tiers = $campaign->get_meta('tiers');
 			// If the tiers are empty, skip the campaign.
 			if ( ! is_array( $tiers ) || empty( $tiers ) ) {
 				continue;
@@ -1184,7 +1184,7 @@ class PricingEngine {
 				$simple = $discount_data['discounts']['simple'];
 				campaignbay_log('	simple_price: ' . $simple['price'], 'DEBUG' );
 				campaignbay_log('	simple_campaign_id: ' . $simple['campaign_id'], 'DEBUG' );
-				campaignbay_log('	simple_campaign_type: ' . $simple['campaign_type'], 'DEBUG' );
+				campaignbay_log('	simple_type: ' . $simple['type'], 'DEBUG' );
 				campaignbay_log('	simple_campaign_title: ' . $simple['campaign_title'], 'DEBUG' );
 				campaignbay_log('	simple_is_applied: ' . $simple['is_applied'], 'DEBUG' );
 			}
@@ -1192,7 +1192,7 @@ class PricingEngine {
 				$quantity = $discount_data['discounts']['quantity'];
 				campaignbay_log('	quantity_price: ' . $quantity['price'], 'DEBUG' );
 				campaignbay_log('	quantity_campaign_id: ' . $quantity['campaign_id'], 'DEBUG' );
-				campaignbay_log('	quantity_campaign_type: ' . $quantity['campaign_type'], 'DEBUG' );
+				campaignbay_log('	quantity_type: ' . $quantity['type'], 'DEBUG' );
 				campaignbay_log('	quantity_campaign_title: ' . $quantity['campaign_title'], 'DEBUG' );
 				campaignbay_log('	quantity_is_applied: ' . $quantity['is_applied'], 'DEBUG' );
 			}

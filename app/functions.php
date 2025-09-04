@@ -320,34 +320,5 @@ if(! function_exists('campaignbay_log')) {
 }
 
 
-// in includes/functions.php
 
-if ( ! function_exists( 'campaignbay_get_campaign_meta_keys' ) ) :
-	/**
-	 * Get the campaign field keys.
-	 *
-	 * This function returns an array of field keys that are used by campaigns.
-	 * These keys are used by the REST API for the React UI.
-	 *
-	 * @since 1.0.0
-	 * @return array Array of field keys.
-	 */
-	function campaignbay_get_campaign_meta_keys() {
-		return array(
-			'campaign_type',
-			'discount_type',
-			'discount_value',
-			'target_type',
-			'target_ids',
-			'start_datetime',
-			'end_datetime',
-			'timezone_string',
-			'campaign_tiers',
-			'usage_count',
-			'exclude_sale_items',
-			'schedule_enabled',
-			'priority'
-		);
-	}
-endif;
 

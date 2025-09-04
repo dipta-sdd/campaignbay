@@ -228,7 +228,7 @@ class ActivityLogController extends ApiController {
 			l.extra_data,
 			l.timestamp,
 			c.title as campaign_title,
-			c.campaign_type
+			c.type
 		FROM {$logs_table} l
 		LEFT JOIN {$campaigns_table} c ON l.campaign_id = c.id
 		{$where_sql}
@@ -284,7 +284,7 @@ class ActivityLogController extends ApiController {
 			l.extra_data,
 			l.timestamp,
 			c.title as campaign_title,
-			c.campaign_type
+			c.type
 		FROM {$logs_table} l
 		LEFT JOIN {$campaigns_table} c ON l.campaign_id = c.id
 		WHERE l.log_id = %d";
@@ -322,7 +322,7 @@ class ActivityLogController extends ApiController {
 			'extra_data'    => ! empty( $log_entry['extra_data'] ) ? json_decode( $log_entry['extra_data'], true ) : null,
 			'timestamp'     => $log_entry['timestamp'],
 			'campaign_title' => $log_entry['campaign_title'],
-			'campaign_type' => $log_entry['campaign_type'],
+			'type' => $log_entry['type'],
 		);
 
 		// Add user information if user_id exists

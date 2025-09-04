@@ -61,8 +61,6 @@ class DbManager {
 
     /**
      * Create the campaigns table.
-    /**
-     * Create the campaigns table.
      *
      * This table stores campaign data.
      *
@@ -78,27 +76,31 @@ class DbManager {
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             title VARCHAR(255) NOT NULL,
             status VARCHAR(20) NOT NULL DEFAULT 'draft',
-            campaign_type VARCHAR(20) ENUM(
-                'scheduled_sales',
-                'quantity_tiered',
-                'early_bird',
-                'bogo',
-                'bundle',
-                'free_shipping_gift',
-                'storewide',
-                'category_product_tag',
-                'user_role',
-                'purchase_history',
-                'cart_checkout',
-                'location_based',
-                'nth_order',
-                'next_buy_bonus',
-                'day_based'
-            ) NOT NULL,
-            
+            type VARCHAR(20) 
+            -- ENUM(
+            --     'scheduled',
+            --     'quantity',
+            --     'earlybird',
+            --     'bogo',
+            --     'bundle',
+            --     'free_shipping_gift',
+            --     'storewide',
+            --     'category_product_tag',
+            --     'user_role',
+            --     'purchase_history',
+            --     'cart_checkout',
+            --     'location_based',
+            --     'nth_order',
+            --     'next_buy_bonus',
+            --     'day_based'
+            -- ) 
+            NOT NULL,
+
             discount_type VARCHAR(20) DEFAULT NULL,
             discount_value DECIMAL(10, 2) DEFAULT NULL,
-            campaign_tiers JSON DEFAULT NULL,
+            tiers JSON DEFAULT NULL,
+            conditions JSON DEFAULT NULL,
+            settings JSON DEFAULT NULL,
             
             target_type VARCHAR(20) DEFAULT NULL,
             target_ids LONGTEXT DEFAULT NULL,
@@ -111,8 +113,8 @@ class DbManager {
             
             usage_count INT(11) NOT NULL DEFAULT 0,
             usage_limit INT(11) DEFAULT NULL,
-            priority INT(11) NOT NULL DEFAULT 10,
-            
+
+
             date_created DATETIME NOT NULL,
             date_modified DATETIME NOT NULL,
 
@@ -121,11 +123,13 @@ class DbManager {
             
             PRIMARY KEY  (id),
             KEY `status` (`status`),
-            KEY `campaign_type` (`campaign_type`),
+            KEY `type` (`type`),
             KEY `date_range` (start_datetime, end_datetime)
         ) $charset_collate;";
 
         dbDelta( $sql );
+        $this->create_campaigns_table_indexes();
+        error_log( 'Campaigns table created' );
     }
 
     /**
@@ -162,6 +166,19 @@ class DbManager {
 		dbDelta( $sql );
 	}
 
+    /**
+     * Create the indexes for the campaigns table.
+     *
+     * @since 1.0.0
+     * @access private
+     */
+    private function create_campaigns_table_indexes() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'campaignbay_campaigns';
+        $wpdb->query( "CREATE INDEX `status` ON {$table_name} (`status`)" );
+        $wpdb->query( "CREATE INDEX `type` ON {$table_name} (`type`)" );
+        $wpdb->query( "CREATE INDEX `date_range` ON {$table_name} (`start_datetime`, `end_datetime`)" );
+    }
 }
 
 
@@ -173,10 +190,10 @@ class DbManager {
 //     id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 //     title VARCHAR(255) NOT NULL,
 //     status VARCHAR(20) NOT NULL DEFAULT 'draft',
-//     campaign_type VARCHAR(20) ENUM(
+//     type VARCHAR(20) ENUM(
 //     'scheduled_sales',
 //     'quantity_tiered',
-//     'early_bird',
+//     'earlybird',
 //     'bogo',
 //     'bundle',
 //     'free_shipping_gift',
@@ -194,7 +211,7 @@ class DbManager {
 //     -- Discount Action Details (The "THEN" part of the rule) --
 //     discount_type VARCHAR(20) DEFAULT NULL,
 //     discount_value DECIMAL(10, 2) DEFAULT NULL,
-//     campaign_tiers JSON DEFAULT NULL,
+//     tiers JSON DEFAULT NULL,
     
 //     -- Conditions & Targeting (The "IF" part of the rule) --
 //     target_type VARCHAR(20) DEFAULT NULL,
@@ -218,6 +235,6 @@ class DbManager {
     
 //     PRIMARY KEY  (id),
 //     KEY `status` (`status`),
-//     KEY `campaign_type` (`campaign_type`),
+//     KEY `type` (`type`),
 //     KEY `date_range` (start_datetime, end_datetime)
 // ) {$wpdb->get_charset_collate()};

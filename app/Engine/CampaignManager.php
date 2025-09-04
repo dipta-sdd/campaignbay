@@ -152,7 +152,7 @@ class CampaignManager {
 			foreach ( $results as $row ) {
 				// Decode JSON fields
 				$row->target_ids = ! empty( $row->target_ids ) ? json_decode( $row->target_ids, true ) : array();
-				$row->campaign_tiers = ! empty( $row->campaign_tiers ) ? json_decode( $row->campaign_tiers, true ) : array();
+				$row->tiers = ! empty( $row->tiers ) ? json_decode( $row->tiers, true ) : array();
 				
 				$campaign = new Campaign( $row );
 				if ( $campaign ) {
