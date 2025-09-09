@@ -575,13 +575,11 @@ class CampaignsController extends ApiController {
 				'start_datetime'      => array(
 					'description' => __( 'The rule\'s start date/time (ISO 8601 string).', 'campaignbay' ),
 					'type'        => 'string',
-					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'end_datetime'        => array(
 					'description' => __( 'The rule\'s end date/time (ISO 8601 string).', 'campaignbay' ),
 					'type'        => 'string',
-					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'usage_count'         => array(

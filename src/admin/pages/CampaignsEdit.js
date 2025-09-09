@@ -28,13 +28,16 @@ const CampaignsEdit = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { woocommerce_currency_symbol } = useCbStore();
-  const [campaignType, setCampaignType] = useState("scheduled");
-  const [campaignStatus, setCampaignStatus] = useState("scheduled");
+
   const [campaignTitle, setCampaignTitle] = useState("");
-  const [selectionType, setSelectionType] = useState("entire_store");
-  const [selections, setSelections] = useState([]);
+  const [campaignStatus, setCampaignStatus] = useState("scheduled");
+  const [campaignType, setCampaignType] = useState("scheduled");
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState("");
+  const [targetType, setTargetType] = useState("entire_store");
+  const [targetIds, setTargetIds] = useState([]);
+  const [isExclude, setIsExclude] = useState(false);
+  const [isExcludeSaleItems, setIsExcludeSaleItems] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState("");
   const { addToast } = useToast();
@@ -69,8 +72,8 @@ const CampaignsEdit = () => {
       setCampaignStatus(response.status);
       setCampaignType(response.type);
       setCampaignTitle(response.title);
-      setSelectionType(response.target_type);
-      setSelections(response.target_ids);
+      setTargetType(response.target_type);
+      setTargetIds(response.target_ids);
       setDiscountType(response.discount_type);
       setDiscountValue(response.discount_value);
       setStartDate(response.start_datetime);
@@ -90,6 +93,12 @@ const CampaignsEdit = () => {
   useEffect(() => {
     Promise.all([fetchCategories(), fetchProducts(), fetchTags()]);
   }, []);
+
+  useEffect(() => {
+    if (campaignType === "scheduled" || campaignStatus === "scheduled") {
+      setScheduleEnabled(true);
+    }
+  }, [campaignStatus, campaignType]);
 
   const fetchCategories = async () => {
     try {
@@ -150,8 +159,8 @@ const CampaignsEdit = () => {
   };
 
   const handleSelectionTypeChange = (value) => {
-    setSelectionType(value);
-    setSelections([]);
+    setTargetType(value);
+    setTargetIds([]);
   };
 
   const handleCampaignTypeChange = (value) => {
@@ -173,8 +182,8 @@ const CampaignsEdit = () => {
       type: campaignType,
       discount_type: discountType,
       discount_value: discountValue || 0,
-      target_type: selectionType,
-      target_ids: selections,
+      target_type: targetType,
+      target_ids: targetIds,
       start_datetime: startDate,
       end_datetime: endDate || null,
       timezone_offset: timezone.offsetFormatted,
@@ -185,57 +194,7 @@ const CampaignsEdit = () => {
           ? ebTiers
           : [],
     };
-    // console.log(campaignData);
-    if (!campaignData?.title) {
-      setErrors({ title: "Title is required" });
-      return;
-    }
-    if (!campaignData?.status && campaignType !== "scheduled") {
-      setErrors({ status: "Status is required" });
-      return;
-    }
-    if (!campaignData?.type) {
-      setErrors({ type: "Campaign type is required" });
-      return;
-    }
-    if (campaignData.type === "scheduled") {
-      if (!campaignData?.discount_type) {
-        setErrors({ discount_type: "Discount type is required" });
-        return;
-      }
-      if (!campaignData?.discount_value) {
-        setErrors({ discount_value: "Discount value is required" });
-        return;
-      }
-    } else {
-      if (!campaignData?.target_type) {
-        setErrors({ target_type: "Target type is required" });
-        return;
-      }
-      if (
-        campaignData.target_type !== "entire_store" &&
-        !campaignData?.target_ids
-      ) {
-        setErrors({ target_ids: "Target ids are required" });
-        return;
-      }
-    }
-    if (
-      campaignData.campaign_status === "scheduled" &&
-      !campaignData?.start_datetime
-    ) {
-      setErrors({ start_datetime: "Start datetime is required" });
-      return;
-    }
-    if (
-      campaignData.campaign_status === "scheduled" &&
-      !campaignData?.end_datetime
-    ) {
-      setErrors({ end_datetime: "End datetime is required" });
-      return;
-    }
-    console.log("start_datetime", campaignData.start_datetime);
-    console.log("end_datetime", campaignData.end_datetime);
+
     try {
       setIsSaving(true);
       const response = await apiFetch({
@@ -391,7 +350,7 @@ const CampaignsEdit = () => {
                 className={`wpab-input w-100 ${
                   errors?.target_type ? "wpab-input-error" : ""
                 }`}
-                value={selectionType}
+                value={targetType}
                 onChange={(e) => handleSelectionTypeChange(e.target.value)}
               >
                 <option value="entire_store">
@@ -406,32 +365,32 @@ const CampaignsEdit = () => {
                 <option value="tag">{__("By Tags", "campaignbay")}</option>
               </select>
 
-              {selectionType !== "entire_store" ? (
+              {targetType !== "entire_store" ? (
                 <div
                   style={{ background: "#ffffff" }}
                   className={`${errors?.target_ids ? "wpab-input-error" : ""}`}
                 >
                   <MultiSelect
                     label={
-                      selectionType === "product"
+                      targetType === "product"
                         ? __("Select Products *", "campaignbay")
-                        : selectionType === "tag"
+                        : targetType === "tag"
                         ? __("Select Tags *", "campaignbay")
-                        : selectionType === "category"
+                        : targetType === "category"
                         ? __("Select Categories *", "campaignbay")
                         : ""
                     }
                     options={
-                      selectionType === "product"
+                      targetType === "product"
                         ? products
-                        : selectionType === "tag"
+                        : targetType === "tag"
                         ? tags
-                        : selectionType === "category"
+                        : targetType === "category"
                         ? categories
                         : []
                     }
-                    value={selections}
-                    onChange={setSelections}
+                    value={targetIds}
+                    onChange={setTargetIds}
                   />
                 </div>
               ) : null}
@@ -439,9 +398,7 @@ const CampaignsEdit = () => {
 
             {campaignType === "quantity" && (
               <QuantityTiers
-                className={`${
-                  errors?.tiers ? "wpab-input-error" : ""
-                }`}
+                className={`${errors?.tiers ? "wpab-input-error" : ""}`}
                 tiers={quantityTiers}
                 setTiers={setQuantityTiers}
                 errors={errors}
@@ -450,9 +407,7 @@ const CampaignsEdit = () => {
 
             {campaignType === "earlybird" && (
               <EBTiers
-                className={`${
-                  errors?.tiers ? "wpab-input-error" : ""
-                }`}
+                className={`${errors?.tiers ? "wpab-input-error" : ""}`}
                 tiers={ebTiers}
                 setTiers={setEBTiers}
                 errors={errors}
@@ -515,7 +470,7 @@ const CampaignsEdit = () => {
             {campaignStatus === "scheduled" && (
               <div className="cb-form-input-con">
                 <label htmlFor="start-time">
-                  {__("SELECT CAMPAIGN DURATION", "campaignbay")} <Required />
+                  {__("SELECT CAMPAIGN DURATION", "campaignbay")} <Required />{" "}
                 </label>
                 <div
                   className="wpab-grid-2 cb-date-time-fix"
@@ -532,10 +487,10 @@ const CampaignsEdit = () => {
                     >
                       {__("Start Time", "campaignbay")}
                     </span>
-                    <TimePicker
+                    <DateTimePicker
                       id="start-time"
-                      currentTime={startDate}
-                      onChange={(date) => {
+                      dateTime={startDate}
+                      onDateTimeChange={(date) => {
                         setStartDate(date);
                       }}
                     />
@@ -551,10 +506,10 @@ const CampaignsEdit = () => {
                     >
                       {__("End Time", "campaignbay")}
                     </span>
-                    <TimePicker
+                    <DateTimePicker
                       id="end-time"
-                      currentTime={endDate ? endDate : null}
-                      onChange={(date) => {
+                      dateTime={endDate}
+                      onDateTimeChange={(date) => {
                         setEndDate(date);
                       }}
                     />

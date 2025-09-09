@@ -22,7 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Exception;
 use DateTime;
 use DateTimeZone;
+use WP_Error;
 use WpabCb\Core\Logger;
+use WpabCb\Core\Validator;
 
 /**
  * The Campaign model class.
@@ -105,29 +107,6 @@ class Campaign {
 		throw new Exception( esc_html( $message ) );
 	}
 
-	/**
-	 * Validates a datetime string and returns null if invalid.
-	 *
-	 * @since 1.0.0
-	 * @param string $datetime The datetime string to validate.
-	 * @return string|null The validated datetime string or null if invalid.
-	 */
-	private static function validate_datetime( $datetime ) {
-		if ( empty( $datetime ) ) {
-			return null;
-		}
-
-		// Try to create a DateTime object to validate the format
-		try {
-			$date = new DateTime( $datetime );
-			// If successful, return the original string
-			return $datetime;
-		} catch ( Exception $e ) {
-			// If invalid, log the error and return null
-			campaignbay_log( 'Invalid datetime format: ' . $datetime, 'WARNING' );
-			return null;
-		}
-	}
 
 	/**
 	 * Creates a new campaign.
@@ -138,88 +117,62 @@ class Campaign {
 	 * @throws Exception If validation fails.
 	 */
 	public static function create( $args ) {
-		// Validate required fields.
-		if ( empty( $args['title'] ) ) {
-			self::throw_validation_error( 'title' );
+		$validator = new Validator( $args );
+		$rules = [
+			'title'           => 'required|max:255',
+			'type'   => 'required|in:earlybird,scheduled,quantity', 
+			'status'          => 'required|in:active,inactive,scheduled',
+
+			'discount_type'   => 'nullable|in:percentage,fixed',
+			'discount_value'  => 'required_if:status,scheduled|numeric',
+			'tiers'  => 'nullable|array',
+
+			'target_type'        => 'nullable|in:entire_store,category,product,tag',
+			'target_ids'         => 'required_if:target_type,category,product,tag|array_of_integers',
+			'exclude_sale_items' => 'nullable|boolean',
+			'is_exclude'         => 'nullable|boolean',
+
+			'schedule_enabled'   => 'required_if:type,scheduled|boolean',
+			'start_datetime'     => 'datetime|required_if:schedule_enabled,1|required_if:status,scheduled|nullable',
+			'end_datetime'       => 'datetime|nullable|after:start_datetime',
+
+			'conditions'         => 'nullable|array',
+			'settings'           => 'nullable|array',
+		];
+		if ( ! $validator->validate( $rules ) ) {
+			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() ) );
 		}
 
-		if ( empty( $args['type'] ) ) {
-			self::throw_validation_error( 'type' );
-		}
-
-		// Set default status
-		if ( empty( $args['status'] ) ) {
-			$args['status'] = 'scheduled' === $args['type'] ? 'scheduled' : 'active';
-		}
-
-		$allowed_statuses = array( 'active', 'inactive', 'scheduled' );
-		if ( ! in_array( $args['status'], $allowed_statuses, true ) ) {
-			self::throw_validation_error( 'status' );
-		}
-
-		$allowed_types = array( 'earlybird', 'scheduled', 'quantity' );
-		if ( ! in_array( $args['type'], $allowed_types, true ) ) {
-			self::throw_validation_error( 'type' );
-		}
-
-		$args['start_datetime'] = self::validate_datetime( $args['start_datetime'] ?? null );
-		$args['end_datetime'] = self::validate_datetime( $args['end_datetime'] ?? null );
-
-		if ( 'scheduled' === $args['status'] && empty( $args['start_datetime'] ) ) {
-			self::throw_validation_error( 'start_datetime' );
-		}
-		if ( 'scheduled' === $args['status'] && empty( $args['end_datetime'] ) ) {
-			self::throw_validation_error( 'end_datetime' );
-		}
-
-		if ( 'scheduled' === $args['type'] && empty( $args['discount_value'] ) ) {
-			self::throw_validation_error( 'discount_value' );
-		}
-		if ( 'scheduled' === $args['type'] && empty( $args['discount_type'] ) ) {
-			self::throw_validation_error( 'discount_type' );
-		}
-		if ( 'scheduled' !== $args['type'] ) {
-			if ( ! isset( $args['target_type'] ) || empty( $args['target_type'] ) ) {
-				self::throw_validation_error( 'target_type' );
-			}
-			$allowed_target_types = array( 'entire_store', 'category', 'product', 'tag' );
-			if ( ! in_array( $args['target_type'], $allowed_target_types, true ) ) {
-				self::throw_validation_error( 'target_type' );
-			}
-			if ( 'entire_store' !== $args['target_type'] && ( empty( $args['target_ids'] ) || ! is_array( $args['target_ids'] ) ) ) {
-				self::throw_validation_error( 'target_ids' );
-			}
-		}
-
+		
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
-		// Prepare data for insertion
 		$data = array(
-			'title' => sanitize_text_field( $args['title'] ),
-			'status' => sanitize_key( $args['status'] ),
-			'type' => sanitize_key( $args['type'] ),
-			'discount_type' => isset( $args['discount_type'] ) ? sanitize_key( $args['discount_type'] ) : null,
-			'discount_value' => isset( $args['discount_value'] ) ? floatval( $args['discount_value'] ) : null,
-			'target_type' => isset( $args['target_type'] ) ? sanitize_key( $args['target_type'] ) : null,
-			'target_ids' => isset( $args['target_ids'] ) ? wp_json_encode( array_map( 'absint', $args['target_ids'] ) ) : null,
-			'exclude_sale_items' => isset( $args['exclude_sale_items'] ) ? (bool) $args['exclude_sale_items'] : false,
-			'schedule_enabled' => isset( $args['schedule_enabled'] ) ? (bool) $args['schedule_enabled'] : false,
-			'tiers' => isset( $args['tiers'] ) ? wp_json_encode( $args['tiers'] ) : null,
-			'conditions' => isset( $args['conditions'] ) ? wp_json_encode( $args['conditions'] ) : null,
-			'settings' => isset( $args['settings'] ) ? wp_json_encode( $args['settings'] ) : null,
-			'is_exclude' => isset( $args['is_exclude'] ) ? (bool) $args['is_exclude'] : false,
-
-			'schedule_enabled' => isset( $args['schedule_enabled'] ) ? (bool) $args['schedule_enabled'] : false,
-			'start_datetime' => $args['start_datetime'],
-			'end_datetime' => $args['end_datetime'],
-			'usage_count' => 0,
-			'date_created' => current_time( 'mysql' ),
-			'date_modified' => current_time( 'mysql' ),
+			'title' => sanitize_text_field( $validator->get_validated_data()['title'] ),
+			'status' => sanitize_key( $validator->get_validated_data()['status'] ),
+			'type' => sanitize_key( $validator->get_validated_data()['type'] ),
+			'discount_type'     => isset( $validator->get_validated_data()['discount_type'] ) ? sanitize_key( $validator->get_validated_data()['discount_type'] ) : null,
+			'discount_value'    => isset( $validator->get_validated_data()['discount_value'] ) ? floatval( $validator->get_validated_data()['discount_value'] ) : null,
+			'target_type'       => isset( $validator->get_validated_data()['target_type'] ) ? sanitize_key( $validator->get_validated_data()['target_type'] ) : null,
+			'target_ids'        => isset( $validator->get_validated_data()['target_ids'] ) ? wp_json_encode( array_map( 'absint', $validator->get_validated_data()['target_ids'] ) ) : null,
+			'exclude_sale_items'=> isset( $validator->get_validated_data()['exclude_sale_items'] ) ? (bool) $validator->get_validated_data()['exclude_sale_items'] : false,
+			'schedule_enabled'  => isset( $validator->get_validated_data()['schedule_enabled'] ) ? (bool) $validator->get_validated_data()['schedule_enabled'] : false,
+			'tiers'             => isset( $validator->get_validated_data()['tiers'] ) ? wp_json_encode( $validator->get_validated_data()['tiers'] ) : null,
+			'conditions'        => isset( $validator->get_validated_data()['conditions'] ) ? wp_json_encode( $validator->get_validated_data()['conditions'] ) : null,
+			'settings'          => isset( $validator->get_validated_data()['settings'] ) ? wp_json_encode( $validator->get_validated_data()['settings'] ) : null,
+			'is_exclude'        => isset( $validator->get_validated_data()['is_exclude'] ) ? (bool) $validator->get_validated_data()['is_exclude'] : false,
+			'start_datetime'    => $validator->get_validated_data()['start_datetime'],
+			'end_datetime'      => $validator->get_validated_data()['end_datetime'],
+			'usage_count'       => 0,
+			'date_created'      => current_time( 'mysql' ),
+			'date_modified'     => current_time( 'mysql' ),
+			'created_by'         => get_current_user_id(),
+			'updated_by'         => get_current_user_id(),
 		);
 
+		error_log(print_r($data, true));
 		$formats = array(
-			'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s'
+			'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%d'
 		);
 
 		$result = $wpdb->insert( $table_name, $data, $formats );
@@ -262,66 +215,62 @@ class Campaign {
 	 * @return bool True on success, false on failure.
 	 */
 	public function update( $args ) {
+		$validator = new Validator( $args );
+		$rules = [
+			'title'           => 'required|max:255',
+			'type'   => 'required|in:earlybird,scheduled,quantity', 
+			'status'          => 'required|in:active,inactive,scheduled',
+
+			'discount_type'   => 'nullable|in:percentage,fixed',
+			'discount_value'  => 'nullable|numeric',
+			'tiers'  => 'nullable|array', 
+
+			'target_type'        => 'nullable|in:entire_store,category,product,tag',
+			'target_ids'         => 'required_if:target_type,category,product,tag|array_of_integers',
+			'exclude_sale_items' => 'nullable|boolean',
+			'is_exclude'         => 'nullable|boolean',
+
+			'schedule_enabled'   => 'nullable|boolean',
+			'start_datetime'     => 'datetime|required_if:schedule_enabled,1|required_if:status,scheduled|nullable',
+			'end_datetime'       => 'datetime|nullable|after:start_datetime',
+
+			'conditions'         => 'nullable|array',
+			'settings'           => 'nullable|array',
+		];
+		if ( ! $validator->validate( $rules ) ) {
+			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() ) );
+		}
+
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+		$data = array('date_modified' => current_time( 'mysql' ));
+		foreach($validator->get_validated_data() as $key => $value) {
+			$data[$key] = $value;
+		}
 
-		$data = array();
+		// $data = array(
+		// 	'title' => sanitize_text_field( $validator->get_validated_data()['title'] ),
+		// 	'status' => sanitize_key( $validator->get_validated_data()['status'] ),
+		// 	'type' => sanitize_key( $validator->get_validated_data()['type'] ),
+		// 	'discount_type'     => isset( $validator->get_validated_data()['discount_type'] ) ? sanitize_key( $validator->get_validated_data()['discount_type'] ) : null,
+		// 	'discount_value'    => isset( $validator->get_validated_data()['discount_value'] ) ? floatval( $validator->get_validated_data()['discount_value'] ) : null,
+		// 	'target_type'       => isset( $validator->get_validated_data()['target_type'] ) ? sanitize_key( $validator->get_validated_data()['target_type'] ) : null,
+		// 	'target_ids'        => isset( $validator->get_validated_data()['target_ids'] ) ? wp_json_encode( array_map( 'absint', $validator->get_validated_data()['target_ids'] ) ) : null,
+		// 	'exclude_sale_items'=> isset( $validator->get_validated_data()['exclude_sale_items'] ) ? (bool) $validator->get_validated_data()['exclude_sale_items'] : false,
+		// 	'schedule_enabled'  => isset( $validator->get_validated_data()['schedule_enabled'] ) ? (bool) $validator->get_validated_data()['schedule_enabled'] : false,
+		// 	'tiers'             => isset( $validator->get_validated_data()['tiers'] ) ? wp_json_encode( $validator->get_validated_data()['tiers'] ) : null,
+		// 	'conditions'        => isset( $validator->get_validated_data()['conditions'] ) ? wp_json_encode( $validator->get_validated_data()['conditions'] ) : null,
+		// 	'settings'          => isset( $validator->get_validated_data()['settings'] ) ? wp_json_encode( $validator->get_validated_data()['settings'] ) : null,
+		// 	'is_exclude'        => isset( $validator->get_validated_data()['is_exclude'] ) ? (bool) $validator->get_validated_data()['is_exclude'] : false,
+		// 	'start_datetime'    => $validator->get_validated_data()['start_datetime'],
+		// 	'end_datetime'      => $validator->get_validated_data()['end_datetime'],
+		// 	'date_modified'     => current_time( 'mysql' ),
+		// 	'updated_by'         => get_current_user_id(),
+		// );
 		$formats = array();
-
-		if ( isset( $args['title'] ) ) {
-			$data['title'] = sanitize_text_field( $args['title'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['status'] ) ) {
-			$data['status'] = sanitize_key( $args['status'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['type'] ) ) {
-			$data['type'] = sanitize_key( $args['type'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['discount_type'] ) ) {
-			$data['discount_type'] = sanitize_key( $args['discount_type'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['discount_value'] ) ) {
-			$data['discount_value'] = floatval( $args['discount_value'] );
-			$formats[] = '%f';
-		}
-		if ( isset( $args['target_type'] ) ) {
-			$data['target_type'] = sanitize_key( $args['target_type'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['target_ids'] ) ) {
-			$data['target_ids'] = wp_json_encode( array_map( 'absint', $args['target_ids'] ) );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['exclude_sale_items'] ) ) {
-			$data['exclude_sale_items'] = (bool) $args['exclude_sale_items'];
-			$formats[] = '%d';
-		}
-		if ( isset( $args['schedule_enabled'] ) ) {
-			$data['schedule_enabled'] = (bool) $args['schedule_enabled'];
-			$formats[] = '%d';
-		}
-		if ( isset( $args['start_datetime'] ) ) {
-			$data['start_datetime'] = self::validate_datetime( $args['start_datetime'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['end_datetime'] ) ) {
-			$data['end_datetime'] = self::validate_datetime( $args['end_datetime'] );
-			$formats[] = '%s';
-		}
-		if ( isset( $args['tiers'] ) ) {
-			$data['tiers'] = wp_json_encode( $args['tiers'] );
-			$formats[] = '%s';
-		}
-
-		// Always update the modified date
-		$data['date_modified'] = current_time( 'mysql' );
 		$formats[] = '%s';
 		if ( empty( $data ) ) {
-			return true; // Nothing to update
+			return true;
 		}
 		$result = $wpdb->update(
 			$table_name,

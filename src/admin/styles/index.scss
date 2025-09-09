@@ -833,6 +833,7 @@
       font-weight: #{$cb-fw-normal};
       padding: 0;
       margin: 0;
+      margin-top: -8px;
     }
 
     & .wpab-input-with-suffix {
@@ -984,6 +985,7 @@
       font-size: #{$cb-fs-base};
       line-height: #{$cb-lh-base};
       font-weight: #{$cb-fw-normal};
+      height: 40px;
     }
 
     & .components-datetime__timezone {

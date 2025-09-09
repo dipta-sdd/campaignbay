@@ -578,7 +578,7 @@ const Campaigns = () => {
                         {campaign.usage_count || 0}
                       </td>
                       <td className="campaignbay-text-secondary">
-                        {formatDateTime(campaign.modified)}
+                        {formatDateTime(campaign.date_modified)}
                       </td>
                       <td className="campaignbay-sticky-r-td">
                         {/* <div className="campaignbay-action-button-container"> */}

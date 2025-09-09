@@ -6,7 +6,7 @@ import {
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
-import { check, Icon } from "@wordpress/icons";
+import { check, code, Icon } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
 import { useEffect } from "react";
@@ -17,23 +17,23 @@ import { useCbStore } from "../store/cbStore";
 import { getSettings as getDateSettings } from "@wordpress/date";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import DateTimePicker from "../components/DateTimePicker";
+import { Check } from "lucide-react";
+import CbCheckbox from "../components/CbCheckbox";
+import Tooltip from "../components/tooltip";
 
 const CampaignsAdd = () => {
-  const { woocommerce_currency_symbol } = useCbStore();
+  const { wpSettings, woocommerce_currency_symbol } = useCbStore();
   const navigate = useNavigate();
-  const [campaignType, setCampaignType] = useState("scheduled");
-  const [campaignStatus, setCampaignStatus] = useState("scheduled");
   const [campaignTitle, setCampaignTitle] = useState("");
-  const [selectionType, setSelectionType] = useState("entire_store");
-  const [selections, setSelections] = useState([]);
+  const [campaignStatus, setCampaignStatus] = useState("scheduled");
+  const [campaignType, setCampaignType] = useState("scheduled");
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState("");
-  const { addToast } = useToast();
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [tags, setTags] = useState([]);
+  const [targetType, setTargetType] = useState("entire_store");
+  const [targetIds, setTargetIds] = useState([]);
+  const [isExclude, setIsExclude] = useState(false);
+  const [isExcludeSaleItems, setIsExcludeSaleItems] = useState(false);
   const [quantityTiers, setQuantityTiers] = useState([
     {
       id: 0,
@@ -61,6 +61,17 @@ const CampaignsAdd = () => {
       get_quantity: 1,
     },
   ]);
+  const [scheduleEnabled, setScheduleEnabled] = useState(false);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState("");
+  const [enableUsageLimit, setEnableUsageLimit] = useState(false);
+  const [usageLimit, setUsageLimit] = useState(null);
+
+  const { addToast } = useToast();
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [tags, setTags] = useState([]);
+
   const [errors, setErrors] = useState({});
 
   const fetchCategories = async () => {
@@ -128,9 +139,15 @@ const CampaignsAdd = () => {
     Promise.all([fetchCategories(), fetchProducts(), fetchTags()]);
   }, []);
 
+  useEffect(() => {
+    if (campaignType === "scheduled" || campaignStatus === "scheduled") {
+      setScheduleEnabled(true);
+    }
+  }, [campaignStatus, campaignType]);
+
   const handleSelectionTypeChange = (value) => {
-    setSelectionType(value);
-    setSelections([]);
+    setTargetType(value);
+    setTargetIds([]);
   };
 
   const handleCampaignTypeChange = (value) => {
@@ -151,9 +168,13 @@ const CampaignsAdd = () => {
       status: campaignStatus,
       type: campaignType,
       discount_type: discountType,
-      discount_value: discountValue || 0,
-      target_type: selectionType,
-      target_ids: selections,
+      discount_value: discountValue || null,
+      target_type: targetType,
+      target_ids: targetIds,
+      isExclude: isExclude,
+      is_exclude_sale_items: isExcludeSaleItems,
+      usage_limit: usageLimit || null,
+      scheduleEnabled: scheduleEnabled,
       start_datetime: startDate,
       end_datetime: endDate || null,
       timezone_offset: timezone.offsetFormatted,
@@ -164,55 +185,6 @@ const CampaignsAdd = () => {
           ? ebTiers
           : [],
     };
-    // console.log(campaignData);
-    if (!campaignData?.title) {
-      setErrors({ title: "Title is required" });
-      return;
-    }
-    if (!campaignData?.status && campaignType !== "scheduled") {
-      setErrors({ status: "Status is required" });
-      return;
-    }
-    if (!campaignData?.type) {
-      setErrors({ type: "Campaign type is required" });
-      return;
-    }
-    if (campaignData.type === "scheduled") {
-      if (!campaignData?.discount_type) {
-        setErrors({ discount_type: "Discount type is required" });
-        return;
-      }
-      if (!campaignData?.discount_value) {
-        setErrors({ discount_value: "Discount value is required" });
-        return;
-      }
-    } else {
-      if (!campaignData?.target_type) {
-        setErrors({ target_type: "Target type is required" });
-        return;
-      }
-      if (
-        campaignData.target_type !== "entire_store" &&
-        !campaignData?.target_ids
-      ) {
-        setErrors({ target_ids: "Target ids are required" });
-        return;
-      }
-    }
-    if (
-      campaignData.campaign_status === "scheduled" &&
-      !campaignData?.start_datetime
-    ) {
-      setErrors({ start_datetime: "Start datetime is required" });
-      return;
-    }
-    if (
-      campaignData.campaign_status === "scheduled" &&
-      !campaignData?.end_datetime
-    ) {
-      setErrors({ end_datetime: "End datetime is required" });
-      return;
-    }
     try {
       const response = await apiFetch({
         path: "/campaignbay/v1/campaigns",
@@ -222,8 +194,9 @@ const CampaignsAdd = () => {
       addToast(__("Campaign saved successfully", "campaignbay"), "success");
       navigate(`/campaigns`);
     } catch (error) {
-      if (error?.code === "rest_invalid_param") {
-        setErrors(error?.data?.params);
+      if (error?.code === "rest_validation_error") {
+        setErrors(error?.data?.details || {});
+        console.log("Validation errors:", error?.data?.details);
       }
       addToast(
         __("Something went wrong, Please reload the page.", "campaignbay"),
@@ -231,6 +204,20 @@ const CampaignsAdd = () => {
       );
     }
   };
+
+  const renderError = (error, negativeMargin = true) => {
+    if (!error) return null;
+    return (
+      <p
+        className={`campaignbay-text-red-600 ${
+          negativeMargin ? "campaignbay--mt-2" : "campaignbay-mt-1"
+        } campaignbay-text-xs`}
+      >
+        {error.message}
+      </p>
+    );
+  };
+
   return (
     <div className="cb-page">
       <Navbar />
@@ -272,6 +259,7 @@ const CampaignsAdd = () => {
               {__("EarlyBird Discount", "campaignbay")}
             </option>
           </select>
+          {renderError(errors?.type)}
         </div>
 
         <div className="cb-form-input-con">
@@ -291,6 +279,7 @@ const CampaignsAdd = () => {
             <option value="inactive">{__("Inactive", "campaignbay")}</option>
             <option value="scheduled">{__("Scheduled", "campaignbay")}</option>
           </select>
+          {renderError(errors?.status)}
         </div>
 
         <div className="cb-form-input-con">
@@ -306,6 +295,7 @@ const CampaignsAdd = () => {
             value={campaignTitle}
             onChange={(e) => setCampaignTitle(e.target.value)}
           />
+          {renderError(errors?.title)}
         </div>
 
         <div className="cb-form-input-con">
@@ -318,7 +308,7 @@ const CampaignsAdd = () => {
             className={`wpab-input w-100 ${
               errors?.target_type ? "wpab-input-error" : ""
             }`}
-            value={selectionType}
+            value={targetType}
             onChange={(e) => handleSelectionTypeChange(e.target.value)}
           >
             <option value="entire_store">
@@ -330,35 +320,65 @@ const CampaignsAdd = () => {
             <option value="product">{__("By Product", "campaignbay")}</option>
             <option value="tag">{__("By Tags", "campaignbay")}</option>
           </select>
+          {renderError(errors?.target_type)}
 
-          {selectionType !== "entire_store" ? (
-            <div
-              style={{ background: "#ffffff" }}
-              className={`${errors?.target_ids ? "wpab-input-error" : ""}`}
-            >
-              <MultiSelect
-                label={
-                  selectionType === "product"
-                    ? __("Select Products *", "campaignbay")
-                    : selectionType === "tag"
-                    ? __("Select Tags *", "campaignbay")
-                    : selectionType === "category"
-                    ? __("Select Categories *", "campaignbay")
-                    : ""
-                }
-                options={
-                  selectionType === "product"
-                    ? products
-                    : selectionType === "tag"
-                    ? tags
-                    : selectionType === "category"
-                    ? categories
-                    : []
-                }
-                value={selections}
-                onChange={setSelections}
-              />
-            </div>
+          {targetType !== "entire_store" ? (
+            <>
+              <div
+                style={{ background: "#ffffff" }}
+                className={`${errors?.target_ids ? "wpab-input-error" : ""}`}
+              >
+                <MultiSelect
+                  label={
+                    targetType === "product"
+                      ? __("Select Products *", "campaignbay")
+                      : targetType === "tag"
+                      ? __("Select Tags *", "campaignbay")
+                      : targetType === "category"
+                      ? __("Select Categories *", "campaignbay")
+                      : ""
+                  }
+                  options={
+                    targetType === "product"
+                      ? products
+                      : targetType === "tag"
+                      ? tags
+                      : targetType === "category"
+                      ? categories
+                      : []
+                  }
+                  value={targetIds}
+                  onChange={setTargetIds}
+                />
+                {renderError(errors?.target_ids, false)}
+              </div>
+              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                <CbCheckbox
+                  id="exclude-items"
+                  checked={isExclude}
+                  onChange={(e) => setIsExclude(e.target.checked)}
+                />
+                <label
+                  htmlFor="exclude-items"
+                  className="!campaignbay-text-gray-700"
+                >
+                  {__("Exclude Items", "campaignbay")}
+                </label>
+                <Tooltip
+                  content={
+                    <span className="campaignbay-text-sm">
+                      {__(
+                        "When checked , selected items will be excluded from the discount",
+                        "campaignbay"
+                      )}
+                    </span>
+                  }
+                  position="right"
+                />
+
+                {renderError(errors?.isExclude)}
+              </div>
+            </>
           ) : null}
         </div>
 
@@ -411,6 +431,8 @@ const CampaignsAdd = () => {
               {__("If you want you will change mode", "campaignbay")}
             </span>
 
+            {renderError(errors?.discount_type)}
+
             <div className="cb-input-with-suffix">
               <input
                 value={discountValue ? discountValue : ""}
@@ -430,13 +452,109 @@ const CampaignsAdd = () => {
                   : woocommerce_currency_symbol || "$"}
               </span>
             </div>
+            {renderError(errors?.discount_value)}
           </div>
         )}
-        {campaignStatus === "scheduled" && (
-          <div className="cb-form-input-con">
-            <label htmlFor="start-time">
-              {__("SELECT CAMPAIGN DURATION", "campaignbay")} <Required />{" "}
+        <div className="cb-form-input-con">
+          <label htmlFor="start-time">
+            {__("OTHER CONFIGURATIONS", "campaignbay")} <Required />{" "}
+          </label>
+
+          {/* Exclude Sale Items */}
+          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+            <CbCheckbox
+              id="exclude-sale-items"
+              checked={isExcludeSaleItems}
+              onChange={(e) => setIsExcludeSaleItems(e.target.checked)}
+            />
+            <label htmlFor="exclude-sale-items" className="">
+              {__("Exclude Sale Items", "campaignbay")}
             </label>
+            <Tooltip
+              content={
+                <span className="campaignbay-text-sm">
+                  {__(
+                    "When checked , sale items will be excluded from the discount",
+                    "campaignbay"
+                  )}
+                </span>
+              }
+              position="right"
+            />
+            {renderError(errors?.is_exclude_sale_items, false)}
+          </div>
+
+          {/* Exclude Sale Items */}
+          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+            <CbCheckbox
+              id="enable-usage-limit"
+              checked={enableUsageLimit}
+              onChange={(e) => setEnableUsageLimit(e.target.checked)}
+            />
+            <label htmlFor="enable-usage-limit" className="">
+              {__("Enable Usage Limit", "campaignbay")}
+            </label>
+            <Tooltip
+              content={
+                <span className="campaignbay-text-sm">
+                  {__(
+                    "When checked , usage limit will be enabled for the campaign. Campaign will be disabled when the limit is reached.",
+                    "campaignbay"
+                  )}
+                </span>
+              }
+              position="right"
+            />
+          </div>
+
+          {enableUsageLimit && (
+            <div className="cb-form-input-con !campaignbay-p-0">
+              <label
+                htmlFor="usage-limit"
+                className="campaignbay-whitespace-nowrap"
+              >
+                {__("Usage Limit", "campaignbay")}
+              </label>
+              <input
+                type="text"
+                id="usage-limit"
+                className={`wpab-input w-100  ${
+                  errors?.usage_limit ? "wpab-input-error" : ""
+                }`}
+                value={usageLimit ? usageLimit : ""}
+                onChange={(e) => setUsageLimit(parseInt(e.target.value))}
+              />
+              {renderError(errors?.usage_limit)}
+            </div>
+          )}
+
+          {/* Schedule */}
+          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+            <CbCheckbox
+              id="schedule"
+              checked={scheduleEnabled}
+              onChange={(e) => setScheduleEnabled(e.target.checked)}
+              disabled={
+                campaignType === "scheduled" || campaignStatus === "scheduled"
+              }
+            />
+            <label htmlFor="schedule" className="">
+              {__("Schedule", "campaignbay")}
+            </label>
+            <Tooltip
+              content={
+                <span className="campaignbay-text-sm">
+                  {__(
+                    "When checked , the campaign will be scheduled to run between the start and end dates",
+                    "campaignbay"
+                  )}
+                </span>
+              }
+              position="right"
+            />
+          </div>
+
+          {scheduleEnabled && (
             <div
               className="wpab-grid-2 cb-date-time-fix"
               style={{ gap: "16px" }}
@@ -452,13 +570,17 @@ const CampaignsAdd = () => {
                 >
                   {__("Start Time", "campaignbay")}
                 </span>
-                <TimePicker
+                <DateTimePicker
+                  timezone={timezone}
+                  wpSettings={wpSettings}
                   id="start-time"
-                  currentTime={startDate}
-                  onChange={(date) => {
+                  dateTime={startDate}
+                  onDateTimeChange={(date) => {
                     setStartDate(date);
                   }}
+                  disabled={!scheduleEnabled}
                 />
+                {renderError(errors?.start_datetime, false)}
               </div>
               <div
                 className={`${errors?.end_datetime ? "wpab-input-error" : ""}`}
@@ -469,17 +591,20 @@ const CampaignsAdd = () => {
                 >
                   {__("End Time", "campaignbay")}
                 </span>
-                <TimePicker
+                <DateTimePicker
+                  timezone={timezone}
                   id="end-time"
-                  currentTime={endDate}
-                  onChange={(date) => {
+                  dateTime={endDate}
+                  onDateTimeChange={(date) => {
                     setEndDate(date);
                   }}
+                  disabled={!scheduleEnabled}
                 />
+                {renderError(errors?.end_datetime, false)}
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
         <div className="wpab-btn-bottom-con">
           <button
             className="wpab-cb-btn wpab-cb-btn-primary"
@@ -495,3 +620,24 @@ const CampaignsAdd = () => {
 };
 
 export default CampaignsAdd;
+
+export const formatJsDateForDb = (jsDate) => {
+  // 1. Validate the input to ensure it's a valid Date object.
+  if (!jsDate || !(jsDate instanceof Date) || isNaN(jsDate)) {
+    return null;
+  }
+
+  // 2. Get all the date and time components.
+  const year = jsDate.getFullYear();
+
+  // getMonth() is zero-based (0=Jan, 11=Dec), so we must add 1.
+  const month = String(jsDate.getMonth() + 1).padStart(2, "0");
+
+  const day = String(jsDate.getDate()).padStart(2, "0");
+  const hours = String(jsDate.getHours()).padStart(2, "0");
+  const minutes = String(jsDate.getMinutes()).padStart(2, "0");
+  const seconds = String(jsDate.getSeconds()).padStart(2, "0");
+
+  // 3. Assemble the final string in the desired format.
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
