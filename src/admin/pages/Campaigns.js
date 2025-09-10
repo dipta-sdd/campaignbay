@@ -27,6 +27,8 @@ import { useCbStore } from "../store/cbStore";
 import { date, getDate } from "@wordpress/date";
 import Skeleton from "../components/Skeleton";
 import Navbar from "../components/Navbar";
+import ImportExport from "../components/ImportExport";
+import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -181,6 +183,22 @@ const Campaigns = () => {
   const SortIndicator = ({ value }) => {
     if (orderby !== value) {
       return null; // Don't show an icon if it's not the active sort column
+    }
+    if (order === "asc") {
+      return (
+        <ArrowDownWideNarrow
+          className="campaignbay-table-header-icon campaignbay-ml-2"
+          size={16}
+        />
+      );
+    }
+    if (order === "desc") {
+      return (
+        <ArrowUpNarrowWide
+          className="campaignbay-table-header-icon campaignbay-ml-2"
+          size={16}
+        />
+      );
     }
     return (
       <Icon
@@ -374,13 +392,7 @@ const Campaigns = () => {
           {__("Campaigns", "campaignbay")}
         </div>
         <div className="cb-page-header-actions">
-          {/* <button
-            className="wpab-cb-btn wpab-cb-btn-primary "
-            onClick={() => navigate("/campaigns/add")}
-          >
-            <Icon icon={plus} fill="currentColor" />
-            {__("Add Campaign", "campaignbay")}
-          </button> */}
+          <ImportExport />
         </div>
       </div>
       <div className="cb-page-container">

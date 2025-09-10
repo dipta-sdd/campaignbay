@@ -52,6 +52,7 @@ class Validator {
 					$value = self::validate_datetime( $value );
 					$this->data[ $field ] = $value; 
 				}
+				campaignbay_log('field : ' . $field);
 				$this->apply_rule( $field, $value, $rule );
 			}
 			
@@ -92,12 +93,16 @@ class Validator {
 				$other_field     = array_shift( $rule_params );
 				$required_values = $rule_params;
 				$other_value     = $this->data[ $other_field ] ?? null;
-				if ( $other_field && in_array( $other_value, $required_values, true ) && ( is_null( $value ) || trim( (string) $value ) === '' ) ) {
+
+				if ( $other_field && in_array( $other_value, $required_values, true ) && ( is_null( $value ) || trim( (string) $value ) === '' || $value == 0 ) ) {
 					$this->add_error( $field, sprintf( __( 'This field is required when %s is one of %s.', 'campaignbay' ), $other_field, implode( ', ', $required_values ) ) );
 				}
-				if ( $other_field && $other_value !== $required_values && ( is_null( $value ) || trim( (string) $value ) === '' ) ) {
+				
+				if ( $other_field && $other_value == $required_values && ( is_null( $value ) || trim( (string) $value ) === '' || $value == 0 ) ) {
 					$this->add_error( $field, sprintf( __( 'This field is required when %s is %s.', 'campaignbay' ), $other_field, implode( ', ', $required_values ) ) );
 				}
+
+				campaignbay_log( "other_field: $other_field, other_value: $other_value, required_values: " . implode( ', ', (array) $required_values ) . ", value: $value" );
 				break;
 
 			case 'in':

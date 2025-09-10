@@ -165,6 +165,19 @@ class CampaignsController extends ApiController {
 				),
 			)
 		);
+
+		register_rest_route(
+			$namespace,
+			'/' . $this->rest_base . '/export',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'export_items' ),
+					'permission_callback' => array( $this, 'get_item_permissions_check' ),
+					'args'                => array(),
+				),
+			)
+		);
 	}
 
 
@@ -448,6 +461,24 @@ class CampaignsController extends ApiController {
 			),
 			200
 		);
+	}
+
+	/**
+	 * Export all campaigns as a JSON file.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function export_items( $request ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+		$sql = "SELECT 
+		`title`, `status`, `type`, `discount_type`, `discount_value`, `tiers`, `conditions`, `settings`, `target_type`, `target_ids`, `is_exclude`,
+		 `exclude_sale_items`, `schedule_enabled`, `start_datetime`, `end_datetime`, `usage_count`, `usage_limit`, `date_created`, `date_modified` FROM {$table_name} ORDER BY date_modified DESC";
+		$results = $wpdb->get_results( $sql );
+		return new WP_REST_Response( $results, 200 );
 	}
 
 	/**

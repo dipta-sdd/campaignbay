@@ -788,6 +788,10 @@
     align-items: center;
     justify-content: end;
     margin-left: auto;
+    @media screen and (max-width: 768px) {
+      justify-content: start;
+      margin-left: 0px;
+    }
   }
 
   & .cb-page-container {

@@ -18,7 +18,6 @@ import { getSettings as getDateSettings } from "@wordpress/date";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import DateTimePicker from "../components/DateTimePicker";
-import { Check } from "lucide-react";
 import CbCheckbox from "../components/CbCheckbox";
 import Tooltip from "../components/tooltip";
 
@@ -171,10 +170,10 @@ const CampaignsAdd = () => {
       discount_value: discountValue || null,
       target_type: targetType,
       target_ids: targetIds,
-      isExclude: isExclude,
+      is_exclude: isExclude,
       is_exclude_sale_items: isExcludeSaleItems,
       usage_limit: usageLimit || null,
-      scheduleEnabled: scheduleEnabled,
+      schedule_enabled: scheduleEnabled,
       start_datetime: startDate,
       end_datetime: endDate || null,
       timezone_offset: timezone.offsetFormatted,

@@ -124,7 +124,7 @@ class Campaign {
 			'status'          => 'required|in:active,inactive,scheduled',
 
 			'discount_type'   => 'nullable|in:percentage,fixed',
-			'discount_value'  => 'required_if:status,scheduled|numeric',
+			'discount_value'  => 'required_if:type,scheduled|numeric',
 			'tiers'  => 'nullable|array',
 
 			'target_type'        => 'nullable|in:entire_store,category,product,tag',
@@ -140,7 +140,7 @@ class Campaign {
 			'settings'           => 'nullable|array',
 		];
 		if ( ! $validator->validate( $rules ) ) {
-			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() ) );
+			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() , 'data' => $args ) );
 		}
 
 		
