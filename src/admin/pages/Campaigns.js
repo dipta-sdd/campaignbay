@@ -392,7 +392,7 @@ const Campaigns = () => {
           {__("Campaigns", "campaignbay")}
         </div>
         <div className="cb-page-header-actions">
-          <ImportExport />
+          <ImportExport refresh={fetchCampaigns} />
         </div>
       </div>
       <div className="cb-page-container">

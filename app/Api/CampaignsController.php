@@ -178,6 +178,19 @@ class CampaignsController extends ApiController {
 				),
 			)
 		);
+
+		register_rest_route(
+			$namespace,
+			'/' . $this->rest_base . '/import',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE, // CREATABLE is used for POST
+					'callback'            => array( $this, 'import_items' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'args'                => $this->get_bulk_import_args(),
+				),
+			)
+		);
 	}
 
 
@@ -479,6 +492,109 @@ class CampaignsController extends ApiController {
 		 `exclude_sale_items`, `schedule_enabled`, `start_datetime`, `end_datetime`, `usage_count`, `usage_limit`, `date_created`, `date_modified` FROM {$table_name} ORDER BY date_modified DESC";
 		$results = $wpdb->get_results( $sql );
 		return new WP_REST_Response( $results, 200 );
+	}
+
+	/**
+	 * Bulk import campaigns from a JSON array.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function import_items( $request ) {
+		$params    = $request->get_json_params();
+		$campaigns = isset( $params['campaigns'] ) ? $params['campaigns'] : array();
+
+		if ( empty( $campaigns ) || ! is_array( $campaigns ) ) {
+			return new WP_Error( 'rest_invalid_data', __( 'Campaign data is missing or not an array.', 'campaignbay' ), array( 'status' => 400 ) );
+		}
+
+		$campaigns = json_decode( wp_json_encode( $campaigns ), true );
+		$created_count = 0;
+		$failed_count  = 0;
+		$errors        = array();
+
+		foreach ( $campaigns as $index => $campaign_data ) {
+			$args = array(
+				'title'              => isset( $campaign_data['title'] ) ? sanitize_text_field( $campaign_data['title'] ) : 'Imported Campaign',
+				'status'             => isset( $campaign_data['status'] ) ? sanitize_key( $campaign_data['status'] ) : 'draft',
+				'type'      => isset( $campaign_data['type'] ) ? sanitize_key( $campaign_data['type'] ) : 'scheduled', // Corrected from 'type' to 'campaign_type'
+				
+				'discount_type'      => isset( $campaign_data['discount_type'] ) ? sanitize_key( $campaign_data['discount_type'] ) : null,
+				'discount_value'     => isset( $campaign_data['discount_value'] ) ? floatval( $campaign_data['discount_value'] ) : 0,
+				
+				'target_type'        => isset( $campaign_data['target_type'] ) ? sanitize_key( $campaign_data['target_type'] ) : 'entire_store',
+				'target_ids'         => isset( $campaign_data['target_ids'] ) && ! empty($campaign_data['target_ids']) ? json_decode( $campaign_data['target_ids'], true ) : array(),
+				'is_exclude'         => isset( $campaign_data['is_exclude'] ) ? (bool) $campaign_data['is_exclude'] : false,
+				'exclude_sale_items' => isset( $campaign_data['exclude_sale_items'] ) ? $campaign_data['exclude_sale_items'] : false,
+				
+				'schedule_enabled'   => isset( $campaign_data['schedule_enabled'] ) ? (bool) $campaign_data['schedule_enabled'] : false,
+				'start_datetime'     => isset( $campaign_data['start_datetime'] ) && ! empty($campaign_data['start_datetime']) ? sanitize_text_field( $campaign_data['start_datetime'] ) : null,
+				'end_datetime'       => isset( $campaign_data['end_datetime'] ) && ! empty($campaign_data['end_datetime']) ? sanitize_text_field( $campaign_data['end_datetime'] ) : null,
+				
+				'campaign_tiers'     => isset( $campaign_data['tiers'] ) && ! empty($campaign_data['tiers']) ? json_decode( $campaign_data['tiers'], true ) : array(),
+				'conditions'         => isset( $campaign_data['conditions'] ) && ! empty($campaign_data['conditions']) ? json_decode( $campaign_data['conditions'], true ) : null,
+				'settings'           => isset( $campaign_data['settings'] ) && ! empty($campaign_data['settings']) ? json_decode( $campaign_data['settings'], true ) : null,
+				
+				'usage_limit'        => isset( $campaign_data['usage_limit'] ) && is_numeric($campaign_data['usage_limit']) ? absint( $campaign_data['usage_limit'] ) : null,
+				'usage_count'        => isset( $campaign_data['usage_count'] ) ? absint( $campaign_data['usage_count'] ) : 0, // Allow importing a previous usage count
+			);
+
+			campaignbay_log( 'Importing campaign: ' . print_r( $args, true ) );
+			$result = Campaign::create( $args );
+
+			if ( is_wp_error( $result ) ) {
+				$failed_count++;
+				$errors[] = "Row " . ( $index + 1 ) . " ('" . esc_html( $args['title'] ) . "'): " . $result->get_error_message();
+			} else {
+				$created_count++;
+			}
+		}
+
+		// Clear the campaign cache once after all imports are done.
+		CampaignManager::get_instance()->clear_cache();
+
+		if ( $failed_count > 0 ) {
+			return new WP_Error(
+				'rest_import_partial_failure',
+				__( 'Some campaigns could not be imported.', 'campaignbay' ),
+				array(
+					'status'  => 400,
+					'details' => array(
+						'created_count' => $created_count,
+						'failed_count'  => $failed_count,
+						'errors'        => $errors,
+					),
+				)
+			);
+		}
+
+		return new \WP_REST_Response(
+			array(
+				'success'       => true,
+				'created_count' => $created_count,
+			),
+			201
+		);
+	}
+
+	/**
+	 * Defines the arguments for the bulk import endpoint.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	private function get_bulk_import_args() {
+		return array(
+			'campaigns' => array(
+				'description' => __( 'An array of campaign objects to import.', 'campaignbay' ),
+				'type'        => 'array',
+				'required'    => true,
+				'items'       => array(
+					'type' => 'object',
+				),
+			),
+		);
 	}
 
 	/**

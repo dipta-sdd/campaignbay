@@ -40,7 +40,27 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const parsedData = csvToJson(e.target.result);
+        const requiredColumns = [
+          "title",
+          "status",
+          "type",
+          "discount_type",
+          "discount_value",
+          "target_type",
+          "target_ids",
+          "is_exclude",
+          "tiers",
+          "conditions",
+          "settings",
+          "exclude_sale_items",
+          "schedule_enabled",
+          "start_datetime",
+          "end_datetime",
+          "usage_limit",
+          "usage_count",
+        ];
+
+        const parsedData = csvToJson(e.target.result, requiredColumns);
         if (parsedData.length > 0) {
           setHeaders(Object.keys(parsedData[0]));
           setJsonData(parsedData);

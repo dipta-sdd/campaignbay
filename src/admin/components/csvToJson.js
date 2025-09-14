@@ -11,29 +11,30 @@ const parseCsvRow = (rowString) => {
     if (char === '"') {
       inQuotes = !inQuotes;
     } else if (char === "," && !inQuotes) {
-      result.push(currentVal);
+      result.push(currentVal.trim());
       currentVal = "";
     } else {
       currentVal += char;
     }
   }
-  result.push(currentVal); // Add the last value
+  result.push(currentVal.trim()); // Add the last value
   return result;
 };
 
 /**
- * Converts a CSV string into an array of JSON objects.
+ * Converts a CSV string into an array of JSON objects, optionally keeping only specified columns.
  *
  * @param {string} csvString The raw CSV content from the file.
+ * @param {string[]} [columnsToKeep] - Optional. An array of header names to include in the final JSON.
+ *                                     If not provided, all columns are included.
  * @returns {Array<object>} An array of objects representing the rows.
- * @throws {Error} If the CSV is malformed (e.g., row length mismatch).
+ * @throws {Error} If the CSV is malformed.
  */
-export const csvToJson = (csvString) => {
+export const csvToJson = (csvString, columnsToKeep = []) => {
   if (!csvString) {
     throw new Error("CSV string is empty or invalid.");
   }
 
-  // Split the string into lines, filtering out empty lines.
   const lines = csvString
     .trim()
     .split("\n")
@@ -42,24 +43,50 @@ export const csvToJson = (csvString) => {
     throw new Error("CSV must have a header row and at least one data row.");
   }
 
-  // The first line is the header.
-  const headers = lines.shift().trim().split(",");
+  const allHeaders = lines.shift().trim().split(",");
+
+  // --- NEW LOGIC: Determine which headers and indices to use ---
+  let headersToProcess = allHeaders;
+  let headerIndices = allHeaders.map((_, index) => index); // By default, use all indices
+
+  if (columnsToKeep && columnsToKeep.length > 0) {
+    headersToProcess = [];
+    headerIndices = [];
+
+    columnsToKeep.forEach((columnName) => {
+      const index = allHeaders.indexOf(columnName);
+      if (index > -1) {
+        headersToProcess.push(columnName);
+        headerIndices.push(index);
+      } else {
+        // Optional: You could throw an error if a required column is missing.
+        console.warn(`Column "${columnName}" not found in CSV file.`);
+      }
+    });
+
+    if (headersToProcess.length === 0) {
+      throw new Error(
+        "None of the specified columns to keep were found in the CSV header."
+      );
+    }
+  }
+  // --- END OF NEW LOGIC ---
 
   const jsonArray = lines.map((line, index) => {
     const values = parseCsvRow(line.trim());
 
-    // Validate that the number of values matches the number of headers.
-    if (values.length !== headers.length) {
+    if (values.length !== allHeaders.length) {
       throw new Error(
         `Row ${index + 2}: Column count mismatch. Expected ${
-          headers.length
+          allHeaders.length
         }, but got ${values.length}.`
       );
     }
 
-    // Use reduce to create an object from the headers and values.
-    return headers.reduce((obj, header, i) => {
-      obj[header] = values[i];
+    // Use reduce to build the object, but only with the headers we decided to process.
+    return headersToProcess.reduce((obj, header, i) => {
+      const originalIndex = headerIndices[i];
+      obj[header] = values[originalIndex];
       return obj;
     }, {});
   });

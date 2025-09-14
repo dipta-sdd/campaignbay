@@ -7,7 +7,7 @@ import { useToast } from "../store/toast/use-toast";
 import { exportDataToCsv } from "./exportDataToCsv";
 import ImportModal from "./ImportModal";
 
-const ImportExport = () => {
+const ImportExport = ({ refresh }) => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const { addToast } = useToast();
 
@@ -41,6 +41,32 @@ const ImportExport = () => {
     }
   };
 
+  const handleImport = async (jsonData) => {
+    try {
+      console.log(jsonData);
+      const response = await apiFetch({
+        path: "/campaignbay/v1/campaigns/import",
+        method: "POST",
+        data: {
+          campaigns: jsonData,
+        },
+      });
+
+      if (response && response.success) {
+        addToast(
+          __("Campaigns imported successfully.", "campaignbay"),
+          "success"
+        );
+        refresh();
+        setIsImportModalOpen(false);
+      } else {
+        addToast(__("Error importing campaigns.", "campaignbay"), "error");
+      }
+    } catch (error) {
+      addToast(__("Error importing campaigns.", "campaignbay"), "error");
+    }
+  };
+
   return (
     <>
       <div className="campaignbay-flex campaignbay-gap-1">
@@ -66,6 +92,7 @@ const ImportExport = () => {
       <ImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImport}
       />
     </>
   );

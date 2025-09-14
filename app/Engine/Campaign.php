@@ -140,13 +140,14 @@ class Campaign {
 			'settings'           => 'nullable|array',
 		];
 		if ( ! $validator->validate( $rules ) ) {
+			campaignbay_log( 'Validation errors: ' . print_r( $validator->get_errors(), true ), 'ERROR' );
 			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() , 'data' => $args ) );
 		}
 
 		
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-
+		
 		$data = array(
 			'title' => sanitize_text_field( $validator->get_validated_data()['title'] ),
 			'status' => sanitize_key( $validator->get_validated_data()['status'] ),
