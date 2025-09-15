@@ -129,7 +129,7 @@ class Campaign {
 
 			'target_type'        => 'nullable|in:entire_store,category,product,tag',
 			'target_ids'         => 'required_if:target_type,category,product,tag|array_of_integers',
-			'exclude_sale_items' => 'nullable|boolean',
+			'exclude_sale_items' => 'required|boolean',
 			'is_exclude'         => 'nullable|boolean',
 
 			'schedule_enabled'   => 'required_if:type,scheduled|boolean',
@@ -139,73 +139,94 @@ class Campaign {
 			'conditions'         => 'nullable|array',
 			'settings'           => 'nullable|array',
 		];
+
 		if ( ! $validator->validate( $rules ) ) {
 			campaignbay_log( 'Validation errors: ' . print_r( $validator->get_errors(), true ), 'ERROR' );
 			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() , 'data' => $args ) );
 		}
 
-		
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-		
-		$data = array(
-			'title' => sanitize_text_field( $validator->get_validated_data()['title'] ),
-			'status' => sanitize_key( $validator->get_validated_data()['status'] ),
-			'type' => sanitize_key( $validator->get_validated_data()['type'] ),
-			'discount_type'     => isset( $validator->get_validated_data()['discount_type'] ) ? sanitize_key( $validator->get_validated_data()['discount_type'] ) : null,
-			'discount_value'    => isset( $validator->get_validated_data()['discount_value'] ) ? floatval( $validator->get_validated_data()['discount_value'] ) : null,
-			'target_type'       => isset( $validator->get_validated_data()['target_type'] ) ? sanitize_key( $validator->get_validated_data()['target_type'] ) : null,
-			'target_ids'        => isset( $validator->get_validated_data()['target_ids'] ) ? wp_json_encode( array_map( 'absint', $validator->get_validated_data()['target_ids'] ) ) : null,
-			'exclude_sale_items'=> isset( $validator->get_validated_data()['exclude_sale_items'] ) ? (bool) $validator->get_validated_data()['exclude_sale_items'] : false,
-			'schedule_enabled'  => isset( $validator->get_validated_data()['schedule_enabled'] ) ? (bool) $validator->get_validated_data()['schedule_enabled'] : false,
-			'tiers'             => isset( $validator->get_validated_data()['tiers'] ) ? wp_json_encode( $validator->get_validated_data()['tiers'] ) : null,
-			'conditions'        => isset( $validator->get_validated_data()['conditions'] ) ? wp_json_encode( $validator->get_validated_data()['conditions'] ) : null,
-			'settings'          => isset( $validator->get_validated_data()['settings'] ) ? wp_json_encode( $validator->get_validated_data()['settings'] ) : null,
-			'is_exclude'        => isset( $validator->get_validated_data()['is_exclude'] ) ? (bool) $validator->get_validated_data()['is_exclude'] : false,
-			'start_datetime'    => $validator->get_validated_data()['start_datetime'],
-			'end_datetime'      => $validator->get_validated_data()['end_datetime'],
-			'usage_count'       => 0,
-			'date_created'      => current_time( 'mysql' ),
-			'date_modified'     => current_time( 'mysql' ),
-			'created_by'         => get_current_user_id(),
-			'updated_by'         => get_current_user_id(),
-		);
+		$data = $validator->get_validated_data();
+		$data['usage_count'] = 0;
+		$data['date_created'] = current_time( 'mysql' );
+		$data['date_modified'] = current_time( 'mysql' );
+		$data['created_by'] = get_current_user_id();
+		$data['updated_by'] = get_current_user_id();
 
-		error_log(print_r($data, true));
-		$formats = array(
-			'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%d'
-		);
-
-		$result = $wpdb->insert( $table_name, $data, $formats );
-
-		if ( false === $result ) {
-			throw new Exception( 'Failed to create campaign.' );
+		if($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
+			$tmp_tiers = array();
+			foreach( $data['tiers'] as $tier ) {
+				$tier_validator = new Validator( $tier );
+				$tier_rules = array();
+				if($data['type'] === 'quantity') {
+					$tier_rules = [
+						'id'    => 'nullable|integer',
+						'min'   => 'required|integer|min:1|gte:previous_tier_max',
+						'max'   => 'required|integer|min:1|gte:min',
+						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
+						'type'  => 'required|in:percentage,currency',
+					];
+				} elseif($data['type'] === 'earlybird') {
+					$tier_rules = [
+						'id'       => 'nullable|integer',
+						'quantity' => 'required|integer|min:1',
+						'value'    => 'required|numeric|min:0|max_if:type,percentage,100',
+						'type'     => 'required|in:percentage,currency',
+					];
+				}
+				if ( ! $tier_validator->validate( $tier_rules ) ) {
+					return new WP_Error( 
+						'rest_validation_error', $tier_validator->get_first_error(), 
+						array( 'status' => 400, 
+						'details' => array( 'tiers' => array( $tier['id'] => $tier_validator->get_errors())) , 
+						'data' => $tier ) 
+					);
+				}
+				$tmp_tiers[] = $tier_validator->get_validated_data();
+			}
 		}
+		$data['tiers'] = wp_json_encode( isset( $tmp_tiers ) ?  $tmp_tiers  : [] );
+		
+		try{
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+			$formats = array(
+				'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%d'
+			);
 
-		$campaign_id = $wpdb->insert_id;
-		$campaign = new self( $campaign_id );
+			$result = $wpdb->insert( $table_name, $data, $formats );
 
-		/**
-		 * Fires after a new campaign is created and all its data is saved.
-		 *
-		 * @param int      $campaign_id The ID of the new campaign.
-		 * @param Campaign $campaign    The campaign object.
-		 */
-		do_action( 'campaignbay_campaign_save', $campaign_id, $campaign );
+			if ( false === $result ) {
+				throw new Exception( 'Failed to create campaign.' );
+			}
 
-		// Log the activity.
-		Logger::get_instance()->log(
-			'campaign_created',
-			'created',
-			array(
-				'campaign_id' => $campaign->get_id(),
-				'extra_data' => array(
-					'title' => $campaign->get_title(),
+			$campaign_id = $wpdb->insert_id;
+			$campaign = new self( $campaign_id );
+
+			/**
+			 * Fires after a new campaign is created and all its data is saved.
+			 *
+			 * @param int      $campaign_id The ID of the new campaign.
+			 * @param Campaign $campaign    The campaign object.
+			 */
+			do_action( 'campaignbay_campaign_save', $campaign_id, $campaign );
+
+			// Log the activity.
+			Logger::get_instance()->log(
+				'campaign_created',
+				'created',
+				array(
+					'campaign_id' => $campaign->get_id(),
+					'extra_data' => array(
+						'title' => $campaign->get_title(),
+					)
 				)
-			)
-		);
+			);
 
-		return $campaign;
+			return $campaign;
+		} catch ( Exception $e ) {
+			campaignbay_log( 'Error creating campaign: ' . $e->getMessage(), 'ERROR' );
+			return new WP_Error( 'rest_cannot_create', __( 'Cannot create campaign.', 'campaignbay' ), array( 'status' => 500 , 'error' => $e->getMessage() ) );
+		}
 	}
 
 	/**
@@ -223,95 +244,83 @@ class Campaign {
 			'status'          => 'required|in:active,inactive,scheduled',
 
 			'discount_type'   => 'nullable|in:percentage,fixed',
-			'discount_value'  => 'nullable|numeric',
-			'tiers'  => 'nullable|array', 
+			'discount_value'  => 'required_if:type,scheduled|numeric',
+			'tiers'  => 'nullable|array',
 
 			'target_type'        => 'nullable|in:entire_store,category,product,tag',
 			'target_ids'         => 'required_if:target_type,category,product,tag|array_of_integers',
-			'exclude_sale_items' => 'nullable|boolean',
+			'exclude_sale_items' => 'required|boolean',
 			'is_exclude'         => 'nullable|boolean',
 
-			'schedule_enabled'   => 'nullable|boolean',
+			'schedule_enabled'   => 'required_if:type,scheduled|boolean',
 			'start_datetime'     => 'datetime|required_if:schedule_enabled,1|required_if:status,scheduled|nullable',
 			'end_datetime'       => 'datetime|nullable|after:start_datetime',
 
 			'conditions'         => 'nullable|array',
 			'settings'           => 'nullable|array',
 		];
+
 		if ( ! $validator->validate( $rules ) ) {
-			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() ) );
+			campaignbay_log( 'Validation errors: ' . print_r( $validator->get_errors(), true ), 'ERROR' );
+			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() , 'data' => $args ) );
 		}
 
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-		$data = array('date_modified' => current_time( 'mysql' ));
-		foreach($validator->get_validated_data() as $key => $value) {
-			$data[$key] = $value;
-		}
+		$data = $validator->get_validated_data();
+		$data['tiers'] = wp_json_encode(  isset( $tmp_tiers ) ? $tmp_tiers : $this->data->tiers ?? '[]' );
+		$data['date_modified'] = current_time( 'mysql' );
+		$data['updated_by'] = get_current_user_id();
+		try{
 
-		// $data = array(
-		// 	'title' => sanitize_text_field( $validator->get_validated_data()['title'] ),
-		// 	'status' => sanitize_key( $validator->get_validated_data()['status'] ),
-		// 	'type' => sanitize_key( $validator->get_validated_data()['type'] ),
-		// 	'discount_type'     => isset( $validator->get_validated_data()['discount_type'] ) ? sanitize_key( $validator->get_validated_data()['discount_type'] ) : null,
-		// 	'discount_value'    => isset( $validator->get_validated_data()['discount_value'] ) ? floatval( $validator->get_validated_data()['discount_value'] ) : null,
-		// 	'target_type'       => isset( $validator->get_validated_data()['target_type'] ) ? sanitize_key( $validator->get_validated_data()['target_type'] ) : null,
-		// 	'target_ids'        => isset( $validator->get_validated_data()['target_ids'] ) ? wp_json_encode( array_map( 'absint', $validator->get_validated_data()['target_ids'] ) ) : null,
-		// 	'exclude_sale_items'=> isset( $validator->get_validated_data()['exclude_sale_items'] ) ? (bool) $validator->get_validated_data()['exclude_sale_items'] : false,
-		// 	'schedule_enabled'  => isset( $validator->get_validated_data()['schedule_enabled'] ) ? (bool) $validator->get_validated_data()['schedule_enabled'] : false,
-		// 	'tiers'             => isset( $validator->get_validated_data()['tiers'] ) ? wp_json_encode( $validator->get_validated_data()['tiers'] ) : null,
-		// 	'conditions'        => isset( $validator->get_validated_data()['conditions'] ) ? wp_json_encode( $validator->get_validated_data()['conditions'] ) : null,
-		// 	'settings'          => isset( $validator->get_validated_data()['settings'] ) ? wp_json_encode( $validator->get_validated_data()['settings'] ) : null,
-		// 	'is_exclude'        => isset( $validator->get_validated_data()['is_exclude'] ) ? (bool) $validator->get_validated_data()['is_exclude'] : false,
-		// 	'start_datetime'    => $validator->get_validated_data()['start_datetime'],
-		// 	'end_datetime'      => $validator->get_validated_data()['end_datetime'],
-		// 	'date_modified'     => current_time( 'mysql' ),
-		// 	'updated_by'         => get_current_user_id(),
-		// );
-		$formats = array();
-		$formats[] = '%s';
-		if ( empty( $data ) ) {
-			return true;
-		}
-		$result = $wpdb->update(
-			$table_name,
-			$data,
-			array( 'id' => $this->id ),
-			$formats,
-			array( '%d' )
-		);
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
-		if ( false === $result ) {
-			return false;
-		}
+			$formats = array();
+			$formats = array(
+					'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%d'
+				);
+			if ( empty( $data ) ) {
+				return true;
+			}
+			$result = $wpdb->update(
+				$table_name,
+				$data,
+				array( 'id' => $this->id ),
+				$formats,
+				array( '%d' )
+			);
 
-		// Reload data
-		$this->load_data();
-		campaignbay_log( 'data: ' . print_r( $data, true ), 'DEBUG' );
-		campaignbay_log( 'formats: ' . print_r( $formats, true ), 'DEBUG' );
-		campaignbay_log( 'result: ' . print_r( $result, true ), 'DEBUG' );
+			if ( is_wp_error( $result ) || false === $result ) {
+				return false;
+			}
 
-		/**
-		 * Fires after a campaign is updated and all its data is saved.
-		 *
-		 * @param int      $campaign_id The ID of the updated campaign.
-		 * @param Campaign $campaign    The campaign object.
-		 */
-		do_action( 'campaignbay_campaign_save', $this->id , $this );
+			// Reload data
+			$this->load_data();
 
-		// Log the activity.
-		Logger::get_instance()->log(
-			'campaign_updated',
-			'updated',
-			array(
-				'campaign_id' => $this->get_id(),
-				'extra_data' => array(
-					'title' => $this->get_title(),
+			/**
+			 * Fires after a campaign is updated and all its data is saved.
+			 *
+			 * @param int      $campaign_id The ID of the updated campaign.
+			 * @param Campaign $campaign    The campaign object.
+			 */
+			do_action( 'campaignbay_campaign_save', $this->id , $this );
+
+			// Log the activity.
+			Logger::get_instance()->log(
+				'campaign_updated',
+				'updated',
+				array(
+					'campaign_id' => $this->get_id(),
+					'extra_data' => array(
+						'title' => $this->get_title(),
+					)
 				)
-			)
-		);
+			);
 
-		return true;
+			return true;
+		} catch ( Exception $e ) {
+			campaignbay_log( 'Error updating campaign: ' . $e->getMessage(), 'ERROR' );
+			return new WP_Error( 'rest_cannot_update', __( 'Cannot update campaign.', 'campaignbay' ), array( 'status' => 500 , 'error' => $e->getMessage() ) );
+		}
 	}
 
 	/**

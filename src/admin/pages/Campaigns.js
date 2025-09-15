@@ -29,6 +29,7 @@ import Skeleton from "../components/Skeleton";
 import Navbar from "../components/Navbar";
 import ImportExport from "../components/ImportExport";
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
+import CampaignsGrid from "../components/campaigns-grid";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);

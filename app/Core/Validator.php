@@ -51,7 +51,7 @@ class Validator {
 				if($rule === 'datetime' && !is_null($value)) {
 					$value = self::validate_datetime( $value );
 					$this->data[ $field ] = $value; 
-				}
+				} 
 				// campaignbay_log('field : ' . $field);
 				$this->apply_rule( $field, $value, $rule );
 			}
@@ -82,13 +82,13 @@ class Validator {
 			case 'datetime':
 				break;
 			case 'required':
-				if ( is_null( $value ) || ( is_string( $value ) && trim( $value ) === '' ) || ( is_array( $value ) && empty( $value ) ) ) {
-					$this->add_error( $field, __( 'This field is required.', 'campaignbay' ) );
+				// $value === null || ( is_string( $value ) && trim( $value ) === '' ) || ( is_array( $value ) && empty( $value ) ) 
+				if ($value === null || ( is_string( $value ) && trim( $value ) === '' ) || ( is_array( $value ) && empty( $value ) ) ) {
+					$this->add_error( $field, __( 'This field is required.' . $value, 'campaignbay' ) );
 				}
 				break;
 				
 			case 'required_if':
-				// Conditional Requirement: required_if:other_field,value1,value2
 				$rule_params     = explode( ',', $param_str );
 				$other_field     = array_shift( $rule_params );
 				$required_values = $rule_params;
@@ -106,7 +106,6 @@ class Validator {
 				break;
 
 			case 'in':
-				// Check if value is in a comma-separated list of allowed values.
 				$allowed = explode( ',', $param_str );
 				if ( ! is_null( $value ) && ! in_array( (string) $value, $allowed, true ) ) {
 					$this->add_error( $field, __( 'The selected value is invalid.', 'campaignbay' )  );
@@ -120,7 +119,7 @@ class Validator {
 				break;
 
 			case 'integer':
-				if ( ! is_null( $value ) && ! filter_var( $value, FILTER_VALIDATE_INT ) ) {
+				if ( $value !== null && filter_var( $value, FILTER_VALIDATE_INT ) === false ) {
 					$this->add_error( $field, __( 'This field must be an integer.', 'campaignbay' ) );
 				}
 				break;
@@ -136,7 +135,6 @@ class Validator {
 					if ( ! is_array( $value ) ) {
 						$this->add_error( $field, __( 'This field must be an array.', 'campaignbay' ) );
 					} else {
-						// Check if every item in the array is an integer.
 						foreach ( $value as $item ) {
 							if ( ! filter_var( $item, FILTER_VALIDATE_INT ) ) {
 								$this->add_error( $field, __( 'All items in this field must be integers.', 'campaignbay' ) );
@@ -162,6 +160,64 @@ class Validator {
 					$this->add_error( $field, sprintf( __( 'This field must be at least %d characters.', 'campaignbay' ), $min_val ) );
 				} elseif ( is_numeric( $value ) && (float) $value < $min_val ) {
 					$this->add_error( $field, sprintf( __( 'This field must be at least %d.', 'campaignbay' ), $min_val ) );
+				}
+				break;
+
+			case 'min_if':
+				$rule_params     = explode( ',', $param_str );
+				$other_field     = array_shift( $rule_params );
+				$required_values = $rule_params;
+				$other_value     = $this->data[ $other_field ] ?? null;
+
+				if ( $other_field && in_array( $other_value, $required_values, true ) ) {
+					$min_val = (int) array_pop( $rule_params );
+					if ( is_string( $value ) ) {
+						if ( mb_strlen( $value ) < $min_val ) {
+							$this->add_error( $field, sprintf( __( 'This field must be at least %d characters.', 'campaignbay' ), $min_val) );
+						}
+					} elseif ( is_numeric( $value )  ) {
+						if ( (float) $value < $min_val ) {
+							$this->add_error( $field, sprintf( __( 'This field must be at least %d', 'campaignbay' ), $min_val ) );
+						}
+					}
+				}
+				break;
+
+			case 'max_if':
+				$rule_params     = explode( ',', $param_str );
+				$other_field     = array_shift( $rule_params );
+				$required_values = $rule_params;
+				$other_value     = $this->data[ $other_field ] ?? null;
+				if ( $other_field && ( in_array( $other_value, $required_values, true ) || $other_value === $required_values ) ) {
+					$max_val = (int) array_pop( $rule_params );
+					if ( is_numeric( $value )  ) {
+						if ( (float) $value > $max_val ) {
+							$this->add_error( $field, sprintf( __( 'This field must be at least %d', 'campaignbay' ), $max_val ) );
+						}
+					} elseif ( is_string( $value ) ) {
+						if ( mb_strlen( $value ) > $max_val ) {
+							$this->add_error( $field, sprintf( __( 'This field may not be greater than %d characters.', 'campaignbay' ), $max_val ) );
+						}
+					}
+				}
+				break;
+
+			case 'gte':
+				$other_field = $param_str;
+				$other_value = $this->data[ $other_field ] ?? null;
+				if ( is_numeric( $value ) && is_numeric( $other_value ) ) {
+					if ( (float) $value < (float) $other_value ) {
+						$this->add_error( $field, sprintf( __( 'This field must be greater than or equal to the %s field.', 'campaignbay' ), $other_field ) );
+					}
+				}
+				break;
+			case 'lte':
+				$other_field = $param_str;
+				$other_value = $this->data[ $other_field ] ?? null;
+				if ( is_numeric( $value ) && is_numeric( $other_value ) ) {
+					if ( (float) $value > (float) $other_value ) {
+						$this->add_error( $field, sprintf( __( 'This field must be less than or equal to the %s field.', 'campaignbay' ), $other_field ) );
+					}
 				}
 				break;
 		}

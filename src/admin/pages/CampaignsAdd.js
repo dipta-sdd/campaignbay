@@ -2,7 +2,6 @@ import { useState } from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
 import MultiSelect from "../components/Multiselect";
 import {
-  TimePicker,
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
@@ -24,9 +23,9 @@ import Tooltip from "../components/tooltip";
 const CampaignsAdd = () => {
   const { wpSettings, woocommerce_currency_symbol } = useCbStore();
   const navigate = useNavigate();
-  const [campaignTitle, setCampaignTitle] = useState("");
-  const [campaignStatus, setCampaignStatus] = useState("scheduled");
-  const [campaignType, setCampaignType] = useState("scheduled");
+  const [campaignTitle, setCampaignTitle] = useState("fgdf");
+  const [campaignStatus, setCampaignStatus] = useState("active");
+  const [campaignType, setCampaignType] = useState("quantity");
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState("");
   const [targetType, setTargetType] = useState("entire_store");
@@ -171,7 +170,7 @@ const CampaignsAdd = () => {
       target_type: targetType,
       target_ids: targetIds,
       is_exclude: isExclude,
-      is_exclude_sale_items: isExcludeSaleItems,
+      exclude_sale_items: isExcludeSaleItems,
       usage_limit: usageLimit || null,
       schedule_enabled: scheduleEnabled,
       start_datetime: startDate,
@@ -195,7 +194,6 @@ const CampaignsAdd = () => {
     } catch (error) {
       if (error?.code === "rest_validation_error") {
         setErrors(error?.data?.details || {});
-        console.log("Validation errors:", error?.data?.details);
       }
       addToast(
         __("Something went wrong, Please reload the page.", "campaignbay"),
@@ -386,7 +384,7 @@ const CampaignsAdd = () => {
             className={`${errors?.tiers ? "wpab-input-error" : ""}`}
             tiers={quantityTiers}
             setTiers={setQuantityTiers}
-            errors={errors}
+            errors={errors?.tiers}
           />
         )}
 
@@ -395,14 +393,14 @@ const CampaignsAdd = () => {
             className={`${errors?.tiers ? "wpab-input-error" : ""}`}
             tiers={ebTiers}
             setTiers={setEBTiers}
-            errors={errors}
+            errors={errors?.tiers}
           />
         )}
 
         {campaignType === "scheduled" && (
           <div className="cb-form-input-con">
             <label htmlFor="discount-type">
-              {__("How many you want to discount?", "campaignbay")} <Required />
+              {__("How much you want to discount?", "campaignbay")} <Required />
             </label>
             <ToggleGroupControl
               className={`cb-toggle-group-control ${
@@ -426,9 +424,14 @@ const CampaignsAdd = () => {
                 value="fixed"
               />
             </ToggleGroupControl>
-            <span className="wpab-input-help">
-              {__("If you want you will change mode", "campaignbay")}
-            </span>
+            {discountType === "fixed" && (
+              <span className="wpab-input-help">
+                {__(
+                  "It will be applied per item , not in total ",
+                  "campaignbay"
+                )}
+              </span>
+            )}
 
             {renderError(errors?.discount_type)}
 
@@ -480,7 +483,7 @@ const CampaignsAdd = () => {
               }
               position="right"
             />
-            {renderError(errors?.is_exclude_sale_items, false)}
+            {renderError(errors?.exclude_sale_items, false)}
           </div>
 
           {/* Exclude Sale Items */}
@@ -604,6 +607,8 @@ const CampaignsAdd = () => {
             </div>
           )}
         </div>
+
+        {/* buttons */}
         <div className="wpab-btn-bottom-con">
           <button
             className="wpab-cb-btn wpab-cb-btn-primary"

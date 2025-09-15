@@ -19,7 +19,11 @@ import { useCbStore } from "../store/cbStore";
 import { getSettings as getDateSettings } from "@wordpress/date";
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
+import CbCheckbox from "../components/CbCheckbox";
+import Tooltip from "../components/tooltip";
+import DateTimePicker from "../components/DateTimePicker";
 const CampaignsEdit = () => {
+  const { wpSettings, woocommerce_currency_symbol } = useCbStore();
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -27,23 +31,16 @@ const CampaignsEdit = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { woocommerce_currency_symbol } = useCbStore();
 
-  const [campaignTitle, setCampaignTitle] = useState("");
-  const [campaignStatus, setCampaignStatus] = useState("scheduled");
-  const [campaignType, setCampaignType] = useState("scheduled");
+  const [campaignTitle, setCampaignTitle] = useState("fgdf");
+  const [campaignStatus, setCampaignStatus] = useState("active");
+  const [campaignType, setCampaignType] = useState("quantity");
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState("");
   const [targetType, setTargetType] = useState("entire_store");
   const [targetIds, setTargetIds] = useState([]);
   const [isExclude, setIsExclude] = useState(false);
   const [isExcludeSaleItems, setIsExcludeSaleItems] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState("");
-  const { addToast } = useToast();
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [tags, setTags] = useState([]);
   const [quantityTiers, setQuantityTiers] = useState([
     {
       id: 0,
@@ -62,43 +59,127 @@ const CampaignsEdit = () => {
       total: 0,
     },
   ]);
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [errors, setErrors] = useState({});
-  useEffect(() => {
-    const fetchCampaign = async () => {
-      const response = await apiFetch({
-        path: `/campaignbay/v1/campaigns/${id}?_timestamp=${Date.now()}`,
-      });
-      setCampaignStatus(response.status);
-      setCampaignType(response.type);
-      setCampaignTitle(response.title);
-      setTargetType(response.target_type);
-      setTargetIds(response.target_ids);
-      setDiscountType(response.discount_type);
-      setDiscountValue(response.discount_value);
-      setStartDate(response.start_datetime);
-      setEndDate(response.end_datetime);
-      if (response.type === "quantity") {
-        setQuantityTiers([...response.tiers]);
-      } else if (response.type === "earlybird") {
-        setEBTiers([...response.tiers]);
-      }
-      setIsLoading(false);
-    };
-    fetchCampaign();
-    fetchCategories();
-    fetchProducts();
-  }, [id]);
+  const [bogoTiers, setBogoTiers] = useState([
+    {
+      id: 0,
+      buy_product: null,
+      get_product: null,
+      buy_quantity: 1,
+      get_quantity: 1,
+    },
+  ]);
+  const [scheduleEnabled, setScheduleEnabled] = useState(false);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState("");
+  const [enableUsageLimit, setEnableUsageLimit] = useState(false);
+  const [usageLimit, setUsageLimit] = useState(null);
 
+  const { addToast } = useToast();
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  const [errors, setErrors] = useState({});
+  // extra state to handle editing
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
   useEffect(() => {
-    Promise.all([fetchCategories(), fetchProducts(), fetchTags()]);
-  }, []);
+    Promise.all([
+      fetchCategories(),
+      fetchProducts(),
+      fetchTags(),
+      fetchCampaign(),
+    ]);
+  }, [id]);
 
   useEffect(() => {
     if (campaignType === "scheduled" || campaignStatus === "scheduled") {
       setScheduleEnabled(true);
     }
   }, [campaignStatus, campaignType]);
+
+  const handleSelectionTypeChange = (value) => {
+    setTargetType(value);
+    setTargetIds([]);
+  };
+
+  const handleCampaignTypeChange = (value) => {
+    setCampaignType(value);
+    if (value === "scheduled") {
+      setCampaignStatus("scheduled");
+    }
+  };
+
+  const handleCampaignStatusChange = (value) => {
+    setCampaignStatus(value);
+  };
+
+  const { timezone } = getDateSettings();
+  const handleSaveCampaign = async () => {
+    const campaignData = {
+      title: campaignTitle,
+      status: campaignStatus,
+      type: campaignType,
+      discount_type: discountType,
+      discount_value: discountValue || null,
+      target_type: targetType,
+      target_ids: targetIds,
+      is_exclude: isExclude,
+      exclude_sale_items: isExcludeSaleItems,
+      usage_limit: usageLimit || null,
+      schedule_enabled: scheduleEnabled,
+      start_datetime: startDate,
+      end_datetime: endDate || null,
+      timezone_offset: timezone.offsetFormatted,
+      tiers:
+        campaignType === "quantity"
+          ? quantityTiers
+          : campaignType === "earlybird"
+          ? ebTiers
+          : [],
+    };
+
+    try {
+      setIsSaving(true);
+      const response = await apiFetch({
+        path: "/campaignbay/v1/campaigns/" + id,
+        method: "POST",
+        data: campaignData,
+      });
+      setIsSaving(false);
+      addToast(__("Campaign saved successfully", "campaignbay"), "success");
+      navigate("/campaigns");
+    } catch (error) {
+      setIsSaving(false);
+      if (error?.code === "rest_invalid_param") {
+        setErrors(error?.data?.params);
+      }
+      addToast(
+        __("Something went wrong, Please reload the page.", "campaignbay"),
+        "error"
+      );
+      console.log(error);
+    }
+  };
+
+  const handleDeleteCampaign = async () => {
+    try {
+      setIsDeleting(true);
+      const response = await apiFetch({
+        path: "/campaignbay/v1/campaigns/" + id,
+        method: "DELETE",
+      });
+      setIsDeleteModalOpen(false);
+      addToast(__("Campaign deleted successfully", "campaignbay"), "success");
+      navigate("/campaigns");
+    } catch (error) {
+      addToast(
+        __("Something went wrong, Please reload the page.", "campaignbay"),
+        "error"
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const fetchCategories = async () => {
     try {
@@ -157,85 +238,53 @@ const CampaignsEdit = () => {
       );
     }
   };
-
-  const handleSelectionTypeChange = (value) => {
-    setTargetType(value);
-    setTargetIds([]);
-  };
-
-  const handleCampaignTypeChange = (value) => {
-    setCampaignType(value);
-    if (value === "scheduled") {
-      setCampaignStatus("scheduled");
-    }
-  };
-
-  const handleCampaignStatusChange = (value) => {
-    setCampaignStatus(value);
-  };
-
-  const { timezone } = getDateSettings();
-  const handleSaveCampaign = async () => {
-    const campaignData = {
-      title: campaignTitle,
-      status: campaignStatus,
-      type: campaignType,
-      discount_type: discountType,
-      discount_value: discountValue || 0,
-      target_type: targetType,
-      target_ids: targetIds,
-      start_datetime: startDate,
-      end_datetime: endDate || null,
-      timezone_offset: timezone.offsetFormatted,
-      tiers:
-        campaignType === "quantity"
-          ? quantityTiers
-          : campaignType === "earlybird"
-          ? ebTiers
-          : [],
-    };
-
+  const fetchCampaign = async () => {
     try {
-      setIsSaving(true);
       const response = await apiFetch({
-        path: "/campaignbay/v1/campaigns/" + id,
-        method: "POST",
-        data: campaignData,
+        path: `/campaignbay/v1/campaigns/${id}?_timestamp=${Date.now()}`,
       });
-      setIsSaving(false);
-      addToast(__("Campaign saved successfully", "campaignbay"), "success");
-      navigate("/campaigns");
-    } catch (error) {
-      setIsSaving(false);
-      if (error?.code === "rest_invalid_param") {
-        setErrors(error?.data?.params);
+
+      setCampaignTitle(response.title);
+      setCampaignStatus(response.status);
+      setCampaignType(response.type);
+      setDiscountType(response.discount_type);
+      setDiscountValue(response.discount_value);
+      setTargetType(response.target_type);
+      setTargetIds(response.target_ids);
+      setIsExclude(response.is_exclude);
+      setIsExcludeSaleItems(response.exclude_sale_items);
+      setScheduleEnabled(response.schedule_enabled);
+      setEnableUsageLimit(response.usage_limit ? true : false);
+      setUsageLimit(response.usage_limit);
+      setStartDate(response.start_datetime);
+      setEndDate(response.end_datetime);
+      if (response.type === "quantity") {
+        setQuantityTiers([...response.tiers]);
+      } else if (response.type === "earlybird") {
+        setEBTiers([...response.tiers]);
       }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching campaign:", error);
       addToast(
         __("Something went wrong, Please reload the page.", "campaignbay"),
         "error"
       );
-      console.log(error);
+      setIsLoading(false);
     }
   };
 
-  const handleDeleteCampaign = async () => {
-    try {
-      setIsDeleting(true);
-      const response = await apiFetch({
-        path: "/campaignbay/v1/campaigns/" + id,
-        method: "DELETE",
-      });
-      setIsDeleteModalOpen(false);
-      addToast(__("Campaign deleted successfully", "campaignbay"), "success");
-      navigate("/campaigns");
-    } catch (error) {
-      addToast(
-        __("Something went wrong, Please reload the page.", "campaignbay"),
-        "error"
-      );
-    } finally {
-      setIsDeleting(false);
-    }
+  const renderError = (error, negativeMargin = true) => {
+    if (!error) return null;
+    return (
+      <p
+        className={`campaignbay-text-red-600 ${
+          negativeMargin ? "campaignbay--mt-2" : "campaignbay-mt-1"
+        } campaignbay-text-xs`}
+      >
+        {error.message}
+      </p>
+    );
   };
   return (
     <>
@@ -315,6 +364,7 @@ const CampaignsEdit = () => {
                   {__("EarlyBird Discount", "campaignbay")}
                 </option>
               </select>
+              {renderError(errors?.type)}
             </div>
 
             <div className="cb-form-input-con">
@@ -337,9 +387,26 @@ const CampaignsEdit = () => {
                 <option value="scheduled">
                   {__("Scheduled", "campaignbay")}
                 </option>
-                <option value="expired">{__("Expired", "campaignbay")}</option>
               </select>
+              {renderError(errors?.status)}
             </div>
+
+            <div className="cb-form-input-con">
+              <label htmlFor="campaign-title">
+                {__("Campaign Title", "campaignbay")} <Required />
+              </label>
+              <input
+                type="text"
+                id="campaign-title"
+                className={`wpab-input w-100 ${
+                  errors?.title ? "wpab-input-error" : ""
+                }`}
+                value={campaignTitle}
+                onChange={(e) => setCampaignTitle(e.target.value)}
+              />
+              {renderError(errors?.title)}
+            </div>
+
             <div className="cb-form-input-con">
               <label htmlFor="selection-type">
                 {__("DISCOUNT TARGET", "campaignbay")} <Required />
@@ -364,35 +431,67 @@ const CampaignsEdit = () => {
                 </option>
                 <option value="tag">{__("By Tags", "campaignbay")}</option>
               </select>
+              {renderError(errors?.target_type)}
 
               {targetType !== "entire_store" ? (
-                <div
-                  style={{ background: "#ffffff" }}
-                  className={`${errors?.target_ids ? "wpab-input-error" : ""}`}
-                >
-                  <MultiSelect
-                    label={
-                      targetType === "product"
-                        ? __("Select Products *", "campaignbay")
-                        : targetType === "tag"
-                        ? __("Select Tags *", "campaignbay")
-                        : targetType === "category"
-                        ? __("Select Categories *", "campaignbay")
-                        : ""
-                    }
-                    options={
-                      targetType === "product"
-                        ? products
-                        : targetType === "tag"
-                        ? tags
-                        : targetType === "category"
-                        ? categories
-                        : []
-                    }
-                    value={targetIds}
-                    onChange={setTargetIds}
-                  />
-                </div>
+                <>
+                  <div
+                    style={{ background: "#ffffff" }}
+                    className={`${
+                      errors?.target_ids ? "wpab-input-error" : ""
+                    }`}
+                  >
+                    <MultiSelect
+                      label={
+                        targetType === "product"
+                          ? __("Select Products *", "campaignbay")
+                          : targetType === "tag"
+                          ? __("Select Tags *", "campaignbay")
+                          : targetType === "category"
+                          ? __("Select Categories *", "campaignbay")
+                          : ""
+                      }
+                      options={
+                        targetType === "product"
+                          ? products
+                          : targetType === "tag"
+                          ? tags
+                          : targetType === "category"
+                          ? categories
+                          : []
+                      }
+                      value={targetIds}
+                      onChange={setTargetIds}
+                    />
+                    {renderError(errors?.target_ids, false)}
+                  </div>
+                  <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                    <CbCheckbox
+                      id="exclude-items"
+                      checked={isExclude}
+                      onChange={(e) => setIsExclude(e.target.checked)}
+                    />
+                    <label
+                      htmlFor="exclude-items"
+                      className="!campaignbay-text-gray-700"
+                    >
+                      {__("Exclude Items", "campaignbay")}
+                    </label>
+                    <Tooltip
+                      content={
+                        <span className="campaignbay-text-sm">
+                          {__(
+                            "When checked , selected items will be excluded from the discount",
+                            "campaignbay"
+                          )}
+                        </span>
+                      }
+                      position="right"
+                    />
+
+                    {renderError(errors?.isExclude)}
+                  </div>
+                </>
               ) : null}
             </div>
 
@@ -401,7 +500,7 @@ const CampaignsEdit = () => {
                 className={`${errors?.tiers ? "wpab-input-error" : ""}`}
                 tiers={quantityTiers}
                 setTiers={setQuantityTiers}
-                errors={errors}
+                errors={errors?.tiers}
               />
             )}
 
@@ -410,14 +509,14 @@ const CampaignsEdit = () => {
                 className={`${errors?.tiers ? "wpab-input-error" : ""}`}
                 tiers={ebTiers}
                 setTiers={setEBTiers}
-                errors={errors}
+                errors={errors?.tiers}
               />
             )}
 
             {campaignType === "scheduled" && (
               <div className="cb-form-input-con">
                 <label htmlFor="discount-type">
-                  {__("How many you want to discount?", "campaignbay")}{" "}
+                  {__("How much you want to discount?", "campaignbay")}{" "}
                   <Required />
                 </label>
                 <ToggleGroupControl
@@ -442,13 +541,20 @@ const CampaignsEdit = () => {
                     value="fixed"
                   />
                 </ToggleGroupControl>
-                <span className="wpab-input-help">
-                  {__("If you want you will change mode", "campaignbay")}
-                </span>
+                {discountType === "fixed" && (
+                  <span className="wpab-input-help">
+                    {__(
+                      "It will be applied per item , not in total ",
+                      "campaignbay"
+                    )}
+                  </span>
+                )}
+
+                {renderError(errors?.discount_type)}
 
                 <div className="cb-input-with-suffix">
                   <input
-                    value={discountValue}
+                    value={discountValue ? discountValue : ""}
                     type="text"
                     name="discount-value"
                     inputMode="numeric"
@@ -465,13 +571,110 @@ const CampaignsEdit = () => {
                       : woocommerce_currency_symbol || "$"}
                   </span>
                 </div>
+                {renderError(errors?.discount_value)}
               </div>
             )}
-            {campaignStatus === "scheduled" && (
-              <div className="cb-form-input-con">
-                <label htmlFor="start-time">
-                  {__("SELECT CAMPAIGN DURATION", "campaignbay")} <Required />{" "}
+            <div className="cb-form-input-con">
+              <label htmlFor="start-time">
+                {__("OTHER CONFIGURATIONS", "campaignbay")} <Required />{" "}
+              </label>
+
+              {/* Exclude Sale Items */}
+              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                <CbCheckbox
+                  id="exclude-sale-items"
+                  checked={isExcludeSaleItems}
+                  onChange={(e) => setIsExcludeSaleItems(e.target.checked)}
+                />
+                <label htmlFor="exclude-sale-items" className="">
+                  {__("Exclude Sale Items", "campaignbay")}
                 </label>
+                <Tooltip
+                  content={
+                    <span className="campaignbay-text-sm">
+                      {__(
+                        "When checked , sale items will be excluded from the discount",
+                        "campaignbay"
+                      )}
+                    </span>
+                  }
+                  position="right"
+                />
+                {renderError(errors?.exclude_sale_items, false)}
+              </div>
+
+              {/* Exclude Sale Items */}
+              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                <CbCheckbox
+                  id="enable-usage-limit"
+                  checked={enableUsageLimit}
+                  onChange={(e) => setEnableUsageLimit(e.target.checked)}
+                />
+                <label htmlFor="enable-usage-limit" className="">
+                  {__("Enable Usage Limit", "campaignbay")}
+                </label>
+                <Tooltip
+                  content={
+                    <span className="campaignbay-text-sm">
+                      {__(
+                        "When checked , usage limit will be enabled for the campaign. Campaign will be disabled when the limit is reached.",
+                        "campaignbay"
+                      )}
+                    </span>
+                  }
+                  position="right"
+                />
+              </div>
+
+              {enableUsageLimit && (
+                <div className="cb-form-input-con !campaignbay-p-0">
+                  <label
+                    htmlFor="usage-limit"
+                    className="campaignbay-whitespace-nowrap"
+                  >
+                    {__("Usage Limit", "campaignbay")}
+                  </label>
+                  <input
+                    type="text"
+                    id="usage-limit"
+                    className={`wpab-input w-100  ${
+                      errors?.usage_limit ? "wpab-input-error" : ""
+                    }`}
+                    value={usageLimit ? usageLimit : ""}
+                    onChange={(e) => setUsageLimit(parseInt(e.target.value))}
+                  />
+                  {renderError(errors?.usage_limit)}
+                </div>
+              )}
+
+              {/* Schedule */}
+              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                <CbCheckbox
+                  id="schedule"
+                  checked={scheduleEnabled}
+                  onChange={(e) => setScheduleEnabled(e.target.checked)}
+                  disabled={
+                    campaignType === "scheduled" ||
+                    campaignStatus === "scheduled"
+                  }
+                />
+                <label htmlFor="schedule" className="">
+                  {__("Schedule", "campaignbay")}
+                </label>
+                <Tooltip
+                  content={
+                    <span className="campaignbay-text-sm">
+                      {__(
+                        "When checked , the campaign will be scheduled to run between the start and end dates",
+                        "campaignbay"
+                      )}
+                    </span>
+                  }
+                  position="right"
+                />
+              </div>
+
+              {scheduleEnabled && (
                 <div
                   className="wpab-grid-2 cb-date-time-fix"
                   style={{ gap: "16px" }}
@@ -488,12 +691,16 @@ const CampaignsEdit = () => {
                       {__("Start Time", "campaignbay")}
                     </span>
                     <DateTimePicker
+                      timezone={timezone}
+                      wpSettings={wpSettings}
                       id="start-time"
                       dateTime={startDate}
                       onDateTimeChange={(date) => {
                         setStartDate(date);
                       }}
+                      disabled={!scheduleEnabled}
                     />
+                    {renderError(errors?.start_datetime, false)}
                   </div>
                   <div
                     className={`${
@@ -507,16 +714,21 @@ const CampaignsEdit = () => {
                       {__("End Time", "campaignbay")}
                     </span>
                     <DateTimePicker
+                      timezone={timezone}
                       id="end-time"
                       dateTime={endDate}
                       onDateTimeChange={(date) => {
                         setEndDate(date);
                       }}
+                      disabled={!scheduleEnabled}
                     />
+                    {renderError(errors?.end_datetime, false)}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            {/* buttons */}
             <div className="wpab-btn-bottom-con campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-4">
               <button
                 className="wpab-cb-btn wpab-cb-btn-danger "

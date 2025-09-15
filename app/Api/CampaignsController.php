@@ -352,8 +352,8 @@ class CampaignsController extends ApiController {
 		$params = $request->get_json_params();
 		$result = $campaign->update( $params );
 
-		if ( is_wp_error( $result ) ) {
-			return $result;
+		if ( !$result  ) {
+			return new WP_Error( 'rest_cannot_update', __( 'Failed to update campaign.', 'campaignbay' ), array( 'status' => 500 ) );
 		}
 
 		// Get the fresh, updated campaign object to return.
