@@ -19,7 +19,6 @@ export default function DateTimePicker({
   }, []);
 
   const loadTime = () => {
-    const offset = timezone?.offset * 60;
     const localTime = new Date();
     const format = `${wpSettings?.dateFormat} ${wpSettings?.timeFormat}`;
     const formatedDate = date(format, localTime, timezone?.offset);

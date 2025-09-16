@@ -348,11 +348,15 @@ class CampaignsController extends ApiController {
 		if ( ! $campaign ) {
 			return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', 'campaignbay' ), array( 'status' => 404 ) );
 		}
-
+		
 		$params = $request->get_json_params();
 		$result = $campaign->update( $params );
 
-		if ( !$result  ) {
+		if ( is_wp_error($result) ) {
+			return $result;
+		}
+		
+		if ( !$result ) {
 			return new WP_Error( 'rest_cannot_update', __( 'Failed to update campaign.', 'campaignbay' ), array( 'status' => 500 ) );
 		}
 
@@ -608,8 +612,8 @@ class CampaignsController extends ApiController {
 	 */
 	public function prepare_item_for_response( $campaign, $request ) {
 		$data = $campaign->get_data();
-		// $data->start_datetime = $campaign->get_start_timestamp();
-		// campaignbay_log();
+		$data->start_datetime_unix = $campaign->get_start_timestamp();
+		$data->end_datetime_unix = $campaign->get_end_timestamp();
 		return $data;
 	}
 

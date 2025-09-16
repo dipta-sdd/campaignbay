@@ -171,7 +171,7 @@ const CampaignsAdd = () => {
       target_ids: targetIds,
       is_exclude: isExclude,
       exclude_sale_items: isExcludeSaleItems,
-      usage_limit: usageLimit || null,
+      usage_limit: enableUsageLimit ? usageLimit || null : null,
       schedule_enabled: scheduleEnabled,
       start_datetime: startDate,
       end_datetime: endDate || null,
@@ -192,7 +192,10 @@ const CampaignsAdd = () => {
       addToast(__("Campaign saved successfully", "campaignbay"), "success");
       navigate(`/campaigns`);
     } catch (error) {
-      if (error?.code === "rest_validation_error") {
+      if (
+        error?.code === "rest_invalid_param" ||
+        error?.code === "rest_validation_error"
+      ) {
         setErrors(error?.data?.details || {});
       }
       addToast(

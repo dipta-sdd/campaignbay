@@ -125,7 +125,7 @@ const CampaignsEdit = () => {
       target_ids: targetIds,
       is_exclude: isExclude,
       exclude_sale_items: isExcludeSaleItems,
-      usage_limit: usageLimit || null,
+      usage_limit: enableUsageLimit ? usageLimit || null : null,
       schedule_enabled: scheduleEnabled,
       start_datetime: startDate,
       end_datetime: endDate || null,
@@ -150,17 +150,20 @@ const CampaignsEdit = () => {
       navigate("/campaigns");
     } catch (error) {
       setIsSaving(false);
-      if (error?.code === "rest_invalid_param") {
-        setErrors(error?.data?.params);
+      if (
+        error?.code === "rest_invalid_param" ||
+        error?.code === "rest_validation_error"
+      ) {
+        setErrors(error?.data?.details);
       }
       addToast(
         __("Something went wrong, Please reload the page.", "campaignbay"),
         "error"
       );
-      console.log(error);
     }
   };
 
+  console.log(errors);
   const handleDeleteCampaign = async () => {
     try {
       setIsDeleting(true);

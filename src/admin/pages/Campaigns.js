@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,12 +24,11 @@ import { useToast } from "../store/toast/use-toast";
 import CbCheckbox from "../components/CbCheckbox"; // Assuming you still use this for the header
 import { addQueryArgs } from "@wordpress/url";
 import { useCbStore } from "../store/cbStore";
-import { date, getDate } from "@wordpress/date";
 import Skeleton from "../components/Skeleton";
 import Navbar from "../components/Navbar";
 import ImportExport from "../components/ImportExport";
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
-import formatDateTime from "../utils/Dates";
+import formatDateTime, { timeDiff } from "../utils/Dates";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -576,16 +575,16 @@ const Campaigns = () => {
                       </td>
                       <td>{getCampaignValue(campaign)}</td>
                       <td className="campaignbay-text-secondary">
-                        {formatDateTime(campaign.start_datetime)}
+                        {formatDateTime(campaign.start_datetime_unix)}
                       </td>
                       <td className="campaignbay-text-secondary">
-                        {formatDateTime(campaign.end_datetime)}
+                        {formatDateTime(campaign.end_datetime_unix)}
                       </td>
                       <td className="campaignbay-text-secondary">
                         {campaign.usage_count || 0}
                       </td>
                       <td className="campaignbay-text-secondary">
-                        {formatDateTime(campaign.date_modified)}
+                        {timeDiff(campaign.date_modified)}
                       </td>
                       <td className="campaignbay-sticky-r-td">
                         {/* <div className="campaignbay-action-button-container"> */}

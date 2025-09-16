@@ -138,6 +138,7 @@ class Campaign {
 
 			'conditions'         => 'nullable|array',
 			'settings'           => 'nullable|array',
+			'usage_limit'		 => 'nullable|integer'
 		];
 
 		if ( ! $validator->validate( $rules ) ) {
@@ -190,7 +191,12 @@ class Campaign {
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 			$formats = array(
-				'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%d'
+				'%s', '%s', '%s', 
+				'%s', '%f', '%s', 
+				'%s', '%d', '%s', '%s', 
+				'%s', '%s', '%s', 
+				'%s', '%s', '%d',
+				'%d', '%s', '%s', '%d', '%d'
 			);
 
 			$result = $wpdb->insert( $table_name, $data, $formats );
@@ -258,6 +264,7 @@ class Campaign {
 
 			'conditions'         => 'nullable|array',
 			'settings'           => 'nullable|array',
+			'usage_limit'		 => 'nullable|integer'
 		];
 
 		if ( ! $validator->validate( $rules ) ) {
@@ -266,6 +273,38 @@ class Campaign {
 		}
 
 		$data = $validator->get_validated_data();
+		if($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
+			$tmp_tiers = array();
+			foreach( $data['tiers'] as $tier ) {
+				$tier_validator = new Validator( $tier );
+				$tier_rules = array();
+				if($data['type'] === 'quantity') {
+					$tier_rules = [
+						'id'    => 'nullable|integer',
+						'min'   => 'required|integer|min:1|gte:previous_tier_max',
+						'max'   => 'required|integer|min:1|gte:min',
+						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
+						'type'  => 'required|in:percentage,currency',
+					];
+				} elseif($data['type'] === 'earlybird') {
+					$tier_rules = [
+						'id'       => 'nullable|integer',
+						'quantity' => 'required|integer|min:1',
+						'value'    => 'required|numeric|min:0|max_if:type,percentage,100',
+						'type'     => 'required|in:percentage,currency',
+					];
+				}
+				if ( ! $tier_validator->validate( $tier_rules ) ) {
+					return new WP_Error( 
+						'rest_validation_error', $tier_validator->get_first_error(), 
+						array( 'status' => 400, 
+						'details' => array( 'tiers' => array( $tier['id'] => $tier_validator->get_errors())) , 
+						'data' => $tier ) 
+					);
+				}
+				$tmp_tiers[] = $tier_validator->get_validated_data();
+			}
+		}
 		$data['tiers'] = wp_json_encode(  isset( $tmp_tiers ) ? $tmp_tiers : $this->data->tiers ?? '[]' );
 		$data['date_modified'] = current_time( 'mysql' );
 		$data['updated_by'] = get_current_user_id();
@@ -273,10 +312,14 @@ class Campaign {
 
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-
 			$formats = array();
 			$formats = array(
-					'%s', '%s', '%s', '%s', '%f', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%d'
+					'%s', '%s', '%s',
+					'%s', '%f', '%s',
+					'%s', '%d', '%s', '%s',
+					'%s', '%s', '%s', 
+					'%s', '%s', '%d',
+					'%s', '%d'
 				);
 			if ( empty( $data ) ) {
 				return true;
@@ -288,7 +331,6 @@ class Campaign {
 				$formats,
 				array( '%d' )
 			);
-
 			if ( is_wp_error( $result ) || false === $result ) {
 				return false;
 			}
@@ -596,6 +638,7 @@ class Campaign {
 	public function get_date_modified() {
 		return $this->data->date_modified ?: null;
 	}
+
 
 	/**
 	 * Gets the current usage count for the campaign.
