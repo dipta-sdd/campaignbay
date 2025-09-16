@@ -29,7 +29,7 @@ import Skeleton from "../components/Skeleton";
 import Navbar from "../components/Navbar";
 import ImportExport from "../components/ImportExport";
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
-import CampaignsGrid from "../components/campaigns-grid";
+import formatDateTime from "../utils/Dates";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -97,23 +97,17 @@ const Campaigns = () => {
     }
   };
 
-  const formatDateTime = (dateTimeString) => {
-    if (
-      !dateTimeString ||
-      new Date(dateTimeString).toString() === "Invalid Date"
-    ) {
-      return "—"; // Return an em-dash for missing dates.
-    }
-
-    // get the date format and time format from the wpSettings
-    const format = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
-
-    // get the date and time from the dateTimeString
-    const dateTime = getDate(dateTimeString);
-
-    // format the date and time
-    return date(format, dateTime, null);
-  };
+  // const formatDateTime = (dateTimeString) => {
+  //   if (
+  //     !dateTimeString ||
+  //     new Date(dateTimeString).toString() === "Invalid Date"
+  //   ) {
+  //     return "—";
+  //   }
+  //   const format = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
+  //   const dateTime = getDate(dateTimeString);
+  //   return date(format, dateTime, null);
+  // };
 
   const handleSelectAll = () => {
     if (isAllSelected) {

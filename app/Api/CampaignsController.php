@@ -608,7 +608,8 @@ class CampaignsController extends ApiController {
 	 */
 	public function prepare_item_for_response( $campaign, $request ) {
 		$data = $campaign->get_data();
-
+		// $data->start_datetime = $campaign->get_start_timestamp();
+		// campaignbay_log();
 		return $data;
 	}
 
