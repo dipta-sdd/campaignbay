@@ -147,14 +147,15 @@ class Campaign {
 		}
 
 		$data = $validator->get_validated_data();
+		$data['target_ids'] = wp_json_encode(  isset( $data['target_ids'] ) ? $data['target_ids'] : $this->data->target_ids ?? '[]' );
 		$data['usage_count'] = 0;
 		$data['date_created'] = current_time( 'mysql' );
 		$data['date_modified'] = current_time( 'mysql' );
 		$data['created_by'] = get_current_user_id();
 		$data['updated_by'] = get_current_user_id();
 
+		$tmp_tiers = array();
 		if($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
-			$tmp_tiers = array();
 			foreach( $data['tiers'] as $tier ) {
 				$tier_validator = new Validator( $tier );
 				$tier_rules = array();
@@ -193,7 +194,7 @@ class Campaign {
 			$formats = array(
 				'%s', '%s', '%s', 
 				'%s', '%f', '%s', 
-				'%s', '%d', '%s', '%s', 
+				'%s', '%s', '%s', '%s', 
 				'%s', '%s', '%s', 
 				'%s', '%s', '%d',
 				'%d', '%s', '%s', '%d', '%d'
@@ -271,10 +272,11 @@ class Campaign {
 			campaignbay_log( 'Validation errors: ' . print_r( $validator->get_errors(), true ), 'ERROR' );
 			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() , 'data' => $args ) );
 		}
-
+		
+		$tmp_tiers = array();
 		$data = $validator->get_validated_data();
+		$data['target_ids'] = wp_json_encode(  isset( $data['target_ids'] ) ? $data['target_ids'] : $this->data->target_ids ?? '[]' );
 		if($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
-			$tmp_tiers = array();
 			foreach( $data['tiers'] as $tier ) {
 				$tier_validator = new Validator( $tier );
 				$tier_rules = array();
@@ -305,9 +307,11 @@ class Campaign {
 				$tmp_tiers[] = $tier_validator->get_validated_data();
 			}
 		}
+
 		$data['tiers'] = wp_json_encode(  isset( $tmp_tiers ) ? $tmp_tiers : $this->data->tiers ?? '[]' );
 		$data['date_modified'] = current_time( 'mysql' );
 		$data['updated_by'] = get_current_user_id();
+
 		try{
 
 			global $wpdb;
@@ -316,7 +320,7 @@ class Campaign {
 			$formats = array(
 					'%s', '%s', '%s',
 					'%s', '%f', '%s',
-					'%s', '%d', '%s', '%s',
+					'%s', '%s', '%s', '%s',
 					'%s', '%s', '%s', 
 					'%s', '%s', '%d',
 					'%s', '%d'

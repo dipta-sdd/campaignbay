@@ -93,14 +93,31 @@ class Validator {
 				$other_field     = array_shift( $rule_params );
 				$required_values = $rule_params;
 				$other_value     = $this->data[ $other_field ] ?? null;
+				error_log(print_r(array(
+					'rule_params' => $rule_params,
+					'other_field' => $other_field,
+					'required_values' => $required_values,
+					'other_value' => $other_value
+				), true));
 
-				if ( $other_field && in_array( $other_value, $required_values, true ) && ( is_null( $value ) || trim( (string) $value ) === '' || $value == 0 ) ) {
-					$this->add_error( $field, sprintf( __( 'This field is required when %s is one of %s.', 'campaignbay' ), $other_field, implode( ', ', $required_values ) ) );
+				if ( $other_field && in_array( $other_value, $required_values, true ) ) {
+					if(is_array($value)){
+						if(empty($value)){
+							$this->add_error( $field, __( 'This field cannot be empty.', 'campaignbay' ));
+						}
+					}
+					elseif ( ( is_null( $value ) || trim( (string) $value ) === '' || $value == 0 ) ) {
+						$this->add_error( $field, __( 'This field is required.', 'campaignbay' ));
+					}
 				}
+
+				// if ( $other_field && (is_array($required_values) && in_array( $other_value, $required_values, true )) && ( is_null( $value ) || trim( (string) $value ) === '' || $value == 0 ) ) {
+				// 	$this->add_error( $field, sprintf( __( 'This field is required when %s is one of %s.', 'campaignbay' ), $other_field, implode( ', ', $required_values ) ) );
+				// }
 				
-				if ( $other_field && $other_value == $required_values && ( is_null( $value ) || trim( (string) $value ) === '' || $value == 0 ) ) {
-					$this->add_error( $field, sprintf( __( 'This field is required when %s is %s.', 'campaignbay' ), $other_field, implode( ', ', $required_values ) ) );
-				}
+				// if ( $other_field && $other_value == $required_values && ( is_null( $value ) || trim( (string) $value ) === '' || $value == 0 ) ) {
+				// 	$this->add_error( $field, sprintf( __( 'This field is required when %s is %s.', 'campaignbay' ), $other_field, implode( ', ', $required_values ) ) );
+				// }
 
 				// campaignbay_log( "other_field: $other_field, other_value: $other_value, required_values: " . implode( ', ', (array) $required_values ) . ", value: $value" );
 				break;
