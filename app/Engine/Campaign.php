@@ -341,6 +341,7 @@ class Campaign {
 
 			// Reload data
 			$this->load_data();
+			$this->load_applicable_product_ids();
 
 			/**
 			 * Fires after a campaign is updated and all its data is saved.
@@ -563,7 +564,17 @@ class Campaign {
 		return !empty( $this->data->is_exclude );
 	}
 
+	/**
+	 * Gets whether scheduling is enabled.
+	 *
+	 * @since 1.0.0
+	 * @return bool True if scheduling is enabled, false otherwise.
+	 */
+	public function get_schedule_enabled() {
+		return !empty( $this->data->schedule_enabled );
+	}
 
+	
 
 	/**
 	 * Gets the start datetime string and converts it to the UTC timezone.

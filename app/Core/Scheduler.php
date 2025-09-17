@@ -134,43 +134,56 @@ class Scheduler {
 			$campaign = new Campaign( $campaign_id );
 		}
 		$this->clear_campaign_schedules( $campaign_id );
-		$status = $campaign->get_status();
-		if ( 'scheduled' !== $status ) {
-			campaignbay_log( sprintf( 'Campaign #%d status is "%s", not "scheduled". No new events will be scheduled.', $campaign_id, $campaign->get_status() ), 'DEBUG' );
+		if ( ! $campaign->get_schedule_enabled() ) {
+			campaignbay_log( sprintf( 'Campaign #%d is not enabled for scheduling. No new events will be scheduled.', $campaign_id ), 'DEBUG' );
 			return;
 		}
 
+		if ( $campaign->get_status() !== 'scheduled' && $campaign->get_status() !== 'active' ) {
+			campaignbay_log( sprintf( 'Campaign #%d is not active or scheduled, current status: %s', $campaign_id, $campaign->get_status() ), 'DEBUG' );
+			return;
+		}
 		$start_timestamp = $campaign->get_start_timestamp();
 		$end_timestamp   = $campaign->get_end_timestamp();
 
-		if ( ! $start_timestamp || ! $end_timestamp ) {
-			campaignbay_log( sprintf( 'Campaign #%d is missing start or end timestamps. Cannot schedule.', $campaign_id ), 'WARNING' );
-			return;
+		if ( ! $start_timestamp ) {
+			campaignbay_log( sprintf( 'Campaign #%d is missing start timestamps. Cannot schedule.', $campaign_id ), 'WARNING' );
+		} else{
+			wp_schedule_single_event(
+				$start_timestamp,
+				self::ACTIVATION_HOOK,
+				array( 'campaign_id' => $campaign_id )
+			);
+			campaignbay_log(
+				sprintf(
+					'Scheduled campaign #%d: activation at %s.',
+					$campaign_id,
+					wp_date( 'Y-m-d H:i:s T', $start_timestamp )
+				),
+				'INFO'
+			);
 		}
 
-		// Schedule the activation event.
-		wp_schedule_single_event(
-			$start_timestamp,
-			self::ACTIVATION_HOOK,
-			array( 'campaign_id' => $campaign_id )
-		);
-
-		// Schedule the deactivation event.
-		wp_schedule_single_event(
-			$end_timestamp,
-			self::DEACTIVATION_HOOK,
-			array( 'campaign_id' => $campaign_id )
-		);
-
-		campaignbay_log(
-			sprintf(
-				'Scheduled campaign #%d: activation at %s, deactivation at %s.',
-				$campaign_id,
-				wp_date( 'Y-m-d H:i:s T', $start_timestamp ),
-				wp_date( 'Y-m-d H:i:s T', $end_timestamp )
-			),
-			'INFO'
-		);
+		
+		if ( ! $end_timestamp ) {
+			campaignbay_log( sprintf( 'Campaign #%d is missing end timestamps. Cannot schedule deactivation.', $campaign_id ), 'WARNING' );
+			return;
+		} else {
+			// Schedule the deactivation event.
+			wp_schedule_single_event(
+				$end_timestamp,
+				self::DEACTIVATION_HOOK,
+				array( 'campaign_id' => $campaign_id )
+			);
+			campaignbay_log(
+				sprintf(
+					'Scheduled campaign #%d: deactivation at %s.',
+					$campaign_id,
+					wp_date( 'Y-m-d H:i:s T', $end_timestamp )
+				),
+				'INFO'
+			);
+		}
 	}
 
 	/**
@@ -191,13 +204,14 @@ class Scheduler {
 		// Get all campaigns that are currently in a state that could potentially change
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id FROM {$table_name} WHERE status IN (%s, %s)",
+				"SELECT id FROM {$table_name} WHERE status IN (%s, %s) AND schedule_enabled = 1",
 				'scheduled',
 				'active'
 			)
 		);
 
 		if ( empty( $results ) ) {
+			campaignbay_log('no scheduled or active campaigns found for failsafe check.', 'DEBUG' );
 			return;
 		}
 
@@ -245,7 +259,6 @@ class Scheduler {
 	public function run_campaign_activation( $campaign_id ) {
 		campaignbay_log( sprintf( 'WP-Cron: Running activation for campaign #%d.', $campaign_id ), 'INFO' );
 		
-		// Update the campaign status in the custom table
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 		
@@ -275,14 +288,13 @@ class Scheduler {
 	public function run_campaign_deactivation( $campaign_id ) {
 		campaignbay_log( sprintf( 'WP-Cron: Running deactivation for campaign #%d.', $campaign_id ), 'INFO' );
 		
-		// Update the campaign status in the custom table
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 		
 		$wpdb->update(
 			$table_name,
 			array( 
-				'status' => 'inactive',
+				'status' => 'expired',
 				'date_modified' => current_time( 'mysql' )
 			),
 			array( 'id' => $campaign_id ),
@@ -290,7 +302,6 @@ class Scheduler {
 			array( '%d' )
 		);
 		
-		// Clear the main campaign cache.
 		CampaignManager::get_instance()->clear_cache('scheduler');
 	}
 
@@ -303,7 +314,6 @@ class Scheduler {
 	 * @return void
 	 */
 	public function clear_campaign_schedules_on_delete( $campaign_id ) {
-		// Since we're no longer using posts, we can directly clear schedules
 		$this->clear_campaign_schedules( $campaign_id );
 	}
 
@@ -317,7 +327,6 @@ class Scheduler {
 	 * @return void
 	 */
 	private function clear_campaign_schedules( $campaign_id	 ) {
-		// We must pass the same arguments array we used when scheduling to ensure the correct hook is cleared.
 		$args = array( 'campaign_id' => $campaign_id );
 		wp_clear_scheduled_hook( self::ACTIVATION_HOOK, $args );
 		wp_clear_scheduled_hook( self::DEACTIVATION_HOOK, $args );
