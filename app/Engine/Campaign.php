@@ -117,11 +117,15 @@ class Campaign {
 	 * @throws Exception If validation fails.
 	 */
 	public static function create( $args ) {
+
+		// campaignbay_log( 'Creating campaign with args: ' . print_r( $args, true ), 'DEBUG' );
+
+		campaignbay_log( 'Creating campaign with args tiers: ' . print_r( $args['tiers'], true ), 'DEBUG' );
 		$validator = new Validator( $args );
 		$rules = [
 			'title'           => 'required|max:255',
 			'type'   => 'required|in:earlybird,scheduled,quantity', 
-			'status'          => 'required|in:active,inactive,scheduled',
+			'status'          => 'required|in:active,inactive,scheduled,expired',
 
 			'discount_type'   => 'nullable|in:percentage,fixed',
 			'discount_value'  => 'required_if:type,scheduled|numeric',
@@ -155,8 +159,15 @@ class Campaign {
 		$data['updated_by'] = get_current_user_id();
 
 		$tmp_tiers = array();
+		
 		if($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
+
+		// campaignbay_log( 'Creating campaign with arg: ' . print_r( $args, true ), 'DEBUG' );
+		// campaignbay_log( 'Creating campaign with tiers: ' . print_r( $args['tiers'], true ), 'DEBUG' );
 			foreach( $data['tiers'] as $tier ) {
+
+		// campaignbay_log( 'Creating campaign with tier: ' . print_r( $tier, true ), 'DEBUG' );
+
 				$tier_validator = new Validator( $tier );
 				$tier_rules = array();
 				if($data['type'] === 'quantity') {
@@ -185,8 +196,12 @@ class Campaign {
 				}
 				$tmp_tiers[] = $tier_validator->get_validated_data();
 			}
+
+		// campaignbay_log( 'Creating campaign with tmp tiers: ' . print_r( $tmp_tiers, true ), 'DEBUG' );
 		}
+
 		$data['tiers'] = wp_json_encode( isset( $tmp_tiers ) ?  $tmp_tiers  : [] );
+		// campaignbay_log( 'Creating campaign with data: ' . print_r( $data, true ), 'DEBUG' );
 		
 		try{
 			global $wpdb;
@@ -248,7 +263,7 @@ class Campaign {
 		$rules = [
 			'title'           => 'required|max:255',
 			'type'   => 'required|in:earlybird,scheduled,quantity', 
-			'status'          => 'required|in:active,inactive,scheduled',
+			'status'          => 'required|in:active,inactive,scheduled,expired',
 
 			'discount_type'   => 'nullable|in:percentage,fixed',
 			'discount_value'  => 'required_if:type,scheduled|numeric',

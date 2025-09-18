@@ -535,8 +535,8 @@ class CampaignsController extends ApiController {
 				'schedule_enabled'   => isset( $campaign_data['schedule_enabled'] ) ? (bool) $campaign_data['schedule_enabled'] : false,
 				'start_datetime'     => isset( $campaign_data['start_datetime'] ) && ! empty($campaign_data['start_datetime']) ? sanitize_text_field( $campaign_data['start_datetime'] ) : null,
 				'end_datetime'       => isset( $campaign_data['end_datetime'] ) && ! empty($campaign_data['end_datetime']) ? sanitize_text_field( $campaign_data['end_datetime'] ) : null,
-				
-				'campaign_tiers'     => isset( $campaign_data['tiers'] ) && ! empty($campaign_data['tiers']) ? json_decode( $campaign_data['tiers'], true ) : array(),
+
+				'tiers'     => isset( $campaign_data['tiers'] ) && ! empty($campaign_data['tiers']) ?  $campaign_data['tiers'] : array(),
 				'conditions'         => isset( $campaign_data['conditions'] ) && ! empty($campaign_data['conditions']) ? json_decode( $campaign_data['conditions'], true ) : null,
 				'settings'           => isset( $campaign_data['settings'] ) && ! empty($campaign_data['settings']) ? json_decode( $campaign_data['settings'], true ) : null,
 				
@@ -544,12 +544,12 @@ class CampaignsController extends ApiController {
 				'usage_count'        => isset( $campaign_data['usage_count'] ) ? absint( $campaign_data['usage_count'] ) : 0, // Allow importing a previous usage count
 			);
 
-			campaignbay_log( 'Importing campaign: ' . print_r( $args, true ) );
+			campaignbay_log( 'Importing campaign:'. $args['title']  . print_r($args, true ), true );
 			$result = Campaign::create( $args );
 
 			if ( is_wp_error( $result ) ) {
 				$failed_count++;
-				$errors[] = "Row " . ( $index + 1 ) . " ('" . esc_html( $args['title'] ) . "'): " . $result->get_error_message();
+				$errors[] = array("Row " . ( $index + 1 ) . " ('" . esc_html( $args['title'] ) . "'): " => $result);
 			} else {
 				$created_count++;
 			}
@@ -819,5 +819,54 @@ class CampaignsController extends ApiController {
 				'required'    => true,
 			),
 		);
+	}
+
+	/**
+	 * Parses a malformed, non-standard JSON-like string into a PHP array.
+	 *
+	 * This function is designed as a fallback to repair a specific type of malformed
+	 * string where keys and some string values are not properly quoted.
+	 * For example: '[{ id: 0, type: percentage }]'
+	 *
+	 * WARNING: The most reliable solution is always to fix the source (JavaScript)
+	 * to generate valid JSON using `JSON.stringify()`. This function should only be
+	 * used if you cannot control the input source.
+	 *
+	 * @param string $malformed_string The malformed, JSON-like string.
+	 * @return array|null Returns the decoded PHP array on success, or null on failure.
+	 */
+	public function parse_malformed_json_string( $malformed_string ) {
+		// Step 0: Basic validation. If the input is not a string or is empty, fail early.
+		if ( ! is_string( $malformed_string ) || empty( trim( $malformed_string ) ) ) {
+			return null;
+		}
+
+		// Step 1: Wrap all unquoted keys (e.g., "id:", "max:") in double quotes.
+		// This regex finds a word character (alphanumeric + underscore) followed by a colon
+		// and wraps the word in double quotes.
+		$json_fixed_keys = preg_replace( '/([a-zA-Z0-9_]+)\s*:/', '"$1":', $malformed_string );
+		if ( null === $json_fixed_keys ) {
+			// preg_replace can return null on error.
+			return null;
+		}
+
+		// Step 2: Wrap unquoted string values (e.g., ": percentage,") in double quotes.
+		// This regex finds a colon, optional space, and then a sequence of letters,
+		// and wraps the letters in double quotes. It avoids quoting numbers.
+		$json_fixed_values = preg_replace( '/: \s*([a-zA-Z_]+)/', ': "$1"', $json_fixed_keys );
+		if ( null === $json_fixed_values ) {
+			return null;
+		}
+
+		// Step 3: Now that the string should be valid JSON, decode it.
+		$decoded_array = json_decode( $json_fixed_values, true );
+
+		// Step 4: Final check. If json_decode failed, it returns null.
+		// We also check json_last_error to be certain.
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			return null;
+		}
+
+		return $decoded_array;
 	}
 }

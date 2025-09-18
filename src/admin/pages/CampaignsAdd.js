@@ -23,9 +23,9 @@ import Tooltip from "../components/tooltip";
 const CampaignsAdd = () => {
   const { wpSettings, woocommerce_currency_symbol } = useCbStore();
   const navigate = useNavigate();
-  const [campaignTitle, setCampaignTitle] = useState("fgdf");
-  const [campaignStatus, setCampaignStatus] = useState("active");
-  const [campaignType, setCampaignType] = useState("quantity");
+  const [campaignTitle, setCampaignTitle] = useState("");
+  const [campaignStatus, setCampaignStatus] = useState("scheduled");
+  const [campaignType, setCampaignType] = useState("scheduled");
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState("");
   const [targetType, setTargetType] = useState("entire_store");
@@ -583,7 +583,7 @@ const CampaignsAdd = () => {
                   onDateTimeChange={(date) => {
                     setStartDate(date);
                   }}
-                  disabled={!scheduleEnabled}
+                  disabled={!scheduleEnabled || campaignStatus !== "scheduled"}
                 />
                 {renderError(errors?.start_datetime, false)}
               </div>

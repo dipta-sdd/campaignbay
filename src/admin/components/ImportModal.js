@@ -126,7 +126,16 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
 
   const handleConfirmImport = () => {
     if (jsonData) {
-      onImport(jsonData);
+      onImport(
+        jsonData.map((item) => {
+          return {
+            ...item,
+            tiers: item.tiers ? JSON.parse(item.tiers) : [],
+            conditions: item.conditions ? JSON.parse(item.conditions) : {},
+            settings: item.settings ? JSON.parse(item.settings) : {},
+          };
+        })
+      );
     }
   };
 

@@ -3,22 +3,43 @@
  * @param {string} rowString The string for a single CSV row.
  * @returns {string[]} An array of cell values.
  */
+/**
+ * A more robust CSV row parser that handles escaped double quotes.
+ * @param {string} rowString The string for a single CSV row.
+ * @returns {string[]} An array of cell values.
+ */
 const parseCsvRow = (rowString) => {
   const result = [];
   let currentVal = "";
   let inQuotes = false;
-  for (const char of rowString) {
+
+  for (let i = 0; i < rowString.length; i++) {
+    const char = rowString[i];
+
     if (char === '"') {
-      inQuotes = !inQuotes;
+      // Check if this is an escaped quote ("")
+      if (inQuotes && rowString[i + 1] === '"') {
+        currentVal += '"'; // Add a literal quote
+        i++; // Skip the next character
+      } else {
+        inQuotes = !inQuotes;
+      }
     } else if (char === "," && !inQuotes) {
-      result.push(currentVal.trim());
+      result.push(currentVal); // Don't trim here, let the outer logic do it
       currentVal = "";
     } else {
       currentVal += char;
     }
   }
-  result.push(currentVal.trim()); // Add the last value
-  return result;
+  result.push(currentVal);
+
+  // Trim quotes from start/end of each value after parsing
+  return result.map((val) => {
+    if (val.startsWith('"') && val.endsWith('"')) {
+      return val.slice(1, -1).trim();
+    }
+    return val.trim();
+  });
 };
 
 /**
@@ -45,9 +66,8 @@ export const csvToJson = (csvString, columnsToKeep = []) => {
 
   const allHeaders = lines.shift().trim().split(",");
 
-  // --- NEW LOGIC: Determine which headers and indices to use ---
   let headersToProcess = allHeaders;
-  let headerIndices = allHeaders.map((_, index) => index); // By default, use all indices
+  let headerIndices = allHeaders.map((_, index) => index);
 
   if (columnsToKeep && columnsToKeep.length > 0) {
     headersToProcess = [];
@@ -59,7 +79,6 @@ export const csvToJson = (csvString, columnsToKeep = []) => {
         headersToProcess.push(columnName);
         headerIndices.push(index);
       } else {
-        // Optional: You could throw an error if a required column is missing.
         console.warn(`Column "${columnName}" not found in CSV file.`);
       }
     });
@@ -70,7 +89,6 @@ export const csvToJson = (csvString, columnsToKeep = []) => {
       );
     }
   }
-  // --- END OF NEW LOGIC ---
 
   const jsonArray = lines.map((line, index) => {
     const values = parseCsvRow(line.trim());
@@ -83,13 +101,12 @@ export const csvToJson = (csvString, columnsToKeep = []) => {
       );
     }
 
-    // Use reduce to build the object, but only with the headers we decided to process.
     return headersToProcess.reduce((obj, header, i) => {
       const originalIndex = headerIndices[i];
       obj[header] = values[originalIndex];
       return obj;
     }, {});
   });
-
+  console.log("Parsed JSON Array:", jsonArray);
   return jsonArray;
 };

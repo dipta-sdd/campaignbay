@@ -311,7 +311,7 @@ if(! function_exists('campaignbay_log')) {
 		$log_level = is_string($level) ? strtoupper($level) : (is_array($level) || is_object($level) ? print_r($level, true) : '');
 		$log_entry = sprintf(
 			"[%s] [%s]: %s\n",
-			gmdate('Y-m-d H:i:s'),
+			current_time('mysql'),
 			$log_level,
 			$formatted_message
 		);

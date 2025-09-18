@@ -702,7 +702,9 @@ const CampaignsEdit = () => {
                       onDateTimeChange={(date) => {
                         setStartDate(date);
                       }}
-                      disabled={!scheduleEnabled}
+                      disabled={
+                        !scheduleEnabled || campaignStatus !== "scheduled"
+                      }
                     />
                     {renderError(errors?.start_datetime, false)}
                   </div>
