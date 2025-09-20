@@ -4,7 +4,7 @@ Tags: woocommerce, discounts, sale, dynamic pricing, bulk discount
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 0.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -97,19 +97,13 @@ You can find the complete, detailed user guide by navigating to `Campaigns > Hel
 
 == Changelog ==
 
-= 1.0.0 =
+= 0.0.1 =
 *   Initial release of CampaignBay!
+= 0.0.7 =
+*   Fixed error in importing campaign with tiers.
 
 == Upgrade Notice ==
 
-= 1.0.0 =
+= 0.0.7 =
 *   Initial release. We recommend backing up your site before installing for the first time.
 
-== Licensing ==
-
-This WordPress plugin is a split-licensed product.
-
-*   The PHP code is licensed under the GPLv2 (or later) as a derivative work of WordPress. You can find the full license text at https://www.gnu.org/licenses/gpl-2.0.html.
-*   All other assets, including but not limited to JavaScript and CSS, are licensed under the Envato Market Split License.
-
-This product is sold exclusively on the Envato Market (CodeCanyon). Redistribution is strictly prohibited.

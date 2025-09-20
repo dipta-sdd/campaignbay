@@ -118,7 +118,6 @@ class Campaign {
 	 */
 	public static function create( $args ) {
 
-		// campaignbay_log( 'Creating campaign with args: ' . print_r( $args, true ), 'DEBUG' );
 
 		campaignbay_log( 'Creating campaign with args tiers: ' . print_r( $args['tiers'], true ), 'DEBUG' );
 		$validator = new Validator( $args );

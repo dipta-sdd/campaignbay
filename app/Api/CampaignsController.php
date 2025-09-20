@@ -537,9 +537,9 @@ class CampaignsController extends ApiController {
 				'end_datetime'       => isset( $campaign_data['end_datetime'] ) && ! empty($campaign_data['end_datetime']) ? sanitize_text_field( $campaign_data['end_datetime'] ) : null,
 
 				'tiers'     => isset( $campaign_data['tiers'] ) && ! empty($campaign_data['tiers']) ?  $campaign_data['tiers'] : array(),
-				'conditions'         => isset( $campaign_data['conditions'] ) && ! empty($campaign_data['conditions']) ? json_decode( $campaign_data['conditions'], true ) : null,
-				'settings'           => isset( $campaign_data['settings'] ) && ! empty($campaign_data['settings']) ? json_decode( $campaign_data['settings'], true ) : null,
-				
+				'conditions'         => isset( $campaign_data['conditions'] ) && ! empty($campaign_data['conditions']) ? $campaign_data['conditions'] : null,
+				'settings'           => isset( $campaign_data['settings'] ) && ! empty($campaign_data['settings']) ? $campaign_data['settings'] : null,
+
 				'usage_limit'        => isset( $campaign_data['usage_limit'] ) && is_numeric($campaign_data['usage_limit']) ? absint( $campaign_data['usage_limit'] ) : null,
 				'usage_count'        => isset( $campaign_data['usage_count'] ) ? absint( $campaign_data['usage_count'] ) : 0, // Allow importing a previous usage count
 			);
