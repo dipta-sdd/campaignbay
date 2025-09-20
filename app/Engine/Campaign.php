@@ -289,6 +289,7 @@ class Campaign {
 		$tmp_tiers = array();
 		$data = $validator->get_validated_data();
 		$data['target_ids'] = wp_json_encode(  isset( $data['target_ids'] ) ? $data['target_ids'] : $this->data->target_ids ?? '[]' );
+		
 		if($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
 			foreach( $data['tiers'] as $tier ) {
 				$tier_validator = new Validator( $tier );
