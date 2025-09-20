@@ -14,6 +14,8 @@ import {
   edit,
   check,
   cancelCircleFilled,
+  copy,
+  copySmall,
 } from "@wordpress/icons";
 import apiFetch from "@wordpress/api-fetch";
 import {
@@ -356,7 +358,6 @@ const Campaigns = () => {
         ),
         "error"
       );
-      console.log(error);
     }
   };
 
@@ -376,6 +377,26 @@ const Campaigns = () => {
       " " +
       (tier?.type === "percentage" ? "%" : woocommerce_currency_symbol)
     );
+  };
+
+  const duplicateCampaign = async (campaignId) => {
+    try {
+      const response = await apiFetch({
+        path: `/campaignbay/v1/campaigns/${campaignId}/duplicate`,
+        method: "POST",
+      });
+      addToast(
+        __("Campaign duplicated successfully.", "campaignbay"),
+        "success"
+      );
+      fetchCampaigns();
+    } catch (error) {
+      addToast(
+        __("Error duplicating campaign. Please try again.", "campaignbay"),
+        "error"
+      );
+      isLoading(false);
+    }
   };
 
   return (
@@ -598,6 +619,14 @@ const Campaigns = () => {
                               icon: edit,
                               onClick: () =>
                                 navigate(`/campaigns/${campaign.id}`),
+                            },
+                            {
+                              title: "Duplicate",
+                              icon: copySmall,
+                              onClick: async () => {
+                                setIsLoading(true);
+                                duplicateCampaign(campaign.id);
+                              },
                             },
                             {
                               title: "Delete",

@@ -146,6 +146,26 @@ class CampaignsController extends ApiController {
 			)
 		);
 
+		// campaigns/duplicate
+		register_rest_route(
+			$namespace,
+			'/' . $this->rest_base . '/(?P<id>[\d]+)' . '/duplicate',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'duplicate_item' ),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'args'                => array(
+						'id' => array(
+							'description' => __( 'Unique identifier for the campaign to duplicate.', 'campaignbay' ),
+							'type'        => 'integer',
+							'required'    => true,
+						),
+					),
+				),
+			)
+		);
+
 		// campaigns/bulk
 		register_rest_route(
 			$namespace,
@@ -478,6 +498,51 @@ class CampaignsController extends ApiController {
 			),
 			200
 		);
+	}
+
+	public function duplicate_item( $request){
+		try{
+			$id       = (int) $request['id'];
+			$campaign = new Campaign( $id );
+
+			if ( ! $campaign ) {
+				return new WP_Error( 'rest_campaign_not_found', __( 'Campaign not found.', 'campaignbay' ), array( 'status' => 404 ) );
+			}
+
+			$new_campaign = $campaign->create( array(
+				'title' => $campaign->get_title() . ' (Copy)',
+				'type' => $campaign->get_type(),
+				'status' => $campaign->get_status(),
+
+				'discount_type' => $campaign->get_discount_type(),
+				'discount_value' => $campaign->get_discount_value(),
+				'tiers' => $campaign->get_tiers(),
+
+				'target_type' => $campaign->get_target_type(),
+				'target_ids' => $campaign->get_target_ids(),
+				'is_exclude' => $campaign->get_is_exclude(),
+				'exclude_sale_items' => $campaign->get_exclude_sale_items(),
+
+				'schedule_enabled' => $campaign->get_schedule_enabled(),
+				'start_datetime' => $campaign->get_start_datetime(),
+				'end_datetime' => $campaign->get_end_datetime(),
+
+				'conditions' => $campaign->get_conditions(),
+				'settings' => $campaign->get_settings(),
+				'usage_limit' => $campaign->get_usage_limit(),
+			) );
+			if ( is_wp_error( $new_campaign ) ) {
+				return $new_campaign;
+			}
+
+			$data     = $this->prepare_item_for_response( $new_campaign, $request );
+			$response = new WP_REST_Response( $data, 201 );
+			$response->header( 'Location', rest_url( sprintf( '%s/%s/%d', $this->namespace . $this->version, $this->rest_base, $new_campaign->get_id() ) ) );
+
+			return $response;
+		} catch( \Exception $e ){
+			return new WP_Error( 'rest_duplicate_failed', __( 'Failed to duplicate campaign.', 'campaignbay' ), array( 'status' => 500 ) );
+		}
 	}
 
 	/**

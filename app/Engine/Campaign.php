@@ -151,6 +151,8 @@ class Campaign {
 
 		$data = $validator->get_validated_data();
 		$data['target_ids'] = wp_json_encode(  isset( $data['target_ids'] ) ? $data['target_ids'] : $this->data->target_ids ?? '[]' );
+		$data['conditions'] = wp_json_encode(  isset( $data['conditions'] ) ? $data['conditions'] : $this->data->conditions ?? '[]' );
+		$data['settings'] = wp_json_encode(  isset( $data['settings'] ) ? $data['settings'] : $this->data->settings ?? '[]' );
 		$data['usage_count'] = 0;
 		$data['date_created'] = current_time( 'mysql' );
 		$data['date_modified'] = current_time( 'mysql' );
@@ -195,12 +197,9 @@ class Campaign {
 				}
 				$tmp_tiers[] = $tier_validator->get_validated_data();
 			}
-
-		// campaignbay_log( 'Creating campaign with tmp tiers: ' . print_r( $tmp_tiers, true ), 'DEBUG' );
 		}
 
 		$data['tiers'] = wp_json_encode( isset( $tmp_tiers ) ?  $tmp_tiers  : [] );
-		// campaignbay_log( 'Creating campaign with data: ' . print_r( $data, true ), 'DEBUG' );
 		
 		try{
 			global $wpdb;
@@ -579,6 +578,16 @@ class Campaign {
 	}
 
 	/**
+	 * Gets the usage limit.
+	 *
+	 * @since 1.0.0
+	 * @return int|null The usage limit, or null if unlimited.
+	 */
+	public function get_usage_limit() {
+		return isset( $this->data->usage_limit ) ? intval( $this->data->usage_limit ) : null;
+	}
+
+	/**
 	 * Gets whether scheduling is enabled.
 	 *
 	 * @since 1.0.0
@@ -590,6 +599,32 @@ class Campaign {
 
 	
 
+	/**
+	 * Gets the start datetime string.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The start datetime in 'Y-m-d H:i:s' format, or null if not set.
+	 */
+	public function get_start_datetime() {
+		if( empty( $this->data->start_datetime ) ) {
+			return null;
+		}
+		return $this->data->start_datetime;
+	}
+
+	/**
+	 * Gets the end datetime string.
+	 *
+	 * @since 1.0.0
+	 * @return string|null The end datetime in 'Y-m-d H:i:s' format, or null if not set.
+	 */
+	public function get_end_datetime() {
+		if( empty( $this->data->end_datetime ) ) {
+			return null;
+		}
+		return $this->data->end_datetime;
+	}
+	
 	/**
 	 * Gets the start datetime string and converts it to the UTC timezone.
 	 *
