@@ -19,6 +19,8 @@ import Navbar from "../components/Navbar";
 import DateTimePicker from "../components/DateTimePicker";
 import CbCheckbox from "../components/CbCheckbox";
 import Tooltip from "../components/tooltip";
+import CampaignSettings from "../components/CampaignSettings";
+import { renderError } from "./CampaignsEdit";
 
 const CampaignsAdd = () => {
   const { wpSettings, woocommerce_currency_symbol } = useCbStore();
@@ -64,6 +66,8 @@ const CampaignsAdd = () => {
   const [endDate, setEndDate] = useState("");
   const [enableUsageLimit, setEnableUsageLimit] = useState(false);
   const [usageLimit, setUsageLimit] = useState(null);
+
+  const [settings, setSettings] = useState({});
 
   const { addToast } = useToast();
   const [categories, setCategories] = useState([]);
@@ -182,6 +186,7 @@ const CampaignsAdd = () => {
           : campaignType === "earlybird"
           ? ebTiers
           : [],
+      settings: getSettings(),
     };
     try {
       const response = await apiFetch({
@@ -205,17 +210,28 @@ const CampaignsAdd = () => {
     }
   };
 
-  const renderError = (error, negativeMargin = true) => {
-    if (!error) return null;
-    return (
-      <p
-        className={`campaignbay-text-red-600 ${
-          negativeMargin ? "campaignbay--mt-2" : "campaignbay-mt-1"
-        } campaignbay-text-xs`}
-      >
-        {error.message}
-      </p>
-    );
+  const getSettings = () => {
+    let tmpSettings = {};
+    if (campaignType === "earlybird" || campaignType === "scheduled") {
+      if (settings?.display_as_regular_price !== undefined) {
+        tmpSettings["display_as_regular_price"] =
+          settings.display_as_regular_price;
+      }
+      if (
+        settings?.message_format !== undefined &&
+        settings?.message_format !== ""
+      ) {
+        tmpSettings["message_format"] = settings.message_format;
+      }
+    } else if (campaignType === "quantity") {
+      if (settings?.enable_quantity_table !== undefined) {
+        tmpSettings["enable_quantity_table"] = settings.enable_quantity_table;
+      }
+      if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
+        tmpSettings["apply_as"] = settings.apply_as;
+      }
+    }
+    return tmpSettings;
   };
 
   return (
@@ -460,6 +476,12 @@ const CampaignsAdd = () => {
             {renderError(errors?.discount_value)}
           </div>
         )}
+        <CampaignSettings
+          settings={settings}
+          setSettings={setSettings}
+          errors={errors?.settings}
+          type={campaignType}
+        />
         <div className="cb-form-input-con">
           <label htmlFor="start-time">
             {__("OTHER CONFIGURATIONS", "campaignbay")} <Required />{" "}

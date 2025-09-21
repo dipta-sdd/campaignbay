@@ -210,6 +210,7 @@ class Admin {
 					'dateFormat' => get_option( 'date_format' ),
 					'timeFormat' => get_option( 'time_format' ),
 				),
+				'campaignbay_settings' => get_option( CAMPAIGNBAY_OPTION_NAME, campaignbay_default_options() )
 			)
 		);
 	

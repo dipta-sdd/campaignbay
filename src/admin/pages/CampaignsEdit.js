@@ -22,6 +22,7 @@ import Navbar from "../components/Navbar";
 import CbCheckbox from "../components/CbCheckbox";
 import Tooltip from "../components/tooltip";
 import DateTimePicker from "../components/DateTimePicker";
+import CampaignSettings from "../components/CampaignSettings";
 const CampaignsEdit = () => {
   const { wpSettings, woocommerce_currency_symbol } = useCbStore();
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const CampaignsEdit = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const [campaignTitle, setCampaignTitle] = useState("fgdf");
+  const [campaignTitle, setCampaignTitle] = useState("");
   const [campaignStatus, setCampaignStatus] = useState("active");
   const [campaignType, setCampaignType] = useState("quantity");
   const [discountType, setDiscountType] = useState("percentage");
@@ -73,6 +74,8 @@ const CampaignsEdit = () => {
   const [endDate, setEndDate] = useState("");
   const [enableUsageLimit, setEnableUsageLimit] = useState(false);
   const [usageLimit, setUsageLimit] = useState(null);
+
+  const [settings, setSettings] = useState({});
 
   const { addToast } = useToast();
   const [categories, setCategories] = useState([]);
@@ -136,6 +139,7 @@ const CampaignsEdit = () => {
           : campaignType === "earlybird"
           ? ebTiers
           : [],
+      settings: getSettings(),
     };
 
     try {
@@ -163,7 +167,6 @@ const CampaignsEdit = () => {
     }
   };
 
-  console.log(errors);
   const handleDeleteCampaign = async () => {
     try {
       setIsDeleting(true);
@@ -266,6 +269,7 @@ const CampaignsEdit = () => {
       } else if (response.type === "earlybird") {
         setEBTiers([...response.tiers]);
       }
+      setSettings({ ...response.settings } || {});
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching campaign:", error);
@@ -276,18 +280,28 @@ const CampaignsEdit = () => {
       setIsLoading(false);
     }
   };
-
-  const renderError = (error, negativeMargin = true) => {
-    if (!error) return null;
-    return (
-      <p
-        className={`campaignbay-text-red-600 ${
-          negativeMargin ? "campaignbay--mt-2" : "campaignbay-mt-1"
-        } campaignbay-text-xs`}
-      >
-        {error.message}
-      </p>
-    );
+  const getSettings = () => {
+    let tmpSettings = {};
+    if (campaignType === "earlybird" || campaignType === "scheduled") {
+      if (settings?.display_as_regular_price !== undefined) {
+        tmpSettings["display_as_regular_price"] =
+          settings.display_as_regular_price;
+      }
+      if (
+        settings?.message_format !== undefined &&
+        settings?.message_format !== ""
+      ) {
+        tmpSettings["message_format"] = settings.message_format;
+      }
+    } else if (campaignType === "quantity") {
+      if (settings?.enable_quantity_table !== undefined) {
+        tmpSettings["enable_quantity_table"] = settings.enable_quantity_table;
+      }
+      if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
+        tmpSettings["apply_as"] = settings.apply_as;
+      }
+    }
+    return tmpSettings;
   };
 
   return (
@@ -410,6 +424,13 @@ const CampaignsEdit = () => {
               />
               {renderError(errors?.title)}
             </div>
+
+            <CampaignSettings
+              settings={settings}
+              setSettings={setSettings}
+              errors={errors}
+              type={campaignType}
+            />
 
             <div className="cb-form-input-con">
               <label htmlFor="selection-type">
@@ -578,6 +599,12 @@ const CampaignsEdit = () => {
                 {renderError(errors?.discount_value)}
               </div>
             )}
+            <CampaignSettings
+              settings={settings}
+              setSettings={setSettings}
+              errors={errors?.settings}
+              type={campaignType}
+            />
             <div className="cb-form-input-con">
               <label htmlFor="start-time">
                 {__("OTHER CONFIGURATIONS", "campaignbay")} <Required />{" "}
@@ -768,3 +795,16 @@ const CampaignsEdit = () => {
 };
 
 export default CampaignsEdit;
+
+export const renderError = (error, negativeMargin = true) => {
+  if (!error) return null;
+  return (
+    <p
+      className={`campaignbay-text-red-600 ${
+        negativeMargin ? "campaignbay--mt-2" : "campaignbay-mt-1"
+      } campaignbay-text-xs`}
+    >
+      {error.message}
+    </p>
+  );
+};

@@ -93,12 +93,6 @@ class Validator {
 				$other_field     = array_shift( $rule_params );
 				$required_values = $rule_params;
 				$other_value     = $this->data[ $other_field ] ?? null;
-				error_log(print_r(array(
-					'rule_params' => $rule_params,
-					'other_field' => $other_field,
-					'required_values' => $required_values,
-					'other_value' => $other_value
-				), true));
 
 				if ( $other_field && in_array( $other_value, $required_values, true ) ) {
 					if(is_array($value)){

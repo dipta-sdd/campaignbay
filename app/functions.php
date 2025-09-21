@@ -29,9 +29,9 @@ if ( ! function_exists( 'campaignbay_default_options' ) ) :
 			* Global Settings Tab
 			==================================================*/
 			'global_enableAddon'     => true,
-			'global_defaultPriority' => 10,
-			'global_calculationMode' => 'after_tax',
-			'global_decimalPlaces'   => 2,
+			'global_calculate_discount_from' => 'sale_price',
+			'position_to_show_bulk_table' => 'below_cart',
+			'position_to_show_discount_bar' => 'above_cart',
 
 			/*==================================================
 			* Performance & Caching (from Global Tab)
@@ -42,41 +42,19 @@ if ( ! function_exists( 'campaignbay_default_options' ) ) :
 			* Debugging & Logging (from Global Tab)
 			==================================================*/
 			'debug_enableMode'       => true,
-			'debug_logLevel'         => 'errors_only',
 
 			/*==================================================
 			* Product Settings Tab
 			==================================================*/
-			'product_showDiscountedPrice' => true,
 			'product_messageFormat'       => esc_html( 'You save {percentage_off}!' ),
-			'product_bogoMessageFormat'   => esc_html( '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!' ),
 			'product_enableQuantityTable' => true,
-			'product_excludeSaleItems'    => true,
 			'product_priorityMethod'      => 'apply_highest',
 
 			/*==================================================
 			* Cart Settings Tab
 			==================================================*/
-			'cart_allowWcCouponStacking'  => true,
-			'cart_allowCampaignStacking'  => false,
-			'cart_savedMessageFormat'     => esc_html( 'You saved {saved_amount} on this order!' ),
-			'cart_showNextDiscountBar'    => true,
-			'cart_nextDiscountFormat'     => esc_html( 'Spend {remaining_amount} more for {discount_percentage} off!' ),
-			'cart_bogoMessageFormat'      => esc_html( 'Buy {buy_quantity} more and get {get_product_quantity} {get_product} for free!' ),
-			'cart_showDiscountBreakdown'  => true,
-
-			/*==================================================
-			* Promotion Settings Tab
-			==================================================*/
-			'promo_enableBar'             => false,
-			'promo_barPosition'           => 'top_of_page',
-			'promo_barBgColor'            => '#000000',
-			'promo_barTextColor'          => '#FFFFFF',
-			'promo_barContent'            => esc_html( 'FLASH SALE! {percentage_off} on all shirts!' ),
-			'promo_barLinkUrl'            => '',
-			'promo_barDisplayPages'       => array( 'shop_page', 'product_pages' ),
-			'promo_enableCustomBadges'    => true,
-
+			'cart_allowWcCouponStacking'     => false,
+			'cart_allowCampaignStacking'     => false,
 			/*==================================================
 			* Advance Settings Tab
 			==================================================*/

@@ -117,9 +117,7 @@ class Campaign {
 	 * @throws Exception If validation fails.
 	 */
 	public static function create( $args ) {
-
-
-		campaignbay_log( 'Creating campaign with args tiers: ' . print_r( $args['tiers'], true ), 'DEBUG' );
+		// validating main data
 		$validator = new Validator( $args );
 		$rules = [
 			'title'           => 'required|max:255',
@@ -143,32 +141,17 @@ class Campaign {
 			'settings'           => 'nullable|array',
 			'usage_limit'		 => 'nullable|integer'
 		];
-
+		// checking validation
 		if ( ! $validator->validate( $rules ) ) {
-			campaignbay_log( 'Validation errors: ' . print_r( $validator->get_errors(), true ), 'ERROR' );
 			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() , 'data' => $args ) );
 		}
-
+		// retriving validated data
 		$data = $validator->get_validated_data();
-		$data['target_ids'] = wp_json_encode(  isset( $data['target_ids'] ) ? $data['target_ids'] : $this->data->target_ids ?? '[]' );
-		$data['conditions'] = wp_json_encode(  isset( $data['conditions'] ) ? $data['conditions'] : $this->data->conditions ?? '[]' );
-		$data['settings'] = wp_json_encode(  isset( $data['settings'] ) ? $data['settings'] : $this->data->settings ?? '[]' );
-		$data['usage_count'] = 0;
-		$data['date_created'] = current_time( 'mysql' );
-		$data['date_modified'] = current_time( 'mysql' );
-		$data['created_by'] = get_current_user_id();
-		$data['updated_by'] = get_current_user_id();
 
+		// validating tiers 
 		$tmp_tiers = array();
-		
 		if($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
-
-		// campaignbay_log( 'Creating campaign with arg: ' . print_r( $args, true ), 'DEBUG' );
-		// campaignbay_log( 'Creating campaign with tiers: ' . print_r( $args['tiers'], true ), 'DEBUG' );
 			foreach( $data['tiers'] as $tier ) {
-
-		// campaignbay_log( 'Creating campaign with tier: ' . print_r( $tier, true ), 'DEBUG' );
-
 				$tier_validator = new Validator( $tier );
 				$tier_rules = array();
 				if($data['type'] === 'quantity') {
@@ -198,9 +181,27 @@ class Campaign {
 				$tmp_tiers[] = $tier_validator->get_validated_data();
 			}
 		}
-
-		$data['tiers'] = wp_json_encode( isset( $tmp_tiers ) ?  $tmp_tiers  : [] );
 		
+
+		// validating settings
+		$validated_settings = self::get_validated_settings( $data['settings'] ?? array(), $data['type']);
+		if ( is_wp_error( $validated_settings ) ) {
+			return $validated_settings;
+		}
+
+		// json encoding json fields
+
+		$data['tiers'] = wp_json_encode( $tmp_tiers  ?  $tmp_tiers  : [] );
+		$data['target_ids'] = wp_json_encode(  isset( $data['target_ids'] ) ? $data['target_ids'] :'[]' );
+		$data['conditions'] = wp_json_encode(  isset( $data['conditions'] ) ? $data['conditions'] :'[]' );
+		$data['settings'] = wp_json_encode(  isset( $data['settings'] ) ? $data['settings'] : '[]' );
+
+		// adding other default data
+		$data['usage_count'] = 0;
+		$data['date_created'] = current_time( 'mysql' );
+		$data['date_modified'] = current_time( 'mysql' );
+		$data['created_by'] = get_current_user_id();
+		$data['updated_by'] = get_current_user_id();
 		try{
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
@@ -285,11 +286,9 @@ class Campaign {
 			campaignbay_log( 'Validation errors: ' . print_r( $validator->get_errors(), true ), 'ERROR' );
 			return new WP_Error( 'rest_validation_error', $validator->get_first_error(), array( 'status' => 400, 'details' => $validator->get_errors() , 'data' => $args ) );
 		}
-		
-		$tmp_tiers = array();
 		$data = $validator->get_validated_data();
-		$data['target_ids'] = wp_json_encode(  isset( $data['target_ids'] ) ? $data['target_ids'] : $this->data->target_ids ?? '[]' );
-		
+		// validating tiers
+		$tmp_tiers = array();
 		if($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
 			foreach( $data['tiers'] as $tier ) {
 				$tier_validator = new Validator( $tier );
@@ -321,8 +320,18 @@ class Campaign {
 				$tmp_tiers[] = $tier_validator->get_validated_data();
 			}
 		}
-
+		// validating settings
+		$validated_settings = $this->get_validated_settings( $data['settings'] ?? array(), $data['type']);
+		if ( is_wp_error( $validated_settings ) ) {
+			return $validated_settings;
+		}
+		// json encoding json fields
+		$data['target_ids'] =  isset( $data['target_ids'] ) ? wp_json_encode( $data['target_ids'] ) : wp_json_encode( $this->data->target_ids ?? '[]' ) ;
+		$data['settings'] =  $validated_settings? wp_json_encode( $validated_settings ) : wp_json_encode($this->data->settings ??  '[]' ) ;
+		$data['conditions'] =  isset( $data['conditions'] ) ? wp_json_encode( $data['conditions'] ) : wp_json_encode( $this->data->conditions ?? '[]' ) ;
 		$data['tiers'] = wp_json_encode(  isset( $tmp_tiers ) ? $tmp_tiers : $this->data->tiers ?? '[]' );
+		
+		// adding other default data
 		$data['date_modified'] = current_time( 'mysql' );
 		$data['updated_by'] = get_current_user_id();
 
@@ -429,6 +438,35 @@ class Campaign {
 		return false !== $result;
 	}
 
+
+	public static function get_validated_settings( $settings , $type) {
+		if($settings === null || !is_array($settings) || empty($settings)) {
+			return null;
+		}
+		$validator = new Validator( $settings );
+		if($type === 'scheduled' || $type === 'earlybird') {
+			$rules = [
+			'display_as_regular_price' => 'nullable|boolean',
+			'message_format' => 'nullable|string',
+			];
+		} else if($type === 'quantity') {
+			$rules = [
+				'enable_quantity_table' => 'nullable|boolean',
+				'apply_as' => 'nullable|string|in:line_total,fee,coupon'
+			];
+		}
+		if ( ! $validator->validate( $rules ) ) {
+			return new WP_Error(
+				'rest_validation_error', $validator->get_first_error(), 
+				array( 'status' => 400, 
+				'details' => array( 'settings' => $validator->get_errors())
+			 	) 
+			);
+		}
+		
+
+		return $validator->get_validated_data();
+	}
 
 
 	/**

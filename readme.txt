@@ -101,6 +101,10 @@ You can find the complete, detailed user guide by navigating to `Campaigns > Hel
 *   Initial release of CampaignBay!
 = 0.0.7 =
 *   Fixed error in importing campaign with tiers.
+= 0.0.8 =
+*   Feature - One click Campaign Duplication.
+= 0.0.9 =
+*   Refactored settings.
 
 == Upgrade Notice ==
 

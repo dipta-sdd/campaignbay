@@ -44,80 +44,28 @@ const Settings = () => {
       );
     }
   };
-  // {
-  // "global_enableAddon": false,
-  // "global_defaultPriority": 10,
-  // "global_calculationMode": "after_tax",
-  // "global_decimalPlaces": 2,
-  // "perf_enableCaching": true,
-  // "debug_enableMode": false,
-  // "debug_logLevel": ["errors_only"],
 
-  // "product_showDiscountedPrice": true,
-  // "product_messageFormat": "You save {percentage_off}!",
-  // "product_enableQuantityTable": true,
-  // "product_excludeSaleItems": true,
-  // "product_priorityMethod": "apply_highest",
-
-  // "cart_allowWcCouponStacking": false,
-  // "cart_allowCampaignStacking": false,
-
-  // "cart_savedMessageFormat": "You saved {saved_amount} on this order!",
-  // "cart_showNextDiscountBar": true,
-  // "cart_nextDiscountFormat": "Spend {remaining_amount} more for {discount_percentage} off!",
-  // "cart_showDiscountBreakdown": true,
-
-  // "promo_enableBar": false,
-  // "promo_barPosition": "top_of_page",
-  // "promo_barBgColor": "#000000",
-  // "promo_barTextColor": "#FFFFFF",
-  // "promo_barContent": "FLASH SALE! {percentage_off} on all shirts!",
-  // "promo_barLinkUrl": "",
-  // "promo_barDisplayPages": [
-  //     "shop_page",
-  //     "product_pages"
-  // ],
-  // "promo_enableCustomBadges": true,
-  // "advanced_deleteAllOnUninstall": false,
-  // "advanced_customCss": "",
-  // "advanced_customJs": "",
-  // "_locale": "user"
-  // }
   useEffect(() => {
     if (!settings) {
       return;
     }
     setProductSettings({
-      product_showDiscountedPrice: settings.product_showDiscountedPrice,
       product_messageFormat: settings.product_messageFormat,
       product_enableQuantityTable: settings.product_enableQuantityTable,
-      product_excludeSaleItems: settings.product_excludeSaleItems,
       product_priorityMethod: settings.product_priorityMethod,
     });
 
     setGlobalSettings({
       global_enableAddon: settings.global_enableAddon,
-      global_defaultPriority: settings.global_defaultPriority,
-      global_calculationMode: settings.global_calculationMode,
-      global_decimalPlaces: settings.global_decimalPlaces,
+      global_calculate_discount_from: settings.global_calculate_discount_from,
+      position_to_show_bulk_table: settings.position_to_show_bulk_table,
+      position_to_show_discount_bar: settings.position_to_show_discount_bar,
       perf_enableCaching: settings.perf_enableCaching,
       debug_enableMode: settings.debug_enableMode,
-      debug_logLevel: settings.debug_logLevel,
-    });
-    setPromotionSettings({
-      promo_enableBar: settings.promo_enableBar,
-      promo_barPosition: settings.promo_barPosition,
-      promo_barBgColor: settings.promo_barBgColor,
-      promo_barTextColor: settings.promo_barTextColor,
-      promo_barContent: settings.promo_barContent,
     });
     setCartSettings({
       cart_allowWcCouponStacking: settings.cart_allowWcCouponStacking,
       cart_allowCampaignStacking: settings.cart_allowCampaignStacking,
-      cart_savedMessageFormat: settings.cart_savedMessageFormat,
-      cart_showNextDiscountBar: settings.cart_showNextDiscountBar,
-      cart_nextDiscountFormat: settings.cart_nextDiscountFormat,
-      cart_showDiscountBreakdown: settings.cart_showDiscountBreakdown,
     });
     setAdvancedSettings({
       advanced_deleteAllOnUninstall: settings.advanced_deleteAllOnUninstall,
@@ -147,11 +95,7 @@ const Settings = () => {
             ...cartSettings,
           };
           break;
-        case "promotion":
-          data = {
-            ...promotionSettings,
-          };
-          break;
+
         case "advanced":
           data = {
             ...advancedSettings,
@@ -226,10 +170,6 @@ const Settings = () => {
             name: "cart",
             title: "Cart Settings",
           },
-          // {
-          //     name: 'promotion',
-          //     title: 'Promotion Settings'
-          // },
           {
             name: "advanced",
             title: "Advanced Settings",
@@ -261,14 +201,6 @@ const Settings = () => {
                   <CartSettings
                     cartSettings={cartSettings}
                     setCartSettings={setCartSettings}
-                  />
-                );
-              case "promotion":
-                setFormData("promotion");
-                return (
-                  <PromotionSettings
-                    promotionSettings={promotionSettings}
-                    setPromotionSettings={setPromotionSettings}
                   />
                 );
               case "advanced":

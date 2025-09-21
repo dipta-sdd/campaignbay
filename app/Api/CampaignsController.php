@@ -609,7 +609,7 @@ class CampaignsController extends ApiController {
 				'usage_count'        => isset( $campaign_data['usage_count'] ) ? absint( $campaign_data['usage_count'] ) : 0, // Allow importing a previous usage count
 			);
 
-			campaignbay_log( 'Importing campaign:'. $args['title']  . print_r($args, true ), true );
+			// campaignbay_log( 'Importing campaign:'. $args['title']  . print_r($args, true ), true );
 			$result = Campaign::create( $args );
 
 			if ( is_wp_error( $result ) ) {

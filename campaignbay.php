@@ -7,7 +7,7 @@
  * Requires PHP:      7.0
  * Requires Plugins:  woocommerce
  * WC requires at least: 6.1
- * Version:           0.0.7
+ * Version:           0.0.9
  * Author:            WP Anchor Bay
  * Author URI:        https://wpanchorbay.com
  * License:           GPLv2 or later

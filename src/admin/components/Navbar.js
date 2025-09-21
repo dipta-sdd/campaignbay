@@ -17,11 +17,6 @@ export default function Navbar() {
       path: "/campaigns",
     },
 
-    // {
-    //   label: "Add Campaign",
-    //   path: "/campaigns/add",
-    // },
-
     {
       label: "Settings",
       path: "/settings",
