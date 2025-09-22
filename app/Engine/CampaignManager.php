@@ -142,7 +142,7 @@ class CampaignManager {
 		
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$table_name} WHERE status = %s ORDER BY priority ASC, date_created ASC",
+				"SELECT * FROM {$table_name} WHERE status = %s ORDER BY date_created ASC",
 				'active'
 			)
 		);

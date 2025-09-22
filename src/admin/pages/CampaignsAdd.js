@@ -252,66 +252,73 @@ const CampaignsAdd = () => {
         </div>
       </div>
       <div className="cb-page-container">
-        <div className="cb-form-input-con">
-          <label htmlFor="campaign-type">
-            {__("SELECT DISCOUNT TYPE", "campaignbay")} <Required />
-          </label>
-          <select
-            type="text"
-            id="campaign-type"
-            className={`wpab-input w-100 ${
-              errors?.type ? "wpab-input-error" : ""
-            }`}
-            value={campaignType}
-            onChange={(e) => handleCampaignTypeChange(e.target.value)}
-          >
-            <option value="scheduled">
-              {__("Scheduled Discount", "campaignbay")}
-            </option>
-            <option value="quantity">
-              {__("Quantity Based Discount", "campaignbay")}
-            </option>
-            <option value="earlybird">
-              {__("EarlyBird Discount", "campaignbay")}
-            </option>
-          </select>
-          {renderError(errors?.type)}
-        </div>
+        <div className="cb-form-input-con ">
+          <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4 campaignbay-gap-[10px]">
+            <div className="cb-form-input-con campaignbay-col-span-2 !campaignbay-p-0">
+              <label htmlFor="campaign-title">
+                {__("Campaign Title", "campaignbay")} <Required />
+              </label>
+              <input
+                type="text"
+                id="campaign-title"
+                className={`wpab-input w-100 ${
+                  errors?.title ? "wpab-input-error" : ""
+                }`}
+                value={campaignTitle}
+                onChange={(e) => setCampaignTitle(e.target.value)}
+              />
+              {renderError(errors?.title)}
+            </div>
+            <div className="cb-form-input-con  !campaignbay-p-0">
+              <label htmlFor="campaign-type">
+                {__("SELECT DISCOUNT TYPE", "campaignbay")} <Required />
+              </label>
+              <select
+                type="text"
+                id="campaign-type"
+                className={`wpab-input w-100 ${
+                  errors?.type ? "wpab-input-error" : ""
+                }`}
+                value={campaignType}
+                onChange={(e) => handleCampaignTypeChange(e.target.value)}
+              >
+                <option value="scheduled">
+                  {__("Scheduled Discount", "campaignbay")}
+                </option>
+                <option value="quantity">
+                  {__("Quantity Based Discount", "campaignbay")}
+                </option>
+                <option value="earlybird">
+                  {__("EarlyBird Discount", "campaignbay")}
+                </option>
+              </select>
+              {renderError(errors?.type)}
+            </div>
 
-        <div className="cb-form-input-con">
-          <label htmlFor="campaign-status">
-            {__("SELECT STATUS", "campaignbay")} <Required />
-          </label>
-          <select
-            type="text"
-            id="campaign-status"
-            className={`wpab-input w-100 ${
-              errors?.status ? "wpab-input-error" : ""
-            }`}
-            value={campaignStatus}
-            onChange={(e) => handleCampaignStatusChange(e.target.value)}
-          >
-            <option value="active">{__("Active", "campaignbay")}</option>
-            <option value="inactive">{__("Inactive", "campaignbay")}</option>
-            <option value="scheduled">{__("Scheduled", "campaignbay")}</option>
-          </select>
-          {renderError(errors?.status)}
-        </div>
-
-        <div className="cb-form-input-con">
-          <label htmlFor="campaign-title">
-            {__("Campaign Title", "campaignbay")} <Required />
-          </label>
-          <input
-            type="text"
-            id="campaign-title"
-            className={`wpab-input w-100 ${
-              errors?.title ? "wpab-input-error" : ""
-            }`}
-            value={campaignTitle}
-            onChange={(e) => setCampaignTitle(e.target.value)}
-          />
-          {renderError(errors?.title)}
+            <div className="cb-form-input-con !campaignbay-p-0">
+              <label htmlFor="campaign-status">
+                {__("SELECT STATUS", "campaignbay")} <Required />
+              </label>
+              <select
+                type="text"
+                id="campaign-status"
+                className={`wpab-input w-100 ${
+                  errors?.status ? "wpab-input-error" : ""
+                }`}
+                value={campaignStatus}
+                onChange={(e) => handleCampaignStatusChange(e.target.value)}
+              >
+                <option value="active">{__("Active", "campaignbay")}</option>
+                <option value="inactive">
+                  {__("Inactive", "campaignbay")}
+                </option>
+                <option value="scheduled">
+                  {__("Scheduled", "campaignbay")}
+                </option>
+              </select>
+              {renderError(errors?.status)}
+            </div>
+          </div>
         </div>
 
         <div className="cb-form-input-con">
