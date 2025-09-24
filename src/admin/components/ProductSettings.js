@@ -23,11 +23,11 @@ const ProductSettings = ({ productSettings, setProductSettings }) => {
             "Use Placeholder like {percentage_off}, {ampount_of} .",
             "campaignbay"
           )}
-          value={productSettings.product_messageFormat}
+          value={productSettings.product_message_format_percentage}
           onChange={(value) =>
             setProductSettings((prev) => ({
               ...prev,
-              product_messageFormat: value,
+              product_message_format_percentage: value,
             }))
           }
         />

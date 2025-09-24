@@ -774,7 +774,7 @@ class PricingEngine {
 		}
 		
 		// Get the format for the product summary message.
-		$format = campaignbay_get_options( 'product_messageFormat' );
+		$format = campaignbay_get_options( 'product_message_format_percentage' );
 		if( empty( $format ) ){
 			return null;
 		}

@@ -12,7 +12,7 @@ use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use WpabCb\Engine\Campaign;
+use WpabCb\Core\Campaign;
 
 /**
  * The REST API Controller for Activity Logs.

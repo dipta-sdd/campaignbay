@@ -14,7 +14,7 @@ use WP_REST_Response;
 use WP_Error;
 use DateTime;
 use DateInterval;
-use WpabCb\Engine\Campaign;
+use WpabCb\Core\Campaign;
 
 /**
  * The REST API Controller for the Dashboard.

@@ -430,13 +430,6 @@ const CampaignsEdit = () => {
               </div>
             </div>
 
-            <CampaignSettings
-              settings={settings}
-              setSettings={setSettings}
-              errors={errors}
-              type={campaignType}
-            />
-
             <div className="cb-form-input-con">
               <label htmlFor="selection-type">
                 {__("DISCOUNT TARGET", "campaignbay")} <Required />

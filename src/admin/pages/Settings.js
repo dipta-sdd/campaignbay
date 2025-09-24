@@ -50,7 +50,8 @@ const Settings = () => {
       return;
     }
     setProductSettings({
-      product_messageFormat: settings.product_messageFormat,
+      product_message_format_percentage:
+        settings.product_message_format_percentage,
       product_enableQuantityTable: settings.product_enableQuantityTable,
       product_priorityMethod: settings.product_priorityMethod,
     });

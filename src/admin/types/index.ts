@@ -90,7 +90,7 @@ export interface GlobalSettings {
 
 export interface ProductSettings {
   product_showDiscountedPrice: boolean;
-  product_messageFormat: string;
+  product_message_format_percentage: string;
   product_enableQuantityTable: boolean;
   product_excludeSaleItems: boolean;
   product_priorityMethod: 'apply_highest' | 'apply_lowest';

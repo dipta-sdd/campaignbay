@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Core;
+namespace WpabCb\Helper;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

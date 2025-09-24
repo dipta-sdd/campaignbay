@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use WpabCb\Admin\Admin;
 use WpabCb\Engine\CampaignManager;
 use WpabCb\Engine\PricingEngine;
+use WpabCb\Engine\DiscountManager;
 use WpabCb\Data\PostTypes;
 use WpabCb\Data\DbManager;
 use WpabCb\Api\SettingsController;
@@ -20,6 +21,7 @@ use WpabCb\Api\ActivityLogController;
 use WpabCb\Api\DashboardController;
 use WpabCb\Engine\OrderManager;
 use WpabCb\Core\Scheduler;
+use WpabCb\Helper\Loader;
 
 /**
  * The core plugin class.
@@ -120,22 +122,19 @@ class Plugin {
 
 		// Initialize API controllers
 		SettingsController::get_instance()->run();
-
 		CampaignsController::get_instance()->run();
-
 		LogsController::get_instance()->run();
-
 		ActivityLogController::get_instance()->run();
-
 		DashboardController::get_instance()->run(); 
-
+		Scheduler::get_instance()->run();
 		// Get instances of components that have hooks
+		$discount_manager = DiscountManager::get_instance();
 		$campaign_manager = CampaignManager::get_instance();
 		$pricing_engine = PricingEngine::get_instance();
 		$order_manager = OrderManager::get_instance();
 		$scheduler = Scheduler::get_instance();
-		$scheduler->run();
 		$components_with_hooks = array(
+			$discount_manager,
 			$campaign_manager,
 			$pricing_engine,
 			$order_manager,

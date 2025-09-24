@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Import necessary classes
-use WpabCb\Engine\Campaign;
+use WpabCb\Core\Campaign;
 use WpabCb\Engine\CampaignManager;
 use WP_Post;
 use WP_Query;

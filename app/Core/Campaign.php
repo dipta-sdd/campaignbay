@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Engine;
+namespace WpabCb\Core;
 
 /**
  * The file that defines the Campaign model class.
@@ -23,8 +23,9 @@ use Exception;
 use DateTime;
 use DateTimeZone;
 use WP_Error;
-use WpabCb\Core\Logger;
+use WpabCb\Helper\Logger;
 use WpabCb\Core\Validator;
+use WpabCb\Helper\Filter;
 
 /**
  * The Campaign model class.
@@ -84,10 +85,7 @@ class Campaign {
 			throw new Exception( 'Invalid campaign provided.' );
 		}
 
-		// Load applicable product IDs if targeting is set
-		if ( ! empty( $this->data->target_type ) ) {
-			$this->load_applicable_product_ids();
-		}
+		
 	}
 
 	
@@ -257,7 +255,10 @@ class Campaign {
 	 * @param array $args The campaign arguments to update.
 	 * @return bool True on success, false on failure.
 	 */
-	public function update( $args ) {
+	public function update( $args , $partial = false ) {
+		if($partial){
+			$args = array_merge( (array) $this->data, $args );
+		}
 		$validator = new Validator( $args );
 		$rules = [
 			'title'           => 'required|max:255',
@@ -277,8 +278,8 @@ class Campaign {
 			'start_datetime'     => 'datetime|required_if:schedule_enabled,1|required_if:status,scheduled|nullable',
 			'end_datetime'       => 'datetime|nullable|after:start_datetime',
 
-			'conditions'         => 'nullable|array',
-			'settings'           => 'nullable|array',
+			'conditions'         => 'nullable',
+			'settings'           => 'nullable',
 			'usage_limit'		 => 'nullable|integer'
 		];
 
@@ -364,7 +365,6 @@ class Campaign {
 
 			// Reload data
 			$this->load_data();
-			$this->load_applicable_product_ids();
 
 			/**
 			 * Fires after a campaign is updated and all its data is saved.
@@ -573,7 +573,7 @@ class Campaign {
 	 * @return array The campaign settings.
 	 */
 	public function get_settings() {
-		return $this->data->settings ?? array();
+		return json_decode( $this->data->settings, true ) ?? array();
 	}
 
 	/**
@@ -813,102 +813,6 @@ class Campaign {
 		return false;
 	}
 
-	/**
-	 * Populates the applicable_product_ids property based on the campaign's targeting rules.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 */
-	private function load_applicable_product_ids() {
-		$target_type = $this->data->target_type;
-		$target_ids = $this->data->target_ids;
-
-		if ( 'entire_store' === $target_type ) {
-			// For store-wide, the list is empty. The pricing engine will interpret this as "applies to all".
-			$this->applicable_product_ids = array();
-			return;
-		}
-
-		if ( empty( $target_ids ) || ! is_array( $target_ids ) ) {
-			$this->applicable_product_ids = array();
-			return;
-		}
-
-		$product_ids = array();
-
-		if ( 'category' === $target_type ) {
-			$product_ids = $this->get_products_from_categories( $target_ids );
-		} elseif ( 'product' === $target_type ) {
-			$product_ids = $target_ids;
-		}
-		// After getting the initial list, expand any variable products to include their variations.
-		$this->applicable_product_ids = $this->expand_variable_products( $product_ids );
-	}
-
-	/**
-	 * Gets all product IDs from the specified category IDs.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param array $category_ids Array of category IDs.
-	 * @return array Array of product IDs.
-	 */
-	private function get_products_from_categories( $category_ids ) {
-		$category_ids = array_map( 'absint', $category_ids );
-		$args = array(
-			'product_category_id' => $category_ids,
-			'limit'    => -1, // Get all matching products.
-			'return'   => 'ids', // Performance: only return the IDs.
-		);
-		$products = wc_get_products( $args );
-		if ( is_wp_error( $products ) ) {
-			return array();
-		}
-		return $products;
-	}
-
-	/**
-	 * Expands variable products to include their variations.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param array $product_ids Array of product IDs.
-	 * @return array Array of product and variation IDs.
-	 */
-	private function expand_variable_products( $product_ids ) {
-		$expanded_ids = array();
-		if ( empty( $product_ids ) ) {
-			return $expanded_ids;
-		}
-		foreach ( $product_ids as $product_id ) {
-			$product = wc_get_product( $product_id );
-			if ( ! $product ) {
-				continue;
-			}
-			// Add the product itself.
-			$expanded_ids[] = $product_id;
-
-			// Add the product variations.
-			if ( $product->is_type( 'variable' ) ) {
-				$variation_ids = $product->get_children();
-				if ( ! empty( $variation_ids ) ) {
-					$expanded_ids = array_merge( $expanded_ids, $variation_ids );
-				}
-			}
-		}
-		// Ensure final list only has unique IDs.
-		return array_unique( array_map( 'absint', $expanded_ids ) );
-	}
-
-	/**
-	 * Gets the list of product IDs this campaign applies to.
-	 *
-	 * @since 1.0.0
-	 * @return array Array of product IDs.
-	 */
-	public function get_applicable_product_ids() {
-		return $this->applicable_product_ids;
-	}
 
 	/**
 	 * Checks if this campaign applies to a specific product.
@@ -918,28 +822,9 @@ class Campaign {
 	 * @return bool True if the campaign applies to the product, false otherwise.
 	 */
 	public function is_applicable_to_product( $product ) {
-		$product_id = is_object( $product ) ? $product->get_id() : absint( $product );
-		if ( ! is_numeric( $product_id ) ) {
-			return false;
-		}
-		if ( 'entire_store' === $this->data->target_type ) {
-			return true;
-		}
-		if ( 'tag' === $this->data->target_type ) {
-			$product = wc_get_product( $product_id );
-			if ( ! $product ) {
-				return false;
-			}
-			$product_tags = $product->get_tag_ids();	
-			foreach ( $product_tags as $product_tag ) {
-				if ( in_array( $product_tag, $this->data->target_ids, true ) ) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		return in_array( $product_id, $this->applicable_product_ids, true );
+		return Filter::get_instance()->match( $product, $this );
 	}
+
+	
 }
 

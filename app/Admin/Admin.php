@@ -320,7 +320,7 @@ class Admin {
 					'type'    => 'boolean',
 					'default' => true,
 				),
-				'product_messageFormat'       => array(
+				'product_message_format_percentage'       => array(
 					'type'              => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
 					'default'           => 'You save {percentage_off}!',

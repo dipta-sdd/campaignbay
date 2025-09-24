@@ -99,6 +99,29 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
             }))
           }
         />
+
+        <Select
+          className="w-100"
+          label={__("Calculate Discount From", "campaignbay")}
+          help={__(
+            "Select the price to calculate discounts from",
+            "campaignbay"
+          )}
+          options={[
+            {
+              label: __("Regular Price", "campaignbay"),
+              value: "regular_price",
+            },
+            { label: __("Sale Price", "campaignbay"), value: "sale_price" },
+          ]}
+          value={globalSettings.global_calculate_discount_from}
+          onChange={(value) =>
+            setGlobalSettings((prev) => ({
+              ...prev,
+              global_calculate_discount_from: value,
+            }))
+          }
+        />
       </SettingCard>
       <SettingCard title={__("Performence & Caching", "campaignbay")}>
         <Checkbox

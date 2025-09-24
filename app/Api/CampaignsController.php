@@ -11,9 +11,9 @@ use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
-use WpabCb\Engine\Campaign;
+use WpabCb\Core\Campaign;
 use WpabCb\Engine\CampaignManager;
-use WpabCb\Core\Logger;
+use WpabCb\Helper\Logger;
 
 /**
  * The REST API Controller for Campaigns.
@@ -437,7 +437,7 @@ class CampaignsController extends ApiController {
 			$campaign = new Campaign( $id );
 			if ( $campaign ) {
 				$title = $campaign->get_title();
-				$result = $campaign->update( array( 'status' => $status ) );
+				$result = $campaign->update( array( 'status' => $status ) , true );
 				
 				if ( $result ) {
 					$updated_count++;

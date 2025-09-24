@@ -29,7 +29,7 @@ if ( ! function_exists( 'campaignbay_default_options' ) ) :
 			* Global Settings Tab
 			==================================================*/
 			'global_enableAddon'     => true,
-			'global_calculate_discount_from' => 'sale_price',
+			'global_calculate_discount_from' => 'regular_price',
 			'position_to_show_bulk_table' => 'below_cart',
 			'position_to_show_discount_bar' => 'above_cart',
 
@@ -46,7 +46,8 @@ if ( ! function_exists( 'campaignbay_default_options' ) ) :
 			/*==================================================
 			* Product Settings Tab
 			==================================================*/
-			'product_messageFormat'       => esc_html( 'You save {percentage_off}!' ),
+			'product_message_format_percentage'       => esc_html( 'You save {percentage_off}%' ),
+			'product_message_format_fixed'       => esc_html( 'You save {amount_off} per item' ),
 			'product_enableQuantityTable' => true,
 			'product_priorityMethod'      => 'apply_highest',
 

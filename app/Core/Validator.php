@@ -1,8 +1,6 @@
 <?php
 
 namespace WpabCb\Core;
-
-
 use DateTime;
 use Exception;
 

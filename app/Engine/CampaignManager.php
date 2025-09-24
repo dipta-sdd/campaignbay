@@ -2,7 +2,7 @@
 
 namespace WpabCb\Engine;
 
-use WpabCb\Engine\Campaign;
+use WpabCb\Core\Campaign;
 
 /**
  * The file that defines the Campaign Manager class.
