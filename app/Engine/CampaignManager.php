@@ -3,6 +3,7 @@
 namespace WpabCb\Engine;
 
 use WpabCb\Core\Campaign;
+use WpabCb\Core\Base;
 
 /**
  * The file that defines the Campaign Manager class.
@@ -31,25 +32,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package    WPAB_CampaignBay
  * @author     WP Anchor Bay <wpanchorbay@gmail.com>
  */
-class CampaignManager {
+class CampaignManager extends Base {
 
-	/**
-	 * The single instance of the class.
-	 *
-	 * @since 1.0.0
-	 * @var   CampaignManager
-	 * @access private
-	 */
-	private static $instance = null;
-
-	/**
-	 * The array of hooks to be registered.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @var array
-	 */
-	private $hooks = array();
 
 	/**
 	 * Array of active campaign objects.
@@ -60,25 +44,6 @@ class CampaignManager {
 	 */
 	private $active_campaigns = null;
 
-	/**
-	 * Gets an instance of this object.
-	 * Prevents duplicate instances which avoid artefacts and improves performance.
-	 *
-	 * @static
-	 * @access public
-	 * @since 1.0.0
-	 * @return object
-	 */
-	public static function get_instance() {
-		// Store the instance locally to avoid private static replication.
-		static $instance = null;
-
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
 
 	/**
 	 * A dummy constructor to prevent the class from being loaded more than once.
@@ -88,34 +53,16 @@ class CampaignManager {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function __construct() {
-		$this->hooks = array(
-			array(
-				'hook'     => 'campaignbay_campaign_save',
-				'callback' => 'clear_cache',
-				'priority' => 10,
-				'accepted_args'     => 2,
-				'type'     => 'action',
-			),
-			array(
-				'hook'     => 'campaignbay_campaign_delete',
-				'callback' => 'clear_cache',
-				'priority' => 10,
-				'accepted_args'     => 1,
-				'type'     => 'action',
-			),
-		);
+	protected function __construct() {
+		parent::__construct();
+
+		// Use the inherited add_action method to register hooks.
+		// These hooks will clear the campaign cache whenever a campaign is saved or deleted.
+		$this->add_action( 'campaignbay_campaign_save', 'clear_cache', 10, 2 );
+		$this->add_action( 'campaignbay_campaign_delete', 'clear_cache', 10, 1 );
 	}
 
-	/**
-	 * Returns the complete array of hooks to be registered by the main loader.
-	 *
-	 * @since 1.0.0
-	 * @return array
-	 */
-	public function get_hooks() {
-		return $this->hooks;
-	}
+	
 
 	/**
 	 * Get all active campaigns, using a multi-level cache.

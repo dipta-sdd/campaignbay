@@ -3,9 +3,10 @@
 namespace WpabCb\Engine;
 
 use WC_Product;
-use WpabCb\Engine\CampaignManager;
 use WP_Error;
+use WpabCb\Core\Base;
 use WpabCb\Core\Common;
+use WpabCb\Engine\CampaignManager;
 use WpabCb\Helper\Woocommerce;
 
 /**
@@ -21,7 +22,7 @@ use WpabCb\Helper\Woocommerce;
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
@@ -35,25 +36,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package    WPAB_CampaignBay
  * @author     WP Anchor Bay <wpanchorbay@gmail.com>
  */
-class PricingEngine {
-
-	/**
-	 * The single instance of the class.
-	 *
-	 * @since 1.0.0
-	 * @var   CAMPAIGNBAY_Pricing_Engine
-	 * @access private
-	 */
-	private static $instance = null;
-
-	/**
-	 * The array of hooks to be registered.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @var array
-	 */
-	private $hooks = array();
+class PricingEngine extends Base
+{
 
 	private $settings = array();
 
@@ -66,35 +50,18 @@ class PricingEngine {
 	 */
 	private $product_discount_cache = array();
 
-	
-
-	/**
-	 * Gets an instance of this object.
-	 *
-	 * @static
-	 * @access public
-	 * @since 1.0.0
-	 * @return object
-	 */
-	public static function get_instance() {
-		// Store the instance locally to avoid private static replication.
-		static $instance = null;
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
-
 	/**
 	 * Constructor to define and build the hooks array.
 	 *
 	 * @since 1.0.0
 	 */
-	private function __construct() {
+	protected function __construct()
+	{
 
+		parent::__construct();
 		$this->settings = Common::get_instance()->get_settings();
 
-		if($this->settings['global_enableAddon']){
+		if ($this->settings['global_enableAddon']) {
 			$this->define_hooks();
 		}
 	}
@@ -105,17 +72,18 @@ class PricingEngine {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function define_hooks() {
+	private function define_hooks()
+	{
 		// woocommerce_product_variation_get_price
 		$hooks = [
-			['filter' , 'woocommerce_get_price_html','get_price_html', 20, 2 ],
-			['filter' , 'woocommerce_product_is_on_sale','is_on_sale', 20, 2 ],
-			['action' , 'woocommerce_before_add_to_cart_form', 'display_product_discount_message', 20, 0 ],
+			['filter', 'woocommerce_get_price_html', 'get_price_html', 20, 2],
+			['filter', 'woocommerce_product_is_on_sale', 'is_on_sale', 20, 2],
+			['action', 'woocommerce_before_add_to_cart_form', 'display_product_discount_message', 20, 0],
 			// ['action' , 'woocommerce_before_single_product_summary', 'display_product_discount_message', 9 ],
 			// ['filter' , 'woocommerce_product_get_price','get_price', 20, 2 ],
 			// ['filter' , 'woocommerce_product_variation_get_price','get_variation_price', 1, 2 ],
 		];
-		foreach($hooks as $hook){
+		foreach ($hooks as $hook) {
 			$this->add_hook(...$hook);
 		}
 	}
@@ -125,48 +93,59 @@ class PricingEngine {
 	// woocommerce_product_meta_start
 	// woocommerce_product_meta_end
 
-	public function get_price_html($price_html, $product){
-		if(Woocommerce::product_type_is($product, 'variable')) return $price_html;
+	public function get_price_html($price_html, $product)
+	{
+		if (Woocommerce::product_type_is($product, 'variable'))
+			return $price_html;
 
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
 		//  
-		if(!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple'])) return $price_html;
-		$price_html = Woocommerce::get_price_html( 
-			$price_html, $product, 
-			$meta['original_price'] , 
-			$meta['simple']['discounted_price'], 
+		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
+			return $price_html;
+		$price_html = Woocommerce::get_price_html(
+			$price_html,
+			$product,
+			$meta['original_price'],
+			$meta['simple']['discounted_price'],
 			$meta['simple']['display_as_regular_price']
 		);
 		return $price_html;
 	}
 
 
-	public function is_on_sale($is_on_sale, $product){
-		if(Woocommerce::product_type_is($product, 'variable')) return $is_on_sale;
+	public function is_on_sale($is_on_sale, $product)
+	{
+		if (Woocommerce::product_type_is($product, 'variable'))
+			return $is_on_sale;
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
-		if(!is_array($meta) || empty($meta) || !isset($meta['is_on_sale']))
-			return $is_on_sale;	
+		if (!is_array($meta) || empty($meta) || !isset($meta['is_on_sale']))
+			return $is_on_sale;
 		return $meta['is_on_sale'] ? $meta['is_on_sale'] : $is_on_sale;
 	}
 
 
-	public function display_product_discount_message() {
+	public function display_product_discount_message()
+	{
 		global $product;
-		if(!$product) return;
+		if (!$product)
+			return;
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
-		if(!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple'])) return;
-		$message = Woocommerce::generate_product_banner( 
+		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
+			return;
+		$message = Woocommerce::generate_product_banner(
 			$format = $meta['simple']['message_format'],
-			$meta['simple']['value'], 
+			$meta['simple']['value'],
 			$meta['simple']['type']
 		);
-		if($message == '') return;
+		if ($message == '')
+			return;
 		Woocommerce::print_notice(
-			$message, 'success'
+			$message,
+			'success'
 		);
 	}
-	 
-	
+
+
 	// public function get_price($price, $product){
 	// 	if(Woocommerce::product_type_is($product, 'variable')) return $price;
 	// 	$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
@@ -185,68 +164,4 @@ class PricingEngine {
 	// 	}
 	// 	return $price;
 	// }
-	
-	
-	/**
-	 * Adds a new action or filter to the hooks array.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param string $type 'action' or 'filter'.
-	 * @param string $hook The hook name.
-	 * @param string $callback The callback method on this object.
-	 * @param int    $priority The priority.
-	 * @param int    $accepted_args The number of accepted arguments.
-	 */
-	private function add_hook( $type, $hook, $callback, $priority = 10, $accepted_args = 1 ) {
-		$this->hooks[] = array(
-			'type'          => $type,
-			'hook'          => $hook,
-			'callback'      => $callback,
-			'priority'      => $priority,
-			'accepted_args' => $accepted_args,
-		);
-	}
-
-	/**
-	 * Adds a new action to the hooks array.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param string $hook The hook name.
-	 * @param string $callback The callback method on this object.
-	 * @param int    $priority The priority.
-	 * @param int    $accepted_args The number of accepted arguments.
-	 */
-	private function add_action( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
-		$this->add_hook( 'action', $hook, $callback, $priority, $accepted_args );
-	}
-
-	/**
-	 * Adds a new filter to the hooks array.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @param string $hook The hook name.
-	 * @param string $callback The callback method on this object.
-	 * @param int    $priority The priority.
-	 * @param int    $accepted_args The number of accepted arguments.
-	 */
-	private function add_filter( $hook, $callback, $priority = 10, $accepted_args = 2 ) {
-		$this->add_hook( 'filter', $hook, $callback, $priority, $accepted_args );
-	}
-
-
-	/**
-	 * Returns the complete array of hooks to be registered by the main loader.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @return array
-	 */
-	public function get_hooks() {
-		return $this->hooks;
-	}
-
-
 }

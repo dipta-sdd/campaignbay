@@ -2,7 +2,8 @@
 
 namespace WpabCb\Helper;
 
-if (!defined('ABSPATH')) exit; // Exit if accessed directly
+if (!defined('ABSPATH'))
+    exit; // Exit if accessed directly
 
 class Helper
 {
@@ -19,16 +20,28 @@ class Helper
                 'p' => array('class' => array(), 'style' => array()),
             );
             // Since v2.5.5
-            $allowed_html = apply_filters( 'advanced_woo_discount_rules_allowed_html_elements_and_attributes', $allowed_html);
+            $allowed_html = apply_filters('advanced_woo_discount_rules_allowed_html_elements_and_attributes', $allowed_html);
             return wp_kses($html, $allowed_html);
         } catch (\Exception $e) {
             return '';
         }
     }
 
-    public static function generate_message($format, $args ){
+
+
+
+
+
+
+
+
+
+
+    public static function generate_message($format, $args)
+    {
         $format = self::get_clean_html($format);
-        if($format == '') return '';
-		return str_replace( array_keys( $args ), array_values( $args ), $format );
+        if ($format == '')
+            return '';
+        return str_replace(array_keys($args), array_values($args), $format);
     }
 }

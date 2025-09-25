@@ -3,11 +3,10 @@
 namespace WpabCb\Engine;
 
 use WC_Product;
-use WpabCb\Engine\CampaignManager;
 use WP_Error;
 use WpabCb\Core\Common;
+use WpabCb\Engine\CampaignManager;
 use WpabCb\Helper\Woocommerce;
-use WpabCb\Helper\Filter;
 
 /**
  * The file that defines the Pricing Engine class.
@@ -22,7 +21,7 @@ use WpabCb\Helper\Filter;
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
@@ -36,13 +35,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package    WPAB_CampaignBay
  * @author     WP Anchor Bay <wpanchorbay@gmail.com>
  */
-class ProductDiscount {
+class ProductDiscount
+{
 
 	private $settings = array();
 
 	private $product = null;
 
-    private $campaigns = array();
+	private $campaigns = array();
 
 	private $data = array();
 
@@ -53,13 +53,14 @@ class ProductDiscount {
 	 * @since 1.0.0
 	 * @param WC_Product $product The product object to be processed.
 	 */
-	private function __construct( WC_Product $product ) {
+	private function __construct(WC_Product $product)
+	{
 		$this->product = $product;
 		$this->settings = Common::get_instance()->get_settings();
-        $this->campaigns = CampaignManager::get_instance()->get_active_campaigns();
+		$this->campaigns = CampaignManager::get_instance()->get_active_campaigns();
 	}
 
-    /**
+	/**
 	 * Static factory method to begin the processing chain.
 	 *
 	 * This is the entry point. It creates an instance of the processor for a given product.
@@ -68,21 +69,22 @@ class ProductDiscount {
 	 * @param WC_Product|int $product The product object or product ID.
 	 * @return self|null Returns a new instance for chaining, or null if the product is invalid.
 	 */
-	public static function create( $product ) {
-		if ( is_numeric( $product ) ) {
-			$product = wc_get_product( $product );
+	public static function create($product)
+	{
+		if (is_numeric($product)) {
+			$product = wc_get_product($product);
 		}
 
-		if ( ! $product instanceof WC_Product ) {
+		if (!$product instanceof WC_Product) {
 			// Return null or a dummy object if the product is invalid to prevent fatal errors.
 			return null;
 		}
 
-		return new self( $product );
+		return new self($product);
 	}
 
 
-    /**
+	/**
 	 * Calculates and applies the best discount to the product object.
 	 *
 	 * This is the main "worker" method. It loops through campaigns, finds the best
@@ -92,9 +94,10 @@ class ProductDiscount {
 	 * @since 1.0.0
 	 * @return self Returns the instance to allow for further chaining.
 	 */
-	public function apply_discounts() {
-		$original_price = (float) Woocommerce::get_product_regular_price( $this->product );
-		$base_price = (float) Woocommerce::get_product_base_price( $this->product );
+	public function apply_discounts()
+	{
+		$original_price = (float) Woocommerce::get_product_regular_price($this->product);
+		$base_price = (float) Woocommerce::get_product_base_price($this->product);
 		$best_price = null;
 		$applied_campaign = null;
 		$this->data = array(
@@ -104,16 +107,18 @@ class ProductDiscount {
 			'is_on_sale' => false,
 		);
 
-		foreach ( $this->campaigns as $campaign ) {
-			if ( ! $campaign->is_applicable_to_product($this->product) ) { continue; }
-			$new_price = $this->get_discounted_price( $base_price, $campaign );
-			if ( $this->is_better_price( $new_price, $best_price ) ) {
+		foreach ($this->campaigns as $campaign) {
+			if (!$campaign->is_applicable_to_product($this->product)) {
+				continue;
+			}
+			$new_price = $this->get_discounted_price($base_price, $campaign);
+			if ($this->is_better_price($new_price, $best_price)) {
 				$best_price = $new_price;
 				$applied_campaign = $campaign;
-				error_log('_____' );
+				error_log('_____');
 			}
 		}
-		if ( $applied_campaign !== null ) {
+		if ($applied_campaign !== null) {
 			error_log(print_r($applied_campaign->get_settings(), true));
 			$this->data['on_discount'] = true;
 			$this->data['is_simple'] = true;
@@ -127,9 +132,10 @@ class ProductDiscount {
 			$simple['display_as_regular_price'] = $applied_campaign->get_settings()['display_as_regular_price'] ?? false;
 			$this->data['simple'] = $simple;
 			// add on sale badge
-			if(!$simple['display_as_regular_price']) $this->data['is_on_sale'] = true;
-		} 
-		$this->product->add_meta_data('campaignbay' ,$this->data, true);
+			if (!$simple['display_as_regular_price'])
+				$this->data['is_on_sale'] = true;
+		}
+		$this->product->add_meta_data('campaignbay', $this->data, true);
 		return $this;
 	}
 
@@ -139,7 +145,8 @@ class ProductDiscount {
 	 * @since 1.0.0
 	 * @return WC_Product The processed product object.
 	 */
-	public function get_product() {
+	public function get_product()
+	{
 		return $this->product;
 	}
 
@@ -152,17 +159,18 @@ class ProductDiscount {
 	 * @param object  $campaign The campaign object.
 	 * @return float The final discounted price for this campaign.
 	 */
-	public function get_discounted_price( $base_price, $campaign ) {
-		do_action( 'campaignbay_before_calculate_discounted_price', $campaign, $this->product, $base_price );
+	public function get_discounted_price($base_price, $campaign)
+	{
+		do_action('campaignbay_before_calculate_discounted_price', $campaign, $this->product, $base_price);
 
 		$final_price = $base_price;
-		if( $campaign->get_type() === 'scheduled' ) {
-			$final_price = $this->calculate_scheduled_price( $campaign, $base_price );
+		if ($campaign->get_type() === 'scheduled') {
+			$final_price = $this->calculate_scheduled_price($campaign, $base_price);
 		}
 
-		do_action( 'campaignbay_after_calculate_discounted_price', $campaign, $this->product, $final_price, $base_price );
-		
-		return Woocommerce::round( $final_price);
+		do_action('campaignbay_after_calculate_discounted_price', $campaign, $this->product, $final_price, $base_price);
+
+		return Woocommerce::round($final_price);
 	}
 
 	/**
@@ -174,14 +182,15 @@ class ProductDiscount {
 	 * @param float  $base_price The price before discount.
 	 * @return float The calculated price.
 	 */
-	public function calculate_scheduled_price($campaign, $base_price) {
+	public function calculate_scheduled_price($campaign, $base_price)
+	{
 		$discount_type = $campaign->get_discount_type();
 		$discount_value = $campaign->get_discount_value();
 		$calculated_price = $base_price;
 
-		if ( $discount_type === 'percentage' ) {
+		if ($discount_type === 'percentage') {
 			$calculated_price = $this->calculate_percentage_price($base_price, $discount_value);
-		} elseif ( $discount_type === 'fixed' ) {
+		} elseif ($discount_type === 'fixed') {
 			$calculated_price = $this->calculate_fixed_price($base_price, $discount_value);
 		}
 
@@ -196,7 +205,8 @@ class ProductDiscount {
 	 * @param float $discount_value The fixed amount to subtract.
 	 * @return float The final price, ensuring it's not below zero.
 	 */
-	public function calculate_fixed_price($base_price, $discount_value){
+	public function calculate_fixed_price($base_price, $discount_value)
+	{
 		return max(0, $base_price - $discount_value);
 	}
 
@@ -208,21 +218,25 @@ class ProductDiscount {
 	 * @param float $discount_value The percentage to subtract (e.g., 10 for 10%).
 	 * @return float The final price, ensuring it's not below zero.
 	 */
-	public function calculate_percentage_price($base_price, $discount_value){
+	public function calculate_percentage_price($base_price, $discount_value)
+	{
 		$discount_amount = ($discount_value / 100) * $base_price;
 		return max(0, $base_price - $discount_amount);
 	}
 
-	public function is_better_price($new_price, $current_best_price){
-		if($new_price === null) return false;
-		if($current_best_price === null) return true;
+	public function is_better_price($new_price, $current_best_price)
+	{
+		if ($new_price === null)
+			return false;
+		if ($current_best_price === null)
+			return true;
 		$setting = Common::get_instance()->get_settings('product_priorityMethod');
 
-		if($setting === 'apply_highest'){
+		if ($setting === 'apply_highest') {
 			return $new_price < $current_best_price;
-		} elseif($setting === 'apply_lowest'){
+		} elseif ($setting === 'apply_lowest') {
 			return $new_price > $current_best_price;
-		} elseif($setting === 'apply_first'){
+		} elseif ($setting === 'apply_first') {
 			return $current_best_price === null;
 		}
 		error_log('_____' . $setting);
