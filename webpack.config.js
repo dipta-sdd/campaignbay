@@ -1,19 +1,14 @@
-const defaults = require('@wordpress/scripts/config/webpack.config');
+const defaults = require("@wordpress/scripts/config/webpack.config");
 
 module.exports = {
   ...defaults,
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-  },
+  externals: {},
   entry: {
-    admin: './src/admin/index.js',
-    public: './src/public/index.js',
+    admin: "./src/admin/index.js",
+    public: "./src/public/index.js",
   },
   output: {
     ...defaults.output,
-    filename: '[name].js',
-  }
-
-  
-}; 
+    filename: "[name].js",
+  },
+};

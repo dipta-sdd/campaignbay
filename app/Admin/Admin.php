@@ -5,7 +5,7 @@ namespace WpabCb\Admin;
 use WpabCb\Core\Common;
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBayadmin
  * @author     dipta-sdd <sankarsandipta@gmail.com>
  */
-class Admin {
+class Admin
+{
 
 	/**
 	 * The single instance of the class.
@@ -29,7 +30,7 @@ class Admin {
 	 * @access private
 	 */
 	private static $instance = null;
-	
+
 	/**
 	 * Menu info.
 	 *
@@ -41,7 +42,7 @@ class Admin {
 
 
 
-	
+
 
 	/**
 	 * Gets an instance of this object.
@@ -51,10 +52,11 @@ class Admin {
 	 * @return Admin
 	 * @since 1.0.0
 	 */
-	public static function get_instance() {
+	public static function get_instance()
+	{
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
-		if ( null === self::$instance ) {
+		if (null === self::$instance) {
 			self::$instance = new self();
 		}
 		return self::$instance;
@@ -67,14 +69,15 @@ class Admin {
 	 * @access public
 	 * @return void	
 	 */
-	public function add_admin_menu() {
-		$white_label     = Common::get_instance()->get_white_label();
+	public function add_admin_menu()
+	{
+		$white_label = Common::get_instance()->get_white_label();
 		$this->menu_info = array(
 			'page_title' => $white_label['plugin_name'],
 			'menu_title' => $white_label['menu_label'],
-			'menu_slug'  => CAMPAIGNBAY_PLUGIN_NAME,
-			'icon_url'   => $white_label['menu_icon'],
-			'position'   => $white_label['position'],
+			'menu_slug' => CAMPAIGNBAY_PLUGIN_NAME,
+			'icon_url' => $white_label['menu_icon'],
+			'position' => $white_label['position'],
 			'docs_uri' => $white_label['docs_uri'],
 		);
 
@@ -83,43 +86,43 @@ class Admin {
 			$this->menu_info['menu_title'],
 			'manage_campaignbay',
 			$this->menu_info['menu_slug'],
-			array( $this, 'add_setting_root_div' ),
+			array($this, 'add_setting_root_div'),
 			$this->menu_info['icon_url'],
 			$this->menu_info['position'],
 		);
 		add_submenu_page(
-				$this->menu_info['menu_slug'],
-				$this->menu_info['page_title'],
-				esc_html__( 'Dashboard', 'campaignbay' ),
-				'manage_campaignbay',
-				CAMPAIGNBAY_TEXT_DOMAIN,
-				array( $this, 'add_setting_root_div' )
-			);
+			$this->menu_info['menu_slug'],
+			$this->menu_info['page_title'],
+			esc_html__('Dashboard', 'campaignbay'),
+			'manage_campaignbay',
+			CAMPAIGNBAY_TEXT_DOMAIN,
+			array($this, 'add_setting_root_div')
+		);
 		$submenu_pages = array();
 		$submenu_pages[] = array(
 			'menu_title' => 'All Campaigns',
-			'menu_slug'  => '#/campaigns',
+			'menu_slug' => '#/campaigns',
 		);
 		$submenu_pages[] = array(
 			'menu_title' => 'Add Campaign',
-			'menu_slug'  => '#/campaigns/add',
+			'menu_slug' => '#/campaigns/add',
 		);
 		$submenu_pages[] = array(
 			'menu_title' => 'Settings',
-			'menu_slug'  => '#/settings',
+			'menu_slug' => '#/settings',
 		);
 		$submenu_pages[] = array(
 			'menu_title' => 'Help',
-			'menu_slug'  => '#/help',
+			'menu_slug' => '#/help',
 		);
-		foreach ( $submenu_pages as $submenu_page ) {
+		foreach ($submenu_pages as $submenu_page) {
 			add_submenu_page(
 				$this->menu_info['menu_slug'],
-				esc_html( $submenu_page['menu_title'] . '-' . $this->menu_info['page_title'] ),
+				esc_html($submenu_page['menu_title'] . '-' . $this->menu_info['page_title']),
 				$submenu_page['menu_title'],
 				'manage_campaignbay',
 				CAMPAIGNBAY_TEXT_DOMAIN . $submenu_page['menu_slug'],
-				array( $this, 'add_setting_root_div' )
+				array($this, 'add_setting_root_div')
 			);
 		}
 	}
@@ -132,10 +135,11 @@ class Admin {
 	 * @since 1.0.0
 	 * @return bool
 	 */
-	public function is_menu_page() {
-		$screen              = get_current_screen();
-		$admin_scripts_bases = array( 'toplevel_page_' . CAMPAIGNBAY_PLUGIN_NAME );
-		if ( ! ( isset( $screen->base ) && in_array( $screen->base, $admin_scripts_bases, true ) ) ) {
+	public function is_menu_page()
+	{
+		$screen = get_current_screen();
+		$admin_scripts_bases = array('toplevel_page_' . CAMPAIGNBAY_PLUGIN_NAME);
+		if (!(isset($screen->base) && in_array($screen->base, $admin_scripts_bases, true))) {
 			return false;
 		}
 		return true;
@@ -150,8 +154,9 @@ class Admin {
 	 * @param string $classes The classes.
 	 * @return string
 	 */
-	public function add_has_sticky_header( $classes ) {
-		if ( $this->is_menu_page() ) {
+	public function add_has_sticky_header($classes)
+	{
+		if ($this->is_menu_page()) {
 			$classes .= ' at-has-hdr-stky ';
 		}
 		return $classes;
@@ -164,8 +169,9 @@ class Admin {
 	 * @access public
 	 * @return void
 	 */
-	public function add_setting_root_div() {
-		echo '<div id="' . esc_attr( CAMPAIGNBAY_PLUGIN_NAME ) . '"></div>';
+	public function add_setting_root_div()
+	{
+		echo '<div id="' . esc_attr(CAMPAIGNBAY_PLUGIN_NAME) . '"></div>';
 	}
 
 	/**
@@ -175,49 +181,55 @@ class Admin {
 	 * @access public
 	 * @return void
 	 */
-	public function enqueue_resources() {
+	public function enqueue_resources()
+	{
 		$this->enqueue_global_admin_styles();
-		if ( ! $this->is_menu_page() ) {
+		if (!$this->is_menu_page()) {
 			return;
 		}
-	
+
 		$deps_file = CAMPAIGNBAY_PATH . 'build/admin.asset.php';
-		$dependency = array( 'wp-i18n' );
-		$version    = CAMPAIGNBAY_VERSION;
-	
-		if ( file_exists( $deps_file ) ) {
-			$deps_file  = require $deps_file;
+		$dependency = array('wp-i18n');
+		$version = CAMPAIGNBAY_VERSION;
+
+		if (file_exists($deps_file)) {
+			$deps_file = require $deps_file;
 			$dependency = $deps_file['dependencies'];
-			$version    = $deps_file['version'];
+			$version = $deps_file['version'];
 		}
-	
-		wp_enqueue_script( CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.js', $dependency, $version, true );
-	
-		wp_enqueue_style( CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.css', array( 'wp-components' ), $version );
-		wp_style_add_data( CAMPAIGNBAY_PLUGIN_NAME, 'rtl', 'replace' );
+
+		error_log(print_r($dependency, true));
+		$js_loaded = wp_enqueue_script(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.js', $dependency, $version, true);
+
+		$css_loaded = wp_enqueue_style(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.css', array('wp-components'), $version);
+
+		error_log('css loaded' . $css_loaded ? 'true' : 'false');
+		error_log('js loaded' . $js_loaded ? 'true -- ' . CAMPAIGNBAY_URL . 'build/admin.js' : 'false -- ' . CAMPAIGNBAY_URL . 'build/admin.css');
+
+		wp_style_add_data(CAMPAIGNBAY_PLUGIN_NAME, 'rtl', 'replace');
 		$woocommerce_currency_symbol = get_woocommerce_currency_symbol();
 		$localize = apply_filters(
-			CAMPAIGNBAY_OPTION_NAME  . '_admin_localize',
+			CAMPAIGNBAY_OPTION_NAME . '_admin_localize',
 			array(
-				'version'     => $version,
-				'root_id'     => CAMPAIGNBAY_PLUGIN_NAME,
-				'nonce'       => wp_create_nonce( 'wp_rest' ),
-				'store'       => CAMPAIGNBAY_PLUGIN_NAME,
-				'rest_url'    => get_rest_url(),
+				'version' => $version,
+				'root_id' => CAMPAIGNBAY_PLUGIN_NAME,
+				'nonce' => wp_create_nonce('wp_rest'),
+				'store' => CAMPAIGNBAY_PLUGIN_NAME,
+				'rest_url' => get_rest_url(),
 				'white_label' => Common::get_instance()->get_white_label(),
 				'woocommerce_currency_symbol' => $woocommerce_currency_symbol,
 				'wpSettings' => array(
-					'dateFormat' => get_option( 'date_format' ),
-					'timeFormat' => get_option( 'time_format' ),
+					'dateFormat' => get_option('date_format'),
+					'timeFormat' => get_option('time_format'),
 				),
-				'campaignbay_settings' => get_option( CAMPAIGNBAY_OPTION_NAME, campaignbay_default_options() )
+				'campaignbay_settings' => get_option(CAMPAIGNBAY_OPTION_NAME, campaignbay_default_options())
 			)
 		);
-	
-		wp_localize_script( CAMPAIGNBAY_PLUGIN_NAME, 'campaignbay_Localize', $localize );
-		
+
+		wp_localize_script(CAMPAIGNBAY_PLUGIN_NAME, 'campaignbay_Localize', $localize);
+
 		// --- START OF DEBUGGING BLOCK ---
-	
+
 		$path_to_check = CAMPAIGNBAY_PATH . 'languages';
 		// campaignbay_log( '--------------------' );
 		// campaignbay_log( 'Checking for translations...' );
@@ -227,13 +239,13 @@ class Admin {
 		// campaignbay_log( 'Does path exist? ' . ( file_exists( $path_to_check ) ? 'Yes' : 'No' ) );
 		// wasted 3 hours on this because of poor documentation, there was no issue here
 		// // --- END OF DEBUGGING BLOCK ---
-	
+
 		$result = wp_set_script_translations(
 			CAMPAIGNBAY_PLUGIN_NAME,
 			'campaignbay',
 			$path_to_check
 		);
-		
+
 		// Log the result of the function call
 		// campaignbay_log( 'Result of wp_set_script_translations: ' . ( $result ? 'True (Success)' : 'False (Failure)' ) );
 
@@ -245,7 +257,8 @@ class Admin {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private function enqueue_global_admin_styles() {
+	private function enqueue_global_admin_styles()
+	{
 		wp_enqueue_style(
 			'wpab-cb-admin-menu', // A new, unique handle
 			CAMPAIGNBAY_URL . 'assets/css/admin-menu.css',
@@ -262,159 +275,160 @@ class Admin {
 	 * @access public
 	 * @return array settings schema for this plugin.
 	 */
-	public function get_settings_schema() {
+	public function get_settings_schema()
+	{
 		$setting_properties = apply_filters(
-			CAMPAIGNBAY_OPTION_NAME  . '_options_properties',
+			CAMPAIGNBAY_OPTION_NAME . '_options_properties',
 			array(
 				/*==================================================
 				* Global Settings Tab
 				==================================================*/
-				'global_enableAddon'     => array(
-					'type'    => 'boolean',
+				'global_enableAddon' => array(
+					'type' => 'boolean',
 					'default' => true,
 				),
 				'global_defaultPriority' => array(
-					'type'    => 'integer',
+					'type' => 'integer',
 					'default' => 10,
 				),
 				'global_calculationMode' => array(
-					'type'              => 'string',
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_key',
-					'default'           => 'after_tax',
+					'default' => 'after_tax',
 				),
 				'global_calculationMode' => array(
-                'type'              => 'string',
-                'sanitize_callback' => 'sanitize_key',
-                'default'           => 'after_tax',
+					'type' => 'string',
+					'sanitize_callback' => 'sanitize_key',
+					'default' => 'after_tax',
 				),
-				'global_decimalPlaces'   => array(
-					'type'    => 'integer',
+				'global_decimalPlaces' => array(
+					'type' => 'integer',
 					'default' => 2,
 				),
 
 				/*==================================================
 				* Performance & Caching (from Global Tab)
 				==================================================*/
-				'perf_enableCaching'     => array(
-					'type'    => 'boolean',
+				'perf_enableCaching' => array(
+					'type' => 'boolean',
 					'default' => true,
 				),
 
 				/*==================================================
 				* Debugging & Logging (from Global Tab)
 				==================================================*/
-				'debug_enableMode'       => array(
-					'type'    => 'boolean',
+				'debug_enableMode' => array(
+					'type' => 'boolean',
 					'default' => false,
 				),
-				'debug_logLevel'         => array(
-					'type'              => 'string',
+				'debug_logLevel' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_key',
-					'default'           => 'errors_only',
+					'default' => 'errors_only',
 				),
 
 				/*==================================================
 				* Product Settings Tab
 				==================================================*/
 				'product_showDiscountedPrice' => array(
-					'type'    => 'boolean',
+					'type' => 'boolean',
 					'default' => true,
 				),
-				'product_message_format_percentage'       => array(
-					'type'              => 'string',
+				'product_message_format_percentage' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => 'You save {percentage_off}!',
+					'default' => 'You save {percentage_off}!',
 				),
-				'product_bogoMessageFormat'   => array(
-					'type'              => 'string',
+				'product_bogoMessageFormat' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!',
+					'default' => '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!',
 				),
 				'product_enableQuantityTable' => array(
-					'type'    => 'boolean',
+					'type' => 'boolean',
 					'default' => true,
 				),
-				'product_excludeSaleItems'    => array(
-					'type'    => 'boolean',
+				'product_excludeSaleItems' => array(
+					'type' => 'boolean',
 					'default' => true,
 				),
-				'product_priorityMethod'      => array(
-					'type'              => 'string',
+				'product_priorityMethod' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_key',
-					'default'           => 'apply_highest',
+					'default' => 'apply_highest',
 				),
 
 				/*==================================================
 				* Cart Settings Tab
 				==================================================*/
-				'cart_allowWcCouponStacking'  => array(
-					'type'    => 'boolean',
+				'cart_allowWcCouponStacking' => array(
+					'type' => 'boolean',
 					'default' => false,
 				),
-				'cart_allowCampaignStacking'  => array(
-					'type'    => 'boolean',
+				'cart_allowCampaignStacking' => array(
+					'type' => 'boolean',
 					'default' => false,
 				),
-				'cart_savedMessageFormat'     => array(
-					'type'              => 'string',
+				'cart_savedMessageFormat' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => 'You saved {saved_amount} on this order!',
+					'default' => 'You saved {saved_amount} on this order!',
 				),
-				'cart_showNextDiscountBar'    => array(
-					'type'    => 'boolean',
+				'cart_showNextDiscountBar' => array(
+					'type' => 'boolean',
 					'default' => true,
 				),
-				'cart_nextDiscountFormat'     => array(
-					'type'              => 'string',
+				'cart_nextDiscountFormat' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => 'Spend {remaining_amount} more for {discount_percentage} off!',
+					'default' => 'Spend {remaining_amount} more for {discount_percentage} off!',
 				),
-				'cart_showDiscountBreakdown'  => array(
-					'type'    => 'boolean',
+				'cart_showDiscountBreakdown' => array(
+					'type' => 'boolean',
 					'default' => true,
 				),
 
 				/*==================================================
 				* Promotion Settings Tab
 				==================================================*/
-				'promo_enableBar'             => array(
-					'type'    => 'boolean',
+				'promo_enableBar' => array(
+					'type' => 'boolean',
 					'default' => false,
 				),
-				'promo_barPosition'           => array(
-					'type'              => 'string',
+				'promo_barPosition' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_key',
-					'default'           => 'top_of_page',
+					'default' => 'top_of_page',
 				),
-				'promo_barBgColor'            => array(
-					'type'              => 'string',
+				'promo_barBgColor' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_hex_color',
-					'default'           => '#000000',
+					'default' => '#000000',
 				),
-				'promo_barTextColor'          => array(
-					'type'              => 'string',
+				'promo_barTextColor' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'sanitize_hex_color',
-					'default'           => '#FFFFFF',
+					'default' => '#FFFFFF',
 				),
-				'promo_barContent'            => array(
-					'type'    => 'string',
+				'promo_barContent' => array(
+					'type' => 'string',
 					'default' => 'FLASH SALE! {percentage_off} on all shirts!',
 					// Note: Use a broader sanitize callback like wp_kses_post in the actual save hook if HTML is allowed.
 				),
-				'promo_barLinkUrl'            => array(
-					'type'              => 'string',
+				'promo_barLinkUrl' => array(
+					'type' => 'string',
 					'sanitize_callback' => 'esc_url_raw',
-					'default'           => '',
+					'default' => '',
 				),
-				'promo_barDisplayPages'       => array(
-					'type'  => 'array',
+				'promo_barDisplayPages' => array(
+					'type' => 'array',
 					'items' => array(
 						'type' => 'string',
 					),
 					'default' => ['shop_page', 'product_pages'],
 				),
-				'promo_enableCustomBadges'    => array(
-					'type'    => 'boolean',
+				'promo_enableCustomBadges' => array(
+					'type' => 'boolean',
 					'default' => true,
 				),
 
@@ -422,16 +436,16 @@ class Admin {
 				* Advance Settings Tab
 				==================================================*/
 				'advanced_deleteAllOnUninstall' => array(
-					'type'    => 'boolean',
+					'type' => 'boolean',
 					'default' => false,
 				),
-				'advanced_customCss'            => array(
-					'type'    => 'string',
+				'advanced_customCss' => array(
+					'type' => 'string',
 					'default' => '',
 					// Note: Requires special sanitization for CSS (e.g., wp_strip_all_tags)
 				),
-				'advanced_customJs'             => array(
-					'type'    => 'string',
+				'advanced_customJs' => array(
+					'type' => 'string',
 					'default' => '',
 					// Note: Requires careful sanitization.
 				),
@@ -439,7 +453,7 @@ class Admin {
 		);
 
 		return array(
-			'type'       => 'object',
+			'type' => 'object',
 			'properties' => $setting_properties,
 		);
 	}
@@ -453,15 +467,16 @@ class Admin {
 	 * @access public
 	 * @return void
 	 */
-	public function register_settings() {
+	public function register_settings()
+	{
 		$defaults = campaignbay_default_options();
 
 		register_setting(
-			CAMPAIGNBAY_OPTION_NAME  . '_settings_group',
+			CAMPAIGNBAY_OPTION_NAME . '_settings_group',
 			CAMPAIGNBAY_OPTION_NAME,
 			array(
-				'type'         => 'object',
-				'default'      => $defaults,
+				'type' => 'object',
+				'default' => $defaults,
 				'show_in_rest' => array(
 					'schema' => $this->get_settings_schema(),
 				),
@@ -486,8 +501,9 @@ class Admin {
 	 *                              'mustuse', 'dropins', and 'search'.
 	 * @return array settings schema for this plugin.
 	 */
-	public function add_plugin_action_links( $actions, $plugin_file, $plugin_data, $context ) {
-		$actions[] = '<a href="' . esc_url( menu_page_url( $this->menu_info['menu_slug'], false ) ) . '">' . esc_html__( 'Settings', 'campaignbay' ) . '</a>';
+	public function add_plugin_action_links($actions, $plugin_file, $plugin_data, $context)
+	{
+		$actions[] = '<a href="' . esc_url(menu_page_url($this->menu_info['menu_slug'], false)) . '">' . esc_html__('Settings', 'campaignbay') . '</a>';
 		return $actions;
 	}
 
@@ -502,23 +518,24 @@ class Admin {
 	 * @param string $file  The plugin file name.
 	 * @return array The modified array of meta links.
 	 */
-	public function add_plugin_row_meta( $links, $file ) {
-		if ( CAMPAIGNBAY_PLUGIN_BASENAME !== $file ) {
+	public function add_plugin_row_meta($links, $file)
+	{
+		if (CAMPAIGNBAY_PLUGIN_BASENAME !== $file) {
 			return $links;
 		}
-		
+
 		// Get the URLs from your white label settings.
 		$white_label = Common::get_instance()->get_white_label();
-		$docs_url    = $white_label['docs_uri'] ?? '#';
+		$docs_url = $white_label['docs_uri'] ?? '#';
 		$support_url = $white_label['support_uri'] ?? '#';
 
 		// Add the new links.
 		$row_meta = array(
-			'docs'    => '<a href="' . esc_url( $docs_url ) . '" target="_blank">' . esc_html__( 'Docs', 'campaignbay' ) . '</a>',
-			'support' => '<a href="' . esc_url( $support_url ) . '" target="_blank">' . esc_html__( 'Support', 'campaignbay' ) . '</a>',
+			'docs' => '<a href="' . esc_url($docs_url) . '" target="_blank">' . esc_html__('Docs', 'campaignbay') . '</a>',
+			'support' => '<a href="' . esc_url($support_url) . '" target="_blank">' . esc_html__('Support', 'campaignbay') . '</a>',
 			// 'reviews' => '<a href="https://wordpress.org/support/plugin/campaignbay/reviews/" target="_blank">' . esc_html__( 'Reviews', 'campaignbay' ) . '</a>', 
 		);
 
-		return array_merge( $links, $row_meta );
+		return array_merge($links, $row_meta);
 	}
 }
