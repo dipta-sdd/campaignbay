@@ -1,5 +1,5 @@
 import { Icon, plus } from "@wordpress/icons";
-import logo_32px from "../../../assets/img/logo-32px.png";
+// import logo_32px from "../../../assets/img/logo-32px.png";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
@@ -35,11 +35,11 @@ export default function Navbar() {
       <div className="campaignbay-bg-white campaignbay-p-0 !campaignbay-border-0 !campaignbay-border-b !campaignbay-border-gray-300 campaignbay-z-50 campaignbay-relative">
         <div className="campaignbay-flex campaignbay-px-12 campaignbay-justify-between campaignbay-items-center campaignbay-flex-wrap md:campaignbay-flex-nowrap campaignbay-gap-4 campaignbay-relative">
           <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-4 campaignbay-py-12">
-            <img
+            {/* <img
               src={logo_32px}
               alt="CampaignBay Logo"
               className="campaignbay-h-32 campaignbay-w-auto"
-            />
+            /> */}
           </div>
           <div
             className={` campaignbay-flex-1 md:campaignbay-flex-none campaignbay-flex-col md:campaignbay-flex-row campaignbay-justify-stretch md:campaignbay-items-center campaignbay-absolute md:campaignbay-relative campaignbay-top-[102%] md:campaignbay-top-auto campaignbay-left-0  campaignbay-w-full md:campaignbay-w-auto campaignbay-gap-0 md:campaignbay-gap-6 campaignbay-bg-white !campaignbay-border-0  ${

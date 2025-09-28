@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import DateTimePicker from "../components/DateTimePicker";
 import CbCheckbox from "../components/CbCheckbox";
-import Tooltip from "../components/tooltip";
+import Tooltip from "../components/Tooltip";
 import CampaignSettings from "../components/CampaignSettings";
 import { renderError } from "./CampaignsEdit";
 

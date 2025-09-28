@@ -12,9 +12,6 @@ import {
   previous,
   next,
   edit,
-  check,
-  cancelCircleFilled,
-  copy,
   copySmall,
 } from "@wordpress/icons";
 import apiFetch from "@wordpress/api-fetch";

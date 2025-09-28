@@ -2,7 +2,6 @@ import { TabPanel, Animate, Notice } from "@wordpress/components";
 import GlobalSettings from "../components/GlobalSettings";
 import ProductSettings from "./../components/ProductSettings";
 import CartSettings from "./../components/CartSettings";
-import PromotionSettings from "./../components/PromotionSettings";
 import AdvancedSettings from "./../components/AdvancedSettings";
 import { useEffect, useState } from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
@@ -20,7 +19,6 @@ const Settings = () => {
   const [productSettings, setProductSettings] = useState({});
   const [globalSettings, setGlobalSettings] = useState({});
   const [cartSettings, setCartSettings] = useState({});
-  const [promotionSettings, setPromotionSettings] = useState({});
   const [advancedSettings, setAdvancedSettings] = useState({});
   const [formData, setFormData] = useState("global");
   useEffect(() => {

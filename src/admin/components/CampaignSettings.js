@@ -1,7 +1,7 @@
 import { __ } from "@wordpress/i18n";
 import Required from "./Required";
 import CbCheckbox from "./CbCheckbox";
-import Tooltip from "./tooltip";
+import Tooltip from "./Tooltip";
 import { renderError } from "../pages/CampaignsEdit";
 import { useEffect, useState } from "react";
 import Input from "./Input";

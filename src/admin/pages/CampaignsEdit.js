@@ -20,7 +20,7 @@ import { getSettings as getDateSettings } from "@wordpress/date";
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
 import CbCheckbox from "../components/CbCheckbox";
-import Tooltip from "../components/tooltip";
+import Tooltip from "../components/Tooltip";
 import DateTimePicker from "../components/DateTimePicker";
 import CampaignSettings from "../components/CampaignSettings";
 const CampaignsEdit = () => {
