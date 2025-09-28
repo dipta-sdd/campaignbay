@@ -1,4 +1,3 @@
-import { TabPanel, Animate, Notice } from "@wordpress/components";
 import GlobalSettings from "../components/GlobalSettings";
 import ProductSettings from "./../components/ProductSettings";
 import CartSettings from "./../components/CartSettings";
@@ -10,6 +9,7 @@ import { useToast } from "../store/toast/use-toast";
 import { check, Icon } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import Navbar from "../components/Navbar";
+import TabPanel from "../components/TabPanel";
 const Settings = () => {
   const [settings, setSettings] = useState({});
   const [isLoading, setIsLoading] = useState(true);
