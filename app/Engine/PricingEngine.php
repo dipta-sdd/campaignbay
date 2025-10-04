@@ -77,6 +77,7 @@ class PricingEngine extends Base
 		// woocommerce_product_variation_get_price
 		$hooks = [
 			['filter', 'woocommerce_get_price_html', 'get_price_html', 20, 2],
+			['filter', 'woocommerce_variable_price_html', 'get_variable_price_html', 20, 2],
 			['filter', 'woocommerce_product_is_on_sale', 'is_on_sale', 20, 2],
 			['action', 'woocommerce_before_add_to_cart_form', 'display_product_discount_message', 20, 0],
 			// ['action' , 'woocommerce_before_single_product_summary', 'display_product_discount_message', 9 ],
@@ -95,11 +96,11 @@ class PricingEngine extends Base
 
 	public function get_price_html($price_html, $product)
 	{
-		if (Woocommerce::product_type_is($product, 'variable'))
+		if (Woocommerce::product_type_is($product, 'variable')) {
 			return $price_html;
-
+		}
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
-		//  
+
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
 			return $price_html;
 		$price_html = Woocommerce::get_price_html(
@@ -112,11 +113,46 @@ class PricingEngine extends Base
 		return $price_html;
 	}
 
+	public function get_variable_price_html($price_html, $product)
+	{
+		error_log('woocommerce_variable_price_html ' . $product->get_name() . ' - ' . $product->get_id());
+		if (!Woocommerce::product_type_is($product, 'variable')) {
+			return $price_html;
+		}
+		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
+		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
+			return $price_html;
+		// error_log(print_r($meta, true));
+
+		$prices = Woocommerce::get_variation_prices($product);
+		foreach ($meta['simple'] as $key => $value) {
+			$prices['price'][$key] = $value['discounted_price'];
+			if ($value['display_as_regular_price'] !== null && $value['display_as_regular_price'] === true)
+				$prices['regular_price'][$key] = $value['discounted_price'];
+		}
+		// from here woocommerce default logic applied
+		$min_price = current($prices['price']);
+		$max_price = end($prices['price']);
+		$min_reg_price = current($prices['regular_price']);
+		$max_reg_price = end($prices['regular_price']);
+
+		if ($min_price !== $max_price) {
+			$price_html = wc_format_price_range($min_price, $max_price);
+		}
+		if ($min_reg_price !== $max_reg_price) {
+			$reg_price = wc_format_price_range($min_reg_price, $max_reg_price);
+		}
+		if ($min_reg_price !== $min_price && $max_reg_price !== $max_price) {
+			$price_html = wc_format_sale_price($reg_price, $price_html);
+		}
+		return $price_html;
+	}
+
 
 	public function is_on_sale($is_on_sale, $product)
 	{
-		if (Woocommerce::product_type_is($product, 'variable'))
-			return $is_on_sale;
+		// if (Woocommerce::product_type_is($product, 'variable'))
+		// 	return $is_on_sale;
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
 		if (!is_array($meta) || empty($meta) || !isset($meta['is_on_sale']))
 			return $is_on_sale;
@@ -133,9 +169,9 @@ class PricingEngine extends Base
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
 			return;
 		$message = Woocommerce::generate_product_banner(
-			$format = $meta['simple']['message_format'],
 			$meta['simple']['value'],
-			$meta['simple']['type']
+			$meta['simple']['type'],
+			$format = $meta['simple']['message_format']
 		);
 		if ($message == '')
 			return;

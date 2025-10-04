@@ -257,8 +257,22 @@ const CampaignsEdit = () => {
       setDiscountValue(response.discount_value);
       setTargetType(response.target_type);
       setTargetIds(response.target_ids);
-      setIsExclude(response.is_exclude);
-      setIsExcludeSaleItems(response.exclude_sale_items);
+      setIsExclude(
+        response.is_exclude === 1 ||
+          response.is_exclude === true ||
+          response.is_exclude === "true" ||
+          response.is_exclude === "1"
+          ? true
+          : false
+      );
+      setIsExcludeSaleItems(
+        response.exclude_sale_items === 1 ||
+          response.exclude_sale_items === true ||
+          response.exclude_sale_items === "true" ||
+          response.exclude_sale_items === "1"
+          ? true
+          : false
+      );
       setScheduleEnabled(response.schedule_enabled);
       setEnableUsageLimit(response.usage_limit ? true : false);
       setUsageLimit(response.usage_limit);
@@ -303,7 +317,6 @@ const CampaignsEdit = () => {
     }
     return tmpSettings;
   };
-
   return (
     <>
       {isLoading ? (

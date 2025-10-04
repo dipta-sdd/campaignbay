@@ -96,6 +96,10 @@ class ProductDiscount
 	 */
 	public function apply_discounts()
 	{
+		// if variable product just apply on variations
+		if (Woocommerce::product_type_is($this->product, 'variable')) {
+			return $this->apply_discounts_on_variations();
+		}
 		$original_price = (float) Woocommerce::get_product_regular_price($this->product);
 		$base_price = (float) Woocommerce::get_product_base_price($this->product);
 		$best_price = null;
@@ -115,11 +119,9 @@ class ProductDiscount
 			if ($this->is_better_price($new_price, $best_price)) {
 				$best_price = $new_price;
 				$applied_campaign = $campaign;
-				error_log('_____');
 			}
 		}
 		if ($applied_campaign !== null) {
-			error_log(print_r($applied_campaign->get_settings(), true));
 			$this->data['on_discount'] = true;
 			$this->data['is_simple'] = true;
 			$simple = array();
@@ -135,6 +137,36 @@ class ProductDiscount
 			if (!$simple['display_as_regular_price'])
 				$this->data['is_on_sale'] = true;
 		}
+		$this->product->add_meta_data('campaignbay', $this->data, true);
+		return $this;
+	}
+
+	public function apply_discounts_on_variations()
+	{
+		$prices = Woocommerce::get_variation_prices($this->product);
+		$this->data = array(
+			'on_discount' => false,
+		);
+
+		if (empty($prices['price'])) {
+			return $this;
+		}
+		foreach ($prices['price'] as $key => $value) {
+			$meta = Woocommerce::get_product($key)->get_meta('campaignbay');
+			if ($meta['on_discount'])
+				$this->data['on_discount'] = true;
+
+			if ($meta['is_on_sale'])
+				$this->data['is_on_sale'] = true;
+
+			if (isset($meta['is_simple']) && $meta['is_simple']) {
+				$this->data['is_simple'] = $meta['is_simple'];
+				if (!isset($meta['simple']))
+					$this->data['simple'] = array();
+				$this->data['simple'][$key] = $meta['simple'];
+			}
+		}
+
 		$this->product->add_meta_data('campaignbay', $this->data, true);
 		return $this;
 	}
@@ -239,7 +271,6 @@ class ProductDiscount
 		} elseif ($setting === 'apply_first') {
 			return $current_best_price === null;
 		}
-		error_log('_____' . $setting);
 		return false;
 	}
 

@@ -2,14 +2,15 @@
 
 namespace WpabCb\Helper;
 
-use WpabCb\Core\Common;
-use WpabCb\Helper\Helper;
 use WC_Order;
 use WC_Order_Refund;
 use WC_Product;
 use WP_Post;
+use WpabCb\Core\Common;
+use WpabCb\Helper\Helper;
 
-if (!defined('ABSPATH')) exit; // Exit if accessed directly
+if (!defined('ABSPATH'))
+    exit; // Exit if accessed directly
 
 class Woocommerce
 {
@@ -28,37 +29,40 @@ class Woocommerce
 
     static function product_type_is($product, $type)
     {
-        if(!empty($product))
+        if (!empty($product))
             if (is_object($product) && method_exists($product, 'is_type')) {
                 return $product->is_type($type);
             }
         return false;
     }
 
-    static function get_price_html($price_html, $product , $original_price, $discount_price, $display_as_regular_price = false)
+    static function get_price_html($price_html, $product, $original_price, $discount_price, $display_as_regular_price = false)
     {
-        if($display_as_regular_price || $original_price <= $discount_price){
+        if ($display_as_regular_price || $original_price <= $discount_price) {
             return self::format_price($discount_price);
         }
         $new_price_html = self::format_sale_price(self::format_price($original_price), self::format_price($discount_price));
-        if( $new_price_html) return $new_price_html;
+        if ($new_price_html)
+            return $new_price_html;
         return $price_html;
     }
 
-    static function generate_product_banner($format = null, $value, $type){
-        if($value === null || $value === '' || $type === null || $type === '') return null;
-        if($format === null || $format === ''){
+    static function generate_product_banner($value, $type = '', $format = null)
+    {
+        if ($value === null || $value === '' || $type === null || $type === '')
+            return null;
+        if ($format === null || $format === '') {
             $format = Common::get_instance()->get_settings(
                 $type == 'percentage' ? 'product_message_format_percentage' : 'product_message_format_fixed'
             );
         }
         return Helper::generate_message($format, array(
-            '{percentage_off}' => $value ,
-            '{amount_off}'     => $value . self::get_currency_symbol(),
+            '{percentage_off}' => $value,
+            '{amount_off}' => $value . self::get_currency_symbol(),
         ));
     }
 
-    
+
     // static function getConvertedFixedPrice($value, $type = '')
     // {
     //     return apply_filters('campaignbay_converted_currency_value', $value, $type);
@@ -142,7 +146,7 @@ class Woocommerce
      */
     static function get_product_id($product)
     {
-        if(!empty($product)){
+        if (!empty($product)) {
             if (is_object($product) && method_exists($product, 'get_id')) {
                 return $product->get_id();
             } elseif (isset($product->id)) {
@@ -164,7 +168,7 @@ class Woocommerce
      */
     static function get_product_or_parent_id($product)
     {
-        if(self::product_type_is($product, 'variation')){
+        if (self::product_type_is($product, 'variation')) {
             return self::get_product_parent_id($product);
         }
         return self::get_product_id($product);
@@ -194,7 +198,7 @@ class Woocommerce
      */
     static function get_product($product_id)
     {
-        if(isset(self::$products[$product_id])){
+        if (isset(self::$products[$product_id])) {
             return self::$products[$product_id];
         } else if (function_exists('wc_get_product')) {
             self::$products[$product_id] = apply_filters('campaignbay_get_product', wc_get_product($product_id), $product_id);
@@ -230,7 +234,7 @@ class Woocommerce
      */
     static function get_product_sale_price($product)
     {
-        if(!empty($product))
+        if (!empty($product))
             if (self::is_product_in_sale($product)) {
                 if (is_object($product) && method_exists($product, 'get_sale_price')) {
                     $price = $product->get_sale_price();
@@ -248,12 +252,12 @@ class Woocommerce
      */
     static function is_product_in_sale($product)
     {
-        if(!empty($product))
+        if (!empty($product))
             if (is_object($product) && method_exists($product, 'is_on_sale') && method_exists($product, 'get_sale_price')) {
-                if($product->is_on_sale('')){
-                    if($product->get_sale_price()){
+                if ($product->is_on_sale('')) {
+                    if ($product->get_sale_price()) {
                         return true;
-                    }else{
+                    } else {
                         return false;
                     }
                 }
@@ -281,7 +285,7 @@ class Woocommerce
      */
     static function get_product_regular_price($product)
     {
-        if(!empty($product))
+        if (!empty($product))
             if (is_object($product) && method_exists($product, 'get_regular_price')) {
                 $price = $product->get_regular_price();
                 return $price;
@@ -297,16 +301,17 @@ class Woocommerce
     static function get_product_base_price($product)
     {
         $price = null;
-        if(empty($product)) return $price;
+        if (empty($product))
+            return $price;
         $settings = Common::get_instance()->get_settings('global_calculate_discount_from');
-        if($settings == 'sale_price' && self::is_product_in_sale($product)){
+        if ($settings == 'sale_price' && self::is_product_in_sale($product)) {
             $price = self::get_product_sale_price($product);
-            if($price !== false){
+            if ($price !== false) {
                 return $price;
             }
-        } 
+        }
         $price = self::get_product_regular_price($product);
-        if($price === false){
+        if ($price === false) {
             $price = self::get_product_sale_price($product);
         }
         return $price;
@@ -458,19 +463,25 @@ class Woocommerce
     //     return true;
     // }
 
-    // /**
-    //  * Get variation prices for variable product
-    //  * @param \WC_Product_Variable $product
-    //  * @param bool $for_display
-    //  * @return array|false
-    //  */
-    // static function getVariationPrices($product, $for_display = false)
-    // {
-    //     if (is_object($product) && method_exists($product, 'get_variation_prices')) {
-    //         return $product->get_variation_prices($for_display);
-    //     }
-    //     return false;
-    // }
+    /**
+     * Get variation prices for variable product
+     * @param \WC_Product_Variable $product
+     * @param bool $for_display
+     * @return array|false
+     */
+    static function get_variation_prices($product, $for_display = false)
+    {
+        // $variations = self::available_product_variations($product);
+        // foreach ($variations as $key => $value) {
+        //     // $meta = self::get_product($key)->get_meta('campaignbay');
+        //     error_log(print_r($value, true));
+        // }
+
+        if (is_object($product) && method_exists($product, 'get_variation_prices')) {
+            return $product->get_variation_prices($for_display);
+        }
+        return false;
+    }
 
     // /**
     //  * Get first visible child variation product of variable product
@@ -518,19 +529,19 @@ class Woocommerce
     //     return self::$custom_taxonomies;
     // }
 
-	// public static function changeCustomTaxonomyLabel(array $custom_taxonomies): array {
-	// 	foreach ($custom_taxonomies as $customTaxonomy => $taxonomy) {
-	// 		if (!is_object($taxonomy) && !($taxonomy instanceof WP_Taxonomy)) {
-	// 			continue;
-	// 		}
-	// 		if ($customTaxonomy === 'pwb-brand' && isset($taxonomy->labels->menu_name)) {
-	// 			$custom_taxonomies[$customTaxonomy]->labels->menu_name = 'Perfect Brands';
-	// 		} elseif ($customTaxonomy === 'product_brand' && isset($taxonomy->labels->menu_name)) {
-	// 			$custom_taxonomies[$customTaxonomy]->labels->menu_name = 'Woocommerce Brands';
-	// 		}
-	// 	}
-	// 	return $custom_taxonomies;
-	// }
+    // public static function changeCustomTaxonomyLabel(array $custom_taxonomies): array {
+    // 	foreach ($custom_taxonomies as $customTaxonomy => $taxonomy) {
+    // 		if (!is_object($taxonomy) && !($taxonomy instanceof WP_Taxonomy)) {
+    // 			continue;
+    // 		}
+    // 		if ($customTaxonomy === 'pwb-brand' && isset($taxonomy->labels->menu_name)) {
+    // 			$custom_taxonomies[$customTaxonomy]->labels->menu_name = 'Perfect Brands';
+    // 		} elseif ($customTaxonomy === 'product_brand' && isset($taxonomy->labels->menu_name)) {
+    // 			$custom_taxonomies[$customTaxonomy]->labels->menu_name = 'Woocommerce Brands';
+    // 		}
+    // 	}
+    // 	return $custom_taxonomies;
+    // }
 
     /**
      * Format the sale price
@@ -679,11 +690,12 @@ class Woocommerce
     //     return null;
     // }
 
-    static function round($value){
-        if(function_exists('wc_get_price_decimals')){
-            return round( $value, wc_get_price_decimals() );
+    static function round($value)
+    {
+        if (function_exists('wc_get_price_decimals')) {
+            return round($value, wc_get_price_decimals());
         } else {
-            return round( $value, get_option( 'woocommerce_price_num_decimals', 2 ) );
+            return round($value, get_option('woocommerce_price_num_decimals', 2));
         }
     }
 
@@ -828,7 +840,7 @@ class Woocommerce
         if (is_int($product)) {
             $product = self::get_product($product);
         }
-        if(!empty($product))
+        if (!empty($product))
             if (is_object($product) && method_exists($product, 'get_parent_id')) {
                 $parent_id = $product->get_parent_id();
             }
@@ -1887,25 +1899,26 @@ class Woocommerce
     //     return apply_filters('campaignbay_display_bulk_table_if_any_one_variant_has_discount', false);
     // }
 
-    // /**
-    //  * get available product variations
-    //  * @param $product
-    //  * @return array
-    //  */
-    // public static function availableProductVariations($product){
-    //     $product_id = self::get_product_id($product);
-    //     if(isset(self::$product_variations[$product_id])){
-    //         return self::$product_variations[$product_id];
-    //     }
-    //     $available_variations = array();
-    //     $is_variable_product = self::product_type_is($product, 'variable');
-    //     if(!empty($product))
-    //         if ($is_variable_product && is_object($product) && method_exists($product, 'get_available_variations')){
-    //             $available_variations = $product->get_available_variations();
-    //         }
-    //     self::$product_variations[$product_id] = $available_variations;
-    //     return $available_variations;
-    // }
+    /**
+     * get available product variations
+     * @param $product
+     * @return array
+     */
+    public static function available_product_variations($product)
+    {
+        $product_id = self::get_product_id($product);
+        if (isset(self::$product_variations[$product_id])) {
+            return self::$product_variations[$product_id];
+        }
+        $available_variations = array();
+        $is_variable_product = self::product_type_is($product, 'variable');
+        if (!empty($product))
+            if ($is_variable_product && is_object($product) && method_exists($product, 'get_available_variations')) {
+                $available_variations = $product->get_available_variations();
+            }
+        self::$product_variations[$product_id] = $available_variations;
+        return $available_variations;
+    }
 
     // /**
     //  * WC format price
@@ -1997,9 +2010,9 @@ class Woocommerce
     //  * @return bool
     //  */
     // static function checkProductIsPurchasable($product) {
-	//     if(!apply_filters('wlr_is_purchasable_need_to_check',true)){
-	// 	    return true;
-	//     }
+    //     if(!apply_filters('wlr_is_purchasable_need_to_check',true)){
+    // 	    return true;
+    //     }
     //     if(is_object($product) && method_exists($product, 'is_purchasable')) {
     //         return $product->is_purchasable();
     //     }

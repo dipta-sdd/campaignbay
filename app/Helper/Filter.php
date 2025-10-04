@@ -1,54 +1,58 @@
 <?php
 
 namespace WpabCb\Helper;
+
 use WpabCb\Core\Common;
 
-if (!defined('ABSPATH')) exit; // Exit if accessed directly
+if (!defined('ABSPATH'))
+    exit; // Exit if accessed directly
 
 class Filter
 {
     /**
-	 * The single instance of the class.
-	 *
-	 * @since 1.0.0
-	 * @var   DiscountManager
-	 * @access private
-	 */
-	private static $instance = null;
+     * The single instance of the class.
+     *
+     * @since 1.0.0
+     * @var   DiscountManager
+     * @access private
+     */
+    private static $instance = null;
 
-	/**
-	 * 
-	 * @since 1.0.0
-	 * @access private
-	 * @var array
-	 */
-	private $settings = array();
+    /**
+     * 
+     * @since 1.0.0
+     * @access private
+     * @var array
+     */
+    private $settings = array();
 
-	
-	/**
-	 * Gets an instance of this object.
-	 *
-	 * @static
-	 * @access public
-	 * @since 1.0.0
-	 * @return object
-	 */
-	public static function get_instance() {
-		static $instance = null;
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
 
-	/**
-	 * Constructor to define and build the hooks array.
-	 *
-	 * @since 1.0.0
-	 */
-	private function __construct() {
-		$this->settings = Common::get_instance()->get_settings();
-	}
+    /**
+     * Gets an instance of this object.
+     *
+     * @static
+     * @access public
+     * @since 1.0.0
+     * @return object
+     */
+    public static function get_instance()
+    {
+        static $instance = null;
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Constructor to define and build the hooks array.
+     *
+     * @since 1.0.0
+     */
+    private function __construct()
+    {
+        $this->settings = Common::get_instance()->get_settings();
+    }
 
 
 
@@ -63,17 +67,23 @@ class Filter
     {
         $settings = Common::get_instance()->get_settings();
         if (is_a($product, 'WC_Product')) {
+            $is_on_sale = Woocommerce::is_product_in_sale($product);
             $product_id = Woocommerce::get_product_or_parent_id($product);
             $type = $campaign->get_target_type();
             $is_exclude = $campaign->get_is_exclude();
-            
+            $exclude_sale_item = $campaign->get_exclude_sale_items();
+
+            if ($is_on_sale && $exclude_sale_item) {
+                error_log('+++=================================');
+                error_log($exclude_sale_item ? 'true' : 'false');
+                return false;
+            }
             if ('entire_store' === $type) {
                 return true;
-            } 
-            else if ('product' === $type) {
+            } else if ('product' === $type) {
                 $result = $this->compareWithProducts($campaign->get_target_ids(), $is_exclude, $product_id, $product);
                 return $result;
-            } 
+            }
             // elseif ('category' === $type) {
             //     return $this->compareWithCategories($product, $values, $method);
             // } elseif ('tags' === $type) {
@@ -176,12 +186,12 @@ class Filter
     {
         $result = false;
         $target_ids = array_map('strval', $target_ids);
-        $product_id = (string)($product_id);
+        $product_id = (string) ($product_id);
         if (!$is_exclude) {
             $result = (in_array($product_id, $target_ids, true));
         } else {
-            $result = !(in_array($product_id, $target_ids,true));
-        } 
+            $result = !(in_array($product_id, $target_ids, true));
+        }
         return $result;
     }
 }
