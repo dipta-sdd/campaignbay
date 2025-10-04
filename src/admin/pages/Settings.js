@@ -21,6 +21,7 @@ const Settings = () => {
   const [cartSettings, setCartSettings] = useState({});
   const [advancedSettings, setAdvancedSettings] = useState({});
   const [formData, setFormData] = useState("global");
+  const [activeTab, setActiveTab] = useState("global");
   useEffect(() => {
     fetchSettings();
   }, []);
@@ -154,6 +155,8 @@ const Settings = () => {
       </div>
       {/* <div className="wpab-cb-settings-tabs-container"> */}
       <TabPanel
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         className="wpab-cb-settings-tabs"
         // activeClass='wpab-cb-settings-active-tab'
         tabs={[
@@ -175,52 +178,30 @@ const Settings = () => {
           },
         ]}
       >
-        {(tab) =>
-          (() => {
-            switch (tab.name) {
-              case "global":
-                setFormData("global");
-                return (
-                  <GlobalSettings
-                    globalSettings={globalSettings}
-                    setGlobalSettings={setGlobalSettings}
-                  />
-                );
-              case "product":
-                setFormData("product");
-                return (
-                  <ProductSettings
-                    productSettings={productSettings}
-                    setProductSettings={setProductSettings}
-                  />
-                );
-              case "cart":
-                setFormData("cart");
-                return (
-                  <CartSettings
-                    cartSettings={cartSettings}
-                    setCartSettings={setCartSettings}
-                  />
-                );
-              case "advanced":
-                setFormData("advanced");
-                return (
-                  <AdvancedSettings
-                    advancedSettings={advancedSettings}
-                    setAdvancedSettings={setAdvancedSettings}
-                  />
-                );
-              default:
-                setFormData("global");
-                return (
-                  <GlobalSettings
-                    globalSettings={globalSettings}
-                    setGlobalSettings={setGlobalSettings}
-                  />
-                );
-            }
-          })()
-        }
+        {activeTab === "global" && (
+          <GlobalSettings
+            globalSettings={globalSettings}
+            setGlobalSettings={setGlobalSettings}
+          />
+        )}
+        {activeTab === "product" && (
+          <ProductSettings
+            productSettings={productSettings}
+            setProductSettings={setProductSettings}
+          />
+        )}
+        {activeTab === "cart" && (
+          <CartSettings
+            cartSettings={cartSettings}
+            setCartSettings={setCartSettings}
+          />
+        )}
+        {activeTab === "advanced" && (
+          <AdvancedSettings
+            advancedSettings={advancedSettings}
+            setAdvancedSettings={setAdvancedSettings}
+          />
+        )}
       </TabPanel>
       <div className="wpab-button-con-card">
         <div className="cb-container ">

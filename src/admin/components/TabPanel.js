@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-export default function TabPanel({ tabs, children }) {
-  const [activeTab, setActiveTab] = useState(tabs[0]?.name);
+export default function TabPanel({ tabs, activeTab, setActiveTab, children }) {
   const style = {
     width: "100%",
     maxWidth: "min(100% - 20px, 1500px)",
@@ -28,9 +27,7 @@ export default function TabPanel({ tabs, children }) {
           ))}
         </div>
       </div>
-      <div className="wpab-cb-settings-tab-content">
-        {children(tabs.find((tab) => tab.name === activeTab))}
-      </div>
+      <div className="wpab-cb-settings-tab-content">{children}</div>
     </>
   );
 }

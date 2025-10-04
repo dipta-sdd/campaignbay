@@ -1,6 +1,5 @@
 import Checkbox from "./Checkbox";
 import SettingCard from "./SettingCard";
-import Input from "./Input";
 import Select from "./Select";
 import { __ } from "@wordpress/i18n";
 import { useState } from "@wordpress/element";
@@ -161,24 +160,11 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
             "campaignbay"
           )}
         />
-        {/* <Select
-                    label={__('Log Level', 'campaignbay')}
-                    options={[
-                        { label: __('Error Only', 'campaignbay'), value: 'error' },
-                        { label: __('All', 'campaignbay'), value: 'all' }
-                    ]}
-                    value={globalSettings.debug_logLevel}
-                    onChange={(value) => setGlobalSettings((prev) => ({
-                        ...prev,
-                        debug_logLevel: value
-                    }))}
-                /> */}
+
         <div className="wpab-cb-btn-con-bottom">
           <button
             className="wpab-cb-btn wpab-cb-btn-outline-primary"
             onClick={openLogViewer}
-            handleClearLogs={handleClearLogs}
-            isClearingLogs={isClearingLogs}
           >
             <Icon icon={seen} fill="currentColor" />
             {__("View Logs", "campaignbay")}

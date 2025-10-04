@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "@wordpress/element";
 import {
-  Modal,
   Spinner,
   Button,
   SelectControl,
@@ -10,6 +9,7 @@ import { __, _n, sprintf } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
 import { addQueryArgs } from "@wordpress/url";
 import { Icon, chevronUp, chevronDown } from "@wordpress/icons";
+import Modal from "./Modal";
 
 const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
   const [activityLogs, setActivityLogs] = useState([]);

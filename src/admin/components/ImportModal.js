@@ -1,9 +1,9 @@
 import { useState, useCallback } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
-import { Modal, Button } from "@wordpress/components";
+import { Button } from "@wordpress/components";
 import { Icon, upload } from "@wordpress/icons";
 import { csvToJson } from "./csvToJson"; // Assuming your csvToJson file is in utils
-
+import Modal from "./Modal";
 /**
  * A modal for importing campaigns from a CSV file with drag-and-drop support.
  *
@@ -172,15 +172,12 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
                 {fileName} - {jsonData.length} {__("rows found", "campaignbay")}
               </p>
             </div>
-            <div className="campaignbay-overflow-auto campaignbay-border campaignbay-rounded-lg campaignbay-max-h-[50vh]">
+            <div className="campaignbay-overflow-auto campaignbay-border campaignbay-rounded-lg campaignbay-max-h-[50vh] campaignbay-mt-[12px]">
               <table className="campaignbay-min-w-full campaignbay-text-sm campaignbay-text-left campaignbay-text-gray-600">
                 <thead className="campaignbay-bg-gray-50 campaignbay-text-xs campaignbay-text-gray-700 campaignbay-uppercase campaignbay-sticky campaignbay-top-0">
                   <tr>
                     {headers.map((header) => (
-                      <th
-                        key={header}
-                        className="campaignbay-px-6 campaignbay-py-3"
-                      >
+                      <th key={header} className="campaignbay-p-[10px]">
                         {header}
                       </th>
                     ))}
@@ -195,7 +192,7 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
                       {headers.map((header) => (
                         <td
                           key={`${rowIndex}-${header}`}
-                          className="campaignbay-px-6 campaignbay-py-4 campaignbay-whitespace-nowrap campaignbay-capitalize"
+                          className="campaignbay-p-[16px] campaignbay-whitespace-nowrap campaignbay-capitalize"
                         >
                           {String(row[header])}
                         </td>
@@ -249,17 +246,20 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
           </div>
         )}
 
-        <div className="campaignbay-flex campaignbay-justify-end campaignbay-gap-4 campaignbay-mt-6">
-          <Button variant="tertiary" onClick={handleClose}>
+        <div className="campaignbay-flex campaignbay-justify-end campaignbay-gap-4 campaignbay-mt-[24px]">
+          <button
+            className="campaignbay-text-blue-600 hover:campaignbay-bg-blue-100 campaignbay-p-8 campaignbay-rounded-sm"
+            onClick={handleClose}
+          >
             {__("Cancel", "campaignbay")}
-          </Button>
-          <Button
-            variant="primary"
+          </button>
+          <button
+            className="campaignbay-bg-blue-600 hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-p-8 campaignbay-rounded-sm campaignbay-transition-colors disabled:campaignbay-text-blue-400 "
             onClick={handleConfirmImport}
             disabled={!jsonData || error}
           >
             {__("Import Campaigns", "campaignbay")}
-          </Button>
+          </button>
         </div>
       </div>
     </Modal>

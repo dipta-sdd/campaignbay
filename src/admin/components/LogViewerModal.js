@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "@wordpress/element";
-import { Modal, Spinner, Button, ButtonGroup } from "@wordpress/components";
+import { Spinner, Button, ButtonGroup } from "@wordpress/components";
 import apiFetch from "@wordpress/api-fetch";
+import Modal from "./Modal";
 
 const LogViewerModal = ({
   isLogModalOpen,
@@ -12,7 +13,6 @@ const LogViewerModal = ({
   const [selectedDate, setSelectedDate] = useState("today");
   const [logContent, setLogContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const fetchAvailableDates = useCallback(async () => {
     try {
       const dates = await apiFetch({ path: "/campaignbay/v1/logs/list" });
@@ -53,6 +53,7 @@ const LogViewerModal = ({
   }, [isLogModalOpen, fetchLogs]);
 
   const closeModal = () => {
+    console.log("object");
     setIsLogModalOpen(false);
   };
 
@@ -96,9 +97,10 @@ const LogViewerModal = ({
   };
 
   if (!isLogModalOpen) {
+    console.log("returning null");
     return null;
   }
-
+  console.log("returning modal");
   return (
     <Modal
       title="Debug Log Viewer"
@@ -130,27 +132,30 @@ const LogViewerModal = ({
         </div>
         {/* Your refined header with all buttons */}
         <div className="campaignbay-inline-flex campaignbay-justify-end campaignbay-gap-3">
-          <Button variant="secondary" onClick={fetchLogs} isBusy={isLoading}>
+          <button
+            className="campaignbay-text-blue-600 hover:campaignbay-bg-blue-100 campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-sm campaignbay-border campaignbay-border-blue-600 campaignbay-transition-colors disabled:campaignbay-text-blue-400"
+            onClick={fetchLogs}
+            isBusy={isLoading}
+          >
             Refresh
-          </Button>
-          {/* --- NEW: Download Button --- */}
-          <Button
-            variant="secondary"
+          </button>
+          {/* --- NEW: Download button --- */}
+          <button
+            className="campaignbay-text-blue-600 hover:campaignbay-bg-blue-100 campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-sm campaignbay-border campaignbay-border-blue-600 campaignbay-transition-colors disabled:campaignbay-text-blue-400"
             onClick={handleDownloadLog}
             disabled={
               isLoading || !logContent || logContent.startsWith("No logs")
             }
           >
             Download
-          </Button>
-          <Button
-            variant="secondary"
-            isDestructive
+          </button>
+          <button
+            className="campaignbay-text-red-600 hover:campaignbay-bg-red-100 campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-sm campaignbay-border campaignbay-border-red-200  campaignbay-transition-colors disabled:campaignbay-text-blue-400"
             onClick={onClearLogsClick}
             isBusy={isClearingLogs}
           >
             Clear Log Files
-          </Button>
+          </button>
         </div>
       </div>
 
