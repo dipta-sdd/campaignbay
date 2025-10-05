@@ -74,8 +74,6 @@ class Filter
             $exclude_sale_item = $campaign->get_exclude_sale_items();
 
             if ($is_on_sale && $exclude_sale_item) {
-                error_log('+++=================================');
-                error_log($exclude_sale_item ? 'true' : 'false');
                 return false;
             }
             if ('entire_store' === $type) {

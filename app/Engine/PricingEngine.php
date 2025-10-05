@@ -115,14 +115,12 @@ class PricingEngine extends Base
 
 	public function get_variable_price_html($price_html, $product)
 	{
-		error_log('woocommerce_variable_price_html ' . $product->get_name() . ' - ' . $product->get_id());
 		if (!Woocommerce::product_type_is($product, 'variable')) {
 			return $price_html;
 		}
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
 			return $price_html;
-		// error_log(print_r($meta, true));
 
 		$prices = Woocommerce::get_variation_prices($product);
 		foreach ($meta['simple'] as $key => $value) {

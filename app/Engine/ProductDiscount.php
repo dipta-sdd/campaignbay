@@ -141,6 +141,12 @@ class ProductDiscount
 		return $this;
 	}
 
+	/**
+	 * Summary of apply_discounts_on_variations
+	 * 
+	 * @since 1.0.0
+	 * @return self Returns the instance to allow for further chaining.
+	 */
 	public function apply_discounts_on_variations()
 	{
 		$prices = Woocommerce::get_variation_prices($this->product);
