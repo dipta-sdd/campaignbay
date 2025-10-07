@@ -10,8 +10,8 @@ module.exports = isLegacy
       },
       output: {
         path: path.resolve(__dirname, "build"),
-        filename: "[name].js",
-        clean: true,
+        filename: "[name]-legacy.js",
+        clean: false,
       },
       devtool: false,
       module: {
@@ -50,5 +50,6 @@ module.exports = isLegacy
       output: {
         ...defaults.output,
         filename: "[name].js",
+        clean: false,
       },
     };

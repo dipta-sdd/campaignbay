@@ -1,11 +1,19 @@
 import { useId } from "@wordpress/element";
 import { check, Icon } from "@wordpress/icons";
 
-const Checkbox = ({ label, help, checked, onChange, className, ...props }) => {
+const Checkbox = ({
+  label,
+  help,
+  checked,
+  onChange,
+  className,
+  conClassName,
+  ...props
+}) => {
   const inputId = useId();
 
   return (
-    <div className="wpab-input-con">
+    <div className={`wpab-input-con ${conClassName ? " " + conClassName : ""}`}>
       <div className="wpab-checkbox-con-inner">
         <div className="wpab-checkbox-con-inner-checkbox">
           <input

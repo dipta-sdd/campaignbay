@@ -19,7 +19,7 @@ const Input = ({
       <input
         id={inputId}
         type={type}
-        value={!!value}
+        value={value ? value : ""}
         onChange={(e) => (
           console.log(e.target.value), onChange(e.target.value)
         )}

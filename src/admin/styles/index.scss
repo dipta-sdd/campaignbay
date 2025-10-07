@@ -1027,15 +1027,12 @@
     */
   .toast-container {
     position: fixed;
-    /* Stays in the same place even if the page is scrolled */
     top: 40px;
     right: 40px;
-    z-index: 9999;
-    /* Ensures it appears above other admin UI elements */
+    z-index: 999999;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* Space between multiple toasts */
     width: 320px;
   }
 
@@ -1715,6 +1712,9 @@
 
     & .components-dropdown-menu:hover {
       box-shadow: 0px 0px 2px 1px rgb(0 0 0 / 11%);
+    }
+    &:has(.campaignbay-dropdown){
+      z-index: 2;
     }
   }
   .campaignbay-table-container:has(.campaignbay-sticky-l-td)

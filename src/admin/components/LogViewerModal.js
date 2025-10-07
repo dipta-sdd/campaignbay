@@ -97,10 +97,8 @@ const LogViewerModal = ({
   };
 
   if (!isLogModalOpen) {
-    console.log("returning null");
     return null;
   }
-  console.log("returning modal");
   return (
     <Modal
       title="Debug Log Viewer"

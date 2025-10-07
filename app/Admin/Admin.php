@@ -3,6 +3,7 @@
 namespace WpabCb\Admin;
 
 use WpabCb\Core\Common;
+use WpabCb\Helper\Woocommerce;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -188,26 +189,29 @@ class Admin
 			return;
 		}
 
-		$deps_file = CAMPAIGNBAY_PATH . 'build/admin.asset.php';
-		$dependency = array('wp-i18n');
-		$version = CAMPAIGNBAY_VERSION;
+		$wordpress_version = get_bloginfo('version');
+		if (version_compare($wordpress_version, '6.8.0', '>=')) {
+			$deps_file = CAMPAIGNBAY_PATH . 'build/admin.asset.php';
+			$dependency = array('wp-i18n');
+			$version = CAMPAIGNBAY_VERSION;
 
-		if (file_exists($deps_file)) {
-			$deps_file = require $deps_file;
-			$dependency = $deps_file['dependencies'];
-			$version = $deps_file['version'];
+			if (file_exists($deps_file)) {
+				$deps_file = require $deps_file;
+				$dependency = $deps_file['dependencies'];
+				$version = $deps_file['version'];
+			}
+			wp_enqueue_script(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.js', $dependency, $version, true);
+		} else {
+			$version = CAMPAIGNBAY_VERSION;
+			wp_enqueue_script(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin-legacy.js', array(), $version, true);
 		}
 
-		error_log(print_r($dependency, true));
-		$js_loaded = wp_enqueue_script(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.js', $dependency, $version, true);
 
-		$css_loaded = wp_enqueue_style(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.css', array(), $version);
-
-		error_log('css loaded' . $css_loaded ? 'true' : 'false');
-		error_log('js loaded' . $js_loaded ? 'true -- ' . CAMPAIGNBAY_URL . 'build/admin.js' : 'false -- ' . CAMPAIGNBAY_URL . 'build/admin.css');
+		wp_enqueue_style(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.css', array(), $version);
 
 		wp_style_add_data(CAMPAIGNBAY_PLUGIN_NAME, 'rtl', 'replace');
-		$woocommerce_currency_symbol = get_woocommerce_currency_symbol();
+
+		$woocommerce_currency_symbol = Woocommerce::get_currency_symbol();
 		$localize = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_admin_localize',
 			array(
@@ -228,27 +232,12 @@ class Admin
 
 		wp_localize_script(CAMPAIGNBAY_PLUGIN_NAME, 'campaignbay_Localize', $localize);
 
-		// --- START OF DEBUGGING BLOCK ---
-
 		$path_to_check = CAMPAIGNBAY_PATH . 'languages';
-		// campaignbay_log( '--------------------' );
-		// campaignbay_log( 'Checking for translations...' );
-		// campaignbay_log( 'Script Handle: ' . CAMPAIGNBAY_PLUGIN_NAME );
-		// campaignbay_log( 'Text Domain: ' . 'campaignbay' );
-		// campaignbay_log( 'Full Path Being Checked: ' . $path_to_check );
-		// campaignbay_log( 'Does path exist? ' . ( file_exists( $path_to_check ) ? 'Yes' : 'No' ) );
-		// wasted 3 hours on this because of poor documentation, there was no issue here
-		// // --- END OF DEBUGGING BLOCK ---
-
 		$result = wp_set_script_translations(
 			CAMPAIGNBAY_PLUGIN_NAME,
 			'campaignbay',
 			$path_to_check
 		);
-
-		// Log the result of the function call
-		// campaignbay_log( 'Result of wp_set_script_translations: ' . ( $result ? 'True (Success)' : 'False (Failure)' ) );
-
 	}
 
 	/**
@@ -260,7 +249,7 @@ class Admin
 	private function enqueue_global_admin_styles()
 	{
 		wp_enqueue_style(
-			'wpab-cb-admin-menu', // A new, unique handle
+			'campaignbay-admin-menu',
 			CAMPAIGNBAY_URL . 'assets/css/admin-menu.css',
 			array(),
 			CAMPAIGNBAY_VERSION
@@ -330,32 +319,81 @@ class Admin
 				/*==================================================
 				* Product Settings Tab
 				==================================================*/
-				'product_showDiscountedPrice' => array(
-					'type' => 'boolean',
-					'default' => true,
-				),
+
 				'product_message_format_percentage' => array(
 					'type' => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
 					'default' => 'You save {percentage_off}!',
 				),
-				'product_bogoMessageFormat' => array(
+				'product_message_format_fixed' => array(
 					'type' => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
-					'default' => '{campaign_name_strong} : Buy {buy_product_quantity} of this and get {get_product_quantity} {get_product} for free!',
-				),
-				'product_enableQuantityTable' => array(
-					'type' => 'boolean',
-					'default' => true,
-				),
-				'product_excludeSaleItems' => array(
-					'type' => 'boolean',
-					'default' => true,
+					'default' => 'You save {amount_off} per item',
 				),
 				'product_priorityMethod' => array(
 					'type' => 'string',
 					'sanitize_callback' => 'sanitize_key',
 					'default' => 'apply_highest',
+				),
+				'show_discount_table' => array(
+					'type' => 'boolean',
+					'default' => true,
+				),
+				'discount_table_options' => array(
+					'type' => 'object',
+					'properties' => array(
+						'show_header' => array(
+							'type' => 'boolean',
+							'default' => true,
+						),
+						'title' => array(
+							'type' => 'object',
+							'properties' => array(
+								'show' => array(
+									'type' => 'boolean',
+									'default' => true,
+								),
+								'label' => array(
+									'type' => 'string',
+									'sanitize_callback' => 'sanitize_text_field',
+									'default' => 'Title',
+								),
+							),
+						),
+						'range' => array(
+							'type' => 'object',
+							'properties' => array(
+								'show' => array(
+									'type' => 'boolean',
+									'default' => true,
+								),
+								'label' => array(
+									'type' => 'string',
+									'sanitize_callback' => 'sanitize_text_field',
+									'default' => 'Range',
+								),
+							),
+						),
+						'discount' => array(
+							'type' => 'object',
+							'properties' => array(
+								'show' => array(
+									'type' => 'boolean',
+									'default' => true,
+								),
+								'label' => array(
+									'type' => 'string',
+									'sanitize_callback' => 'sanitize_text_field',
+									'default' => 'Discount',
+								),
+								'content' => array(
+									'type' => 'string',
+									'sanitize_callback' => 'sanitize_key',
+									'default' => 'price',
+								),
+							),
+						),
+					),
 				),
 
 				/*==================================================

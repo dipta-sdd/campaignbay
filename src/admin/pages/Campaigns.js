@@ -28,6 +28,7 @@ import Navbar from "../components/Navbar";
 import ImportExport from "../components/ImportExport";
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import formatDateTime, { timeDiff } from "../utils/Dates";
+import DropdownMenu from "../components/DropdownMenu";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -392,7 +393,7 @@ const Campaigns = () => {
         __("Error duplicating campaign. Please try again.", "campaignbay"),
         "error"
       );
-      isLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -606,10 +607,7 @@ const Campaigns = () => {
                       </td>
                       <td className="campaignbay-sticky-r-td">
                         {/* <div className="campaignbay-action-button-container"> */}
-                        <ToolbarDropdownMenu
-                          icon={moreVertical}
-                          label="Actions"
-                          position="bottom left"
+                        <DropdownMenu
                           controls={[
                             {
                               title: "Edit",

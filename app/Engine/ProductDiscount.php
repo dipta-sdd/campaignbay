@@ -112,6 +112,8 @@ class ProductDiscount
 		);
 
 		foreach ($this->campaigns as $campaign) {
+			if ($campaign->get_type() !== 'scheduled')
+				continue;
 			if (!$campaign->is_applicable_to_product($this->product)) {
 				continue;
 			}
@@ -137,6 +139,7 @@ class ProductDiscount
 			if (!$simple['display_as_regular_price'])
 				$this->data['is_on_sale'] = true;
 		}
+
 		$this->product->add_meta_data('campaignbay', $this->data, true);
 		return $this;
 	}

@@ -20,8 +20,7 @@ const Settings = () => {
   const [globalSettings, setGlobalSettings] = useState({});
   const [cartSettings, setCartSettings] = useState({});
   const [advancedSettings, setAdvancedSettings] = useState({});
-  const [formData, setFormData] = useState("global");
-  const [activeTab, setActiveTab] = useState("global");
+  const [activeTab, setActiveTab] = useState("product");
   useEffect(() => {
     fetchSettings();
   }, []);
@@ -52,6 +51,8 @@ const Settings = () => {
       product_message_format_percentage:
         settings.product_message_format_percentage,
       product_enableQuantityTable: settings.product_enableQuantityTable,
+      show_discount_table: settings.show_discount_table,
+      discount_table_options: settings.discount_table_options,
       product_priorityMethod: settings.product_priorityMethod,
     });
 
@@ -77,15 +78,16 @@ const Settings = () => {
   const updateSettings = async () => {
     try {
       setIsSaving(true);
-      console.log(formData);
+      console.log(activeTab);
       let data = {};
-      switch (formData) {
+      switch (activeTab) {
         case "global":
           data = {
             ...globalSettings,
           };
           break;
         case "product":
+          console.log(productSettings);
           data = {
             ...productSettings,
           };
@@ -129,7 +131,6 @@ const Settings = () => {
       );
     }
   };
-  console.log(cartSettings);
   if (isLoading) {
     return <Loader />;
   }
@@ -188,6 +189,8 @@ const Settings = () => {
           <ProductSettings
             productSettings={productSettings}
             setProductSettings={setProductSettings}
+            isSaving={isSaving}
+            updateSettings={updateSettings}
           />
         )}
         {activeTab === "cart" && (

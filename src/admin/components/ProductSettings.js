@@ -4,8 +4,17 @@ import { __ } from "@wordpress/i18n";
 import { Save } from "lucide-react";
 import Select from "./Select";
 import Input from "./Input";
+import { Icon, pencil } from "@wordpress/icons";
+import QuantityTableEditModal from "./QuantityTableEditModal";
+import { useState } from "react";
 
-const ProductSettings = ({ productSettings, setProductSettings }) => {
+const ProductSettings = ({
+  productSettings,
+  setProductSettings,
+  isSaving,
+  updateSettings,
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(true);
   return (
     <div className="wpab-cb-settings-tab">
       <SettingCard title={__("Product Page Display", "campaignbay")}>
@@ -49,6 +58,33 @@ const ProductSettings = ({ productSettings, setProductSettings }) => {
             "campaignbay"
           )}
         />
+
+        <Checkbox
+          checked={productSettings.show_discount_table}
+          onChange={() =>
+            setProductSettings((prev) => ({
+              ...prev,
+              show_discount_table: !prev.show_discount_table,
+            }))
+          }
+          label={__(
+            "Enable Quantity Discounts Table on Product Page",
+            "campaignbay"
+          )}
+          help={__(
+            "Show a table outlining tiered quantity based discounts",
+            "campaignbay"
+          )}
+        />
+        <div className="wpab-cb-btn-con-bottom">
+          <button
+            className="wpab-cb-btn wpab-cb-btn-outline-primary"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <Icon icon={pencil} fill="currentColor" />
+            {__("Customize Table", "campaignbay")}
+          </button>
+        </div>
       </SettingCard>
 
       <SettingCard
@@ -83,6 +119,19 @@ const ProductSettings = ({ productSettings, setProductSettings }) => {
           }
         />
       </SettingCard>
+      <QuantityTableEditModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        options={productSettings.discount_table_options}
+        setOptions={(value) => {
+          setProductSettings((prev) => ({
+            ...prev,
+            discount_table_options: { ...value },
+          }));
+        }}
+        isSaving={isSaving}
+        updateSettings={updateSettings}
+      />
     </div>
   );
 };
