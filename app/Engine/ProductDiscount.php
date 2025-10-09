@@ -112,7 +112,7 @@ class ProductDiscount
 		);
 
 		foreach ($this->campaigns as $campaign) {
-			if ($campaign->get_type() !== 'scheduled')
+			if ($campaign->get_type() !== 'scheduled' || $campaign->get_type() !== 'earlybird')
 				continue;
 			if (!$campaign->is_applicable_to_product($this->product)) {
 				continue;
@@ -126,17 +126,19 @@ class ProductDiscount
 		if ($applied_campaign !== null) {
 			$this->data['on_discount'] = true;
 			$this->data['is_simple'] = true;
-			$simple = array();
-			$simple['applied_campaign'] = $applied_campaign->get_id();
-			$simple['applied_campaign_title'] = $applied_campaign->get_title();
-			$simple['discounted_price'] = $best_price;
-			$simple['message_format'] = $applied_campaign->get_settings()['message_format'] ?? '';
-			$simple['value'] = $applied_campaign->get_discount_value() ?? null;
-			$simple['type'] = $applied_campaign->get_discount_type() ?? null;
-			$simple['display_as_regular_price'] = $applied_campaign->get_settings()['display_as_regular_price'] ?? false;
-			$this->data['simple'] = $simple;
+			$this->data['simple'] = array(
+				'applied_campaign' => $applied_campaign->get_id(),
+				'applied_campaign_title' => $applied_campaign->get_title(),
+				'price' => $best_price,
+				'discount' => $base_price - $best_price,
+				'message_format' => $applied_campaign->get_settings()['message_format'] ?? '',
+				'value' => $applied_campaign->get_discount_value() ?? null,
+				'type' => $applied_campaign->get_discount_type() ?? null,
+				'display_as_regular_price' => $applied_campaign->get_settings()['display_as_regular_price'] ?? false
+			);
+
 			// add on sale badge
-			if (!$simple['display_as_regular_price'])
+			if (!$this->data['simple']['display_as_regular_price'])
 				$this->data['is_on_sale'] = true;
 		}
 
@@ -208,6 +210,9 @@ class ProductDiscount
 		if ($campaign->get_type() === 'scheduled') {
 			$final_price = $this->calculate_scheduled_price($campaign, $base_price);
 		}
+		if ($campaign->get_type() === 'earlybird') {
+			$final_price = $this->calculate_earlybird_price($campaign, $base_price);
+		}
 
 		do_action('campaignbay_after_calculate_discounted_price', $campaign, $this->product, $final_price, $base_price);
 
@@ -236,6 +241,12 @@ class ProductDiscount
 		}
 
 		return $calculated_price;
+	}
+
+
+	public function calculate_earlybird_price($campaign, $base_price)
+	{
+
 	}
 
 	/**

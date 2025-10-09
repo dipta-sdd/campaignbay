@@ -58,24 +58,49 @@ class Helper
         return $campaigns;
     }
 
-    public static function get_quantity_tiers($tiers, $price)
+    public static function get_quantity_tiers_with_campaign($product)
+    {
+        $quantity_campaigns = self::get_quantity_campaigns($product);
+        $tiers = array();
+        foreach ($quantity_campaigns as $campaign) {
+            foreach ($campaign->get_tiers() as $tier) {
+                $tiers[] = array(
+                    'id' => $campaign->get_id(),
+                    'title' => $campaign->get_title(),
+                    'settings' => $campaign->get_settings(),
+                    'min' => $tier['min'],
+                    'max' => $tier['max'],
+                    'value' => $tier['value'],
+                    'type' => $tier['type'],
+                );
+            }
+        }
+        return $tiers;
+    }
+
+    public static function get_unique_quantity_tiers($tiers, $price)
     {
         $unique_tiers = array();
         foreach ($tiers as $tier) {
             $key = $tier['min'] . '-' . $tier['max'];
-            $current_tier_price = self::get_quantity_price($price, $tier);
+            $current_tier_price = (float) self::get_quantity_price($price, $tier);
             if (isset($unique_tiers[$key])) {
-                $unique_tier_price = $unique_tiers[$key][$price];
+                $unique_tier_price = (float) $unique_tiers[$key]['price'];
+
                 $is_better = self::is_better_price($unique_tier_price, $current_tier_price);
                 if ($is_better) {
                     $unique_tiers[$key] = $tier;
-                    $unique_tiers[$key]['price'] = $current_tier_price;
+                    $unique_tiers[$key]['price'] = (float) $current_tier_price;
                 }
                 continue;
             }
             $unique_tiers[$key] = $tier;
-            $unique_tiers[$key]['price'] = $current_tier_price;
+            $unique_tiers[$key]['price'] = (float) $current_tier_price;
         }
+        $unique_tiers = array_values($unique_tiers);
+        usort($unique_tiers, function ($a, $b) {
+            return $a['min'] - $b['min'];
+        });
         return $unique_tiers;
     }
 
@@ -135,7 +160,6 @@ class Helper
     public static function generate_quantity_table($tiers)
     {
         $settings = Common::get_instance()->get_settings('discount_table_options');
-        error_log(print_r($settings['discount']['content'], true));
         $table = '<table class="campaignbay-discount-table"> ';
         //show table header
         if (
@@ -173,7 +197,6 @@ class Helper
             $table .= '</tr>';
         }
         $table .= '</tbody></table>';
-        error_log($table);
         return self::get_clean_html($table);
     }
 }

@@ -189,17 +189,17 @@ class Admin
 			return;
 		}
 
+		$deps_file = CAMPAIGNBAY_PATH . 'build/admin.asset.php';
+		$dependency = array('wp-i18n');
+		$version = CAMPAIGNBAY_VERSION;
+		if (file_exists($deps_file)) {
+			$deps_file = require $deps_file;
+			$dependency = $deps_file['dependencies'];
+			$version = $deps_file['version'];
+		}
+
 		$wordpress_version = get_bloginfo('version');
 		if (version_compare($wordpress_version, '6.8.0', '>=')) {
-			$deps_file = CAMPAIGNBAY_PATH . 'build/admin.asset.php';
-			$dependency = array('wp-i18n');
-			$version = CAMPAIGNBAY_VERSION;
-
-			if (file_exists($deps_file)) {
-				$deps_file = require $deps_file;
-				$dependency = $deps_file['dependencies'];
-				$version = $deps_file['version'];
-			}
 			wp_enqueue_script(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.js', $dependency, $version, true);
 		} else {
 			$version = CAMPAIGNBAY_VERSION;

@@ -403,6 +403,7 @@ class Campaign
 
 			// Reload data
 			$this->load_data();
+			error_log(print_r($this->data, true));
 
 			/**
 			 * Fires after a campaign is updated and all its data is saved.

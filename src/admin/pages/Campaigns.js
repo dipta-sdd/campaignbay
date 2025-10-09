@@ -8,17 +8,12 @@ import {
   chevronUp,
   chevronDown,
   trash,
-  moreVertical,
   previous,
   next,
   edit,
   copySmall,
 } from "@wordpress/icons";
 import apiFetch from "@wordpress/api-fetch";
-import {
-  __experimentalConfirmDialog as ConfirmDialog,
-  ToolbarDropdownMenu,
-} from "@wordpress/components";
 import { useToast } from "../store/toast/use-toast";
 import CbCheckbox from "../components/CbCheckbox"; // Assuming you still use this for the header
 import { addQueryArgs } from "@wordpress/url";
@@ -29,6 +24,7 @@ import ImportExport from "../components/ImportExport";
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import formatDateTime, { timeDiff } from "../utils/Dates";
 import DropdownMenu from "../components/DropdownMenu";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);

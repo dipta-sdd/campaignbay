@@ -33,8 +33,8 @@ export default function Navbar() {
   return (
     <>
       <div className="campaignbay-bg-white campaignbay-p-0 !campaignbay-border-0 !campaignbay-border-b !campaignbay-border-gray-300 campaignbay-z-50 campaignbay-relative">
-        <div className="campaignbay-flex campaignbay-px-12 campaignbay-justify-between campaignbay-items-center campaignbay-flex-wrap md:campaignbay-flex-nowrap campaignbay-gap-4 campaignbay-relative">
-          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-4 campaignbay-py-12">
+        <div className="campaignbay-flex campaignbay-px-[12px] campaignbay-justify-between campaignbay-items-center campaignbay-flex-wrap md:campaignbay-flex-nowrap campaignbay-gap-[4px] campaignbay-relative">
+          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[4px] campaignbay-py-[12px]">
             {/* <img
               src={logo_32px}
               alt="CampaignBay Logo"
@@ -42,17 +42,17 @@ export default function Navbar() {
             /> */}
           </div>
           <div
-            className={` campaignbay-flex-1 md:campaignbay-flex-none campaignbay-flex-col md:campaignbay-flex-row campaignbay-justify-stretch md:campaignbay-items-center campaignbay-absolute md:campaignbay-relative campaignbay-top-[102%] md:campaignbay-top-auto campaignbay-left-0  campaignbay-w-full md:campaignbay-w-auto campaignbay-gap-0 md:campaignbay-gap-6 campaignbay-bg-white !campaignbay-border-0  ${
+            className={` campaignbay-flex-1 md:campaignbay-flex-none campaignbay-flex-col md:campaignbay-flex-row campaignbay-justify-stretch md:campaignbay-items-center campaignbay-absolute md:campaignbay-relative campaignbay-top-[102%] md:campaignbay-top-auto campaignbay-left-0  campaignbay-w-full md:campaignbay-w-auto campaignbay-gap-0 md:campaignbay-gap-[6px] campaignbay-bg-white !campaignbay-border-0  ${
               isMobileMenuOpen
                 ? "campaignbay-flex  "
                 : " campaignbay-hidden md:campaignbay-flex"
             }`}
           >
-            <nav className="campaignbay-items-stretch md:campaignbay-items-center  campaignbay-gap-0 md:campaignbay-gap-0 campaignbay-flex campaignbay-flex-col md:campaignbay-flex-row campaignbay-w-full">
+            <nav className="campaignbay-items-stretch md:campaignbay-items-center  campaignbay-gap-0 campaignbay-flex campaignbay-flex-col md:campaignbay-flex-row campaignbay-w-full">
               {menus.map((menu) => (
                 <span
                   key={menu.path}
-                  className={`campaignbay-text-base campaignbay-font-medium campaignbay-cursor-pointer campaignbay-p-12 md:campaignbay-p-4 campaignbay-py-8 campaignbay-pl-8 md:campaignbay-pl-0 campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
+                  className={`campaignbay-text-base campaignbay-font-medium campaignbay-cursor-pointer campaignbay-p-[12px]  campaignbay-py-[8px] campaignbay-pl-[8px] campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
                     activeTab === menu.path
                       ? "campaignbay-text-blue-800"
                       : "campaignbay-text-gray-800 hover:campaignbay-text-blue-800"
@@ -69,7 +69,7 @@ export default function Navbar() {
 
             <button
               className="campaignbay-flex campaignbay-justify-center
-               campaignbay-items-center campaignbay-p-8 campaignbay-px-12 campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-12 md:campaignbay-m-0"
+               campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-12 md:campaignbay-m-0"
               onClick={() => navigate("/campaigns/add")}
             >
               {__("Add Campaign", "campaignbay")}
@@ -84,7 +84,7 @@ export default function Navbar() {
 
           {/* toggle button for mobile */}
           <button
-            className="campaignbay-flex md:campaignbay-hidden campaignbay-items-center campaignbay-gap-2 campaignbay-text-gray-800 hover:campaignbay-text-blue-800 tr"
+            className="campaignbay-flex md:campaignbay-hidden campaignbay-items-center campaignbay-gap-[2px] campaignbay-text-gray-800 hover:campaignbay-text-blue-800 tr"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             <svg

@@ -77,7 +77,6 @@ class DiscountManager extends Base
 
 	public function add_discount_data($product, $product_id)
 	{
-		error_log('adding discount data to product ' . $product->get_name() . ' - ' . $product_id);
 		$product = ProductDiscount::create($product)->apply_discounts()->get_product();
 		return $product;
 	}

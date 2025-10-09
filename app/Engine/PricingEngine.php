@@ -42,14 +42,9 @@ class PricingEngine extends Base
 
 	private $settings = array();
 
-	/**
-	 * The request-level cache for calculated product discounts.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @var array
-	 */
-	private $product_discount_cache = array();
+	public $coupons = array();
+
+	private $calculated_totals = false;
 
 	/**
 	 * Constructor to define and build the hooks array.
@@ -82,13 +77,26 @@ class PricingEngine extends Base
 			['filter', 'woocommerce_product_is_on_sale', 'is_on_sale', 20, 2],
 			['action', 'woocommerce_before_add_to_cart_form', 'display_product_discount_message', 20, 0],
 			['action', 'woocommerce_before_add_to_cart_form', 'display_product_quantity_table', 20, 0],
-			['action', 'woocommerce_before_calculate_totals', 'calculate_totals', 20, 1],
+
+
+			['action', 'woocommerce_before_cart', 'ensure_cart_calculate_totals', 20, 1],
+			['action', 'woocommerce_before_mini_cart', 'ensure_cart_calculate_totals', 20, 1],
+			['action', 'woocommerce_before_mini_cart_contents', 'ensure_cart_calculate_totals', 20, 1],
+
+			['action', 'woocommerce_before_calculate_totals', 'before_calculate_totals', 20, 1],
+			// ['filter', 'woocommerce_after_calculate_totals', 'after_calculate_totals', 20, 1],
+			['filter', 'woocommerce_get_shop_coupon_data', 'validate_fake_coupon_data', 10, 2],
+			['filter', 'woocommerce_cart_totals_coupon_label', 'change_virtual_coupon_label', 10, 2],
+			['filter', 'woocommerce_coupon_is_valid', 'validate_fake_coupon', 10, 3]
 		];
+
+		// add_action('woocommerce_after_calculate_totals', array($this, 'after_calculate_totals'), 10, 1);
+		// add_action('woocommerce_before_calculate_totals', array($this, 'before_calculate_totals'), 10, 1);
 		foreach ($hooks as $hook) {
 			$this->add_hook(...$hook);
 		}
 	}
-	//position for banners
+	// position for banners
 	// woocommerce_before_single_product
 	// woocommerce_before_add_to_cart_form
 	// woocommerce_after_add_to_cart_form
@@ -108,7 +116,7 @@ class PricingEngine extends Base
 			$price_html,
 			$product,
 			$meta['original_price'],
-			$meta['simple']['discounted_price'],
+			$meta['simple']['price'],
 			$meta['simple']['display_as_regular_price']
 		);
 		return $price_html;
@@ -125,9 +133,9 @@ class PricingEngine extends Base
 
 		$prices = Woocommerce::get_variation_prices($product);
 		foreach ($meta['simple'] as $key => $value) {
-			$prices['price'][$key] = $value['discounted_price'];
+			$prices['price'][$key] = $value['price'];
 			if ($value['display_as_regular_price'] !== null && $value['display_as_regular_price'] === true)
-				$prices['regular_price'][$key] = $value['discounted_price'];
+				$prices['regular_price'][$key] = $value['price'];
 		}
 		$min_price = current($prices['price']);
 		$max_price = end($prices['price']);
@@ -185,22 +193,8 @@ class PricingEngine extends Base
 			return;
 
 		global $product;
-		$quantity_campaigns = Helper::get_quantity_campaigns($product);
-		$tiers = array();
-		foreach ($quantity_campaigns as $campaign) {
-			foreach ($campaign->get_tiers() as $tier) {
-				$tiers[] = array(
-					'id' => $campaign->get_id(),
-					'title' => $campaign->get_title(),
-					'settings' => $campaign->get_settings(),
-					'min' => $tier['min'],
-					'max' => $tier['max'],
-					'value' => $tier['value'],
-					'type' => $tier['type'],
-				);
-			}
-		}
-		$tiers = Helper::get_quantity_tiers($tiers, (float) Woocommerce::get_product_base_price($product));
+		$tiers = Helper::get_quantity_tiers_with_campaign($product);
+		$tiers = Helper::get_unique_quantity_tiers($tiers, (float) Woocommerce::get_product_base_price($product));
 		if (empty($tiers))
 			return;
 		echo Helper::generate_quantity_table($tiers);
@@ -208,10 +202,110 @@ class PricingEngine extends Base
 		return;
 	}
 
-
-	public function calculate_totals($cart)
+	public function before_calculate_totals($cart)
 	{
-		CartDiscount::calculate_cart_discount($cart);
+		$this->coupons = CartDiscount::calculate_cart_discount($cart);
+		$this->calculated_totals = true;
+	}
+
+	public function after_calculate_totals($cart)
+	{
+
+		if (!isset($cart->campaignbay['coupon']))
+			return;
+		remove_action('woocommerce_after_calculate_totals', array($this, 'after_calculate_totals'), 10);
+		remove_action('woocommerce_before_calculate_totals', array($this, 'before_calculate_totals'), 10);
+		foreach ($cart->campaignbay['coupon'] as $key => $coupon) {
+		}
+
+		add_action('woocommerce_after_calculate_totals', array($this, 'after_calculate_totals'), 10, 1);
+		add_action('woocommerce_before_calculate_totals', array($this, 'before_calculate_totals'), 10, 1);
+	}
+
+	public function validate_fake_coupon_data($data, $coupon_code)
+	{
+
+		if ($coupon_code !== false && $coupon_code !== 0 && isset($this->coupons[$coupon_code])) {
+
+			$data = array(
+				'id' => $coupon_code,
+				'amount' => $this->coupons[$coupon_code]['discount'],
+				'individual_use' => false,
+				'product_ids' => $this->coupons[$coupon_code]['product_ids'] ?? array(),
+				'exclude_product_ids' => array(),
+				'usage_limit' => '',
+				'usage_limit_per_user' => '',
+				'limit_usage_to_x_items' => '',
+				'usage_count' => '',
+				'date_created' => gmdate('Y-m-d'),
+				'expiry_date' => '',
+				'apply_before_tax' => 'yes',
+				'free_shipping' => false,
+				'product_categories' => array(),
+				'exclude_product_categories' => array(),
+				'exclude_sale_items' => false,
+				'minimum_amount' => '',
+				'maximum_amount' => '',
+				'customer_email' => '',
+				'discount_type' => $this->coupons[$coupon_code]['type']
+			);
+		} elseif ($this->calculated_totals === false) {
+			// before calculating total
+			$data = array(
+				'id' => $coupon_code,
+				'amount' => 0,
+				'individual_use' => false,
+				'product_ids' => array(),
+				'exclude_product_ids' => array(),
+				'usage_limit' => '',
+				'usage_limit_per_user' => '',
+				'limit_usage_to_x_items' => '',
+				'usage_count' => '',
+				'date_created' => gmdate('Y-m-d'),
+				'expiry_date' => '',
+				'apply_before_tax' => 'yes',
+				'free_shipping' => false,
+				'product_categories' => array(),
+				'exclude_product_categories' => array(),
+				'exclude_sale_items' => false,
+				'minimum_amount' => '',
+				'maximum_amount' => '',
+				'customer_email' => '',
+				'discount_type' => 'fixed_cart'
+			);
+		}
+		return $data;
+	}
+	public function change_virtual_coupon_label($label, $coupon_code)
+	{
+		$code = $coupon_code->get_code();
+		if (isset($this->coupons[$code])) {
+			return $this->coupons[$code]['title'];
+		}
+		return $label;
+	}
+
+	public function validate_fake_coupon($value, $coupon, $discount)
+	{
+		if (isset($this->coupons[$coupon->get_code()])) {
+			return true;
+		}
+		return $value;
+	}
+
+	public function ensure_cart_calculate_totals()
+	{
+		if (!did_action('woocommerce_before_calculate_totals')) {
+			return;
+		}
+
+		if (function_exists('WC')) {
+			if (isset(WC()->cart) && WC()->cart != null) {
+				if (is_object(WC()->cart) && method_exists(WC()->cart, 'calculate_totals')) {
+					WC()->cart->calculate_totals();
+				}
+			}
+		}
 	}
 
 }
