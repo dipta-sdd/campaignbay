@@ -199,4 +199,19 @@ class Helper
         $table .= '</tbody></table>';
         return self::get_clean_html($table);
     }
+
+    public static function earlybird_current_tier($campaign)
+    {
+        $usage_count = $campaign->get_usage_count();
+        $current_tier = null;
+        $tiers = $campaign->get_tiers();
+        foreach ($tiers as $tier) {
+            if ($usage_count > $tier['quantity']) {
+                $usage_count -= $tier['quantity'];
+            } else {
+                return $tier;
+            }
+        }
+        return $current_tier;
+    }
 }

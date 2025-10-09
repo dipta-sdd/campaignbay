@@ -6,6 +6,7 @@ use WC_Product;
 use WP_Error;
 use WpabCb\Core\Common;
 use WpabCb\Engine\CampaignManager;
+use WpabCb\Helper\Helper;
 use WpabCb\Helper\Woocommerce;
 
 /**
@@ -112,7 +113,7 @@ class ProductDiscount
 		);
 
 		foreach ($this->campaigns as $campaign) {
-			if ($campaign->get_type() !== 'scheduled' || $campaign->get_type() !== 'earlybird')
+			if ($campaign->get_type() !== 'scheduled' && $campaign->get_type() !== 'earlybird')
 				continue;
 			if (!$campaign->is_applicable_to_product($this->product)) {
 				continue;
@@ -126,9 +127,9 @@ class ProductDiscount
 		if ($applied_campaign !== null) {
 			$this->data['on_discount'] = true;
 			$this->data['is_simple'] = true;
-			$this->data['simple'] = array(
-				'applied_campaign' => $applied_campaign->get_id(),
-				'applied_campaign_title' => $applied_campaign->get_title(),
+			$data = array(
+				'campaign' => $applied_campaign->get_id(),
+				'campaign_title' => $applied_campaign->get_title(),
 				'price' => $best_price,
 				'discount' => $base_price - $best_price,
 				'message_format' => $applied_campaign->get_settings()['message_format'] ?? '',
@@ -136,6 +137,12 @@ class ProductDiscount
 				'type' => $applied_campaign->get_discount_type() ?? null,
 				'display_as_regular_price' => $applied_campaign->get_settings()['display_as_regular_price'] ?? false
 			);
+			if ($applied_campaign->get_type() === 'earlybird') {
+				$tier = Helper::earlybird_current_tier($applied_campaign);
+				$data['value'] = $tier['value'];
+				$data['type'] = $tier['type'];
+			}
+			$this->data['simple'] = $data;
 
 			// add on sale badge
 			if (!$this->data['simple']['display_as_regular_price'])
@@ -211,7 +218,8 @@ class ProductDiscount
 			$final_price = $this->calculate_scheduled_price($campaign, $base_price);
 		}
 		if ($campaign->get_type() === 'earlybird') {
-			$final_price = $this->calculate_earlybird_price($campaign, $base_price);
+			$tier = Helper::earlybird_current_tier($campaign);
+			$final_price = $this->calculate_earlybird_price($tier, $base_price);
 		}
 
 		do_action('campaignbay_after_calculate_discounted_price', $campaign, $this->product, $final_price, $base_price);
@@ -243,10 +251,18 @@ class ProductDiscount
 		return $calculated_price;
 	}
 
-
-	public function calculate_earlybird_price($campaign, $base_price)
+	public function calculate_earlybird_price($tier, $base_price)
 	{
 
+		$discount_type = $tier['type'];
+		$discount_value = $tier['value'];
+		$calculated_price = $base_price;
+		if ($discount_type === 'percentage') {
+			$calculated_price = $this->calculate_percentage_price($base_price, $discount_value);
+		} elseif ($discount_type === 'fixed') {
+			$calculated_price = $this->calculate_fixed_price($base_price, $discount_value);
+		}
+		return $calculated_price;
 	}
 
 	/**
