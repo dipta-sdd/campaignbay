@@ -14,7 +14,7 @@ const ProductSettings = ({
   isSaving,
   updateSettings,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <div className="wpab-cb-settings-tab">
       <SettingCard title={__("Product Page Display", "campaignbay")}>

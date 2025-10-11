@@ -20,7 +20,7 @@ const Settings = () => {
   const [globalSettings, setGlobalSettings] = useState({});
   const [cartSettings, setCartSettings] = useState({});
   const [advancedSettings, setAdvancedSettings] = useState({});
-  const [activeTab, setActiveTab] = useState("product");
+  const [activeTab, setActiveTab] = useState("global");
   useEffect(() => {
     fetchSettings();
   }, []);

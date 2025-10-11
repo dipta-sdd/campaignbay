@@ -119,9 +119,12 @@ class ProductDiscount
 				continue;
 			}
 			$new_price = $this->get_discounted_price($base_price, $campaign);
+
+			campaignbay_log($this->product->get_name() . ' ' . 'new price  ' . $new_price);
 			if ($this->is_better_price($new_price, $best_price)) {
 				$best_price = $new_price;
 				$applied_campaign = $campaign;
+				campaignbay_log($this->product->get_name() . ' ' . 'best price  ' . $best_price);
 			}
 		}
 		if ($applied_campaign !== null) {
@@ -135,7 +138,7 @@ class ProductDiscount
 				'message_format' => $applied_campaign->get_settings()['message_format'] ?? '',
 				'display_as_regular_price' => $applied_campaign->get_settings()['display_as_regular_price'] ?? false
 			);
-			if ($applied_campaign->get_type() === 'earlybird') {
+			if ($applied_campaign->get_type() === 'scheduled') {
 				$data['value'] = $applied_campaign->get_discount_value() ?? null;
 				$data['type'] = $applied_campaign->get_discount_type() ?? null;
 			}
@@ -147,6 +150,7 @@ class ProductDiscount
 			$this->data['simple'] = $data;
 
 			$this->product->set_price($this->data['simple']['price']);
+
 			$this->product->set_regular_price($this->data['base_price']);
 			// add on sale badge
 			if (!$this->data['simple']['display_as_regular_price']) {
@@ -261,13 +265,12 @@ class ProductDiscount
 
 	public function calculate_earlybird_price($tier, $base_price)
 	{
-
 		$discount_type = $tier['type'];
 		$discount_value = $tier['value'];
 		$calculated_price = $base_price;
 		if ($discount_type === 'percentage') {
 			$calculated_price = $this->calculate_percentage_price($base_price, $discount_value);
-		} elseif ($discount_type === 'fixed') {
+		} elseif ($discount_type === 'fixed' || $discount_type === 'currency') {
 			$calculated_price = $this->calculate_fixed_price($base_price, $discount_value);
 		}
 		return $calculated_price;
