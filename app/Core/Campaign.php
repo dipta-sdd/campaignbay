@@ -170,6 +170,7 @@ class Campaign
 						'quantity' => 'required|integer|min:1',
 						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
 						'type' => 'required|in:percentage,currency',
+						'total' => 'required|integer|min:0'
 					];
 				}
 				if (!$tier_validator->validate($tier_rules)) {
@@ -331,6 +332,7 @@ class Campaign
 						'quantity' => 'required|integer|min:1',
 						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
 						'type' => 'required|in:percentage,currency',
+						'total' => 'required|integer|min:0'
 					];
 				}
 				if (!$tier_validator->validate($tier_rules)) {

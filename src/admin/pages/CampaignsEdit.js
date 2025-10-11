@@ -23,6 +23,7 @@ import CbCheckbox from "../components/CbCheckbox";
 import Tooltip from "../components/Tooltip";
 import DateTimePicker from "../components/DateTimePicker";
 import CampaignSettings from "../components/CampaignSettings";
+import getBool from "../utils/getBool";
 const CampaignsEdit = () => {
   const { wpSettings, woocommerce_currency_symbol } = useCbStore();
   const navigate = useNavigate();
@@ -257,23 +258,9 @@ const CampaignsEdit = () => {
       setDiscountValue(response.discount_value);
       setTargetType(response.target_type);
       setTargetIds(response.target_ids);
-      setIsExclude(
-        response.is_exclude === 1 ||
-          response.is_exclude === true ||
-          response.is_exclude === "true" ||
-          response.is_exclude === "1"
-          ? true
-          : false
-      );
-      setIsExcludeSaleItems(
-        response.exclude_sale_items === 1 ||
-          response.exclude_sale_items === true ||
-          response.exclude_sale_items === "true" ||
-          response.exclude_sale_items === "1"
-          ? true
-          : false
-      );
-      setScheduleEnabled(response.schedule_enabled);
+      setIsExclude(getBool(response.is_exclude));
+      setIsExcludeSaleItems(getBool(response.exclude_sale_items));
+      setScheduleEnabled(getBool(response.schedule_enabled));
       setEnableUsageLimit(response.usage_limit ? true : false);
       setUsageLimit(response.usage_limit);
       setStartDate(response.start_datetime);
@@ -317,6 +304,7 @@ const CampaignsEdit = () => {
     }
     return tmpSettings;
   };
+  console.log(scheduleEnabled);
   return (
     <>
       {isLoading ? (

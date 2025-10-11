@@ -77,6 +77,8 @@ class CartDiscount
 				if (isset($meta['quantity'])) {
 					$cart->cart_contents[$key]['data']->set_price($meta['quantity']['base_price']);
 					$apply_as = $meta['quantity']['settings']['apply_as'] ?? 'line_total';
+					if (!self::cart_allow_campaign_stacking())
+						$cart->cart_contents[$key]['data']->set_regular_price($meta['quantity']['base_price']);
 					if ($apply_as === 'line_total') {
 						$cart->cart_contents[$key]['data']->set_price($meta['quantity']['price']);
 					} elseif ($apply_as === 'coupon') {
@@ -101,7 +103,7 @@ class CartDiscount
 							'discount' => $meta['quantity']['discount'] * $cart_item['quantity']
 						));
 					}
-
+					campaignbay_log($meta);
 				}
 			}
 		}
