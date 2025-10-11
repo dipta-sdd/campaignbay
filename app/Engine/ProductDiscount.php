@@ -133,10 +133,12 @@ class ProductDiscount
 				'price' => $best_price,
 				'discount' => $base_price - $best_price,
 				'message_format' => $applied_campaign->get_settings()['message_format'] ?? '',
-				'value' => $applied_campaign->get_discount_value() ?? null,
-				'type' => $applied_campaign->get_discount_type() ?? null,
 				'display_as_regular_price' => $applied_campaign->get_settings()['display_as_regular_price'] ?? false
 			);
+			if ($applied_campaign->get_type() === 'earlybird') {
+				$data['value'] = $applied_campaign->get_discount_value() ?? null;
+				$data['type'] = $applied_campaign->get_discount_type() ?? null;
+			}
 			if ($applied_campaign->get_type() === 'earlybird') {
 				$tier = Helper::earlybird_current_tier($applied_campaign);
 				$data['value'] = $tier['value'];
@@ -144,9 +146,15 @@ class ProductDiscount
 			}
 			$this->data['simple'] = $data;
 
+			$this->product->set_price($this->data['simple']['price']);
+			$this->product->set_regular_price($this->data['base_price']);
 			// add on sale badge
-			if (!$this->data['simple']['display_as_regular_price'])
+			if (!$this->data['simple']['display_as_regular_price']) {
 				$this->data['is_on_sale'] = true;
+			} else {
+				$this->data['is_on_sale'] = false;
+				$this->product->set_regular_price($this->data['simple']['price']);
+			}
 		}
 
 		$this->product->add_meta_data('campaignbay', $this->data, true);

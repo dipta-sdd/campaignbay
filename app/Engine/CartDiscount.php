@@ -66,8 +66,14 @@ class CartDiscount
 				if ($meta === null)
 					continue;
 				$cart->cart_contents[$key]['campaignbay'] = $meta;
-				if (isset($meta['simple']) && isset($meta['simple']['price']))
+				if (isset($meta['simple']) && isset($meta['simple']['price'])) {
+					if ($meta['simple']['display_as_regular_price']) {
+						$cart->cart_contents[$key]['data']->set_regular_price($meta['simple']['price']);
+					} else {
+						$cart->cart_contents[$key]['data']->set_regular_price($meta['base_price']);
+					}
 					$cart->cart_contents[$key]['data']->set_price($meta['simple']['price']);
+				}
 				if (isset($meta['quantity'])) {
 					$cart->cart_contents[$key]['data']->set_price($meta['quantity']['base_price']);
 					$apply_as = $meta['quantity']['settings']['apply_as'] ?? 'line_total';
@@ -89,7 +95,6 @@ class CartDiscount
 							$data_to_add
 						);
 					} else {
-						error_log(print_r($meta, true) . '____ quantity: ' . $cart_item['quantity']);
 						self::add_fee($cart, array(
 							'id' => $meta['quantity']['id'],
 							'title' => $meta['quantity']['title'],
@@ -141,6 +146,7 @@ class CartDiscount
 		}
 
 		if ($current_tier !== null) {
+			$meta['on_discount'] = true;
 			$meta['is_quantity'] = true;
 			$meta['quantity'] = array(
 				'id' => $current_tier['id'],
