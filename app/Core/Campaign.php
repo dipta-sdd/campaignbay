@@ -123,7 +123,7 @@ class Campaign
 		$validator = new Validator($args);
 		$rules = [
 			'title' => 'required|max:255',
-			'type' => 'required|in:earlybird,scheduled,quantity',
+			'type' => 'required|in:earlybird,scheduled,quantity,bogo',
 			'status' => 'required|in:active,inactive,scheduled,expired',
 
 			'discount_type' => 'nullable|in:percentage,fixed',
@@ -152,7 +152,7 @@ class Campaign
 
 		// validating tiers 
 		$tmp_tiers = array();
-		if ($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
+		if ($data['type'] === 'quantity' || $data['type'] === 'earlybird' || $data['type'] === 'bogo') {
 			foreach ($data['tiers'] as $tier) {
 				$tier_validator = new Validator($tier);
 				$tier_rules = array();
@@ -172,6 +172,11 @@ class Campaign
 						'type' => 'required|in:percentage,currency',
 						'total' => 'required|integer|min:0'
 					];
+				} elseif ($data['type'] === 'bogo') {
+					$tier_rules = [
+						'buy_quantity' => 'required|integer|min:1',
+						'get_quantity' => 'required|integer|min:1',
+					];
 				}
 				if (!$tier_validator->validate($tier_rules)) {
 					return new WP_Error(
@@ -184,6 +189,7 @@ class Campaign
 						)
 					);
 				}
+
 				$tmp_tiers[] = $tier_validator->get_validated_data();
 			}
 		}
@@ -286,7 +292,7 @@ class Campaign
 		$validator = new Validator($args);
 		$rules = [
 			'title' => 'required|max:255',
-			'type' => 'required|in:earlybird,scheduled,quantity',
+			'type' => 'required|in:earlybird,scheduled,quantity,bogo',
 			'status' => 'required|in:active,inactive,scheduled,expired',
 
 			'discount_type' => 'nullable|in:percentage,fixed',
@@ -314,7 +320,7 @@ class Campaign
 		$data = $validator->get_validated_data();
 		// validating tiers
 		$tmp_tiers = array();
-		if ($data['type'] === 'quantity' || $data['type'] === 'earlybird') {
+		if ($data['type'] === 'quantity' || $data['type'] === 'earlybird' || $data['type'] === 'bogo') {
 			foreach ($data['tiers'] as $tier) {
 				$tier_validator = new Validator($tier);
 				$tier_rules = array();
@@ -333,6 +339,11 @@ class Campaign
 						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
 						'type' => 'required|in:percentage,currency',
 						'total' => 'required|integer|min:0'
+					];
+				} elseif ($data['type'] === 'bogo') {
+					$tier_rules = [
+						'buy_quantity' => 'required|integer|min:1',
+						'get_quantity' => 'required|integer|min:1',
 					];
 				}
 				if (!$tier_validator->validate($tier_rules)) {

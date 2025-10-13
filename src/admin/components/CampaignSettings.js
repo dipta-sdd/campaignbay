@@ -4,8 +4,6 @@ import CbCheckbox from "./CbCheckbox";
 import Tooltip from "./Tooltip";
 import { renderError } from "../pages/CampaignsEdit";
 import { useEffect, useState } from "react";
-import Input from "./Input";
-import { useCbStore } from "../store/cbStore";
 
 export default function CampaignSettings({
   settings,
@@ -13,6 +11,14 @@ export default function CampaignSettings({
   errors,
   type,
 }) {
+  useEffect(() => {
+    if (type === "bogo" && settings?.apply_as === "coupon") {
+      setSettings((prev) => ({
+        ...prev,
+        apply_as: "line_total",
+      }));
+    }
+  }, [type]);
   return (
     <>
       <div className="cb-form-input-con">
@@ -30,6 +36,7 @@ export default function CampaignSettings({
                     ? false
                     : settings?.display_as_regular_price
                 }
+                aria-label={__("Display as Regular Price", "campaignbay")}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...settings,
@@ -65,6 +72,7 @@ export default function CampaignSettings({
               <input
                 type="text"
                 id="message-format"
+                aria-label={__("Discount Message Format", "campaignbay")}
                 className={`wpab-input w-100  ${
                   errors?.message_format ? "wpab-input-error" : ""
                 }`}
@@ -97,6 +105,10 @@ export default function CampaignSettings({
                     ? true
                     : settings?.enable_quantity_table
                 }
+                aria-label={__(
+                  "Show Quantity Discounts Table on Product Page",
+                  "campaignbay"
+                )}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...settings,
@@ -149,6 +161,220 @@ export default function CampaignSettings({
                 <option value="fee">{__("Fee", "campaignbay")}</option>
               </select>
               {renderError(errors?.apply_as)}
+            </div>
+            {/* next quantity message format */}
+            <div className="cb-form-input-con !campaignbay-p-0">
+              <label
+                htmlFor="message-format"
+                className="campaignbay-whitespace-nowrap"
+              >
+                {__("Next Discount Message Format", "campaignbay")}
+              </label>
+              <input
+                type="text"
+                id="message-format"
+                aria-label={__(
+                  "Cart Page Next Discount Message Format",
+                  "campaignbay"
+                )}
+                className={`wpab-input w-100  ${
+                  errors?.cart_quantity_message_format ? "wpab-input-error" : ""
+                }`}
+                value={settings?.cart_quantity_message_format}
+                onChange={(e) =>
+                  setSettings((prev) => ({
+                    ...prev,
+                    cart_quantity_message_format: e.target.value,
+                  }))
+                }
+              />
+              <span className="wpab-input-help">
+                {__(
+                  "This message will be displayed on the cart item name. Leave blank for the default message.Use placeholder like {remainging_quantity_for_next_offer} , {discount_value}",
+                  "campaignbay"
+                )}
+              </span>
+              {renderError(errors?.cart_quantity_message_format)}
+            </div>
+          </>
+        ) : null}
+
+        {type === "bogo" ? (
+          <>
+            {/* auto add to cart */}
+            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+              <CbCheckbox
+                id="auto-add-free-product"
+                checked={
+                  settings?.auto_add_free_product === undefined
+                    ? true
+                    : settings?.auto_add_free_product
+                }
+                aria-label={__(
+                  "Automatically add free product to cart",
+                  "campaignbay"
+                )}
+                onChange={(e) =>
+                  setSettings((prev) => ({
+                    ...settings,
+                    auto_add_free_product: e.target.checked,
+                  }))
+                }
+              />
+              <label htmlFor="auto-add-free-product">
+                {__("Automatically add free product to cart", "campaignbay")}
+              </label>
+              <Tooltip
+                content={
+                  <span className="campaignbay-text-sm">
+                    {__(
+                      "When checked, the free product will be automatically added to the cart.",
+                      "campaignbay"
+                    )}
+                  </span>
+                }
+                position="right"
+              />
+              {renderError(errors?.auto_add_free_product)}
+            </div>
+
+            <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px]">
+              {/* apply as  */}
+              <div className="cb-form-input-con !campaignbay-p-0">
+                <label htmlFor="apply_as">
+                  {__("APPLY DISCOUNT AS", "campaignbay")} <Required />
+                </label>
+                <select
+                  type="text"
+                  id="apply_as"
+                  className={`wpab-input w-100 ${
+                    errors?.apply_as ? "wpab-input-error" : ""
+                  }`}
+                  value={settings?.apply_as || "coupon"}
+                  aria-label={__("Apply Discount As", "campaignbay")}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      apply_as: e.target.value,
+                    })
+                  }
+                >
+                  <option value="line_total">
+                    {__("Strike through in line total", "campaignbay")}
+                  </option>
+                  <option value="fee">{__("Fee", "campaignbay")}</option>
+                </select>
+                {renderError(errors?.apply_as)}
+              </div>
+
+              {/* prduct page message format */}
+              <div className="cb-form-input-con !campaignbay-p-0">
+                <label
+                  htmlFor="message-format"
+                  className="campaignbay-whitespace-nowrap"
+                >
+                  {__("Product Page Discount Message Format", "campaignbay")}
+                </label>
+                <input
+                  type="text"
+                  id="message-format"
+                  aria-label={__(
+                    "Product Page Discount Message Format",
+                    "campaignbay"
+                  )}
+                  className={`wpab-input w-100  ${
+                    errors?.bogo_banner_message_format ? "wpab-input-error" : ""
+                  }`}
+                  value={settings?.bogo_banner_message_format}
+                  onChange={(e) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      bogo_banner_message_format: e.target.value,
+                    }))
+                  }
+                />
+                <span className="wpab-input-help">
+                  {__(
+                    "This message will be displayed on the product page. Leave blank for the default message. Use Placeholder Like {buy_quantity}, {get_quantity}",
+                    "campaignbay"
+                  )}
+                </span>
+                {renderError(errors?.bogo_banner_message_format)}
+              </div>
+              {/* cart page message format when a bogo applyed then only show */}
+              <div className="cb-form-input-con !campaignbay-p-0">
+                <label
+                  htmlFor="message-format"
+                  className="campaignbay-whitespace-nowrap"
+                >
+                  {__("Cart Page Discount Message Format", "campaignbay")}
+                </label>
+                <input
+                  type="text"
+                  id="message-format"
+                  aria-label={__(
+                    "Cart Page Discount Message Format",
+                    "campaignbay"
+                  )}
+                  className={`wpab-input w-100  ${
+                    errors?.cart_bogo_cart_message_format
+                      ? "wpab-input-error"
+                      : ""
+                  }`}
+                  value={settings?.cart_bogo_cart_message_format}
+                  onChange={(e) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      cart_bogo_cart_message_format: e.target.value,
+                    }))
+                  }
+                />
+                <span className="wpab-input-help">
+                  {__(
+                    "This message will be displayed on the cart page. Leave blank for the default message.Use placeholder like {title}",
+                    "campaignbay"
+                  )}
+                </span>
+                {renderError(errors?.cart_bogo_cart_message_format)}
+              </div>
+              {/* cart page message location , line items name or notice or dont show*/}
+              <div className="cb-form-input-con !campaignbay-p-0">
+                <label htmlFor="cart-message-location">
+                  {__("Cart Page Message Location", "campaignbay")} <Required />
+                </label>
+                <select
+                  type="text"
+                  id="cart-message-location"
+                  className={`wpab-input w-100  ${
+                    errors?.bogo_cart_message_location ? "wpab-input-error" : ""
+                  }`}
+                  value={
+                    settings?.bogo_cart_message_location || "line_item_name"
+                  }
+                  aria-label={__("Cart Page Message Location", "campaignbay")}
+                  onChange={(e) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      bogo_cart_message_location: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="line_item_name">
+                    {__("Line Item Name", "campaignbay")}
+                  </option>
+                  <option value="notice">{__("Notice", "campaignbay")}</option>
+                  <option value="dont_show">
+                    {__("Don't Show", "campaignbay")}
+                  </option>
+                </select>
+                <span className="wpab-input-help">
+                  {__(
+                    "Choose where the BOGO discount message will be displayed on the cart page.",
+                    "campaignbay"
+                  )}
+                </span>
+                {renderError(errors?.bogo_cart_message_location)}
+              </div>
             </div>
           </>
         ) : null}

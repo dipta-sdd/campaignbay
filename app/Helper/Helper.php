@@ -46,13 +46,24 @@ class Helper
 
     public static function get_quantity_campaigns($product)
     {
+        return self::get_type_of_campaign('quantity', $product);
+    }
+    public static function get_bogo_campaigns($product)
+    {
+        return self::get_type_of_campaign('bogo', $product);
+    }
+
+    public static function get_type_of_campaign($type, $product = null)
+    {
         $active_campaigns = CampaignManager::get_instance()->get_active_campaigns();
         $campaigns = array();
         foreach ($active_campaigns as $campaign) {
 
-            if ($campaign->get_type() !== 'quantity')
+            if ($campaign->get_type() !== $type)
                 continue;
-            if ($campaign->is_applicable_to_product($product))
+            if ($product === null)
+                $campaigns[] = $campaign;
+            elseif ($campaign->is_applicable_to_product($product))
                 $campaigns[] = $campaign;
         }
         return $campaigns;
@@ -102,6 +113,77 @@ class Helper
             return $a['min'] - $b['min'];
         });
         return $unique_tiers;
+    }
+
+    public static function get_bogo_tiers($product)
+    {
+        $bogo_campaigns = self::get_bogo_campaigns($product);
+        $tiers = array();
+        foreach ($bogo_campaigns as $campaign) {
+            $tiers[] = array(
+                'id' => $campaign->get_id(),
+                'title' => $campaign->get_title(),
+                'settings' => $campaign->get_settings(),
+                'buy_quantity' => $campaign->get_tiers()[0]['buy_quantity'],
+                'get_quantity' => $campaign->get_tiers()[0]['get_quantity'],
+                'ratio' => (int) (($campaign->get_tiers()[0]['get_quantity'] / $campaign->get_tiers()[0]['buy_quantity']) * 100)
+            );
+        }
+        usort($tiers, function ($a, $b) {
+            return $b['ratio'] - $a['ratio'];
+        });
+        return $tiers;
+    }
+
+    public static function get_bogo_meta($product, $quantity)
+    {
+        $bogo_tiers = Helper::get_bogo_tiers($product);
+        $meta = array(
+            'is_bogo' => false,
+        );
+        $current_tier = null;
+        $next_tier = null;
+        foreach ($bogo_tiers as $key => $tier) {
+            if ($tier['buy_quantity'] <= $quantity) {
+                $current_tier = $tier;
+                break;
+            }
+        }
+        if ($current_tier === null) {
+            foreach ($bogo_tiers as $key => $tier) {
+                if ($next_tier === null || $next_tier['buy_quantity'] > $tier['buy_quantity']) {
+                    $next_tier = $tier;
+                }
+            }
+        } else {
+            $total = $current_tier['buy_quantity'] + $current_tier['get_quantity'];
+            $free_quantity = (int) ($quantity / $total);
+            $free_quantity *= $current_tier['get_quantity'];
+            $remaining = $quantity % $total;
+            $need_to_add = 0;
+            if ($remaining >= $current_tier['buy_quantity']) {
+                $remaining -= $current_tier['buy_quantity'];
+                $need_to_add = $current_tier['get_quantity'] - $remaining;
+                $free_quantity += $remaining;
+            }
+            $meta['is_bogo'] = true;
+            $meta['bogo'] = array(
+                'id' => $current_tier['id'],
+                'title' => $current_tier['title'],
+                'settings' => $current_tier['settings'],
+                'buy_quantity' => $current_tier['buy_quantity'],
+                'get_quantity' => $current_tier['get_quantity'],
+                'free_quantity' => $free_quantity,
+                'need_to_add' => $need_to_add, // after adding this quantity all of free quantity will be added
+            );
+        }
+
+        if ($next_tier !== null) {
+            $meta['on_discount'] = true;
+            $meta['is_bogo'] = false;
+            $meta['bogo']['next_tier'] = $next_tier;
+        }
+        return $meta;
     }
 
 
@@ -213,5 +295,25 @@ class Helper
             }
         }
         return $current_tier;
+    }
+
+    public static function get_cart_for_session($cart)
+    {
+        $cart_session = array();
+
+        foreach ($cart->cart_contents as $key => $values) {
+            $cart_session[$key] = $values;
+            campaignbay_log($key . ' : ' . $values['quantity']);
+            unset($cart_session[$key]['data']); // Unset product object.
+        }
+        return $cart_session;
+    }
+
+    public static function set_cart_session($cart)
+    {
+        $cart = self::get_cart_for_session($cart);
+        $wc_session = WC()->session;
+        $wc_session->set('cart', empty($cart) ? null : $cart);
+        campaignbay_log('manualy updatede cart session');
     }
 }

@@ -527,6 +527,20 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 *   **Then:** The campaign should be deleted, and a success response returned.
 *   **And:** The campaign should no longer be retrievable via GET.
 
+### 6.6. Discount Resulting in Zero or Negative Price (Edge Case)
+*   **User Story:** As an Admin, I want to ensure that product prices do not go below zero, even with large discounts.
+*   **Scenario:** Verify that the plugin correctly caps the discounted price at $0, preventing negative prices.
+*   **Given:** A product "Low-Cost Item" costs $5.
+*   **And:** An active campaign applies a fixed discount of "$10 off" to "Low-Cost Item".
+*   **When:** I add "Low-Cost Item" to my cart.
+*   **Then:** The price for "Low-Cost Item" should be $0, not -$5.
+*   **And:** The cart total should reflect this $0 price.
+*   **Given:** A product "Another Low-Cost Item" costs $10.
+*   **And:** An active campaign applies a percentage discount of "150% off" to "Another Low-Cost Item".
+*   **When:** I add "Another Low-Cost Item" to my cart.
+*   **Then:** The price for "Another Low-Cost Item" should be $0, not a negative value.
+*   **And:** The cart total should reflect this $0 price.
+
 ---
 
 ## 7. Variable Product Scenarios

@@ -30,6 +30,14 @@ module.exports = isLegacy
               "sass-loader",
             ],
           },
+          {
+            test: /\.svg$/,
+            type: "asset/resource", // Use Webpack 5's built-in asset handler.
+            generator: {
+              // This ensures the output file has a readable name and is placed in an 'images' folder.
+              filename: "images/[name][ext]",
+            },
+          },
         ],
       },
       plugins: [

@@ -3,7 +3,6 @@ import { useState } from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
 import MultiSelect from "../components/Multiselect";
 import {
-  TimePicker,
   __experimentalConfirmDialog as ConfirmDialog,
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -61,15 +60,11 @@ const CampaignsEdit = () => {
       total: 0,
     },
   ]);
-  const [bogoTiers, setBogoTiers] = useState([
-    {
-      id: 0,
-      buy_product: null,
-      get_product: null,
-      buy_quantity: 1,
-      get_quantity: 1,
-    },
-  ]);
+  const [bogoTiers, setBogoTiers] = useState({
+    id: 0,
+    buy_quantity: 1,
+    get_quantity: 1,
+  });
   const [scheduleEnabled, setScheduleEnabled] = useState(false);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState("");
@@ -139,6 +134,8 @@ const CampaignsEdit = () => {
           ? quantityTiers
           : campaignType === "earlybird"
           ? ebTiers
+          : campaignType === "bogo"
+          ? [bogoTiers]
           : [],
       settings: getSettings(),
     };
@@ -269,6 +266,8 @@ const CampaignsEdit = () => {
         setQuantityTiers([...response.tiers]);
       } else if (response.type === "earlybird") {
         setEBTiers([...response.tiers]);
+      } else if (response.type === "bogo") {
+        setBogoTiers({ ...(response.tiers[0] || {}) });
       }
       setSettings({ ...response.settings } || {});
       setIsLoading(false);
@@ -598,12 +597,81 @@ const CampaignsEdit = () => {
                 {renderError(errors?.discount_value)}
               </div>
             )}
-            <CampaignSettings
-              settings={settings}
-              setSettings={setSettings}
-              errors={errors?.settings}
-              type={campaignType}
-            />
+
+            {/* Bogo */}
+            {campaignType === "bogo" ? (
+              <>
+                <div className="cb-form-input-con">
+                  <label htmlFor="discount-type">
+                    {__("DEFINE QUANTITY TIERS", "campaignbay")} <Required />
+                  </label>
+
+                  <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-overflow-hidden campaignbay-flex-wrap">
+                    <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
+                      <label
+                        htmlFor="bogo-buy-amount"
+                        className="!campaignbay-leading-[36px]"
+                      >
+                        {__("Buy Amount", "campaignbay")}
+                      </label>
+                      <span>
+                        <input
+                          type="text"
+                          id="bogo-buy-amount"
+                          className={`wpab-input  ${
+                            errors?.tiers?.[0]?.buy_quantity
+                              ? "wpab-input-error"
+                              : ""
+                          }`}
+                          value={
+                            bogoTiers.buy_quantity ? bogoTiers.buy_quantity : ""
+                          }
+                          onChange={(e) =>
+                            setBogoTiers((prev) => ({
+                              ...prev,
+                              buy_quantity: parseInt(e.target.value) || "",
+                            }))
+                          }
+                        />
+                        {renderError(errors?.tiers?.[0]?.buy_quantity, false)}
+                      </span>
+                      <span className="!campaignbay-leading-[36px]"> , </span>
+                    </div>
+                    <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
+                      <label
+                        htmlFor="bogo-get-quantity"
+                        className="!campaignbay-leading-[36px]"
+                      >
+                        {__("Get Quantity", "campaignbay")}
+                      </label>
+                      <span>
+                        <input
+                          type="text"
+                          id="bogo-get-quantity"
+                          className={`wpab-input  ${
+                            errors?.tiers?.[0]?.get_quantity
+                              ? "wpab-input-error"
+                              : ""
+                          }`}
+                          value={
+                            bogoTiers.get_quantity ? bogoTiers.get_quantity : ""
+                          }
+                          onChange={(e) =>
+                            setBogoTiers((prev) => ({
+                              ...prev,
+                              get_quantity: parseInt(e.target.value) || "",
+                            }))
+                          }
+                        />
+                        {renderError(errors?.tiers?.[0]?.get_quantity, false)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : null}
+
+            {/* other settings */}
             <div className="cb-form-input-con">
               <label htmlFor="start-time">
                 {__("OTHER CONFIGURATIONS", "campaignbay")} <Required />{" "}
@@ -759,6 +827,13 @@ const CampaignsEdit = () => {
                 </div>
               )}
             </div>
+
+            <CampaignSettings
+              settings={settings}
+              setSettings={setSettings}
+              errors={errors?.settings}
+              type={campaignType}
+            />
 
             {/* buttons */}
             <div className="wpab-btn-bottom-con campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-4">

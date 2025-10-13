@@ -105,6 +105,7 @@ class ProductDiscount
 		$base_price = (float) Woocommerce::get_product_base_price($this->product);
 		$best_price = null;
 		$applied_campaign = null;
+		$applied_tier = null;
 		$this->data = array(
 			'original_price' => $original_price,
 			'base_price' => $base_price,
@@ -118,13 +119,16 @@ class ProductDiscount
 			if (!$campaign->is_applicable_to_product($this->product)) {
 				continue;
 			}
-			$new_price = $this->get_discounted_price($base_price, $campaign);
+			if ($campaign->get_type() === 'earlybird') {
+				$tier = Helper::earlybird_current_tier($campaign);
+				$new_price = $this->calculate_earlybird_price($tier, $base_price);
+			} elseif ($campaign->get_type() === 'scheduled')
+				$new_price = $this->calculate_scheduled_price($campaign, $base_price);
 
-			campaignbay_log($this->product->get_name() . ' ' . 'new price  ' . $new_price);
 			if ($this->is_better_price($new_price, $best_price)) {
 				$best_price = $new_price;
 				$applied_campaign = $campaign;
-				campaignbay_log($this->product->get_name() . ' ' . 'best price  ' . $best_price);
+				$applied_tier = $tier ?? null;
 			}
 		}
 		if ($applied_campaign !== null) {
@@ -143,9 +147,8 @@ class ProductDiscount
 				$data['type'] = $applied_campaign->get_discount_type() ?? null;
 			}
 			if ($applied_campaign->get_type() === 'earlybird') {
-				$tier = Helper::earlybird_current_tier($applied_campaign);
-				$data['value'] = $tier['value'];
-				$data['type'] = $tier['type'];
+				$data['value'] = $applied_tier['value'];
+				$data['type'] = $applied_tier['type'];
 			}
 			$this->data['simple'] = $data;
 
@@ -212,32 +215,6 @@ class ProductDiscount
 		return $this->product;
 	}
 
-	/**
-	 * Calculates the discounted price for a single campaign.
-	 * This method acts as a dispatcher, calling the correct calculation logic based on the campaign type.
-	 *
-	 * @since 1.0.0
-	 * @param float   $base_price The base price before discount.
-	 * @param object  $campaign The campaign object.
-	 * @return float The final discounted price for this campaign.
-	 */
-	public function get_discounted_price($base_price, $campaign)
-	{
-		do_action('campaignbay_before_calculate_discounted_price', $campaign, $this->product, $base_price);
-
-		$final_price = $base_price;
-		if ($campaign->get_type() === 'scheduled') {
-			$final_price = $this->calculate_scheduled_price($campaign, $base_price);
-		}
-		if ($campaign->get_type() === 'earlybird') {
-			$tier = Helper::earlybird_current_tier($campaign);
-			$final_price = $this->calculate_earlybird_price($tier, $base_price);
-		}
-
-		do_action('campaignbay_after_calculate_discounted_price', $campaign, $this->product, $final_price, $base_price);
-
-		return Woocommerce::round($final_price);
-	}
 
 	/**
 	 * Handles the price calculation for "scheduled" type campaigns.
