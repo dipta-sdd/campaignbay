@@ -31,8 +31,8 @@ if (!function_exists('campaignbay_default_options')):
 			==================================================*/
 			'global_enableAddon' => true,
 			'global_calculate_discount_from' => 'regular_price',
-			'position_to_show_bulk_table' => 'below_cart',
-			'position_to_show_discount_bar' => 'above_cart',
+			'position_to_show_bulk_table' => 'woocommerce_after_add_to_cart_form',
+			'position_to_show_discount_bar' => 'woocommerce_before_add_to_cart_form',
 
 			/*==================================================
 			* Performance & Caching (from Global Tab)
@@ -49,6 +49,7 @@ if (!function_exists('campaignbay_default_options')):
 			==================================================*/
 			'product_message_format_percentage' => esc_html('You save {percentage_off}%'),
 			'product_message_format_fixed' => esc_html('You save {amount_off} per item'),
+			'bogo_banner_message_format' => esc_html('Buy {buy_quantity} and {get_quantity} free!!!!!!'),
 			'product_priorityMethod' => 'apply_highest',
 			'show_discount_table' => 'true',
 			'discount_table_options' => array(
@@ -74,14 +75,15 @@ if (!function_exists('campaignbay_default_options')):
 			==================================================*/
 			'cart_allowWcCouponStacking' => false,
 			'cart_allowCampaignStacking' => false,
+			'cart_quantity_message_format_percentage' => esc_html('Add {remainging_quantity_for_next_offer} more and get {percentage_off}% off'),
+			'cart_quantity_message_format_fixed' => esc_html('Add {remainging_quantity_for_next_offer} more and get {amount_off} off per item!!'),
+			'cart_bogo_cart_message_format' => esc_html('{title} discount applied.'),
+
 			/*==================================================
 			* Advance Settings Tab
 			==================================================*/
 			'advanced_deleteAllOnUninstall' => false,
-			'advanced_customCss' => '',
-			'advanced_customJs' => '',
 		);
-
 		return apply_filters(CAMPAIGNBAY_OPTION_NAME . '_default_options', $default_options);
 	}
 endif;

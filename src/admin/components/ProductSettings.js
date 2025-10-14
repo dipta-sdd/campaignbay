@@ -1,12 +1,12 @@
 import SettingCard from "./SettingCard";
 import Checkbox from "./Checkbox";
 import { __ } from "@wordpress/i18n";
-import { Save } from "lucide-react";
 import Select from "./Select";
 import Input from "./Input";
 import { Icon, pencil } from "@wordpress/icons";
 import QuantityTableEditModal from "./QuantityTableEditModal";
 import { useState } from "react";
+import Placeholders from "./PlaceHolders";
 
 const ProductSettings = ({
   productSettings,
@@ -18,72 +18,72 @@ const ProductSettings = ({
   return (
     <div className="wpab-cb-settings-tab">
       <SettingCard title={__("Product Page Display", "campaignbay")}>
-        <Input
-          className="w-100"
-          label={
-            <span className="wpab-input-label">
-              {__(
-                "Product Page Schedule or Early Bird Discount Message Format",
+        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full">
+          <Input
+            className="w-100"
+            label="Product Page Percentage Schedule or Early Bird Discount Message Format"
+            help={<Placeholders options={["percentage_off"]} />}
+            value={productSettings.product_message_format_percentage}
+            onChange={(value) =>
+              setProductSettings((prev) => ({
+                ...prev,
+                product_message_format_percentage: value,
+              }))
+            }
+          />
+          <Input
+            className="w-100"
+            label="Product Page Fixed Schedule or Early Bird Discount Message Format"
+            help={<Placeholders options={["ampount_of"]} />}
+            value={productSettings.product_message_format_fixed}
+            onChange={(value) =>
+              setProductSettings((prev) => ({
+                ...prev,
+                product_message_format_fixed: value,
+              }))
+            }
+          />
+
+          <Input
+            className="w-100"
+            label="Product Page BOGO Discount Message Format"
+            help={<Placeholders options={["buy_quantity", "get_quantity"]} />}
+            value={productSettings.bogo_banner_message_format}
+            onChange={(value) =>
+              setProductSettings((prev) => ({
+                ...prev,
+                bogo_banner_message_format: value,
+              }))
+            }
+          />
+          <span>
+            <Checkbox
+              checked={productSettings.show_discount_table}
+              onChange={() =>
+                setProductSettings((prev) => ({
+                  ...prev,
+                  show_discount_table: !prev.show_discount_table,
+                }))
+              }
+              label={__(
+                "Enable Quantity Discounts Table on Product Page",
                 "campaignbay"
               )}
-            </span>
-          }
-          help={__(
-            "Use Placeholder like {percentage_off}, {ampount_of} .",
-            "campaignbay"
-          )}
-          value={productSettings.product_message_format_percentage}
-          onChange={(value) =>
-            setProductSettings((prev) => ({
-              ...prev,
-              product_message_format_percentage: value,
-            }))
-          }
-        />
-
-        <Checkbox
-          checked={productSettings.product_enableQuantityTable}
-          onChange={() =>
-            setProductSettings((prev) => ({
-              ...prev,
-              product_enableQuantityTable: !prev.product_enableQuantityTable,
-            }))
-          }
-          label={__(
-            "Enable Quantity Discounts Table on Product Page",
-            "campaignbay"
-          )}
-          help={__(
-            "Show a table outlining tiered quantity based discounts",
-            "campaignbay"
-          )}
-        />
-
-        <Checkbox
-          checked={productSettings.show_discount_table}
-          onChange={() =>
-            setProductSettings((prev) => ({
-              ...prev,
-              show_discount_table: !prev.show_discount_table,
-            }))
-          }
-          label={__(
-            "Enable Quantity Discounts Table on Product Page",
-            "campaignbay"
-          )}
-          help={__(
-            "Show a table outlining tiered quantity based discounts",
-            "campaignbay"
-          )}
-        />
-        <div className="wpab-cb-btn-con-bottom">
-          <button
-            className="wpab-cb-btn wpab-cb-btn-outline-primary"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <Icon icon={pencil} fill="currentColor" />
-            {__("Customize Table", "campaignbay")}
-          </button>
+              help={__(
+                "Show a table outlining tiered quantity based discounts",
+                "campaignbay"
+              )}
+            />
+            <div className="wpab-cb-btn-con-bottom !campaignbay-justify-start">
+              <button
+                className="wpab-cb-btn wpab-cb-btn-outline-primary"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <Icon icon={pencil} fill="currentColor" />
+                {__("Customize Table", "campaignbay")}
+              </button>
+            </div>
+          </span>
         </div>
       </SettingCard>
 

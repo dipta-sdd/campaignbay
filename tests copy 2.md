@@ -21,7 +21,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **And:** I select "Scheduled Discount" as the "SELECT DISCOUNT TYPE".
 - **And:** I select "Active" as the "SELECT STATUS".
 - **And:** I select "Entire Store" as the "DISCOUNT TARGET".
-- **And:** I select "Percentage %" and enter "10" in "Enter Value".
+- **And:** I enter "10" in the "Discount Value" field and select "Percentage" as the discount type.
 - **And:** I click the "Save Campaign" button.
 - **Then:** The campaign should be saved successfully.
 - **And:** I should be redirected to the "All Campaigns" page.
@@ -86,7 +86,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **And:** I select "Scheduled Discount" as the "SELECT DISCOUNT TYPE".
 - **And:** I select "Active" as the "SELECT STATUS".
 - **And:** I select "Entire Store" as the "DISCOUNT TARGET".
-- **And:** I select "Percentage %" and enter "abc" in "Enter Value".
+- **And:** I enter "abc" in the "Discount Value" field.
 - **And:** I click the "Save Campaign" button.
 - **Then:** An error message should be displayed indicating invalid input for the discount value.
 - **And:** The campaign should not be saved.
@@ -100,6 +100,18 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **And:** I fill in all other mandatory fields with valid data (e.g., Scheduled Discount, Active, Entire Store, 10% discount).
 - **And:** I click the "Save Campaign" button.
 - **Then:** An error message should be displayed indicating that the "Campaign Title" is required.
+- **And:** The campaign should not be saved.
+
+### 1.8. Attempting to save a campaign with an invalid type (Negative)
+
+- **User Story:** As an Admin, I want the system to prevent me from saving campaigns with an invalid type.
+- **Scenario:** Verify that the system prevents saving a campaign with an invalid type.
+- **Given:** I am on the "Add Campaign" page.
+- **When:** I enter a valid "Campaign Title".
+- **And:** I select "invalid_type" as the "SELECT DISCOUNT TYPE".
+- **And:** I fill in all other mandatory fields with valid data.
+- **And:** I click the "Save Campaign" button.
+- **Then:** An error message should be displayed indicating that the "type" is invalid.
 - **And:** The campaign should not be saved.
 
 ---
@@ -214,7 +226,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **Scenario:** Verify that a quantity discount applied as a coupon is reflected in the cart.
 - **Given:** A product "Bulk Item B" costs $20.
 - **And:** A "Quantity Based Discount" campaign is created for "Bulk Item B": Buy 5+, get 15% off.
-- **And:** The campaign is "Active" and "APPLY DISCOUNT AS" is set to "Coupon".
+- **And:** The campaign is "Active" and "Apply Discount As" is set to "Coupon".
 - **When:** I add 6 "Bulk Item B" to the cart.
 - **Then:** A coupon should appear in the cart totals, reducing the total by 15% of the "Bulk Item B" subtotal.
 - **And:** The individual line item price for "Bulk Item B" should remain $20.
@@ -225,7 +237,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **Scenario:** Verify that a quantity discount applied as a fee is reflected in the cart.
 - **Given:** A product "Bulk Item C" costs $30.
 - **And:** A "Quantity Based Discount" campaign is created for "Bulk Item C": Buy 4+, get $10 off.
-- **And:** The campaign is "Active" and "APPLY DISCOUNT AS" is set to "Fee".
+- **And:** The campaign is "Active" and "Apply Discount As" is set to "Fee".
 - **When:** I add 4 "Bulk Item C" to the cart.
 - **Then:** A negative fee of $10 should appear in the cart totals.
 - **And:** The individual line item price for "Bulk Item C" should remain $30.
@@ -235,7 +247,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **User Story:** As a customer, I want to see a clear table of quantity discounts on the product page.
 - **Scenario:** Verify that the quantity discount table is displayed correctly on the product page.
 - **Given:** A product "Bulk Item D" has an active "Quantity Based Discount" campaign.
-- **And:** The campaign's "Show Quantity Discounts Table on Product Page" setting is enabled.
+- **And:** The campaign's "Enable Quantity Table" setting is enabled.
 - **When:** I view the "Bulk Item D" product page.
 - **Then:** A table displaying the quantity tiers and their corresponding discounted prices should be visible.
 
@@ -244,9 +256,42 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **User Story:** As an Admin, I want to hide the quantity discount table if I choose.
 - **Scenario:** Verify that the quantity discount table is not displayed when disabled.
 - **Given:** A product "Bulk Item E" has an active "Quantity Based Discount" campaign.
-- **And:** The campaign's "Show Quantity Discounts Table on Product Page" setting is disabled.
+- **And:** The campaign's "Enable Quantity Table" setting is disabled.
 - **When:** I view the "Bulk Item E" product page.
 - **Then:** No quantity discount table should be visible.
+
+### 2.12. Scheduled Discount - Settings (Positive)
+
+- **User Story:** As an Admin, I want to configure the settings for a scheduled discount.
+- **Scenario:** Verify that the settings for a scheduled discount are correctly applied.
+- **Given:** A "Scheduled Discount" campaign is created.
+- **And:** The "display_as_regular_price" setting is enabled.
+- **And:** The "message_format" setting is set to "Custom message".
+- **When:** I view a product with the discount applied.
+- **Then:** The discounted price should be displayed as the regular price.
+- **And:** The custom message should be displayed on the product page.
+
+### 2.13. Quantity Discount - Settings (Positive)
+
+- **User Story:** As an Admin, I want to configure the settings for a quantity discount.
+- **Scenario:** Verify that the settings for a quantity discount are correctly applied.
+- **Given:** A "Quantity Based Discount" campaign is created.
+- **And:** The "enable_quantity_table" setting is enabled.
+- **And:** The "apply_as" setting is set to "coupon".
+- **When:** I view a product with the discount applied.
+- **Then:** The quantity discount table should be displayed.
+- **And:** The discount should be applied as a coupon in the cart.
+
+### 2.14. Earlybird Discount - Settings (Positive)
+
+- **User Story:** As an Admin, I want to configure the settings for an earlybird discount.
+- **Scenario:** Verify that the settings for an earlybird discount are correctly applied.
+- **Given:** An "EarlyBird Discount" campaign is created.
+- **And:** The "display_as_regular_price" setting is enabled.
+- **And:** The "message_format" setting is set to "Custom message".
+- **When:** I view a product with the discount applied.
+- **Then:** The discounted price should be displayed as the regular price.
+- **And:** The custom message should be displayed on the product page.
 
 ---
 
@@ -261,83 +306,31 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **When:** I add any product (e.g., "Test Product") to the cart.
 - **Then:** A 10% discount should be applied to "Test Product".
 
-### 3.2. Targeting - By Product Category (Positive)
-
-- **User Story:** As an Admin, I want to apply a discount to products within a specific category.
-- **Scenario:** Verify that a discount targeting a specific product category applies only to products in that category.
-- **Given:** A product "Category Product A" in "Category X" costs $20.
-- **And:** A product "Category Product B" in "Category Y" costs $20.
-- **And:** A "Scheduled Discount" campaign is created for "10% off" with "DISCOUNT TARGET" set to "By Product Category" and "Select Categories \*" set to "Category X".
-- **And:** The campaign is "Active".
-- **When:** I add "Category Product A" to the cart.
-- **Then:** A 10% discount should be applied to "Category Product A".
-- **When:** I add "Category Product B" to the cart.
-- **Then:** No discount should be applied to "Category Product B".
-
-### 3.3. Targeting - By Product Category with Exclude Items (Negative)
-
-- **User Story:** As an Admin, I want to exclude specific categories from a discount.
-- **Scenario:** Verify that a discount targeting a specific product category with "Exclude Items" enabled does not apply to products in the selected category.
-- **Given:** A product "Category Product A" in "Category X" costs $20.
-- **And:** A product "Category Product B" in "Category Y" costs $20.
-- **And:** A "Scheduled Discount" campaign is created for "10% off" with "DISCOUNT TARGET" set to "By Product Category", "Select Categories \*" set to "Category X", and "Exclude Items" checked.
-- **And:** The campaign is "Active".
-- **When:** I add "Category Product A" to the cart.
-- **Then:** No discount should be applied to "Category Product A".
-- **When:** I add "Category Product B" to the cart.
-- **Then:** A 10% discount should be applied to "Category Product B".
-
-### 3.4. Targeting - By Product (Positive)
+### 3.2. Targeting - By Product (Positive)
 
 - **User Story:** As an Admin, I want to apply a discount to specific products.
 - **Scenario:** Verify that a discount targeting specific products applies only to those products.
 - **Given:** A product "Specific Product 1" costs $30.
 - **And:** A product "Specific Product 2" costs $30.
-- **And:** A "Scheduled Discount" campaign is created for "15% off" with "DISCOUNT TARGET" set to "By Product" and "Select Products \*" set to "Specific Product 1".
+- **And:** A "Scheduled Discount" campaign is created for "15% off" with "DISCOUNT TARGET" set to "By Product" and "Select Products" set to "Specific Product 1".
 - **And:** The campaign is "Active".
 - **When:** I add "Specific Product 1" to the cart.
 - **Then:** A 15% discount should be applied to "Specific Product 1".
 - **When:** I add "Specific Product 2" to the cart.
 - **Then:** No discount should be applied to "Specific Product 2".
 
-### 3.5. Targeting - By Product with Exclude Items (Negative)
+### 3.3. Targeting - By Product with Exclude Items (Negative)
 
 - **User Story:** As an Admin, I want to exclude specific products from a discount.
 - **Scenario:** Verify that a discount targeting specific products with "Exclude Items" enabled does not apply to the selected products.
 - **Given:** A product "Specific Product 1" costs $30.
 - **And:** A product "Specific Product 2" costs $30.
-- **And:** A "Scheduled Discount" campaign is created for "15% off" with "DISCOUNT TARGET" set to "By Product", "Select Products \*" set to "Specific Product 1", and "Exclude Items" checked.
+- **And:** A "Scheduled Discount" campaign is created for "15% off" with "DISCOUNT TARGET" set to "By Product", "Select Products" set to "Specific Product 1", and "Exclude Items" checked.
 - **And:** The campaign is "Active".
 - **When:** I add "Specific Product 1" to the cart.
 - **Then:** No discount should be applied to "Specific Product 1".
 - **When:** I add "Specific Product 2" to the cart.
 - **Then:** A 15% discount should be applied to "Specific Product 2".
-
-### 3.6. Targeting - By Tags (Positive)
-
-- **User Story:** As an Admin, I want to apply a discount to products with a specific tag.
-- **Scenario:** Verify that a discount targeting specific tags applies only to products with those tags.
-- **Given:** A product "Tagged Product A" with tag "Sale" costs $25.
-- **And:** A product "Tagged Product B" with tag "New" costs $25.
-- **And:** A "Scheduled Discount" campaign is created for "5% off" with "DISCOUNT TARGET" set to "By Tags" and "Select Tags \*" set to "Sale".
-- **And:** The campaign is "Active".
-- **When:** I add "Tagged Product A" to the cart.
-- **Then:** A 5% discount should be applied to "Tagged Product A".
-- **When:** I add "Tagged Product B" to the cart.
-- **Then:** No discount should be applied to "Tagged Product B".
-
-### 3.7. Targeting - By Tags with Exclude Items (Negative)
-
-- **User Story:** As an Admin, I want to exclude products with specific tags from a discount.
-- **Scenario:** Verify that a discount targeting specific tags with "Exclude Items" enabled does not apply to products with the selected tags.
-- **Given:** A product "Tagged Product A" with tag "Sale" costs $25.
-- **And:** A product "Tagged Product B" with tag "New" costs $25.
-- **And:** A "Scheduled Discount" campaign is created for "5% off" with "DISCOUNT TARGET" set to "By Tags", "Select Tags \*" set to "Sale", and "Exclude Items" checked.
-- **And:** The campaign is "Active".
-- **When:** I add "Tagged Product A" to the cart.
-- **Then:** No discount should be applied to "Tagged Product A".
-- **When:** I add "Tagged Product B" to the cart.
-- **Then:** A 5% discount should be applied to "Tagged Product B".
 
 ### 3.8. Exclude Sale Items (Positive)
 
@@ -406,7 +399,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **User Story:** As a customer, I want to see a clear table of quantity discounts on the product page.
 - **Scenario:** Verify that the quantity discount table is displayed correctly on the product page.
 - **Given:** A product "Bulk Buy Product" has an active "Quantity Based Discount" campaign with multiple tiers.
-- **And:** The campaign's "Show Quantity Discounts Table on Product Page" setting is enabled.
+- **And:** The campaign's "Enable Quantity Table" setting is enabled.
 - **When:** I view the "Bulk Buy Product" product page.
 - **Then:** A table displaying the quantity tiers and their corresponding discounted prices should be visible.
 
@@ -443,7 +436,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **User Story:** As a customer, I want discounts to be recalculated automatically when I remove items from the cart.
 - **Scenario:** Verify that cart-level discounts are recalculated when items are removed from the cart.
 - **Given:** A product "Cart Total Product" costs $20.
-- **And:** An active "Cart Total Discount" campaign (assuming this type exists, based on `DbManager.php` enum) applies $5 off the cart total if the subtotal is $50 or more.
+- **And:** An active "Cart Total Discount" campaign applies $5 off the cart total if the subtotal is $50 or more.
 - **When:** I add 3 "Cart Total Product" to the cart (subtotal $60).
 - **Then:** A $5 discount should be applied to the cart total.
 - **When:** I remove 1 "Cart Total Product" from the cart (subtotal $40).
@@ -456,15 +449,15 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 ### 5.1. Global Enable/Disable Addon (Positive)
 
 - **User Story:** As an Admin, I want to quickly enable or disable all CampaignBay functionalities.
-- **Scenario:** Verify that toggling "Enable CampaignBay" globally enables/disables all discounts.
+- **Scenario:** Verify that toggling "Enable Discount Add-on" globally enables/disables all discounts.
 - **Given:** An active "Scheduled Discount" campaign exists for "10% off the entire store".
-- **And:** The "Enable CampaignBay" checkbox in "Settings > General" is checked.
+- **And:** The "Enable Discount Add-on" checkbox in "Settings > Global Settings" is checked.
 - **When:** I view any product page.
 - **Then:** The 10% discount should be applied.
-- **When:** I uncheck "Enable CampaignBay" in "Settings > General" and click "Save Changes".
+- **When:** I uncheck "Enable Discount Add-on" in "Settings > Global Settings" and click "Save Changes".
 - **And:** I view any product page.
 - **Then:** No discount should be applied.
-- **When:** I check "Enable CampaignBay" in "Settings > General" and click "Save Changes".
+- **When:** I check "Enable Discount Add-on" in "Settings > Global Settings" and click "Save Changes".
 - **And:** I view any product page.
 - **Then:** The 10% discount should be applied again.
 
@@ -475,9 +468,9 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **Given:** A product "On Sale Item" costs $100, currently on sale for $80.
 - **And:** An active "Scheduled Discount" campaign applies a 10% discount to "On Sale Item".
 - **And:** The campaign has "Exclude Sale Items" unchecked.
-- **When:** "Calculate Discount From" in "Settings > General" is set to "Regular Price" and I view "On Sale Item".
+- **When:** "Calculate Discount From" in "Settings > Global Settings" is set to "Regular Price" and I view "On Sale Item".
 - **Then:** The price should be $70 (10% off $100, then $80 sale price is ignored).
-- **When:** "Calculate Discount From" in "Settings > General" is set to "Sale Price" and I view "On Sale Item".
+- **When:** "Calculate Discount From" in "Settings > Global Settings" is set to "Sale Price" and I view "On Sale Item".
 - **Then:** The price should be $72 (10% off $80).
 
 ### 5.3. Product Priority Method (Positive)
@@ -488,24 +481,57 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **And:** Two active "Scheduled Discount" campaigns apply to "Priority Product":
   - Campaign A: 10% off (created first).
   - Campaign B: 15% off (created second).
-- **When:** "Product Priority Method" in "Settings > General" is set to "Apply Highest Discount".
+- **When:** "Product Priority Method" in "Settings > Product Settings" is set to "Apply Highest Discount".
 - **Then:** The product price should reflect a 15% discount ($85).
-- **When:** "Product Priority Method" in "Settings > General" is set to "Apply Lowest Discount".
+- **When:** "Product Priority Method" in "Settings > Product Settings" is set to "Apply Lowest Discount".
 - **Then:** The product price should reflect a 10% discount ($90).
-- **When:** "Product Priority Method" in "Settings > General" is set to "Apply First Created Discount".
+- **When:** "Product Priority Method" in "Settings > Product Settings" is set to "Apply First Created Discount".
 - **Then:** The product price should reflect a 10% discount ($90).
 
 ### 5.4. Save and Reset Settings (Positive)
 
 - **User Story:** As an Admin, I want to save my settings changes and also be able to revert to default settings.
 - **Scenario:** Verify that settings can be saved and reset to their default values.
-- **Given:** I am on the "Settings > General" page.
+- **Given:** I am on the "Settings > Global Settings" page.
 - **When:** I change "Calculate Discount From" to "Sale Price".
 - **And:** I click "Save Changes".
 - **Then:** The setting should persist after page refresh.
 - **When:** I click "Reset Settings".
 - **And:** I confirm the reset.
 - **Then:** "Calculate Discount From" should revert to "Regular Price" (or its default value).
+
+### 5.5. Advanced Settings - Delete All On Uninstall (Positive)
+
+- **User Story:** As an Admin, I want to be able to completely remove all plugin data upon uninstallation.
+- **Scenario:** Verify that the "Delete All Data On Uninstall" setting works as expected.
+- **Given:** I am on the "Settings > Advanced Settings" page.
+- **When:** I check the "Delete All Data On Uninstall" checkbox.
+- **And:** I click "Save Changes".
+- **Then:** The setting should be saved.
+- **When:** I deactivate and uninstall the CampaignBay plugin.
+- **Then:** All CampaignBay related database tables and options should be removed.
+
+### 5.6. Cart Settings - Allow WC Coupon Stacking (Positive)
+
+- **User Story:** As an Admin, I want to control if CampaignBay discounts can be used with other WooCommerce coupons.
+- **Scenario:** Verify that the "Allow WC Coupon Stacking" setting works as expected.
+- **Given:** I am on the "Settings > Cart Settings" page.
+- **And:** A standard WooCommerce coupon "TESTCOUPON" for $5 off exists.
+- **And:** A CampaignBay campaign for 10% off is active.
+- **When:** I enable "Allow WC Coupon Stacking".
+- **And:** I add a $100 product to the cart.
+- **And:** I apply the "TESTCOUPON" coupon.
+- **Then:** Both the 10% CampaignBay discount and the $5 coupon should be applied, for a total of $15 off.
+
+### 5.7. Cart Settings - Allow Campaign Stacking (Positive)
+
+- **User Story:** As an Admin, I want to control if multiple CampaignBay cart discounts can apply to the same cart.
+- **Scenario:** Verify that the "Allow Campaign Stacking" setting works as expected.
+- **Given:** I am on the "Settings > Cart Settings" page.
+- **And:** Two separate CampaignBay cart-level campaigns are active.
+- **When:** I enable "Allow Campaign Stacking".
+- **And:** I add products to the cart that trigger both campaigns.
+- **Then:** Both CampaignBay discounts should be applied to the cart.
 
 ---
 
@@ -526,7 +552,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 
 - **User Story:** As an Admin, I want to control whether multiple cart-level discounts can be applied simultaneously.
 - **Scenario:** Verify that the `cart_allowCampaignStacking` setting correctly enables or disables the stacking of cart-level discounts.
-- **Given:** Two active "Quantity Based Discount" campaigns (Campaign A and Campaign B) apply to the same product, both set to "APPLY DISCOUNT AS" "Coupon".
+- **Given:** Two active "Quantity Based Discount" campaigns (Campaign A and Campaign B) apply to the same product, both set to "Apply Discount As" "Coupon".
 - **When:** The global setting `cart_allowCampaignStacking` is enabled.
 - **And:** I add enough quantity of the product to trigger both campaigns.
 - **Then:** Both Campaign A and Campaign B discounts should be applied in the cart.
@@ -667,3 +693,217 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **When:** I proceed to checkout.
 - **Then:** The payment section should be bypassed or show "No payment required".
 - **And:** I should be able to complete the order successfully.
+
+---
+
+## 10. Validation Scenarios (Negative)
+
+### 10.1. Attempting to save a campaign with an invalid discount type (Negative)
+
+- **User Story:** As an Admin, I want the system to prevent me from saving campaigns with an invalid discount type.
+- **Scenario:** Verify that the system prevents saving a campaign with an invalid discount type.
+- **Given:** I am on the "Add Campaign" page.
+- **When:** I enter a valid "Campaign Title".
+- **And:** I select "scheduled" as the "SELECT DISCOUNT TYPE".
+- **And:** I select "invalid_discount_type" as the "DISCOUNT TYPE".
+- **And:** I fill in all other mandatory fields with valid data.
+- **And:** I click the "Save Campaign" button.
+- **Then:** An error message should be displayed indicating that the "discount_type" is invalid.
+- **And:** The campaign should not be saved.
+
+### 10.2. Attempting to save a campaign with an invalid discount value (Negative)
+
+- **User Story:** As an Admin, I want the system to prevent me from saving campaigns with an invalid discount value.
+- **Scenario:** Verify that the system prevents saving a campaign with an invalid discount value.
+- **Given:** I am on the "Add Campaign" page.
+- **When:** I enter a valid "Campaign Title".
+- **And:** I select "scheduled" as the "SELECT DISCOUNT TYPE".
+- **And:** I select "percentage" as the "DISCOUNT TYPE".
+- **And:** I enter "abc" as the "DISCOUNT VALUE".
+- **And:** I fill in all other mandatory fields with valid data.
+- **And:** I click the "Save Campaign" button.
+- **Then:** An error message should be displayed indicating that the "discount_value" is invalid.
+- **And:** The campaign should not be saved.
+
+### 10.3. Attempting to save a quantity campaign with invalid tiers (Negative)
+
+- **User Story:** As an Admin, I want the system to prevent me from saving quantity campaigns with invalid tiers.
+- **Scenario:** Verify that the system prevents saving a quantity campaign with invalid tiers.
+- **Given:** I am on the "Add Campaign" page.
+- **When:** I enter a valid "Campaign Title".
+- **And:** I select "quantity" as the "SELECT DISCOUNT TYPE".
+- **And:** I add a tier with a "min" value greater than the "max" value.
+- **And:** I fill in all other mandatory fields with valid data.
+- **And:** I click the "Save Campaign" button.
+- **Then:** An error message should be displayed indicating that the tiers are invalid.
+- **And:** The campaign should not be saved.
+
+---
+
+## 11. Logging Scenarios (Positive)
+
+### 11.1. Verify campaign creation is logged (Positive)
+
+- **User Story:** As an Admin, I want to have a record of when new campaigns are created.
+- **Scenario:** Verify that a log entry is created when a new campaign is created.
+- **Given:** I am on the "Add Campaign" page.
+- **When:** I create a new campaign.
+- **Then:** A log entry should be created in the `wp_campaignbay_logs` table with the `log_type` 'campaign_created'.
+
+### 11.2. Verify campaign update is logged (Positive)
+
+- **User Story:** As an Admin, I want to have a record of when campaigns are updated.
+- **Scenario:** Verify that a log entry is created when a campaign is updated.
+- **Given:** An existing campaign.
+- **When:** I update the campaign.
+- **Then:** A log entry should be created in the `wp_campaignbay_logs` table with the `log_type` 'campaign_updated'.
+
+### 11.3. Verify campaign deletion is logged (Positive)
+
+- **User Story:** As an Admin, I want to have a record of when campaigns are deleted.
+- **Scenario:** Verify that a log entry is created when a campaign is deleted.
+- **Given:** An existing campaign.
+- **When:** I delete the campaign.
+- **Then:** A log entry should be created in the `wp_campaignbay_logs` table with the `log_type` 'campaign_deleted'.
+
+---
+
+## 12. Additional Scenarios from new_tests_to_add.md
+
+### [Global Settings] - Bulk Table Position
+
+- **User Story:** As an Admin, I want to control the position of the bulk discount table on the product page so that I can customize the layout.
+- **Scenario:** Verify that the bulk discount table position can be changed.
+- **Given:** A product has a quantity-based discount.
+- **When:** I set "Bulk Table Position" to "Above Cart" in the Global Settings.
+- **Then:** The bulk discount table should appear above the cart on the product page.
+- **When:** I set "Bulk Table Position" to "Below Meta" in the Global Settings.
+- **Then:** The bulk discount table should appear below the product meta section on the product page.
+
+### [Global Settings] - Discount Bar Position
+
+- **User Story:** As an Admin, I want to control the position of the discount bar on the product page so that I can customize the layout.
+- **Scenario:** Verify that the discount bar position can be changed.
+- **Given:** A product has an active discount.
+- **When:** I set "Discount Bar Position" to "Above Cart" in the Global Settings.
+- **Then:** The discount bar should appear above the cart on the product page.
+- **When:** I set "Discount Bar Position" to "Below Meta" in the Global Settings.
+- **Then:** The discount bar should appear below the product meta section on the product page.
+
+### [Global Settings] - Enable Discount Caching
+
+- **User Story:** As an Admin, I want to enable or disable discount caching to optimize performance.
+- **Scenario:** Verify that discount caching can be enabled and disabled.
+- **Given:** I am on the "Settings" page.
+- **When:** I check the "Enable Discount Caching" checkbox.
+- **Then:** The setting should be saved and discount caching should be active.
+- **When:** I uncheck the "Enable Discount Caching" checkbox.
+- **Then:** The setting should be saved and discount caching should be inactive.
+
+### [Global Settings] - Clear Discount Cache
+
+- **User Story:** As an Admin, I want to be able to clear the discount cache to apply new rules immediately.
+- **Scenario:** Verify that the discount cache can be cleared.
+- **Given:** Discount caching is enabled.
+- **When:** I click the "Clear Discount Cache" button.
+- **Then:** A success message should be displayed indicating that the cache has been cleared.
+
+### [Global Settings] - Enable Debug Mode
+
+- **User Story:** As an Admin, I want to enable or disable debug mode for troubleshooting.
+- **Scenario:** Verify that debug mode can be enabled and disabled.
+- **Given:** I am on the "Settings" page.
+- **When:** I check the "Enable Debug Mode" checkbox.
+- **Then:** The setting should be saved and debug mode should be active.
+- **When:** I uncheck the "Enable Debug Mode" checkbox.
+- **Then:** The setting should be saved and debug mode should be inactive.
+
+### [Global Settings] - View Logs
+
+- **User Story:** As an Admin, I want to be able to view the plugin's logs for troubleshooting.
+- **Scenario:** Verify that the logs can be viewed.
+- **Given:** Debug mode is enabled.
+- **When:** I click the "View Logs" button.
+- **Then:** I should be taken to a page where I can view the plugin's logs.
+
+### [Global Settings] - Clear Log Files
+
+- **User Story:** As an Admin, I want to be able to clear the plugin's log files.
+- **Scenario:** Verify that the log files can be cleared.
+- **Given:** There are existing log files.
+- **When:** I click the "Clear Log Files" button.
+- **Then:** A success message should be displayed indicating that the log files have been cleared.
+
+### [Product Settings] - Customize Table
+
+- **User Story:** As an Admin, I want to customize the appearance of the quantity discounts table.
+- **Scenario:** Verify that the "Customize Table" button opens the customization options.
+- **Given:** "Enable Quantity Discounts Table on Product Page" is checked.
+- **When:** I click the "Customize Table" button.
+- **Then:** I should be presented with options to customize the table's appearance (e.g., colors, borders, etc.).
+
+### [Cart Settings] - Allow Stacking with WooCommerce Coupons
+
+- **User Story:** As an Admin, I want to control whether CampaignBay discounts can be used in conjunction with standard WooCommerce coupons.
+- **Scenario:** Verify that CampaignBay discounts are applied correctly when "Allow Stacking with WooCommerce Coupons" is enabled.
+- **Given:** A CampaignBay discount is active for a product.
+- **And:** A standard WooCommerce coupon is also active.
+- **When:** I enable "Allow Stacking with WooCommerce Coupons".
+- **And:** I add the product to the cart and apply the WooCommerce coupon.
+- **Then:** Both the CampaignBay discount and the WooCommerce coupon should be applied to the cart.
+
+- **User Story:** As an Admin, I want to prevent CampaignBay discounts from being used with standard WooCommerce coupons.
+- **Scenario:** Verify that CampaignBay discounts are not applied when "Allow Stacking with WooCommerce Coupons" is disabled.
+- **Given:** A CampaignBay discount is active for a product.
+- **And:** A standard WooCommerce coupon is also active.
+- **When:** I disable "Allow Stacking with WooCommerce Coupons".
+- **And:** I add the product to the cart and apply the WooCommerce coupon.
+- **Then:** Only the WooCommerce coupon should be applied, and the CampaignBay discount should be ignored.
+
+### [Cart Settings] - Allow Stacking with Other Discount Campaigns
+
+- **User Story:** As an Admin, I want to control whether multiple CampaignBay discounts can be applied to the same cart.
+- **Scenario:** Verify that multiple CampaignBay discounts are applied correctly when "Allow Stacking with Other Discount Campaigns" is enabled.
+- **Given:** Two different CampaignBay discounts are active and applicable to the products in the cart.
+- **When:** I enable "Allow Stacking with Other Discount Campaigns".
+- **And:** I add the products to the cart.
+- **Then:** Both CampaignBay discounts should be applied to the cart.
+
+- **User Story:** As an Admin, I want to prevent multiple CampaignBay discounts from being applied to the same cart.
+- **Scenario:** Verify that only one CampaignBay discount is applied when "Allow Stacking with Other Discount Campaigns" is disabled.
+- **Given:** Two different CampaignBay discounts are active and applicable to the products in the cart.
+- **When:** I disable "Allow Stacking with Other Discount Campaigns".
+- **And:** I add the products to the cart.
+- **Then:** Only one of the CampaignBay discounts (based on priority) should be applied to the cart.
+
+### [Advanced Settings] - Delete All Data on Uninstall
+
+- **User Story:** As an Admin, I want to have the option to completely remove all plugin data upon uninstallation.
+- **Scenario:** Verify that all plugin data is deleted when "Delete All Data on Uninstall" is enabled.
+- **Given:** The "Delete All Data on Uninstall" checkbox is checked.
+- **When:** I uninstall the CampaignBay plugin.
+- **Then:** All CampaignBay settings, campaigns, and log data should be removed from the database.
+
+- **User Story:** As an Admin, I want to keep my plugin data even after uninstallation.
+- **Scenario:** Verify that plugin data is not deleted when "Delete All Data on Uninstall" is disabled.
+- **Given:** The "Delete All Data on Uninstall" checkbox is unchecked.
+- **When:** I uninstall the CampaignBay plugin.
+- **Then:** All CampaignBay settings, campaigns, and log data should be preserved in the database.
+
+### [Campaign Creation] - APPLY DISCOUNT AS - Strike through in line total
+
+- **User Story:** As an Admin, I want to display the discount as a strikethrough on the product's price in the cart.
+- **Scenario:** Verify that the discount is displayed as a strikethrough in the cart.
+- **Given:** A campaign is created with "APPLY DISCOUNT AS" set to "Strike through in line total".
+- **When:** I add the discounted product to the cart.
+- **Then:** The original price of the product should be displayed with a strikethrough, and the discounted price should be shown.
+
+### [Campaign Creation] - Cart Page Message Location
+
+- **User Story:** As an Admin, I want to control where the BOGO discount message is displayed on the cart page.
+- **Scenario:** Verify that the BOGO discount message location can be changed.
+- **Given:** A BOGO campaign is active.
+- **When:** I set "Cart Page Message Location" to "Notice".
+- **Then:** The BOGO discount message should be displayed as a notice on the cart page.
+- **When:** I set "Cart Page Message Location" to "Don't Show".
+- **Then:** The BOGO discount message should not be displayed on the cart page.

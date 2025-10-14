@@ -63,64 +63,98 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
             }))
           }
         />
-        <Select
-          className="w-100"
-          label={__("Bulk Table Position", "campaignbay")}
-          help={__("Select the position to show the bulk table", "campaignbay")}
-          options={[
-            { label: __("Below Cart", "campaignbay"), value: "below_cart" },
-            { label: __("Above Cart", "campaignbay"), value: "above_cart" },
-          ]}
-          value={globalSettings.position_to_show_bulk_table}
-          onChange={(value) =>
-            setGlobalSettings((prev) => ({
-              ...prev,
-              position_to_show_bulk_table: value,
-            }))
-          }
-        />
-        <Select
-          className="w-100"
-          label={__("Discount Bar Position", "campaignbay")}
-          help={__(
-            "Select the position to show the discount bar",
-            "campaignbay"
-          )}
-          options={[
-            { label: __("Below Cart", "campaignbay"), value: "below_cart" },
-            { label: __("Above Cart", "campaignbay"), value: "above_cart" },
-          ]}
-          value={globalSettings.position_to_show_discount_bar}
-          onChange={(value) =>
-            setGlobalSettings((prev) => ({
-              ...prev,
-              position_to_show_discount_bar: value,
-            }))
-          }
-        />
 
-        <Select
-          className="w-100"
-          label={__("Calculate Discount From", "campaignbay")}
-          help={__(
-            "Select the price to calculate discounts from",
-            "campaignbay"
-          )}
-          options={[
-            {
-              label: __("Regular Price", "campaignbay"),
-              value: "regular_price",
-            },
-            { label: __("Sale Price", "campaignbay"), value: "sale_price" },
-          ]}
-          value={globalSettings.global_calculate_discount_from}
-          onChange={(value) =>
-            setGlobalSettings((prev) => ({
-              ...prev,
-              global_calculate_discount_from: value,
-            }))
-          }
-        />
+        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full">
+          <Select
+            className="w-100"
+            label={__("Bulk Table Position", "campaignbay")}
+            help={__(
+              "Select the position to show the bulk table",
+              "campaignbay"
+            )}
+            options={[
+              {
+                label: __("Below Cart", "campaignbay"),
+                value: "woocommerce_after_add_to_cart_form",
+              },
+              {
+                label: __("Above Cart", "campaignbay"),
+                value: "woocommerce_before_add_to_cart_form",
+              },
+              {
+                label: __("Below Meta", "campaignbay"),
+                value: "woocommerce_product_meta_end",
+              },
+              {
+                label: __("Above Meta", "campaignbay"),
+                value: "woocommerce_product_meta_start",
+              },
+            ]}
+            value={globalSettings.position_to_show_bulk_table}
+            onChange={(value) =>
+              setGlobalSettings((prev) => ({
+                ...prev,
+                position_to_show_bulk_table: value,
+              }))
+            }
+          />
+          <Select
+            className="w-100"
+            label={__("Discount Bar Position", "campaignbay")}
+            help={__(
+              "Select the position to show the discount bar",
+              "campaignbay"
+            )}
+            options={[
+              {
+                label: __("Below Cart", "campaignbay"),
+                value: "woocommerce_after_add_to_cart_form",
+              },
+              {
+                label: __("Above Cart", "campaignbay"),
+                value: "woocommerce_before_add_to_cart_form",
+              },
+              {
+                label: __("Below Meta", "campaignbay"),
+                value: "woocommerce_product_meta_end",
+              },
+              {
+                label: __("Above Meta", "campaignbay"),
+                value: "woocommerce_product_meta_start",
+              },
+            ]}
+            value={globalSettings.position_to_show_discount_bar}
+            onChange={(value) =>
+              setGlobalSettings((prev) => ({
+                ...prev,
+                position_to_show_discount_bar: value,
+              }))
+            }
+          />
+
+          <Select
+            className="w-100"
+            label={__("Calculate Discount From", "campaignbay")}
+            help={__(
+              "Select the price to calculate discounts from",
+              "campaignbay"
+            )}
+            options={[
+              {
+                label: __("Regular Price", "campaignbay"),
+                value: "regular_price",
+              },
+              { label: __("Sale Price", "campaignbay"), value: "sale_price" },
+            ]}
+            value={globalSettings.global_calculate_discount_from}
+            onChange={(value) =>
+              setGlobalSettings((prev) => ({
+                ...prev,
+                global_calculate_discount_from: value,
+              }))
+            }
+          />
+        </div>
       </SettingCard>
       <SettingCard title={__("Performence & Caching", "campaignbay")}>
         <Checkbox

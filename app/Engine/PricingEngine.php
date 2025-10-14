@@ -71,12 +71,15 @@ class PricingEngine extends Base
 	private function define_hooks()
 	{
 		// woocommerce_product_variation_get_price
+		$bulk_table_position = $this->settings['position_to_show_bulk_table'] ?? 'woocommerce_after_add_to_cart_form';
+		$banner_position = $this->settings['position_to_show_discount_bar'] ?? 'woocommerce_before_add_to_cart_form';
+
 		$hooks = [
 			['filter', 'woocommerce_get_price_html', 'get_price_html', 20, 2],
 			['filter', 'woocommerce_variable_price_html', 'get_variable_price_html', 20, 2],
 			['filter', 'woocommerce_product_is_on_sale', 'is_on_sale', 20, 2],
-			['action', 'woocommerce_before_add_to_cart_form', 'display_product_discount_message', 20, 0],
-			['action', 'woocommerce_before_add_to_cart_form', 'display_product_quantity_table', 20, 0],
+			['action', $banner_position, 'display_product_discount_message', 20, 0],
+			['action', $bulk_table_position, 'display_product_quantity_table', 20, 0],
 
 
 			['action', 'woocommerce_before_cart', 'ensure_cart_calculate_totals', 20, 1],

@@ -16,8 +16,6 @@ use WpabCb\Api\DashboardController;
 use WpabCb\Api\LogsController;
 use WpabCb\Api\SettingsController;
 use WpabCb\Core\Scheduler;
-use WpabCb\Data\DbManager;
-use WpabCb\Data\PostTypes;
 use WpabCb\Engine\CampaignManager;
 use WpabCb\Engine\DiscountManager;
 use WpabCb\Engine\OrderManager;
@@ -121,9 +119,6 @@ class Plugin
 	 */
 	private function define_core_hooks()
 	{
-		// Initialize post types
-		$post_types = PostTypes::get_instance();
-		$post_types->run();
 
 
 		// Initialize API controllers

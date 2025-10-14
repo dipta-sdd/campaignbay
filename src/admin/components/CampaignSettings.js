@@ -4,6 +4,7 @@ import CbCheckbox from "./CbCheckbox";
 import Tooltip from "./Tooltip";
 import { renderError } from "../pages/CampaignsEdit";
 import { useEffect, useState } from "react";
+import Placeholders from "./PlaceHolders";
 
 export default function CampaignSettings({
   settings,
@@ -89,6 +90,7 @@ export default function CampaignSettings({
                   "Product Page Discount Message Format. Leave Blank for default message.",
                   "campaignbay"
                 )}
+                <Placeholders options={["percentage_off", "amount_off"]} />
               </span>
               {renderError(errors?.message_format)}
             </div>
@@ -190,9 +192,16 @@ export default function CampaignSettings({
               />
               <span className="wpab-input-help">
                 {__(
-                  "This message will be displayed on the cart item name. Leave blank for the default message.Use placeholder like {remainging_quantity_for_next_offer} , {discount_value}",
+                  "This message will be displayed on the cart item name. Leave blank for the default message.",
                   "campaignbay"
                 )}
+                <Placeholders
+                  options={[
+                    "remainging_quantity_for_next_offer",
+                    "percentage_off",
+                    "amount_off",
+                  ]}
+                />
               </span>
               {renderError(errors?.cart_quantity_message_format)}
             </div>
@@ -295,9 +304,10 @@ export default function CampaignSettings({
                 />
                 <span className="wpab-input-help">
                   {__(
-                    "This message will be displayed on the product page. Leave blank for the default message. Use Placeholder Like {buy_quantity}, {get_quantity}",
+                    "This message will be displayed on the product page. Leave blank for the default message.",
                     "campaignbay"
                   )}
+                  <Placeholders options={["buy_quantity", "get_quantity"]} />
                 </span>
                 {renderError(errors?.bogo_banner_message_format)}
               </div>
@@ -331,9 +341,10 @@ export default function CampaignSettings({
                 />
                 <span className="wpab-input-help">
                   {__(
-                    "This message will be displayed on the cart page. Leave blank for the default message.Use placeholder like {title}",
+                    "This message will be displayed on the cart page. Leave blank for the default message.",
                     "campaignbay"
                   )}
+                  <Placeholders options={["title"]} />
                 </span>
                 {renderError(errors?.cart_bogo_cart_message_format)}
               </div>

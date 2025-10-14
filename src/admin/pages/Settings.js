@@ -50,7 +50,8 @@ const Settings = () => {
     setProductSettings({
       product_message_format_percentage:
         settings.product_message_format_percentage,
-      product_enableQuantityTable: settings.product_enableQuantityTable,
+      product_message_format_fixed: settings.product_message_format_fixed,
+      bogo_banner_message_format: settings.bogo_banner_message_format,
       show_discount_table: settings.show_discount_table,
       discount_table_options: settings.discount_table_options,
       product_priorityMethod: settings.product_priorityMethod,
@@ -67,6 +68,11 @@ const Settings = () => {
     setCartSettings({
       cart_allowWcCouponStacking: settings.cart_allowWcCouponStacking,
       cart_allowCampaignStacking: settings.cart_allowCampaignStacking,
+      cart_quantity_message_format_percentage:
+        settings.cart_quantity_message_format_percentage,
+      cart_quantity_message_format_fixed:
+        settings.cart_quantity_message_format_fixed,
+      cart_bogo_cart_message_format: settings.cart_bogo_cart_message_format,
     });
     setAdvancedSettings({
       advanced_deleteAllOnUninstall: settings.advanced_deleteAllOnUninstall,

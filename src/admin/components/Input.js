@@ -26,7 +26,7 @@ const Input = ({
         className={`wpab-input${className ? " " + className : ""}`}
         {...props}
       />
-      <span className="wpab-input-help">{help}</span>
+      {help && <span className="wpab-input-help">{help}</span>}
     </div>
   );
 };
