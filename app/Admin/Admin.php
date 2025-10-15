@@ -413,7 +413,7 @@ class Admin
 					'sanitize_callback' => 'sanitize_text_field',
 					'default' => 'Add {remainging_quantity_for_next_offer} more and get {discount_value} off per item!!',
 				),
-				'cart_bogo_cart_message_format' => array(
+				'cart_bogo_message_format' => array(
 					'type' => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
 					'default' => '{title} discount applied.',

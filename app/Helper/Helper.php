@@ -10,6 +10,10 @@ if (!defined('ABSPATH'))
 
 class Helper
 {
+    public static function get_settings($name)
+    {
+        return Common::get_instance()->get_settings($name);
+    }
     public static function get_clean_html($html)
     {
         try {
@@ -41,7 +45,13 @@ class Helper
         $format = self::get_clean_html($format);
         if ($format == '')
             return '';
-        return str_replace(array_keys($args), array_values($args), $format);
+        return self::get_clean_message(str_replace(array_keys($args), array_values($args), $format));
+    }
+
+    public static function get_clean_message($message)
+    {
+        return $message;
+        // will implement later
     }
 
     public static function get_quantity_campaigns($product)
@@ -115,6 +125,22 @@ class Helper
         return $unique_tiers;
     }
 
+    public static function get_quantity_message($tier)
+    {
+        $message_format = $tier['settings']['cart_quantity_message_format'] ?? '';
+        $type = $tier['type'];
+        $value = $tier['value'];
+        if ($message_format === '' || $message_format === null) {
+            $message_format = self::get_settings($type === 'percentage' ? 'cart_quantity_message_format_percentage' : 'cart_quantity_message_format_fixed');
+        }
+        $message = Helper::generate_message($message_format, array(
+            '{remainging_quantity_for_next_offer}' => $tier['remaining'],
+            '{percentage_off}' => $value,
+            '{amount_off}' => $value
+        ));
+        return $message;
+    }
+
     public static function get_bogo_tiers($product)
     {
         $bogo_campaigns = self::get_bogo_campaigns($product);
@@ -129,15 +155,47 @@ class Helper
                 'ratio' => (int) (($campaign->get_tiers()[0]['get_quantity'] / $campaign->get_tiers()[0]['buy_quantity']) * 100)
             );
         }
+        $tmp_tiers = array();
+        foreach ($tiers as $tier) {
+            if (isset($tmp_tiers[$tier['buy_quantity']]))
+                continue;
+            $tmp_tiers[$tier['buy_quantity']] = $tier;
+        }
+        $tiers = array_values($tmp_tiers);
         usort($tiers, function ($a, $b) {
             return $b['ratio'] - $a['ratio'];
         });
         return $tiers;
     }
 
-    public static function get_bogo_meta($product, $quantity)
+    public static function render_product_bogo_message($product)
     {
-        $bogo_tiers = Helper::get_bogo_tiers($product);
+        $tiers = self::get_bogo_tiers($product);
+        usort($tiers, function ($a, $b) {
+            return $a['buy_quantity'] - $b['buy_quantity'];
+        });
+        if (empty($tiers))
+            return;
+        $tier = $tiers[0];
+        $format = $tier['settings']['bogo_banner_message_format'] ?? Common::get_instance()->get_settings('bogo_banner_message_format');
+        $message = self::generate_message($format, array(
+            '{buy_quantity}' => $tier['buy_quantity'],
+            '{get_quantity}' => $tier['get_quantity'],
+        ));
+
+        if ($message === '' || $message === null)
+            return;
+
+        Woocommerce::print_notice(
+            $message,
+            'success'
+        );
+
+    }
+    public static function get_bogo_meta($product, $quantity = null)
+    {
+
+        $bogo_tiers = self::get_bogo_tiers($product);
         $meta = array(
             'is_bogo' => false,
         );
@@ -174,7 +232,7 @@ class Helper
                 'buy_quantity' => $current_tier['buy_quantity'],
                 'get_quantity' => $current_tier['get_quantity'],
                 'free_quantity' => $free_quantity,
-                'need_to_add' => $need_to_add, // after adding this quantity all of free quantity will be added
+                'need_to_add' => $need_to_add,
             );
         }
 
@@ -184,6 +242,17 @@ class Helper
             $meta['bogo']['next_tier'] = $next_tier;
         }
         return $meta;
+    }
+
+    public static function get_bogo_cart_message($tier)
+    {
+        $message_format = $tier['settings']['cart_bogo_message_format'];
+        if ($message_format === '' || $message_format === null)
+            $message_format = self::get_settings('cart_bogo_message_format');
+
+        return self::generate_message($message_format, array(
+            '{title}' => $tier['title'],
+        ));
     }
 
 
@@ -303,7 +372,7 @@ class Helper
 
         foreach ($cart->cart_contents as $key => $values) {
             $cart_session[$key] = $values;
-            campaignbay_log($key . ' : ' . $values['quantity']);
+            // campaignbay_log($key . ' : ' . $values['quantity']);
             unset($cart_session[$key]['data']); // Unset product object.
         }
         return $cart_session;
@@ -314,6 +383,6 @@ class Helper
         $cart = self::get_cart_for_session($cart);
         $wc_session = WC()->session;
         $wc_session->set('cart', empty($cart) ? null : $cart);
-        campaignbay_log('manualy updatede cart session');
+        // campaignbay_log('manualy updatede cart session');
     }
 }

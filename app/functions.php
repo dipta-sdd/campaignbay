@@ -77,7 +77,7 @@ if (!function_exists('campaignbay_default_options')):
 			'cart_allowCampaignStacking' => false,
 			'cart_quantity_message_format_percentage' => esc_html('Add {remainging_quantity_for_next_offer} more and get {percentage_off}% off'),
 			'cart_quantity_message_format_fixed' => esc_html('Add {remainging_quantity_for_next_offer} more and get {amount_off} off per item!!'),
-			'cart_bogo_cart_message_format' => esc_html('{title} discount applied.'),
+			'cart_bogo_message_format' => esc_html('{title} discount applied.'),
 
 			/*==================================================
 			* Advance Settings Tab

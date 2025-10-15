@@ -73,7 +73,6 @@ class PricingEngine extends Base
 		// woocommerce_product_variation_get_price
 		$bulk_table_position = $this->settings['position_to_show_bulk_table'] ?? 'woocommerce_after_add_to_cart_form';
 		$banner_position = $this->settings['position_to_show_discount_bar'] ?? 'woocommerce_before_add_to_cart_form';
-
 		$hooks = [
 			['filter', 'woocommerce_get_price_html', 'get_price_html', 20, 2],
 			['filter', 'woocommerce_variable_price_html', 'get_variable_price_html', 20, 2],
@@ -88,14 +87,16 @@ class PricingEngine extends Base
 
 			['action', 'woocommerce_before_calculate_totals', 'before_calculate_totals', 20, 1],
 			['action', 'woocommerce_after_calculate_totals', 'after_calculate_totals', 20, 1],
-			['action', 'woocommerce_cart_updated', 'woocommerce_cart_updated', 20, 0],
-			// ['filter', 'woocommerce_calculated_total', 'woo_calculated_totals', 20, 2],
+			// ['action', 'woocommerce_cart_updated', 'woocommerce_cart_updated', 20, 0],
 			['filter', 'woocommerce_get_shop_coupon_data', 'validate_fake_coupon_data', 10, 2],
 			['filter', 'woocommerce_cart_totals_coupon_label', 'change_virtual_coupon_label', 10, 2],
 			['filter', 'woocommerce_coupon_is_valid', 'validate_fake_coupon', 10, 3],
 			['filter', 'woocommerce_cart_item_price', 'cart_item_price', 10, 3],
 			['filter', 'woocommerce_cart_item_subtotal', 'cart_item_subtotal', 10, 3],
 			['filter', 'woocommerce_cart_item_name', 'cart_item_name', 10, 3],
+			['action', 'woocommerce_after_cart_item_quantity_update', 'after_cart_item_quantity_update', 10, 4],
+			['action', 'woocommerce_checkout_create_order', 'save_discount_breakdown_to_order_meta', 10, 2],
+			['action', 'woocommerce_store_api_checkout_update_order_meta', 'save_discount_breakdown_to_order_meta', 10, 1],
 		];
 
 		// add_action('woocommerce_after_calculate_totals', array($this, 'after_calculate_totals'), 10, 1);
@@ -112,9 +113,72 @@ class PricingEngine extends Base
 	// woocommerce_product_meta_end
 
 
+
+	/**
+	 * Save the discount breakdown to the order meta.
+	 *
+	 * @since 1.0.0
+	 * @hook woocommerce_checkout_create_order
+	 * @hook woocommerce_store_api_checkout_update_order_meta
+	 * @param WC_Order $order The order object.
+	 * @param array $data The order data.
+	 */
+	public function save_discount_breakdown_to_order_meta($order, $data = null)
+	{
+		// The cart object is available globally via WC()->cart at this point.
+		$cart = WC()->cart;
+
+
+		campaignbay_log('___________________________________________');
+
+
+		if (!$cart)
+			return;
+
+
+		$discount_breakdown = $cart->campaignbay_discount_breakdown ?? array();
+		// campaignbay_log('___________________________________________');
+		// campaignbay_log(message: print_r($breakdown, true));
+
+		// if (!empty($cart->cart_contents)) {
+		// 	foreach ($cart->cart_contents as $key => $cart_item) {
+
+		// 	}
+		// }
+
+		$applied_coupons = $cart->get_coupon_discount_totals();
+		$our_coupons = $this->coupons;
+		if (is_array($applied_coupons) && !empty($applied_coupons) && !empty($our_coupons)) {
+			foreach ($applied_coupons as $key => $value) {
+				if (!isset($our_coupons[$key]))
+					continue;
+				$coupon = $our_coupons[$key];
+				$campaign_id = $coupon['id'];
+				if (!isset($discount_breakdown[$campaign_id]))
+					$discount_breakdown[$campaign_id] = array(
+						'title' => $coupon['title'],
+						'old_price' => 0,
+						'discount' => 0
+					);
+				$discount_breakdown[$campaign_id]['old_price'] = $discount_breakdown[$campaign_id]['old_price'] + $coupon['old_price'];
+				$discount_breakdown[$campaign_id]['discount'] = $discount_breakdown[$campaign_id]['discount'] + $value;
+			}
+		}
+
+		campaignbay_log(message: print_r($discount_breakdown, true));
+
+
+
+
+
+		// Save the entire breakdown array to a single meta key on the order.
+		$order->update_meta_data('_campaignbay_discount_breakdown', $discount_breakdown);
+		campaignbay_log(sprintf('Saved discount breakdown to order #%d .', $order->get_id()), 'INFO');
+	}
+
 	public function woocommerce_cart_updated()
 	{
-		campaignbay_log('woo_cart_updated');
+		// campaignbay_log('woo_cart_updated');
 		$wc_session = WC()->session->get('cart', null);
 		// campaignbay_log(print_r($wc_session, true));
 
@@ -160,10 +224,12 @@ class PricingEngine extends Base
 
 		if ($min_price !== $max_price) {
 			$price_html = wc_format_price_range($min_price, $max_price);
-		}
+		} else
+			$price_html = Woocommerce::format_price($min_price);
 		if ($min_reg_price !== $max_reg_price) {
 			$reg_price = wc_format_price_range($min_reg_price, $max_reg_price);
-		}
+		} else
+			$reg_price = Woocommerce::format_price($min_reg_price);
 		if ($min_reg_price !== $min_price && $max_reg_price !== $max_price) {
 			$price_html = wc_format_sale_price($reg_price, $price_html);
 		}
@@ -257,6 +323,26 @@ class PricingEngine extends Base
 
 	public function cart_item_name($name, $cart_item, $cart_item_key)
 	{
+		$meta = $cart_item['campaignbay'];
+		if (isset($meta['quantity_next_tier'])) {
+			$message = Helper::get_quantity_message($meta['quantity_next_tier']);
+			if ($message !== '' || $message !== null)
+				$name .= '<br/><span>' . $message . '</span>';
+		}
+		if (
+			isset($meta['is_bogo']) &&
+			$meta['is_bogo'] === true &&
+			isset($meta['bogo'])
+		) {
+			$message = Helper::get_bogo_cart_message($meta['bogo']);
+			$location = $meta['bogo']['settings']['bogo_cart_message_location'];
+			if ($message !== '' || $message !== null) {
+				if ($location === 'line_item_name')
+					$name .= '<br/><span>' . $message . '</span>';
+				// elseif ($location === 'notice')
+				// 	Woocommerce::wc_add_notice($message, 'success');
+			}
+		}
 		return $name;
 	}
 
@@ -275,6 +361,7 @@ class PricingEngine extends Base
 		global $product;
 		if (!$product)
 			return;
+		Helper::render_product_bogo_message($product);
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
 			return;
@@ -299,13 +386,29 @@ class PricingEngine extends Base
 			return;
 
 		global $product;
+		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
+		$price = $meta['base_price'];
+		if ($this->settings['cart_allowCampaignStacking']) {
+			if (isset($meta['simple']) && $meta['is_simple'] === true && isset($meta['simple']['price']))
+				$price = $meta['simple']['price'];
+		}
 		$tiers = Helper::get_quantity_tiers_with_campaign($product);
-		$tiers = Helper::get_unique_quantity_tiers($tiers, (float) Woocommerce::get_product_base_price($product));
+		$tiers = Helper::get_unique_quantity_tiers($tiers, $price);
 		if (empty($tiers))
 			return;
 		echo Helper::generate_quantity_table($tiers);
 
 		return;
+	}
+
+
+	public function after_cart_item_quantity_update($cart_item_key, $quantity, $old_quantity, $cart)
+	{
+		if (!did_action('woocommerce_before_calculate_totals')) {
+
+			// add to cart message for prduct page goes here
+			// campaignbay_log(' after_cart_item_quantity_update');
+		}
 	}
 
 	public function before_calculate_totals($cart)
@@ -316,20 +419,37 @@ class PricingEngine extends Base
 
 	public function after_calculate_totals($cart)
 	{
+
 		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
 			foreach ($cart->cart_contents as $key => $cart_item) {
+				$quantity = $cart_item['quantity'];
+				// campaignbay_log($cart_item);
 				$meta = isset($cart_item['campaignbay']) ? $cart_item['campaignbay'] : null;
 				if ($meta === null || !isset($meta['is_bogo']) || !isset($meta['bogo']['free_quantity']))
 					continue;
-				campaignbay_log(print_r('woo_calculated_totals ' . $cart->cart_contents[$key]['quantity'], true));
+				// campaignbay_log(print_r('woo_calculated_totals ' . $cart->cart_contents[$key]['quantity'], true));
 				// print_r($meta);
 				if (isset($meta['bogo']['free_quantity'])) {
 					// $cart->cart_contents[$key]['quantity'] = $cart_item['quantity'] + $meta['bogo']['free_quantity'];
-					$cart->set_quantity($key, $cart_item['quantity'] + $meta['bogo']['free_quantity'], false);
+
+					$free_quantity = $meta['bogo']['free_quantity'];
+					$cart->set_quantity($key, $quantity + $free_quantity, false);
+
+					$price = (float) $cart_item['line_total'] / $quantity;
+
+					$campaign_id = $meta['bogo']['id'];
+					if (!isset($cart->campaignbay_discount_breakdown[$campaign_id]))
+						$cart->campaignbay_discount_breakdown[$campaign_id] = array(
+							'title' => $meta['bogo']['title'],
+							'old_price' => 0,
+							'discount' => 0
+						);
+					$cart->campaignbay_discount_breakdown[$campaign_id]['old_price'] = $cart->campaignbay_discount_breakdown[$campaign_id]['old_price'] + (($quantity + $free_quantity) * $price);
+					$cart->campaignbay_discount_breakdown[$campaign_id]['discount'] = $cart->campaignbay_discount_breakdown[$campaign_id]['discount'] + ($free_quantity * $price);
 					// print_r('woo_calculated_totals' . $cart->cart_contents[$key]['quantity'] . '<br/>');
 				}
 
-				campaignbay_log(print_r('woo_calculated_totals ' . $cart->cart_contents[$key]['quantity'], true));
+				// campaignbay_log(print_r('woo_calculated_totals ' . $cart->cart_contents[$key]['quantity'], true));
 			}
 		}
 		// print_r('after_calculate_totals');
@@ -337,29 +457,7 @@ class PricingEngine extends Base
 	}
 
 
-	public function woo_calculated_totals($total, $cart)
-	{
-		$total_discount = 0;
-		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
-			foreach ($cart->cart_contents as $key => $cart_item) {
-				// $cart->cart_contents[$key]['quantity'] = 3;
-				$meta = isset($cart_item['campaignbay']) ? $cart_item['campaignbay'] : null;
-				if ($meta === null || !isset($meta['is_bogo']) || !isset($meta['bogo']['free_quantity']))
-					continue;
-				$sub_total = $cart_item['line_subtotal'];
-				$free_quantity = $meta['bogo']['free_quantity'];
-				$quantity = $cart_item['quantity'];
-				$discount = Woocommerce::round(($sub_total / $quantity) * $free_quantity);
-				$sub_total -= $discount;
-				// $cart->cart_contents[$key]['line_subtotal'] = $sub_total;
-				$total_discount += $discount;
 
-				// print_r($sub_total . '<br/>');
-			}
-		}
-		// $cart->set_subtotal($cart->get_subtotal() - $total_discount);
-		return $total;
-	}
 
 	public function validate_fake_coupon_data($data, $coupon_code)
 	{

@@ -370,7 +370,6 @@ class Campaign
 		$data['settings'] = $validated_settings ? wp_json_encode($validated_settings) : wp_json_encode($this->data->settings ?? '[]');
 		$data['conditions'] = isset($data['conditions']) ? wp_json_encode($data['conditions']) : wp_json_encode($this->data->conditions ?? '[]');
 		$data['tiers'] = wp_json_encode(isset($tmp_tiers) ? $tmp_tiers : $this->data->tiers ?? '[]');
-
 		// adding other default data
 		$data['date_modified'] = current_time('mysql');
 		$data['updated_by'] = get_current_user_id();
@@ -503,10 +502,19 @@ class Campaign
 				'display_as_regular_price' => 'nullable|boolean',
 				'message_format' => 'nullable|string',
 			];
-		} else if ($type === 'quantity') {
+		} elseif ($type === 'quantity') {
 			$rules = [
 				'enable_quantity_table' => 'nullable|boolean',
-				'apply_as' => 'nullable|string|in:line_total,fee,coupon'
+				'apply_as' => 'nullable|string|in:line_total,fee,coupon',
+				'cart_quantity_message_format' => 'nullable|string',
+			];
+		} elseif ($type === 'bogo') {
+			$rules = [
+				'auto_add_free_product' => 'nullable|boolean',
+				'apply_as' => 'nullable|string|in:line_total,fee',
+				'bogo_banner_message_format' => 'nullable|string',
+				'cart_bogo_message_format' => 'nullable|string',
+				'bogo_cart_message_location' => 'nullable|string|in:line_item_name,notice,dont_show',
 			];
 		}
 		if (!$validator->validate($rules)) {
@@ -914,4 +922,3 @@ class Campaign
 
 
 }
-

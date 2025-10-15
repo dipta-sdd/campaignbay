@@ -70,6 +70,7 @@ EXCLUDE_PATTERNS=(
     "todo.txt"
     "hooks.md"
     "hooks.txt"
+    "tmp.json"
 
 )
 

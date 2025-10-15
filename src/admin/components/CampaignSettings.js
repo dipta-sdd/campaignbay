@@ -138,72 +138,76 @@ export default function CampaignSettings({
               {renderError(errors?.enable_quantity_table)}
             </div>
 
-            <div className="cb-form-input-con !campaignbay-p-0">
-              <label htmlFor="apply_as">
-                {__("APPLY DISCOUNT AS", "campaignbay")} <Required />
-              </label>
-              <select
-                type="text"
-                id="apply_as"
-                className={`wpab-input w-100 ${
-                  errors?.apply_as ? "wpab-input-error" : ""
-                }`}
-                value={settings?.apply_as || "coupon"}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    apply_as: e.target.value,
-                  })
-                }
-              >
-                <option value="line_total">
-                  {__("Strike through in line total", "campaignbay")}
-                </option>
-                <option value="coupon">{__("Coupon", "campaignbay")}</option>
-                <option value="fee">{__("Fee", "campaignbay")}</option>
-              </select>
-              {renderError(errors?.apply_as)}
-            </div>
-            {/* next quantity message format */}
-            <div className="cb-form-input-con !campaignbay-p-0">
-              <label
-                htmlFor="message-format"
-                className="campaignbay-whitespace-nowrap"
-              >
-                {__("Next Discount Message Format", "campaignbay")}
-              </label>
-              <input
-                type="text"
-                id="message-format"
-                aria-label={__(
-                  "Cart Page Next Discount Message Format",
-                  "campaignbay"
-                )}
-                className={`wpab-input w-100  ${
-                  errors?.cart_quantity_message_format ? "wpab-input-error" : ""
-                }`}
-                value={settings?.cart_quantity_message_format}
-                onChange={(e) =>
-                  setSettings((prev) => ({
-                    ...prev,
-                    cart_quantity_message_format: e.target.value,
-                  }))
-                }
-              />
-              <span className="wpab-input-help">
-                {__(
-                  "This message will be displayed on the cart item name. Leave blank for the default message.",
-                  "campaignbay"
-                )}
-                <Placeholders
-                  options={[
-                    "remainging_quantity_for_next_offer",
-                    "percentage_off",
-                    "amount_off",
-                  ]}
+            <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px]">
+              <div className="cb-form-input-con !campaignbay-p-0">
+                <label htmlFor="apply_as">
+                  {__("APPLY DISCOUNT AS", "campaignbay")} <Required />
+                </label>
+                <select
+                  type="text"
+                  id="apply_as"
+                  className={`wpab-input w-100 ${
+                    errors?.apply_as ? "wpab-input-error" : ""
+                  }`}
+                  value={settings?.apply_as || "coupon"}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      apply_as: e.target.value,
+                    })
+                  }
+                >
+                  <option value="line_total">
+                    {__("Strike through in line total", "campaignbay")}
+                  </option>
+                  <option value="coupon">{__("Coupon", "campaignbay")}</option>
+                  <option value="fee">{__("Fee", "campaignbay")}</option>
+                </select>
+                {renderError(errors?.apply_as)}
+              </div>
+              {/* next quantity message format */}
+              <div className="cb-form-input-con !campaignbay-p-0">
+                <label
+                  htmlFor="message-format"
+                  className="campaignbay-whitespace-nowrap"
+                >
+                  {__("Next Discount Message Format", "campaignbay")}
+                </label>
+                <input
+                  type="text"
+                  id="message-format"
+                  aria-label={__(
+                    "Cart Page Next Discount Message Format",
+                    "campaignbay"
+                  )}
+                  className={`wpab-input w-100  ${
+                    errors?.cart_quantity_message_format
+                      ? "wpab-input-error"
+                      : ""
+                  }`}
+                  value={settings?.cart_quantity_message_format}
+                  onChange={(e) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      cart_quantity_message_format: e.target.value,
+                    }))
+                  }
                 />
-              </span>
-              {renderError(errors?.cart_quantity_message_format)}
+                <span className="wpab-input-help">
+                  {__(
+                    "This message will be displayed on the cart item name. Leave blank for the default message.",
+                    "campaignbay"
+                  )}
+                  <Placeholders
+                    options={[
+                      "remainging_quantity_for_next_offer",
+                      "percentage_off",
+                      "amount_off",
+                    ]}
+                  />
+                </span>
+                {renderError(errors?.cart_quantity_message_format)}
+              </div>
             </div>
           </>
         ) : null}
@@ -327,15 +331,13 @@ export default function CampaignSettings({
                     "campaignbay"
                   )}
                   className={`wpab-input w-100  ${
-                    errors?.cart_bogo_cart_message_format
-                      ? "wpab-input-error"
-                      : ""
+                    errors?.cart_bogo_message_format ? "wpab-input-error" : ""
                   }`}
-                  value={settings?.cart_bogo_cart_message_format}
+                  value={settings?.cart_bogo_message_format}
                   onChange={(e) =>
                     setSettings((prev) => ({
                       ...prev,
-                      cart_bogo_cart_message_format: e.target.value,
+                      cart_bogo_message_format: e.target.value,
                     }))
                   }
                 />
@@ -346,7 +348,7 @@ export default function CampaignSettings({
                   )}
                   <Placeholders options={["title"]} />
                 </span>
-                {renderError(errors?.cart_bogo_cart_message_format)}
+                {renderError(errors?.cart_bogo_message_format)}
               </div>
               {/* cart page message location , line items name or notice or dont show*/}
               <div className="cb-form-input-con !campaignbay-p-0">

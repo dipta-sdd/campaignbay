@@ -4,6 +4,7 @@ namespace WpabCb\Engine;
 
 use WC_Order;
 use WpabCb\Core\Base;
+use WpabCb\Core\Campaign;
 
 /**
  * Handles actions related to WooCommerce order status changes.
@@ -60,14 +61,14 @@ class OrderManager extends Base
 		foreach ($discount_breakdown as $campaign_id => $data) {
 			campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG');
 			campaignbay_log('data: ' . print_r($data, true), 'DEBUG');
-			if ($data['earlybird_usage_limit'] !== null) {
-				$campaign = new Campaign($campaign_id);
-				// Usage count is now stored directly in the table, no need to load separately
-				if ($campaign->get_usage_count() > $data['earlybird_usage_limit']) {
-					campaignbay_log('earlybird_usage_limit reached', 'DEBUG');
-					throw new Exception('Earlybird usage limit reached for campaign ID: ' . $campaign_id);
-				}
-			}
+			// if ($data['earlybird_usage_limit'] !== null) {
+			// 	$campaign = new Campaign($campaign_id);
+			// 	// Usage count is now stored directly in the table, no need to load separately
+			// 	if ($campaign->get_usage_count() > $data['earlybird_usage_limit']) {
+			// 		campaignbay_log('earlybird_usage_limit reached', 'DEBUG');
+			// 		throw new Exception('Earlybird usage limit reached for campaign ID: ' . $campaign_id);
+			// 	}
+			// }
 			$this->log_sale_event($campaign_id, $order, $data, $new_status);
 		}
 	}
@@ -90,9 +91,9 @@ class OrderManager extends Base
 		$order_id = $order->get_id();
 
 		// Calculate the base total and the total discount for this specific campaign.
-		$base_total = (float) ($data['total_old_price'] ?? 0);
-		$new_total = (float) ($data['total_new_price'] ?? 0);
-		$total_discount = $base_total - $new_total;
+		$base_total = (float) ($data['old_price'] ?? 0);
+
+		$total_discount = $data['discount'] ?? 0;
 
 		// Prepare the flexible JSON data column.
 		$extra_data = array(
@@ -138,8 +139,8 @@ class OrderManager extends Base
 
 			// Increment the usage count for the campaign
 			$campaign = new Campaign($campaign_id);
-			$campaign->increment_usage_count();
-			campaignbay_log('usage_count: ' . $campaign->get_usage_count(), 'DEBUG');
+			// $campaign->increment_usage_count();
+			// campaignbay_log('usage_count: ' . $campaign->get_usage_count(), 'DEBUG');
 			CampaignManager::get_instance()->clear_cache('order_manager');
 		}
 

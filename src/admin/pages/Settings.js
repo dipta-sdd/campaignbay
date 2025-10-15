@@ -72,7 +72,7 @@ const Settings = () => {
         settings.cart_quantity_message_format_percentage,
       cart_quantity_message_format_fixed:
         settings.cart_quantity_message_format_fixed,
-      cart_bogo_cart_message_format: settings.cart_bogo_cart_message_format,
+      cart_bogo_message_format: settings.cart_bogo_message_format,
     });
     setAdvancedSettings({
       advanced_deleteAllOnUninstall: settings.advanced_deleteAllOnUninstall,

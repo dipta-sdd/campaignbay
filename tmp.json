@@ -1,0 +1,68 @@
+{
+  "key": "b6d767d2f8ed5d21a44b0e5886680cb9",
+  "product_id": 22,
+  "variation_id": 0,
+  "variation": [],
+  "quantity": 5,
+  "data_hash": "b5c1d5ca8bae6d4896cf1807cdf763f0",
+  "campaignbay": {
+    "original_price": 15,
+    "base_price": 15,
+    "on_discount": true,
+    "is_on_sale": true,
+    "is_simple": true,
+    "simple": {
+      "campaign": "6",
+      "campaign_title": "Earlybird",
+      "price": 12.6,
+      "discount": 2.4000000000000004,
+      "message_format": "",
+      "display_as_regular_price": false,
+      "value": "16",
+      "type": "percentage"
+    },
+    "is_quantity": true,
+    "quantity": {
+      "id": "2",
+      "title": "Happy Hour Sale",
+      "settings": {
+        "apply_as": "coupon",
+        "enable_quantity_table": null,
+        "cart_quantity_message_format": null
+      },
+      "price": 11.34,
+      "discount": 1.2599999999999998,
+      "base_price": 12.6,
+      "type": "percentage",
+      "value": "10"
+    },
+    "quantity_next_tier": {
+      "settings": "",
+      "remaining": 4,
+      "type": "percentage",
+      "value": "15"
+    },
+    "is_bogo": true,
+    "bogo": {
+      "id": "10",
+      "title": "bogo",
+      "settings": {
+        "apply_as": "line_total",
+        "auto_add_free_product": true,
+        "cart_bogo_message_format": null,
+        "bogo_banner_message_format": null,
+        "bogo_cart_message_location": "notice"
+      },
+      "buy_quantity": 3,
+      "get_quantity": 2,
+      "free_quantity": 2,
+      "need_to_add": 0
+    }
+  },
+  "line_tax_data": { "subtotal": [], "total": [] },
+  "line_subtotal": 63,
+  "line_subtotal_tax": 0,
+  "line_total": 56.7,
+  "line_tax": 0,
+  "data": {}
+}

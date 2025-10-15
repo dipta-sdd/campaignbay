@@ -783,20 +783,20 @@ class Woocommerce
     //     return false;
     // }
 
-    // /**
-    //  * Add notice
-    //  *
-    //  * @access public
-    //  * @param $message string
-    //  * @param $type string
-    //  * @param $data array
-    //  */
-    // public static function wc_add_notice($message, $type = 'success', $data = array())
-    // {
-    //     if (function_exists('wc_add_notice')) {
-    //         wc_add_notice( $message, $type,  $data);
-    //     }
-    // }
+    /**
+     * Add notice
+     *
+     * @access public
+     * @param $message string
+     * @param $type string
+     * @param $data array
+     */
+    public static function wc_add_notice($message, $type = 'success', $data = array())
+    {
+        if (function_exists('wc_add_notice')) {
+            wc_add_notice($message, $type, $data);
+        }
+    }
 
     // /**
     //  * Remove specific notice
@@ -1048,8 +1048,6 @@ class Woocommerce
      */
     static function print_notice($message, $type)
     {
-        // echo '<div class="woocommerce-info" style="margin-bottom: 0px; border-top: none;">' . wp_kses_post( $message ) . '</div>';
-        // return;
         if (function_exists('wc_print_notice')) {
             wc_print_notice(wp_unslash($message), $type);
         }

@@ -55,11 +55,11 @@ const CartSettings = ({ cartSettings, setCartSettings }) => {
             className="w-100"
             label={__("Cart Page BOGO Discount Message Format", "campaignbay")}
             help={<Placeholders options={["title"]} />}
-            value={cartSettings.cart_bogo_cart_message_format}
+            value={cartSettings.cart_bogo_message_format}
             onChange={(value) =>
               setCartSettings((prev) => ({
                 ...prev,
-                cart_bogo_cart_message_format: value,
+                cart_bogo_message_format: value,
               }))
             }
           />

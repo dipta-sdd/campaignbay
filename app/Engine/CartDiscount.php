@@ -59,22 +59,35 @@ class CartDiscount
 			'coupon' => array(),
 			'fee' => array()
 		);
+		$discount_breakdown = array();
 		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
 			foreach ($cart->cart_contents as $key => $cart_item) {
 				$meta = self::get_cart_discount($cart_item);
+				$simple_applied = false;
+
 				// error_log(print_r($meta, true));
 				if ($meta === null)
 					continue;
 				$cart_quantity = $cart_item['quantity'];
 
+				if (isset($meta['bogo']) && isset($meta['bogo']['need_to_add']) && $meta['bogo']['settings']['auto_add_free_product'] === true) {
+					// auto adding free product
+					$cart_quantity += $meta['bogo']['need_to_add'];
+					$cart->set_quantity($key, $cart_quantity, false);
+
+					// correcting meta
+					$meta['bogo']['free_quantity'] = $meta['bogo']['free_quantity'] + $meta['bogo']['need_to_add'];
+					$meta['bogo']['need_to_add'] = 0;
+				}
+
 
 				if (isset($meta['bogo']) && isset($meta['bogo']['free_quantity'])) {
-					campaignbay_log(print_r('before_totals ' . $cart->cart_contents[$key]['quantity'], true));
+					// campaignbay_log(print_r('before_totals ' . $cart->cart_contents[$key]['quantity'], true));
 
 					$cart_quantity -= $meta['bogo']['free_quantity'];
 					$cart_quantity = max($cart_quantity, 0);
-					$cart->set_quantity($key, $cart_item['quantity'] - $meta['bogo']['free_quantity'], false);
-					campaignbay_log(print_r('before_totals ' . $cart->cart_contents[$key]['quantity'], true));
+					$cart->set_quantity($key, $cart_quantity, false);
+					// campaignbay_log(print_r('before_totals ' . $cart->cart_contents[$key]['quantity'], true));
 
 				}
 
@@ -82,6 +95,7 @@ class CartDiscount
 
 				$cart->cart_contents[$key]['campaignbay'] = $meta;
 				if (isset($meta['simple']) && isset($meta['simple']['price'])) {
+					$simple_applied = true;
 					if ($meta['simple']['display_as_regular_price']) {
 						$cart->cart_contents[$key]['data']->set_regular_price($meta['simple']['price']);
 					} else {
@@ -89,16 +103,22 @@ class CartDiscount
 					}
 					$cart->cart_contents[$key]['data']->set_price($meta['simple']['price']);
 				}
-				if (isset($meta['quantity'])) {
+				if (isset($meta['quantity']) && (self::cart_allow_campaign_stacking() || !isset($meta['simple'])) || $meta['quantity']['price'] < $meta['simple']['price']) {
+					// campaign stacking not allowed
+					if (!self::cart_allow_campaign_stacking()) {
+						// seting orginal price as base price
+						$cart->cart_contents[$key]['data']->set_regular_price($meta['quantity']['base_price']);
+						$simple_applied = false;
+					}
+
 					$cart->cart_contents[$key]['data']->set_price($meta['quantity']['base_price']);
 					$apply_as = $meta['quantity']['settings']['apply_as'] ?? 'line_total';
-					if (!self::cart_allow_campaign_stacking())
-						$cart->cart_contents[$key]['data']->set_regular_price($meta['quantity']['base_price']);
 					if ($apply_as === 'line_total') {
 						$cart->cart_contents[$key]['data']->set_price($meta['quantity']['price']);
 					} elseif ($apply_as === 'coupon') {
 						$data_to_add = array(
 							'id' => $meta['quantity']['id'],
+							'old_price' => $cart_quantity * $meta['quantity']['base_price'],
 							'product_id' => $cart_item['data']->get_id(),
 							'type' => $meta['quantity']['type'] === 'percentage' ? 'percent' : 'fixed_product',
 							'title' => $meta['quantity']['title']
@@ -119,9 +139,37 @@ class CartDiscount
 						));
 					}
 
+					if ($apply_as !== 'coupon') {
+						$campaign_id = $meta['quantity']['id'];
+						if (!isset($discount_breakdown[$campaign_id]))
+							$discount_breakdown[$campaign_id] = array(
+								'title' => $meta['quantity']['title'],
+								'old_price' => 0,
+								'discount' => 0
+							);
+						$discount_breakdown[$campaign_id]['old_price'] = $discount_breakdown[$campaign_id]['old_price'] + ($cart_quantity * $meta['quantity']['base_price']);
+						$discount_breakdown[$campaign_id]['discount'] = $discount_breakdown[$campaign_id]['discount'] + ($cart_quantity * $meta['quantity']['discount']);
+					}
+
 				}
+				if ($simple_applied && isset($meta['simple'])) {
+
+					$campaign_id = $meta['simple']['campaign'];
+					if (!isset($discount_breakdown[$campaign_id]))
+						$discount_breakdown[$campaign_id] = array(
+							'title' => $meta['simple']['campaign_title'],
+							'old_price' => 0,
+							'discount' => 0
+						);
+					$discount_breakdown[$campaign_id]['old_price'] = $discount_breakdown[$campaign_id]['old_price'] + ($cart_quantity * $meta['base_price']);
+					$discount_breakdown[$campaign_id]['discount'] = $discount_breakdown[$campaign_id]['discount'] + ($cart_quantity * $meta['simple']['discount']);
+				}
+
 			}
 		}
+
+
+		$cart->campaignbay_discount_breakdown = $discount_breakdown ?? array();
 
 		// error_log('______++++++======' . print_r($cart->campaignbay, true));
 		foreach ($cart->campaignbay['coupon'] as $key => $coupon) {
@@ -153,12 +201,11 @@ class CartDiscount
 		$current_tier = null;
 		$next_tier = null;
 		foreach ($tiers as $key => $tier) {
-			if ($current_tier !== null && $tier['min'] > $quantity) {
-				$next_tier = $tier;
-				break;
-			}
-			if ($current_tier === null && $tier['min'] <= $quantity && $tier['max'] >= $quantity) {
+			if (($current_tier === null || $current_tier['price'] > $tier['price']) && $tier['min'] <= $quantity && $tier['max'] >= $quantity) {
 				$current_tier = $tier;
+				$next_tier = null;
+			} elseif (($current_tier === null || ($current_tier['min'] < $tier['min'] && $current_tier['price'] > $tier['price'])) && $next_tier === null && $tier['min'] > $quantity) {
+				$next_tier = $tier;
 			}
 		}
 
@@ -176,9 +223,19 @@ class CartDiscount
 				'value' => $current_tier['value']
 			);
 		}
+		if ($next_tier !== null) {
+			$meta['quantity_next_tier'] = array(
+				'settings' => $next_tier['settings']['cart_quantity_message_format'] ?? '',
+				'remaining' => $next_tier['min'] - $quantity,
+				'type' => $next_tier['type'],
+				'value' => $next_tier['value']
+			);
+		}
 
 
-		// bogo discount
+		/**===================================
+		 *=========== bogo discount ==========
+		 *==================================*/
 		$bogo_meta = Helper::get_bogo_meta($product, $quantity);
 		if ($bogo_meta !== null || !empty($bogo_meta)) {
 			if ($bogo_meta["is_bogo"])
@@ -186,8 +243,9 @@ class CartDiscount
 			$meta['is_bogo'] = $bogo_meta['is_bogo'];
 			if (isset($bogo_meta['bogo']))
 				$meta['bogo'] = $bogo_meta['bogo'];
-
 		}
+
+
 		return $meta;
 	}
 
@@ -199,15 +257,20 @@ class CartDiscount
 
 			if (!isset($cart->campaignbay['coupon'][$code]))
 				$cart->campaignbay['coupon'][$code] = array(
+					'id' => $data['id'],
+					'old_price' => 0,
 					'title' => $data['title'],
 					'type' => $data['type'],
 					'product_ids' => array(),
 					'discount' => $data['discount'],
 				);
 			$cart->campaignbay['coupon'][$code]['product_ids'][] = $data['product_id'];
+			$cart->campaignbay['coupon'][$code]['old_price'] = $cart->campaignbay['coupon'][$code]['old_price'] + $data['old_price'];
 		} else {
 			$code = 'campaignbay_' . $data['id'] . '_' . $data['product_id'];
 			$cart->campaignbay['coupon'][$code] = array(
+				'id' => $data['id'],
+				'old_price' => $data['old_price'],
 				'title' => $data['title'],
 				'type' => $data['type'],
 				'discount' => $data['discount'],
