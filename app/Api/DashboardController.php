@@ -130,64 +130,71 @@ class DashboardController extends ApiController
 	{
 		global $wpdb;
 		$logs_table = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN . '_logs';
-		$success_statuses = "'processing', 'completed'";
 
-		/**
-		 * base_total_for_discounts is the total of the base price(before discount) of the products in the order.
-		 * sales_from_campaigns is the total of the order_total of the products in the order.
-		 * discounted_orders is the total of the order_id of the products in the order.
-		 * total_discount_value is the total of the total_discount of the products in the order.
-		 */
-		$sql = "SELECT
-				SUM(total_discount) as total_discount_value,
-				SUM(base_total) as base_total_for_discounts,
-				SUM(order_total) as sales_from_campaigns,
-				COUNT(DISTINCT order_id) as discounted_orders
-			 FROM {$logs_table}
-			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
-			 AND timestamp BETWEEN %s AND %s";
+		// This is the new, corrected SQL query structure.
+		$sql = "
+        SELECT
+            (SELECT SUM(total_discount) 
+             FROM {$logs_table} 
+             WHERE log_type = 'sale' AND order_status IN ('processing', 'completed') AND timestamp BETWEEN %s AND %s) as total_discount_value,
+
+            SUM(unique_orders.final_order_total) as sales_from_campaigns,
+            SUM(unique_orders.final_base_total) as base_total_for_discounts,
+            COUNT(unique_orders.order_id) as discounted_orders
+        FROM 
+            (
+                -- This subquery runs first. It finds each unique order_id,
+                -- calculates the MIN(order_total) for that order,
+                -- and takes just one value for base_total (using AVG, but MIN or MAX would also work as it's the same).
+                SELECT 
+                    order_id,
+                    MIN(order_total) as final_order_total,
+                    MAX(base_total) as final_base_total -- Using AVG as a safe way to get one value
+                FROM {$logs_table}
+                WHERE 
+                    log_type = 'sale' 
+                    AND order_status IN ('processing', 'completed') 
+                    AND timestamp BETWEEN %s AND %s
+                GROUP BY order_id
+            ) as unique_orders
+    ";
+
+		// --- Get Current Period Data ---
 		$current_sql = $wpdb->prepare(
 			//phpcs:ignore
 			$sql,
 			$current_start,
-			$current_end
+			$current_end, // First two placeholders are for the total_discount subquery
+			$current_start,
+			$current_end  // Last two placeholders are for the unique_orders subquery
 		);
-		campaignbay_log($current_sql);
+		error_log($current_sql);
 		//phpcs:ignore
 		$current_data = $wpdb->get_row($current_sql, ARRAY_A);
 
-		// --- Get Previous Period Data for Comparison ---
-		$sql = "SELECT
-			SUM(total_discount) as total_discount_value,
-			SUM(base_total) as base_total_for_discounts,
-			SUM(order_total) as sales_from_campaigns,
-			COUNT(DISTINCT order_id) as discounted_orders
-		 FROM {$logs_table}
-		 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
-		 AND timestamp BETWEEN %s AND %s";
+		// --- Get Previous Period Data ---
 		$previous_sql = $wpdb->prepare(
 			//phpcs:ignore
 			$sql,
 			$previous_start,
-			$previous_end
+			$previous_end, // For total_discount
+			$previous_start,
+			$previous_end  // For unique_orders
 		);
 		//phpcs:ignore
 		$previous_data = $wpdb->get_row($previous_sql, ARRAY_A);
 
-		// --- Get Active Campaign Count from custom table ---
+		// --- Get Active Campaign Count (this part remains the same) ---
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
-		$active_count = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$campaigns_table} WHERE status = 'active'"
-			)
-		);
+		$active_count = $wpdb->get_var("SELECT COUNT(*) FROM {$campaigns_table} WHERE status = 'active'");
+
 		return array(
 			'active_campaigns' => array(
 				'value' => (int) $active_count,
 			),
 			'total_discount_value' => array(
 				'value' => (float) ($current_data['total_discount_value'] ?? 0),
-				'base_total' => (float) ($current_data['base_total_for_discounts'] ?? 0), // <-- NEW
+				'base_total' => (float) ($current_data['base_total_for_discounts'] ?? 0),
 				'change' => $this->calculate_percentage_change($current_data['total_discount_value'], $previous_data['total_discount_value']),
 			),
 			'discounted_orders' => array(
@@ -214,17 +221,42 @@ class DashboardController extends ApiController
 	{
 		global $wpdb;
 		$logs_table = $wpdb->prefix . CAMPAIGNBAY_TEXT_DOMAIN . '_logs';
-		$success_statuses = "'processing', 'completed'";
 
-		// --- FIX: Discount Trends (Line Chart) ---
-		$sql = "SELECT DATE(timestamp) as date, SUM(total_discount) as total_discount_value,
-			SUM(base_total) as total_base,
-			SUM(order_total) as total_sales
-			 FROM {$logs_table}
-			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
-			 AND timestamp BETWEEN %s AND %s
-			 GROUP BY DATE(timestamp)
-			 ORDER BY date ASC";
+		// --- CORRECTED: Discount Trends (Line Chart) ---
+		// This query now uses the same robust pattern as the corrected get_kpi_data function.
+		$sql = "
+        SELECT
+            -- The date for the grouping.
+            unique_orders_per_day.date,
+            
+            -- Sum the total sales and base totals FROM the clean, de-duplicated subquery.
+            SUM(unique_orders_per_day.final_order_total) as total_sales,
+            SUM(unique_orders_per_day.final_base_total) as total_base,
+            
+            -- Get the sum of all discounts in a separate, efficient subquery.
+            (SELECT SUM(total_discount) 
+             FROM {$logs_table} 
+             WHERE log_type = 'sale' AND order_status IN ('processing', 'completed') AND DATE(timestamp) = unique_orders_per_day.date
+            ) as total_discount_value
+        FROM
+            (
+                -- This inner subquery runs first. It creates a temporary table in memory
+                -- containing exactly one row for each unique order on each unique day.
+                SELECT 
+                    DATE(timestamp) as date,
+                    order_id,
+                    MIN(order_total) as final_order_total,
+                    MAX(base_total) as final_base_total
+                FROM {$logs_table}
+                WHERE 
+                    log_type = 'sale' 
+                    AND order_status IN ('processing', 'completed') 
+                    AND timestamp BETWEEN %s AND %s
+                GROUP BY DATE(timestamp), order_id
+            ) as unique_orders_per_day
+        GROUP BY unique_orders_per_day.date
+        ORDER BY unique_orders_per_day.date ASC
+    ";
 
 		$trends_sql = $wpdb->prepare(
 			//phpcs:ignore
@@ -235,29 +267,29 @@ class DashboardController extends ApiController
 		//phpcs:ignore
 		$discount_trends = $wpdb->get_results($trends_sql, ARRAY_A);
 
-		// Fill in missing dates with zero values
+		// Fill in missing dates with zero values (this function remains essential).
 		$discount_trends = $this->fill_missing_dates($discount_trends, $start_date, $end_date);
 
 
-		// --- FIX: Top Campaigns (Bar Chart) ---
-		$sql = "SELECT campaign_id, SUM(total_discount) as value
-			 FROM {$logs_table}
-			 WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
-			 AND timestamp BETWEEN %s AND %s
-			 GROUP BY campaign_id
-			 ORDER BY value DESC
-			 LIMIT 5";
+		// --- Top Campaigns (Bar Chart) - This query was already correct. ---
+		$sql_top = "SELECT campaign_id, SUM(total_discount) as value
+             FROM {$logs_table}
+             WHERE log_type = 'sale' AND order_status IN ('processing', 'completed')
+             AND timestamp BETWEEN %s AND %s
+             GROUP BY campaign_id
+             ORDER BY value DESC
+             LIMIT 5";
 
 		$top_campaigns_sql = $wpdb->prepare(
 			//phpcs:ignore
-			$sql,
+			$sql_top,
 			$start_date,
 			$end_date
 		);
 		//phpcs:ignore
 		$top_campaigns = $wpdb->get_results($top_campaigns_sql, ARRAY_A);
 
-		// Add campaign titles to the results using custom table.
+		// Add campaign titles to the results (this logic remains the same).
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 		foreach ($top_campaigns as &$campaign_data) {
 			$title = $wpdb->get_var(
