@@ -736,7 +736,7 @@ const Campaigns = () => {
                   {campaigns.map((campaign) => (
                     <div
                       key={campaign.id}
-                      className="campaignbay-bg-white campaignbay-rounded-xs campaignbay-border campaignbay-border-gray-200 campaignbay-p-3.5 campaignbay-hover:shadow-md campaignbay-hover:border-gray-300 campaignbay-transition-all campaignbay-duration-200 campaignbay-group"
+                      className="campaignbay-bg-white campaignbay-rounded-xs campaignbay-border campaignbay-border-gray-200 campaignbay-p-3.5 campaignbay-pb-1.5 campaignbay-hover:shadow-md campaignbay-hover:border-gray-300 campaignbay-transition-all campaignbay-duration-200 campaignbay-group"
                     >
                       {/* Card Header */}
                       <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-mb-2.5">
@@ -782,17 +782,6 @@ const Campaigns = () => {
                             },
                           ]}
                         />
-                      </div>
-
-                      {/* Status Badge */}
-                      <div className="campaignbay-mb-1.5">
-                        <span
-                          className={`campaignbay-status-pill campaignbay-status-${
-                            campaign?.status?.replace("", "") || ""
-                          }`}
-                        >
-                          {campaign?.status?.replace("", "") || ""}
-                        </span>
                       </div>
 
                       {/* Campaign Details */}
@@ -874,11 +863,23 @@ const Campaigns = () => {
                       </div>
 
                       {/* Footer */}
-                      <div className="campaignbay-pt-2.5 campaignbay-border-t campaignbay-border-gray-200">
-                        <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5 campaignbay-text-xs campaignbay-text-gray-500">
-                          <Clock className="campaignbay-w-3.5 campaignbay-h-3.5" />
-                          <span className="campaignbay-text-xs campaignbay-text-gray-600">
-                            {timeDiff(campaign.date_modified)}
+                      <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-pt-1.5 campaignbay-border-t campaignbay-border-gray-200">
+                        <div className="">
+                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5 campaignbay-text-xs campaignbay-text-gray-500">
+                            <Clock className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                            <span className="campaignbay-text-xs campaignbay-text-gray-600">
+                              {timeDiff(campaign.date_modified)}
+                            </span>
+                          </div>
+                        </div>
+                        {/* Status Badge */}
+                        <div className="campaignbay-my-1.5">
+                          <span
+                            className={`campaignbay-status-pill campaignbay-status-${
+                              campaign?.status?.replace("", "") || ""
+                            }`}
+                          >
+                            {campaign?.status?.replace("", "") || ""}
                           </span>
                         </div>
                       </div>

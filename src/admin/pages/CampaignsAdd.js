@@ -304,7 +304,8 @@ const CampaignsAdd = () => {
               />
               {renderError(errors?.title)}
             </div>
-            <div className="cb-form-input-con  !campaignbay-p-0">
+
+            <div className="cb-form-input-con campaignbay-col-span-2 md:campaignbay-col-span-1 !campaignbay-p-0">
               <label htmlFor="campaign-type">
                 {__("SELECT DISCOUNT TYPE", "campaignbay")} <Required />
               </label>
@@ -331,7 +332,7 @@ const CampaignsAdd = () => {
               {renderError(errors?.type)}
             </div>
 
-            <div className="cb-form-input-con !campaignbay-p-0">
+            <div className="cb-form-input-con campaignbay-col-span-2  md:campaignbay-col-span-1 !campaignbay-p-0">
               <label htmlFor="campaign-status">
                 {__("SELECT STATUS", "campaignbay")} <Required />
               </label>

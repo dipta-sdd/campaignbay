@@ -397,23 +397,24 @@ const CampaignsEdit = () => {
           </div>
           <div className="cb-page-container">
             <div className="cb-form-input-con ">
-              <div className="cb-form-input-con !campaignbay-p-0">
-                <label htmlFor="campaign-title">
-                  {__("Campaign Title", "campaignbay")} <Required />
-                </label>
-                <input
-                  type="text"
-                  id="campaign-title"
-                  className={`wpab-input w-100 ${
-                    errors?.title ? "wpab-input-error" : ""
-                  }`}
-                  value={campaignTitle}
-                  onChange={(e) => setCampaignTitle(e.target.value)}
-                />
-                {renderError(errors?.title)}
-              </div>
-              <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 campaignbay-gap-[10px]">
-                <div className="cb-form-input-con  !campaignbay-p-0">
+              <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4 campaignbay-gap-[10px]">
+                <div className="cb-form-input-con campaignbay-col-span-2 !campaignbay-p-0">
+                  <label htmlFor="campaign-title">
+                    {__("Campaign Title", "campaignbay")} <Required />
+                  </label>
+                  <input
+                    type="text"
+                    id="campaign-title"
+                    className={`wpab-input w-100 ${
+                      errors?.title ? "wpab-input-error" : ""
+                    }`}
+                    value={campaignTitle}
+                    onChange={(e) => setCampaignTitle(e.target.value)}
+                  />
+                  {renderError(errors?.title)}
+                </div>
+
+                <div className="cb-form-input-con campaignbay-col-span-2 md:campaignbay-col-span-1 !campaignbay-p-0">
                   <label htmlFor="campaign-type">
                     {__("SELECT DISCOUNT TYPE", "campaignbay")} <Required />
                   </label>
@@ -426,6 +427,9 @@ const CampaignsEdit = () => {
                     value={campaignType}
                     onChange={(e) => handleCampaignTypeChange(e.target.value)}
                   >
+                    <option value="bogo">
+                      {__("Buy X Get X", "campaignbay")}
+                    </option>
                     <option value="scheduled">
                       {__("Scheduled Discount", "campaignbay")}
                     </option>
@@ -439,7 +443,7 @@ const CampaignsEdit = () => {
                   {renderError(errors?.type)}
                 </div>
 
-                <div className="cb-form-input-con !campaignbay-p-0">
+                <div className="cb-form-input-con campaignbay-col-span-2  md:campaignbay-col-span-1 !campaignbay-p-0">
                   <label htmlFor="campaign-status">
                     {__("SELECT STATUS", "campaignbay")} <Required />
                   </label>
