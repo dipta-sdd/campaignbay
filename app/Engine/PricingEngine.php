@@ -137,16 +137,11 @@ class PricingEngine extends Base
 
 
 		$discount_breakdown = $cart->campaignbay_discount_breakdown ?? array();
-		// campaignbay_log('___________________________________________');
-		// campaignbay_log(message: print_r($breakdown, true));
 
-		// if (!empty($cart->cart_contents)) {
-		// 	foreach ($cart->cart_contents as $key => $cart_item) {
-
-		// 	}
-		// }
 
 		$applied_coupons = $cart->get_coupon_discount_totals();
+		$applied_coupons_taxes = $cart->get_coupon_discount_tax_totals();
+		campaignbay_log('coupon taxes' . print_r($applied_coupons_taxes, true));
 		$our_coupons = $this->coupons;
 		if (is_array($applied_coupons) && !empty($applied_coupons) && !empty($our_coupons)) {
 			foreach ($applied_coupons as $key => $value) {

@@ -2,6 +2,21 @@ import { useState, useEffect } from "react";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { useNavigate } from "react-router-dom";
 import {
+  Calendar,
+  Clock,
+  Target,
+  TrendingUp,
+  BarChart3,
+  Tag,
+  Zap,
+  Gift,
+  Layers,
+  Table,
+  Table2,
+  LayoutGrid,
+} from "lucide-react";
+
+import {
   Icon,
   plus,
   search,
@@ -13,6 +28,11 @@ import {
   edit,
   copySmall,
 } from "@wordpress/icons";
+
+import {
+  __experimentalToggleGroupControl as ToggleGroupControl,
+  __experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from "@wordpress/components";
 import apiFetch from "@wordpress/api-fetch";
 import { useToast } from "../store/toast/use-toast";
 import CbCheckbox from "../components/CbCheckbox"; // Assuming you still use this for the header
@@ -46,6 +66,23 @@ const Campaigns = () => {
   const [typeFilter, setTypeFilter] = useState("");
   const [bulkAction, setBulkAction] = useState("");
   const [isBulkActionModalOpen, setIsBulkActionModalOpen] = useState(false);
+  const [view, setView] = useState();
+
+  useEffect(() => {
+    const savedView = localStorage.getItem("campaignbay_campaigns_view");
+
+    if (savedView) {
+      setView(savedView);
+    } else {
+      setView("table");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (view) {
+      localStorage.setItem("campaignbay_campaigns_view", view);
+    }
+  }, [view]);
 
   const tableHeads = [
     { label: "Campaign Name", value: "post_name", isSortable: true },
@@ -63,6 +100,7 @@ const Campaigns = () => {
   useEffect(() => {
     fetchCampaigns();
   }, [orderby, order, searchQuery, currentPage, itemsPerPage]);
+
   const fetchCampaigns = async () => {
     try {
       setIsLoading(true);
@@ -366,6 +404,8 @@ const Campaigns = () => {
       );
     }
     const tier = campaign?.tiers[0];
+    if (campaign?.type === "bogo")
+      return tier?.get_quantity + " / " + tier?.buy_quantity;
     return (
       tier?.value +
       " " +
@@ -393,6 +433,21 @@ const Campaigns = () => {
     }
   };
 
+  const getCampaignTypeIcon = (type) => {
+    switch (type) {
+      case "scheduled":
+        return <Calendar className="campaignbay-w-3.5 campaignbay-h-3.5" />;
+      case "earlybird":
+        return <Zap className="campaignbay-w-3.5 campaignbay-h-3.5" />;
+      case "bogo":
+        return <Gift className="campaignbay-w-3.5 campaignbay-h-3.5" />;
+      case "quantity":
+        return <Layers className="campaignbay-w-3.5 campaignbay-h-3.5" />;
+      default:
+        return <Tag className="campaignbay-w-3.5 campaignbay-h-3.5" />;
+    }
+  };
+
   return (
     <div className="cb-page campaignbay-campaigns">
       <Navbar />
@@ -405,11 +460,19 @@ const Campaigns = () => {
         </div>
       </div>
       <div className="cb-page-container">
-        <div className="campaignbay-bg-white">
+        <div
+          className={`campaignbay-bg-white ${
+            view === "table" ? "" : "!campaignbay-border-0"
+          }`}
+        >
           {/* ==================================================================== */}
           {/* FILTERS SECTION                                                      */}
           {/* ==================================================================== */}
-          <div className="campaignbay-filters">
+          <div
+            className={`campaignbay-filters ${
+              view === "table" ? "" : "campaignbay-bg-white"
+            }`}
+          >
             <div className="campaignbay-filter-group">
               <div className="campaignbay-filter-group-1">
                 <select
@@ -455,6 +518,24 @@ const Campaigns = () => {
                 >
                   Apply
                 </button>
+
+                <ToggleGroupControl
+                  className={`cb-toggle-group-control campaignbay-mt-[-8px]`}
+                  __next40pxDefaultSize
+                  __nextHasNoMarginBottom
+                  isBlock
+                  value={view}
+                  onChange={(value) => setView(value)}
+                >
+                  <ToggleGroupControlOption
+                    label={<Table2 size={16} />}
+                    value="table"
+                  />
+                  <ToggleGroupControlOption
+                    label={<LayoutGrid size={16} />}
+                    value="grid"
+                  />
+                </ToggleGroupControl>
               </div>
             </div>
             <div className="campaignbay-search-box">
@@ -473,136 +554,208 @@ const Campaigns = () => {
             </div>
           </div>
 
-          {/* ==================================================================== */}
-          {/* TABLE CONTAINER                                                    */}
-          {/* ==================================================================== */}
-          <div className="campaignbay-table-container">
-            <table className="campaignbay-table">
-              <thead>
-                <tr>
-                  <th className="campaignbay-table-checkbox-cell">
-                    <CbCheckbox
-                      checked={isAllSelected}
-                      onChange={handleSelectAll}
-                    />
-                  </th>
-                  {tableHeads.map((head) => (
-                    <TableHead
-                      key={head.value}
-                      label={head.label}
-                      isSortable={head.isSortable}
-                      value={head.value}
-                      onClick={() => handleSort(head.value)}
-                    />
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  Array.from({ length: itemsPerPage || 10 }).map((_, index) => (
-                    <tr key={index}>
-                      <td>
-                        <Skeleton />
-                      </td>
-                      <td>
-                        <Skeleton />
-                      </td>
-                      <td>
-                        <Skeleton height="24" width="24" borderRadius="full" />
-                      </td>
-                      <td>
-                        <Skeleton />
-                      </td>
-                      <td>
-                        <Skeleton />
-                      </td>
-                      <td>
-                        <Skeleton>
-                          <span>August 9, 2025 7:04 pm</span>
-                        </Skeleton>
-                      </td>
-                      <td>
-                        <Skeleton>
-                          <span>August 9, 2025 7:04 pm</span>
-                        </Skeleton>
-                      </td>
-                      <td>
-                        <Skeleton />
-                      </td>
-                      <td>
-                        <Skeleton />
-                      </td>
-                      <td>
-                        <Skeleton
-                          width="24"
-                          height="24"
-                          className="campaignbay-m-6"
-                        />
-                      </td>
-                    </tr>
-                  ))
-                ) : campaigns.length === 0 ? (
-                  <tr>
-                    <td colSpan="10" style={{ textAlign: "center" }}>
-                      No campaigns found.
-                    </td>
-                  </tr>
-                ) : (
-                  campaigns.map((campaign) => (
-                    <tr
-                      key={campaign.id}
-                      className={
-                        selectedCampaigns.includes(campaign.id)
-                          ? "is-selected"
-                          : ""
-                      }
-                    >
-                      <td className="campaignbay-table-checkbox-cell campaignbay-sticky-l-td">
+          {view === "table" ? (
+            <>
+              {/* ==================================================================== */}
+              {/* TABLE CONTAINER                                                    */}
+              {/* ==================================================================== */}
+              <div className="campaignbay-table-container">
+                <table className="campaignbay-table">
+                  <thead>
+                    <tr>
+                      <th className="campaignbay-table-checkbox-cell">
                         <CbCheckbox
-                          checked={selectedCampaigns.includes(campaign.id)}
-                          onChange={(isChecked) =>
-                            handleSelectCampaign(campaign.id)
-                          }
+                          checked={isAllSelected}
+                          onChange={handleSelectAll}
                         />
-                      </td>
-                      <td>
-                        <a
-                          className="campaignbay-capitalize "
-                          href={`#/campaigns/${campaign.id}`}
+                      </th>
+                      {tableHeads.map((head) => (
+                        <TableHead
+                          key={head.value}
+                          label={head.label}
+                          isSortable={head.isSortable}
+                          value={head.value}
+                          onClick={() => handleSort(head.value)}
+                        />
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {isLoading ? (
+                      Array.from({ length: itemsPerPage || 10 }).map(
+                        (_, index) => (
+                          <tr key={index}>
+                            <td>
+                              <Skeleton />
+                            </td>
+                            <td>
+                              <Skeleton />
+                            </td>
+                            <td>
+                              <Skeleton
+                                height="24"
+                                width="24"
+                                borderRadius="full"
+                              />
+                            </td>
+                            <td>
+                              <Skeleton />
+                            </td>
+                            <td>
+                              <Skeleton />
+                            </td>
+                            <td>
+                              <Skeleton>
+                                <span>August 9, 2025 7:04 pm</span>
+                              </Skeleton>
+                            </td>
+                            <td>
+                              <Skeleton>
+                                <span>August 9, 2025 7:04 pm</span>
+                              </Skeleton>
+                            </td>
+                            <td>
+                              <Skeleton />
+                            </td>
+                            <td>
+                              <Skeleton />
+                            </td>
+                            <td>
+                              <Skeleton
+                                width="24"
+                                height="24"
+                                className="campaignbay-m-6"
+                              />
+                            </td>
+                          </tr>
+                        )
+                      )
+                    ) : campaigns.length === 0 ? (
+                      <tr>
+                        <td colSpan="10" style={{ textAlign: "center" }}>
+                          No campaigns found.
+                        </td>
+                      </tr>
+                    ) : (
+                      campaigns.map((campaign) => (
+                        <tr
+                          key={campaign.id}
+                          className={
+                            selectedCampaigns.includes(campaign.id)
+                              ? "is-selected"
+                              : ""
+                          }
                         >
-                          {campaign.title}
-                        </a>
-                      </td>
-                      <td>
-                        <span
-                          className={`campaignbay-status-pill campaignbay-status-${
-                            campaign?.status?.replace("", "") || ""
-                          }`}
-                        >
-                          {campaign?.status?.replace("", "") || ""}
-                        </span>
-                      </td>
-                      <td className="campaignbay-capitalize campaignbay-text-secondary">
-                        {campaign.type}
-                      </td>
-                      <td className="campaignbay-capitalize campaignbay-text-secondary">
-                        {getTargetType(campaign.target_type)}
-                      </td>
-                      <td>{getCampaignValue(campaign)}</td>
-                      <td className="campaignbay-text-secondary">
-                        {formatDateTime(campaign.start_datetime_unix)}
-                      </td>
-                      <td className="campaignbay-text-secondary">
-                        {formatDateTime(campaign.end_datetime_unix)}
-                      </td>
-                      <td className="campaignbay-text-secondary">
-                        {campaign.usage_count || 0}
-                      </td>
-                      <td className="campaignbay-text-secondary">
-                        {timeDiff(campaign.date_modified)}
-                      </td>
-                      <td className="campaignbay-sticky-r-td">
-                        {/* <div className="campaignbay-action-button-container"> */}
+                          <td className="campaignbay-table-checkbox-cell campaignbay-sticky-l-td">
+                            <CbCheckbox
+                              checked={selectedCampaigns.includes(campaign.id)}
+                              onChange={(isChecked) =>
+                                handleSelectCampaign(campaign.id)
+                              }
+                            />
+                          </td>
+                          <td>
+                            <a
+                              className="campaignbay-capitalize "
+                              href={`#/campaigns/${campaign.id}`}
+                            >
+                              {campaign.title}
+                            </a>
+                          </td>
+                          <td>
+                            <span
+                              className={`campaignbay-status-pill campaignbay-status-${
+                                campaign?.status?.replace("", "") || ""
+                              }`}
+                            >
+                              {campaign?.status?.replace("", "") || ""}
+                            </span>
+                          </td>
+                          <td className="campaignbay-capitalize campaignbay-text-secondary">
+                            {campaign.type}
+                          </td>
+                          <td className="campaignbay-capitalize campaignbay-text-secondary">
+                            {getTargetType(campaign.target_type)}
+                          </td>
+                          <td>{getCampaignValue(campaign)}</td>
+                          <td className="campaignbay-text-secondary">
+                            {formatDateTime(campaign.start_datetime_unix)}
+                          </td>
+                          <td className="campaignbay-text-secondary">
+                            {formatDateTime(campaign.end_datetime_unix)}
+                          </td>
+                          <td className="campaignbay-text-secondary">
+                            {campaign.usage_count || 0}
+                          </td>
+                          <td className="campaignbay-text-secondary">
+                            {timeDiff(campaign.date_modified)}
+                          </td>
+                          <td className="campaignbay-sticky-r-td">
+                            <DropdownMenu
+                              controls={[
+                                {
+                                  title: "Edit",
+                                  icon: edit,
+                                  onClick: () =>
+                                    navigate(`/campaigns/${campaign.id}`),
+                                },
+                                {
+                                  title: "Duplicate",
+                                  icon: copySmall,
+                                  onClick: async () => {
+                                    setIsLoading(true);
+                                    duplicateCampaign(campaign.id);
+                                  },
+                                },
+                                {
+                                  title: "Delete",
+                                  icon: trash,
+                                  onClick: () => {
+                                    setSelectedCampaignId(campaign.id);
+                                    setIsDeleteModalOpen(true);
+                                  },
+                                },
+                              ]}
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* ==================================================================== */}
+              {/* GRID                                                    */}
+              {/* ==================================================================== */}
+
+              <div>
+                <div className="campaignbay-grid campaign-grid campaignbay-gap-3  campaignbay-bg-body campaignbay-py-3.5">
+                  {campaigns.map((campaign) => (
+                    <div
+                      key={campaign.id}
+                      className="campaignbay-bg-white campaignbay-rounded-xs campaignbay-border campaignbay-border-gray-200 campaignbay-p-3.5 campaignbay-hover:shadow-md campaignbay-hover:border-gray-300 campaignbay-transition-all campaignbay-duration-200 campaignbay-group"
+                    >
+                      {/* Card Header */}
+                      <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-mb-2.5">
+                        <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-1 campaignbay-min-w-0">
+                          <CbCheckbox
+                            checked={selectedCampaigns.includes(campaign.id)}
+                            onChange={(isChecked) =>
+                              handleSelectCampaign(campaign.id)
+                            }
+                          />
+                          <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                            <a
+                              className="campaignbay-capitalize campaignbay-campaign-link"
+                              href={`#/campaigns/${campaign.id}`}
+                            >
+                              {campaign.title}
+                            </a>
+                          </div>
+                        </div>
                         <DropdownMenu
                           controls={[
                             {
@@ -629,19 +782,120 @@ const Campaigns = () => {
                             },
                           ]}
                         />
-                        {/* </div> */}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                      </div>
 
+                      {/* Status Badge */}
+                      <div className="campaignbay-mb-1.5">
+                        <span
+                          className={`campaignbay-status-pill campaignbay-status-${
+                            campaign?.status?.replace("", "") || ""
+                          }`}
+                        >
+                          {campaign?.status?.replace("", "") || ""}
+                        </span>
+                      </div>
+
+                      {/* Campaign Details */}
+                      <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-x-3 campaignbay-gap-y-2  campaignbay-mb-2.5">
+                        {/* Left Column */}
+                        <div className="campaignbay-space-y-2">
+                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-blue-100 campaignbay-text-blue-600 campaignbay-flex-shrink-0 ">
+                              {getCampaignTypeIcon(campaign.type)}
+                            </div>
+                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                              <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-medium campaignbay-truncate campaignbay-capitalize">
+                                {campaign.type}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-purple-100 campaignbay-text-purple-600 campaignbay-flex-shrink-0">
+                              <Target className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                            </div>
+                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                              <div className="campaignbay-text-xs campaignbay-text-gray-800 campaignbay-truncatecampaignbay-capitalize">
+                                {getTargetType(campaign.target_type)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="campaignbay-space-y-2">
+                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-amber-100 campaignbay-text-amber-600 campaignbay-flex-shrink-0">
+                              <TrendingUp className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                            </div>
+                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                              <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-semibold campaignbay-truncate">
+                                {getCampaignValue(campaign)}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-indigo-100 campaignbay-text-indigo-600 campaignbay-flex-shrink-0">
+                              <BarChart3 className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                            </div>
+                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                              <div className="campaignbay-text-xs campaignbay-text-gray-800 campaignbay-truncate">
+                                Usage: {campaign.usage_count || 0}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Dates Section */}
+                      <div className="campaignbay-pt-2.5 campaignbay-border-t campaignbay-border-gray-200 campaignbay-mb-2.5">
+                        <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-x-3 campaignbay-gap-y-1">
+                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1">
+                            <Calendar className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-gray-500 campaignbay-flex-shrink-0" />
+                            <span className="campaignbay-text-xs campaignbay-text-gray-600">
+                              Start:
+                            </span>
+                          </div>
+                          <div className="campaignbay-text-xs campaignbay-text-gray-700 campaignbay-truncate">
+                            {formatDateTime(campaign.start_datetime_unix)}
+                          </div>
+
+                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1">
+                            <Calendar className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-gray-500 campaignbay-flex-shrink-0" />
+                            <span className="campaignbay-text-xs campaignbay-text-gray-600">
+                              End:
+                            </span>
+                          </div>
+                          <div className="campaignbay-text-xs campaignbay-text-gray-700 campaignbay-truncate">
+                            {formatDateTime(campaign.end_datetime_unix)}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Footer */}
+                      <div className="campaignbay-pt-2.5 campaignbay-border-t campaignbay-border-gray-200">
+                        <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5 campaignbay-text-xs campaignbay-text-gray-500">
+                          <Clock className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                          <span className="campaignbay-text-xs campaignbay-text-gray-600">
+                            {timeDiff(campaign.date_modified)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
           {/* ==================================================================== */}
           {/* FOOTER SECTION                                                     */}
           {/* ==================================================================== */}
-          <div className="campaignbay-table-footer">
+          <div
+            className={`campaignbay-table-footer ${
+              view === "table" ? "" : "campaignbay-bg-white"
+            }`}
+          >
             <div className="campaignbay-bulk-actions-footer">
               {/* <CbCheckbox checked={isAllSelected} onChange={handleSelectAll} />
               <span>{selectedCampaigns.length} ITEM SELECTED</span> */}
@@ -722,3 +976,114 @@ const Campaigns = () => {
 };
 
 export default Campaigns;
+
+const campaignsData = [
+  {
+    id: 1,
+    name: "Happy Hour Sale Sssssssssssssss",
+    status: "Inactive",
+    campaignType: "Scheduled",
+    target: "All Products",
+    value: "50.00 %",
+    startDate: "September 16, 2025 3:26 pm",
+    endDate: "—",
+    usage: 0,
+    lastModified: "4 days ago",
+  },
+  {
+    id: 2,
+    name: "Earlybird",
+    status: "Active",
+    campaignType: "Earlybird",
+    target: "All Products",
+    value: "16 %",
+    startDate: "—",
+    endDate: "—",
+    usage: 5,
+    lastModified: "4 days ago",
+  },
+  {
+    id: 3,
+    name: "Bogo (Copy)",
+    status: "Active",
+    campaignType: "Bogo",
+    target: "All Products",
+    value: "undefined ℬ",
+    startDate: "—",
+    endDate: "—",
+    usage: 0,
+    lastModified: "4 days ago",
+  },
+  {
+    id: 4,
+    name: "Bogo (Copy) (Copy)",
+    status: "Active",
+    campaignType: "Bogo",
+    target: "All Products",
+    value: "undefined ℬ",
+    startDate: "—",
+    endDate: "—",
+    usage: 0,
+    lastModified: "4 days ago",
+  },
+  {
+    id: 5,
+    name: "Minimal Test Campaign",
+    status: "Active",
+    campaignType: "Scheduled",
+    target: "All Products",
+    value: "10.00 %",
+    startDate: "—",
+    endDate: "—",
+    usage: 0,
+    lastModified: "2 days ago",
+  },
+  {
+    id: 6,
+    name: "Bogo",
+    status: "Active",
+    campaignType: "Bogo",
+    target: "All Products",
+    value: "undefined ℬ",
+    startDate: "—",
+    endDate: "—",
+    usage: 5,
+    lastModified: "19 hours ago",
+  },
+  {
+    id: 7,
+    name: "Happy Hour Sale",
+    status: "Active",
+    campaignType: "Quantity",
+    target: "All Products",
+    value: "10 %",
+    startDate: "—",
+    endDate: "—",
+    usage: 5,
+    lastModified: "17 hours ago",
+  },
+  {
+    id: 8,
+    name: "Happy Hour Sale (Copy)",
+    status: "Active",
+    campaignType: "Quantity",
+    target: "All Products",
+    value: "9 %",
+    startDate: "—",
+    endDate: "—",
+    usage: 4,
+    lastModified: "14 hours ago",
+  },
+  {
+    id: 9,
+    name: "Happy Hour Sale (Copy) (Copy)",
+    status: "Active",
+    campaignType: "Quantity",
+    target: "All Products",
+    value: "9 %",
+    startDate: "—",
+    endDate: "—",
+    usage: 0,
+    lastModified: "14 hours ago",
+  },
+];

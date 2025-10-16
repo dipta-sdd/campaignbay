@@ -583,6 +583,76 @@ class Campaign
 		return $this->data->status;
 	}
 
+	public function set_status($status)
+	{
+		if (empty($status)) {
+			return false;
+		}
+		$allowed_statuses = array('active', 'inactive', 'scheduled', 'expired');
+		if (!in_array($status, $allowed_statuses, true)) {
+			campaignbay_log(
+				// Translators: %s is the invalid status provided.
+				sprintf(__('Invalid status "%s" provided. Status must be one of: active, inactive, scheduled, expired.', 'campaignbay'), $status)
+			);
+			return false;
+		}
+
+		try {
+
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+
+
+			$result = $wpdb->update(
+				$table_name,
+				array(
+					'status' => $status,
+				),
+				array(
+					'id' => $this->id,
+				),
+				array(
+					'%s',
+				),
+				array(
+					'%d',
+				)
+			);
+			if (is_wp_error($result) || false === $result) {
+				return false;
+			}
+
+			// Reload data
+			$this->load_data();
+
+			/**
+			 * Fires after a campaign is updated and all its data is saved.
+			 *
+			 * @param int      $campaign_id The ID of the updated campaign.
+			 * @param Campaign $campaign    The campaign object.
+			 */
+			do_action('campaignbay_campaign_save', $this->id, $this);
+
+			// Log the activity.
+			Logger::get_instance()->log(
+				'campaign_updated',
+				'updated',
+				array(
+					'campaign_id' => $this->get_id(),
+					'extra_data' => array(
+						'title' => $this->get_title(),
+					)
+				)
+			);
+
+			return true;
+		} catch (Exception $e) {
+			campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
+			return new WP_Error('rest_cannot_update', __('Cannot update campaign.', 'campaignbay'), array('status' => 500, 'error' => $e->getMessage()));
+		}
+	}
+
+
 	/**
 	 * Gets the campaign type.
 	 *
@@ -889,7 +959,6 @@ class Campaign
 		global $wpdb;
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 
-		// Increment the usage count in the database
 		$result = $wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$campaigns_table} SET usage_count = usage_count + 1 WHERE id = %d",
@@ -897,14 +966,24 @@ class Campaign
 			)
 		);
 
-		if ($result !== false) {
-			// Update the local data
-			$this->data->usage_count = (int) $this->data->usage_count + 1;
-			campaignbay_log('Usage count incremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG');
-			return true;
+		if (is_wp_error($result) || false === $result) {
+			return false;
 		}
 
-		return false;
+		// Reload data
+		// $this->load_data();
+		$this->data->usage_count = (int) $this->data->usage_count + 1;
+		campaignbay_log('Usage count incremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG');
+
+		/**
+		 * Fires after a campaign is updated and all its data is saved.
+		 *
+		 * @param int      $campaign_id The ID of the updated campaign.
+		 * @param Campaign $campaign    The campaign object.
+		 */
+		do_action('campaignbay_campaign_save', $this->id, $this);
+
+		return true;
 	}
 
 

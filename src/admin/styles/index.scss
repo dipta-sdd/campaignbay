@@ -216,6 +216,9 @@
   .campaignbay-text-secondary {
     color: #{$cb-text-secondary};
   }
+  .campaignbay-bg-body {
+    background-color: #{$cb-color-body};
+  }
 
   --cb-p-1: 10px;
   --cb-p-2: 20px;
@@ -306,6 +309,10 @@
     width: 100%;
     margin: 0;
     padding: 0;
+  }
+
+  .campaign-grid{
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
 
   & .cb-p-1 {
@@ -1587,6 +1594,7 @@
         text-align: end;
       }
     }
+    a.campaignbay-campaign-link,
     .campaignbay-table td a {
       color: #2563eb;
       text-decoration: none;

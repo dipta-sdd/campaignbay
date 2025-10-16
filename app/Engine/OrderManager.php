@@ -47,9 +47,16 @@ class OrderManager extends Base
 	 */
 	public function handle_order_status_change($order_id, $old_status, $new_status, $order)
 	{
+		if ($old_status === 'processing' || $old_status === 'completed') {
+			campaignbay_log(sprintf('Order #%d status changed canceled for old status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+			return;
+		}
+		if ($new_status !== 'processing' && $new_status !== 'completed') {
+			campaignbay_log(sprintf('Order #%d status changed canceled for new status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+			return;
+		}
 		campaignbay_log(sprintf('Order #%d status changed from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
 
-		// Get the discount breakdown we saved from the cart.
 		$discount_breakdown = $order->get_meta('_campaignbay_discount_breakdown', true);
 
 		if (empty($discount_breakdown) || !is_array($discount_breakdown)) {
@@ -57,18 +64,13 @@ class OrderManager extends Base
 			return; // This order was not processed by our plugin.
 		}
 		do_action('campaignbay_create_order');
-		// Loop through the breakdown, which has one entry per campaign that was applied.
+
 		foreach ($discount_breakdown as $campaign_id => $data) {
 			campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG');
 			campaignbay_log('data: ' . print_r($data, true), 'DEBUG');
-			// if ($data['earlybird_usage_limit'] !== null) {
-			// 	$campaign = new Campaign($campaign_id);
-			// 	// Usage count is now stored directly in the table, no need to load separately
-			// 	if ($campaign->get_usage_count() > $data['earlybird_usage_limit']) {
-			// 		campaignbay_log('earlybird_usage_limit reached', 'DEBUG');
-			// 		throw new Exception('Earlybird usage limit reached for campaign ID: ' . $campaign_id);
-			// 	}
-			// }
+			$campaign = new Campaign($campaign_id);
+			$campaign->increment_usage_count();
+			campaignbay_log('incrementing usage count' . $campaign_id);
 			$this->log_sale_event($campaign_id, $order, $data, $new_status);
 		}
 	}
