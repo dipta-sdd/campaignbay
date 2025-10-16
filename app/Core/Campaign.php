@@ -135,8 +135,8 @@ class Campaign
 			'exclude_sale_items' => 'required|boolean',
 			'is_exclude' => 'nullable|boolean',
 
-			'schedule_enabled' => 'required_if:type,scheduled|boolean',
-			'start_datetime' => 'datetime|required_if:schedule_enabled,1|required_if:status,scheduled|nullable',
+			'schedule_enabled' => $args['status'] === 'scheduled' ? 'required_if:type,scheduled|boolean' : 'boolean|nullable',
+			'start_datetime' => 'datetime|required_if:schedule_enabled,1',
 			'end_datetime' => 'datetime|nullable|after:start_datetime',
 
 			'conditions' => 'nullable|array',
@@ -304,9 +304,9 @@ class Campaign
 			'exclude_sale_items' => 'required|boolean',
 			'is_exclude' => 'nullable|boolean',
 
-			'schedule_enabled' => 'required_if:type,scheduled|boolean',
-			'start_datetime' => 'datetime|required_if:schedule_enabled,1|required_if:status,scheduled|nullable',
-			'end_datetime' => 'datetime|nullable|after:start_datetime',
+			'schedule_enabled' => $args['status'] === 'scheduled' ? 'required_if:type,scheduled|boolean' : 'boolean|nullable',
+			'start_datetime' => 'datetime|required_if:schedule_enabled,1',
+			'end_datetime' => 'datetime|after:start_datetime',
 
 			'conditions' => 'nullable',
 			'settings' => 'nullable',

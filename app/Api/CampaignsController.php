@@ -450,7 +450,7 @@ class CampaignsController extends ApiController
 				$title = $campaign->get_title();
 				$result = $campaign->update(array('status' => $status), true);
 
-				if ($result === true) {
+				if ($result === true && !is_wp_error($result)) {
 					error_log('title : ' . $campaign->get_title() . ' ' . $status);
 					$updated_count++;
 					// Log the activity.

@@ -792,10 +792,7 @@ const CampaignsEdit = () => {
                   id="schedule"
                   checked={scheduleEnabled}
                   onChange={(e) => setScheduleEnabled(e.target.checked)}
-                  disabled={
-                    campaignType === "scheduled" ||
-                    campaignStatus === "scheduled"
-                  }
+                  disabled={campaignStatus === "scheduled"}
                 />
                 <label htmlFor="schedule" className="">
                   {__("Schedule", "campaignbay")}
