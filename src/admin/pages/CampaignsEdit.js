@@ -91,10 +91,10 @@ const CampaignsEdit = () => {
   }, [id]);
 
   useEffect(() => {
-    if (campaignType === "scheduled" || campaignStatus === "scheduled") {
+    if (campaignStatus === "scheduled") {
       setScheduleEnabled(true);
     }
-  }, [campaignStatus, campaignType]);
+  }, [campaignStatus]);
 
   const handleSelectionTypeChange = (value) => {
     setTargetType(value);
@@ -103,9 +103,9 @@ const CampaignsEdit = () => {
 
   const handleCampaignTypeChange = (value) => {
     setCampaignType(value);
-    if (value === "scheduled") {
-      setCampaignStatus("scheduled");
-    }
+    // if (value === "scheduled") {
+    //   setCampaignStatus("scheduled");
+    // }
   };
 
   const handleCampaignStatusChange = (value) => {
@@ -792,7 +792,7 @@ const CampaignsEdit = () => {
                   id="schedule"
                   checked={scheduleEnabled}
                   onChange={(e) => setScheduleEnabled(e.target.checked)}
-                  disabled={campaignStatus === "scheduled"}
+                  disabled={campaignStatus === "active" && !scheduleEnabled}
                 />
                 <label htmlFor="schedule" className="">
                   {__("Schedule", "campaignbay")}

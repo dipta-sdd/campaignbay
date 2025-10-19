@@ -30,7 +30,7 @@ const CampaignsAdd = () => {
   const [campaignType, setCampaignType] = useState("bogo");
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState("");
-  const [targetType, setTargetType] = useState("product");
+  const [targetType, setTargetType] = useState("entire_store");
   const [targetIds, setTargetIds] = useState([]);
   const [isExclude, setIsExclude] = useState(false);
   const [isExcludeSaleItems, setIsExcludeSaleItems] = useState(false);
@@ -138,10 +138,10 @@ const CampaignsAdd = () => {
   }, []);
 
   useEffect(() => {
-    if (campaignType === "scheduled" || campaignStatus === "scheduled") {
+    if (campaignStatus === "scheduled") {
       setScheduleEnabled(true);
     }
-  }, [campaignStatus, campaignType]);
+  }, [campaignType]);
 
   const handleSelectionTypeChange = (value) => {
     setTargetType(value);
@@ -150,9 +150,10 @@ const CampaignsAdd = () => {
 
   const handleCampaignTypeChange = (value) => {
     setCampaignType(value);
-    if (value === "scheduled") {
-      setCampaignStatus("scheduled");
-    }
+    console.log("object");
+    // if (value === "scheduled") {
+    //   setCampaignStatus("scheduled");
+    // }
   };
 
   const handleCampaignStatusChange = (value) => {
@@ -674,7 +675,7 @@ const CampaignsAdd = () => {
               id="schedule"
               checked={scheduleEnabled}
               onChange={(e) => setScheduleEnabled(e.target.checked)}
-              disabled={campaignStatus === "scheduled"}
+              disabled={campaignStatus === "active" && !scheduleEnabled}
             />
             <label htmlFor="schedule" className="">
               {__("Schedule", "campaignbay")}
@@ -716,7 +717,7 @@ const CampaignsAdd = () => {
                   onDateTimeChange={(date) => {
                     setStartDate(date);
                   }}
-                  disabled={!scheduleEnabled || campaignStatus !== "scheduled"}
+                  disabled={!scheduleEnabled}
                 />
                 {renderError(errors?.start_datetime, false)}
               </div>
