@@ -99,7 +99,7 @@ export default function CampaignSettings({
 
         {type === "quantity" ? (
           <>
-            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+            {/* <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
               <CbCheckbox
                 id="enable-quantity-table"
                 checked={
@@ -136,7 +136,7 @@ export default function CampaignSettings({
                 position="right"
               />
               {renderError(errors?.enable_quantity_table)}
-            </div>
+            </div> */}
 
             <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px]">
               <div className="cb-form-input-con !campaignbay-p-0">

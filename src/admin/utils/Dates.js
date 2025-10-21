@@ -16,6 +16,7 @@ import { useCbStore } from "../store/cbStore";
  */
 export default function formatDateTime(dateTimeString) {
   const { wpSettings } = useCbStore();
+  const { timezone } = getDateSettings();
   if (
     !dateTimeString ||
     new Date(dateTimeString).toString() === "Invalid Date"
@@ -24,7 +25,7 @@ export default function formatDateTime(dateTimeString) {
   }
   const format = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
   const dateTime = getDate(dateTimeString * 1000);
-  return date(format, dateTime, null);
+  return date(format, dateTime, timezone?.offset);
 }
 
 /**
@@ -43,7 +44,9 @@ export function timeDiff(dateTimeString) {
   ) {
     return "—";
   }
-  const dateTime = getDate(dateTimeString);
+
+  const { timezone } = getDateSettings();
+  const dateTime = getDate(dateTimeString * 1000, timezone?.offset);
   const currentTime = new Date();
   const diffDays = Math.abs(
     (currentTime.getTime() - dateTime.getTime()) / (1000 * 60 * 60 * 24)
@@ -51,6 +54,11 @@ export function timeDiff(dateTimeString) {
   if (diffDays > 10) {
     return formatDateTime(dateTimeString);
   }
-
+  // console.table({
+  //   dateTimeString,
+  //   dateTime,
+  //   currentTime,
+  //   diffDays,
+  // });
   return humanTimeDiff(dateTime, currentTime.getTime());
 }

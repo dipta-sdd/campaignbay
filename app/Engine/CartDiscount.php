@@ -103,14 +103,22 @@ class CartDiscount
 					}
 					$cart->cart_contents[$key]['data']->set_price($meta['simple']['price']);
 				}
-				if (isset($meta['quantity']) && (self::cart_allow_campaign_stacking() || !isset($meta['simple'])) || $meta['quantity']['price'] < $meta['simple']['price']) {
+
+				if (
+					isset($meta['quantity']) && (
+						(self::cart_allow_campaign_stacking() || !isset($meta['simple'])) ||
+						$meta['quantity']['price'] < $meta['simple']['price']
+					)
+				) {
+					campaignbay_log('have quantity discount');
 					// campaign stacking not allowed
 					if (!self::cart_allow_campaign_stacking()) {
 						// seting orginal price as base price
+						campaignbay_log('seting orginal price as base price : ' . $meta['quantity']['base_price']);
 						$cart->cart_contents[$key]['data']->set_regular_price($meta['quantity']['base_price']);
 						$simple_applied = false;
 					}
-
+					campaignbay_log('setting quantity discount price : ' . $meta['quantity']['price']);
 					$cart->cart_contents[$key]['data']->set_price($meta['quantity']['base_price']);
 					$apply_as = $meta['quantity']['settings']['apply_as'] ?? 'line_total';
 					if ($apply_as === 'line_total') {
@@ -152,6 +160,7 @@ class CartDiscount
 					}
 
 				}
+
 				if ($simple_applied && isset($meta['simple'])) {
 
 					$campaign_id = $meta['simple']['campaign'];

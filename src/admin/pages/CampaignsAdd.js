@@ -226,9 +226,8 @@ const CampaignsAdd = () => {
       if (settings?.enable_quantity_table !== undefined) {
         tmpSettings["enable_quantity_table"] = settings.enable_quantity_table;
       }
-      if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
-        tmpSettings["apply_as"] = settings.apply_as;
-      }
+      tmpSettings["apply_as"] = settings?.apply_as || "line_total";
+
       // cart_quantity_message_format
       if (
         settings?.cart_quantity_message_format !== undefined &&
@@ -675,7 +674,7 @@ const CampaignsAdd = () => {
               id="schedule"
               checked={scheduleEnabled}
               onChange={(e) => setScheduleEnabled(e.target.checked)}
-              disabled={campaignStatus === "active" && !scheduleEnabled}
+              // disabled={campaignStatus === "active" && !scheduleEnabled}
             />
             <label htmlFor="schedule" className="">
               {__("Schedule", "campaignbay")}

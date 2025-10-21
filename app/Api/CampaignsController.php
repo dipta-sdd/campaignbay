@@ -703,6 +703,8 @@ class CampaignsController extends ApiController
 		$data = $campaign->get_data();
 		$data->start_datetime_unix = $campaign->get_start_timestamp();
 		$data->end_datetime_unix = $campaign->get_end_timestamp();
+		$data->date_modified_unix = $campaign->get_time_stamp($data->date_modified);
+		$data->date_created_unix = $campaign->get_time_stamp($data->date_created);
 		return $data;
 	}
 

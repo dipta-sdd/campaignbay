@@ -87,7 +87,6 @@ class PricingEngine extends Base
 
 			['action', 'woocommerce_before_calculate_totals', 'before_calculate_totals', 20, 1],
 			['action', 'woocommerce_after_calculate_totals', 'after_calculate_totals', 20, 1],
-			// ['action', 'woocommerce_cart_updated', 'woocommerce_cart_updated', 20, 0],
 			['filter', 'woocommerce_get_shop_coupon_data', 'validate_fake_coupon_data', 10, 2],
 			['filter', 'woocommerce_cart_totals_coupon_label', 'change_virtual_coupon_label', 10, 2],
 			['filter', 'woocommerce_coupon_is_valid', 'validate_fake_coupon', 10, 3],
@@ -160,7 +159,7 @@ class PricingEngine extends Base
 			}
 		}
 
-		campaignbay_log(message: print_r($discount_breakdown, true));
+		// campaignbay_log(message: print_r($discount_breakdown, true));
 
 
 
@@ -186,7 +185,16 @@ class PricingEngine extends Base
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
 
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
-			return $price_html;
+			return Woocommerce::get_price_html(
+				$price_html,
+				$product,
+				Woocommerce::get_product_regular_price($product),
+				$product->get_price(),
+				false
+			);
+
+		campaignbay_log(print_r($product->get_name(), true));
+		campaignbay_log(print_r($meta, true));
 		$price_html = Woocommerce::get_price_html(
 			$price_html,
 			$product,
@@ -233,24 +241,28 @@ class PricingEngine extends Base
 
 	public function cart_item_price($price_html, $cart_item, $cart_item_key)
 	{
+		// campaignbay_log('cart item price ' . $cart_item['data']->get_name());
 		$meta = isset($cart_item['campaignbay']) ? $cart_item['campaignbay'] : null;
 		if ($meta === null || !isset($meta['on_discount']) || !$meta['on_discount'])
 			return $price_html;
 
 		$base_price = $meta['base_price'];
+		$price = $base_price;
+		$as_reg_price = false;
 		if (isset($meta['quantity'])) {
 			$quantity = $meta['quantity'];
-			$price = $quantity['base_price'];
 			//seting simple discount as base price
 			if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
 				$base_price = $quantity['base_price'];
-			$as_reg_price = false;
 			if ($quantity['settings']['apply_as'] === 'line_total') {
 				$price = $quantity['price'];
 			}
+			// campaignbay_log('setting quantity price');
+			// campaignbay_log(print_r($price, true));
 		} elseif (isset($meta['simple'])) {
 			$price = $meta['simple']['price'];
 			$as_reg_price = $meta['simple']['display_as_regular_price'];
+			$base_price = $meta['base_price'];
 		} else
 			return $price_html;
 		$price_html = Woocommerce::get_price_html(
@@ -272,13 +284,13 @@ class PricingEngine extends Base
 		$base_price = $meta['base_price'];
 		$price = $base_price;
 
+		$as_reg_price = false;
+
 		if (isset($meta['quantity'])) {
 			$quantity = $meta['quantity'];
-			$price = $quantity['base_price'];
 			//seting simple discount as base price
 			if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
 				$base_price = $quantity['base_price'];
-			$as_reg_price = false;
 			if ($quantity['settings']['apply_as'] === 'line_total') {
 				$price = $quantity['price'];
 			}
@@ -344,10 +356,17 @@ class PricingEngine extends Base
 
 	public function is_on_sale($is_on_sale, $product)
 	{
-		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
-		if (!is_array($meta) || empty($meta) || !isset($meta['is_on_sale']))
+		if ($is_on_sale)
 			return $is_on_sale;
-		return $meta['is_on_sale'] ? $meta['is_on_sale'] : $is_on_sale;
+
+		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
+		if (is_array($meta) && !empty($meta) && isset($meta['is_on_sale']) && $meta['is_on_sale'] === true)
+			return true;
+
+		$quantity_tiers = Helper::get_quantity_tiers_with_campaign($product);
+		if (!empty($quantity_tiers))
+			return true;
+		return $is_on_sale;
 	}
 
 

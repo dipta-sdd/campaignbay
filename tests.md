@@ -242,7 +242,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **Then:** A negative fee of $10 should appear in the cart totals.
 - **And:** The individual line item price for "Bulk Item C" should remain $30.
 
-### 2.10. Quantity Discount - Display Table (Positive)
+<!-- ### 2.10. Quantity Discount - Display Table (Positive)
 
 - **User Story:** As a customer, I want to see a clear table of quantity discounts on the product page.
 - **Scenario:** Verify that the quantity discount table is displayed correctly on the product page.
@@ -258,9 +258,9 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **Given:** A product "Bulk Item E" has an active "Quantity Based Discount" campaign.
 - **And:** The campaign's "Enable Quantity Table" setting is disabled.
 - **When:** I view the "Bulk Item E" product page.
-- **Then:** No quantity discount table should be visible.
+- **Then:** No quantity discount table should be visible. -->
 
-### 2.12. Scheduled Discount - Settings (Positive)
+### 2.10. Scheduled Discount - Settings (Positive)
 
 - **User Story:** As an Admin, I want to configure the settings for a scheduled discount.
 - **Scenario:** Verify that the settings for a scheduled discount are correctly applied.
@@ -271,7 +271,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **Then:** The discounted price should be displayed as the regular price.
 - **And:** The custom message should be displayed on the product page.
 
-### 2.13. Quantity Discount - Settings (Positive)
+### 2.11. Quantity Discount - Settings (Positive)
 
 - **User Story:** As an Admin, I want to configure the settings for a quantity discount.
 - **Scenario:** Verify that the settings for a quantity discount are correctly applied.
@@ -282,7 +282,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **Then:** The quantity discount table should be displayed.
 - **And:** The discount should be applied as a coupon in the cart.
 
-### 2.14. Earlybird Discount - Settings (Positive)
+### 2.12. Earlybird Discount - Settings (Positive)
 
 - **User Story:** As an Admin, I want to configure the settings for an earlybird discount.
 - **Scenario:** Verify that the settings for an earlybird discount are correctly applied.

@@ -121,6 +121,7 @@ class ProductDiscount
 			}
 			if ($campaign->get_type() === 'earlybird') {
 				$tier = Helper::earlybird_current_tier($campaign);
+				campaignbay_log('early bird current tier : ____________' . print_r($tier, true));
 				$new_price = $this->calculate_earlybird_price($tier, $base_price);
 			} elseif ($campaign->get_type() === 'scheduled')
 				$new_price = $this->calculate_scheduled_price($campaign, $base_price);

@@ -688,7 +688,7 @@ const Campaigns = () => {
                             {campaign.usage_count || 0}
                           </td>
                           <td className="campaignbay-text-secondary">
-                            {timeDiff(campaign.date_modified)}
+                            {timeDiff(campaign.date_modified_unix)}
                           </td>
                           <td className="campaignbay-sticky-r-td">
                             <DropdownMenu
@@ -868,7 +868,7 @@ const Campaigns = () => {
                           <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5 campaignbay-text-xs campaignbay-text-gray-500">
                             <Clock className="campaignbay-w-3.5 campaignbay-h-3.5" />
                             <span className="campaignbay-text-xs campaignbay-text-gray-600">
-                              {timeDiff(campaign.date_modified)}
+                              {timeDiff(campaign.date_modified_unix)}
                             </span>
                           </div>
                         </div>

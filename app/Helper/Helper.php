@@ -357,7 +357,8 @@ class Helper
         $current_tier = null;
         $tiers = $campaign->get_tiers();
         foreach ($tiers as $tier) {
-            if ($usage_count > $tier['quantity']) {
+
+            if ($usage_count >= $tier['quantity']) {
                 $usage_count -= $tier['quantity'];
             } else {
                 return $tier;

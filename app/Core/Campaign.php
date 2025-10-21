@@ -135,9 +135,9 @@ class Campaign
 			'exclude_sale_items' => 'required|boolean',
 			'is_exclude' => 'nullable|boolean',
 
-			'schedule_enabled' => $args['status'] === 'scheduled' ? 'required_if:type,scheduled|boolean' : 'boolean|nullable',
-			'start_datetime' => 'datetime|required_if:schedule_enabled,1',
-			'end_datetime' => 'datetime|nullable|after:start_datetime',
+			'schedule_enabled' => 'boolean',
+			'start_datetime' => 'datetime|required_if:status,scheduled',
+			'end_datetime' => (!isset($args['start_datetime']) || $args['start_datetime'] === null || empty($args['start_datetime']) || $args['start_datetime'] === '') ? 'datetime|required_if:schedule_enabled,1' : 'datetime|nullable',
 
 			'conditions' => 'nullable|array',
 			'settings' => 'nullable|array',
@@ -304,9 +304,9 @@ class Campaign
 			'exclude_sale_items' => 'required|boolean',
 			'is_exclude' => 'nullable|boolean',
 
-			'schedule_enabled' => $args['status'] === 'scheduled' ? 'required_if:type,scheduled|boolean' : 'boolean|nullable',
-			'start_datetime' => 'datetime|required_if:schedule_enabled,1',
-			'end_datetime' => 'datetime|after:start_datetime',
+			'schedule_enabled' => 'boolean',
+			'start_datetime' => 'datetime|required_if:status,scheduled',
+			'end_datetime' => (!isset($args['start_datetime']) || $args['start_datetime'] === null || empty($args['start_datetime']) || $args['start_datetime'] === '') ? 'datetime|required_if:schedule_enabled,1' : 'datetime|nullable',
 
 			'conditions' => 'nullable',
 			'settings' => 'nullable',
@@ -820,6 +820,28 @@ class Campaign
 		return $this->data->end_datetime;
 	}
 
+	public function get_utc_time($date_string)
+	{
+
+		if (empty($date_string)) {
+			return null;
+		}
+
+		try {
+			$date = new DateTime($date_string, new DateTimeZone(wp_timezone_string()));
+			$date->setTimezone(new DateTimeZone('UTC'));
+			return $date->format('Y-m-d H:i:s');
+		} catch (Exception $e) {
+			return null;
+		}
+	}
+
+	public function get_time_stamp($date_string)
+	{
+		$utc_datetime = $this->get_utc_time($date_string);
+		return $utc_datetime ? strtotime($utc_datetime) : null;
+	}
+
 	/**
 	 * Gets the start datetime string and converts it to the UTC timezone.
 	 *
@@ -828,8 +850,6 @@ class Campaign
 	 */
 	public function get_start_datetime_utc()
 	{
-		$start_datetime_site = $this->data->start_datetime;
-
 		if (empty($start_datetime_site)) {
 			return null;
 		}
@@ -965,6 +985,15 @@ class Campaign
 				$this->id
 			)
 		);
+		// update status 
+		$result = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$campaigns_table} SET status = 'expired' WHERE id = %d AND usage_count >= usage_limit",
+				$this->id
+			)
+		);
+
+
 
 		if (is_wp_error($result) || false === $result) {
 			return false;
