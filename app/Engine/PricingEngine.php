@@ -379,6 +379,10 @@ class PricingEngine extends Base
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
 			return;
+
+		if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
+			return;
+
 		$message = Woocommerce::generate_product_banner(
 			$meta['simple']['value'],
 			$meta['simple']['type'],
@@ -541,6 +545,8 @@ class PricingEngine extends Base
 		if (isset($this->coupons[$coupon->get_code()])) {
 			return true;
 		}
+		if (!$this->settings['cart_allowWcCouponStacking'] && !empty($this->coupons))
+			return false;
 		return $value;
 	}
 

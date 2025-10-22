@@ -271,18 +271,7 @@ This document outlines comprehensive test scenarios for the CampaignBay WooComme
 - **Then:** The discounted price should be displayed as the regular price.
 - **And:** The custom message should be displayed on the product page.
 
-### 2.11. Quantity Discount - Settings (Positive)
-
-- **User Story:** As an Admin, I want to configure the settings for a quantity discount.
-- **Scenario:** Verify that the settings for a quantity discount are correctly applied.
-- **Given:** A "Quantity Based Discount" campaign is created.
-- **And:** The "enable_quantity_table" setting is enabled.
-- **And:** The "apply_as" setting is set to "coupon".
-- **When:** I view a product with the discount applied.
-- **Then:** The quantity discount table should be displayed.
-- **And:** The discount should be applied as a coupon in the cart.
-
-### 2.12. Earlybird Discount - Settings (Positive)
+### 2.11. Earlybird Discount - Settings (Positive)
 
 - **User Story:** As an Admin, I want to configure the settings for an earlybird discount.
 - **Scenario:** Verify that the settings for an earlybird discount are correctly applied.
