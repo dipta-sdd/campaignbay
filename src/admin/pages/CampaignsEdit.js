@@ -81,6 +81,9 @@ const CampaignsEdit = () => {
   const [errors, setErrors] = useState({});
   // extra state to handle editing
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+
+  const [isTmpScheduledEnabled, setIsTmpScheduledEnabled] = useState(false);
+
   useEffect(() => {
     Promise.all([
       fetchCategories(),
@@ -93,8 +96,17 @@ const CampaignsEdit = () => {
   useEffect(() => {
     if (campaignStatus === "scheduled") {
       setScheduleEnabled(true);
+      setIsTmpScheduledEnabled(true);
+    } else if (isTmpScheduledEnabled) {
+      setScheduleEnabled(false);
+      setIsTmpScheduledEnabled(false);
     }
   }, [campaignStatus]);
+
+  const handleScheduledChange = (value) => {
+    setScheduleEnabled(value);
+    setIsTmpScheduledEnabled(false);
+  };
 
   const handleSelectionTypeChange = (value) => {
     setTargetType(value);
@@ -399,7 +411,10 @@ const CampaignsEdit = () => {
             <div className="cb-form-input-con ">
               <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4 campaignbay-gap-[10px]">
                 <div className="cb-form-input-con campaignbay-col-span-2 !campaignbay-p-0">
-                  <label htmlFor="campaign-title">
+                  <label
+                    htmlFor="campaign-title"
+                    className="!campaignbay-capitalize"
+                  >
                     {__("Campaign Title", "campaignbay")} <Required />
                   </label>
                   <input
@@ -415,8 +430,11 @@ const CampaignsEdit = () => {
                 </div>
 
                 <div className="cb-form-input-con campaignbay-col-span-2 md:campaignbay-col-span-1 !campaignbay-p-0">
-                  <label htmlFor="campaign-type">
-                    {__("SELECT DISCOUNT TYPE", "campaignbay")} <Required />
+                  <label
+                    htmlFor="campaign-type"
+                    className="!campaignbay-capitalize"
+                  >
+                    {__("Select Discount Type", "campaignbay")} <Required />
                   </label>
                   <select
                     type="text"
@@ -444,8 +462,11 @@ const CampaignsEdit = () => {
                 </div>
 
                 <div className="cb-form-input-con campaignbay-col-span-2  md:campaignbay-col-span-1 !campaignbay-p-0">
-                  <label htmlFor="campaign-status">
-                    {__("SELECT STATUS", "campaignbay")} <Required />
+                  <label
+                    htmlFor="campaign-status"
+                    className="!campaignbay-capitalize"
+                  >
+                    {__("Select Status", "campaignbay")} <Required />
                   </label>
                   <select
                     type="text"
@@ -472,7 +493,10 @@ const CampaignsEdit = () => {
             </div>
 
             <div className="cb-form-input-con">
-              <label htmlFor="selection-type">
+              <label
+                htmlFor="selection-type"
+                className="!campaignbay-capitalize"
+              >
                 {__("DISCOUNT TARGET", "campaignbay")} <Required />
               </label>
               <select
@@ -493,7 +517,7 @@ const CampaignsEdit = () => {
                 <option value="product">
                   {__("By Product", "campaignbay")}
                 </option>
-                <option value="tag">{__("By Tags", "campaignbay")}</option>
+                {/* <option value="tag">{__("By Tags", "campaignbay")}</option> */}
               </select>
               {renderError(errors?.target_type)}
 
@@ -743,6 +767,7 @@ const CampaignsEdit = () => {
               </div>
 
               {/* Exclude Sale Items */}
+
               <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
                 <CbCheckbox
                   id="enable-usage-limit"
@@ -792,7 +817,7 @@ const CampaignsEdit = () => {
                   id="schedule"
                   checked={scheduleEnabled}
                   onChange={(e) => setScheduleEnabled(e.target.checked)}
-                  // disabled={campaignStatus === "active" && !scheduleEnabled}
+                  disabled={campaignStatus === "scheduled"}
                 />
                 <label htmlFor="schedule" className="">
                   {__("Schedule", "campaignbay")}
@@ -825,6 +850,7 @@ const CampaignsEdit = () => {
                       style={{ display: "block", marginBottom: "10px" }}
                     >
                       {__("Start Time", "campaignbay")}
+                      {<Required />}
                     </span>
                     <DateTimePicker
                       timezone={timezone}
@@ -834,9 +860,7 @@ const CampaignsEdit = () => {
                       onDateTimeChange={(date) => {
                         setStartDate(date);
                       }}
-                      disabled={
-                        !scheduleEnabled || campaignStatus !== "scheduled"
-                      }
+                      disabled={!scheduleEnabled}
                     />
                     {renderError(errors?.start_datetime, false)}
                   </div>

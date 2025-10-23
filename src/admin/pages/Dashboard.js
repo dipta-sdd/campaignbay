@@ -28,9 +28,12 @@ ChartJS.register(
   Legend,
   ArcElement
 );
+import chart_placeholder from "../../../assets/img/top_p_c.svg";
+import table_placeholder from "../../../assets/img/top_p_t.svg";
 
 import Navbar from "../components/Navbar";
 import ActivityLogModal from "../components/ActivityLogModal";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -38,6 +41,7 @@ const Dashboard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const [chartType, setChartType] = useState("bar");
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -608,14 +612,14 @@ const Dashboard = () => {
                   height={220}
                 />
               ) : (
-                <div className="cb-chart-placeholder">
-                  <div className="cb-chart-message">
-                    {__(
-                      "No campaign performance data available",
-                      "campaignbay"
-                    )}
-                  </div>
-                </div>
+                <Placeholder
+                  image={chart_placeholder}
+                  mainText={__("No Data Available", "campaignbay")}
+                  seconderyText={__(
+                    "Run a campaign to see performance data.",
+                    "campaignbay"
+                  )}
+                />
               )}
             </div>
           </div>
@@ -632,14 +636,14 @@ const Dashboard = () => {
                   height={220}
                 />
               ) : (
-                <div className="cb-chart-placeholder">
-                  <div className="cb-chart-message">
-                    {__(
-                      "No campaign performance data available",
-                      "campaignbay"
-                    )}
-                  </div>
-                </div>
+                <Placeholder
+                  image={table_placeholder}
+                  mainText={__("No Data Available", "campaignbay")}
+                  seconderyText={__(
+                    "Run a campaign to see performance data.",
+                    "campaignbay"
+                  )}
+                />
               )}
             </div>
           </div>
@@ -693,7 +697,22 @@ const Dashboard = () => {
                     ) : (
                       <tr className="cb-campaign-row empty">
                         <td colSpan="3" className="cb-no-campaigns">
-                          {__("No active campaigns", "campaignbay")}
+                          <Placeholder
+                            image={table_placeholder}
+                            mainText={__(
+                              "No Upcoming Campaigns",
+                              "campaignbay"
+                            )}
+                            seconderyText={
+                              <button
+                                className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-mx-auto "
+                                onClick={() => navigate("/campaigns/add")}
+                              >
+                                Add New Campaign
+                              </button>
+                            }
+                            opacity={70}
+                          />
                         </td>
                       </tr>
                     )}
@@ -755,7 +774,22 @@ const Dashboard = () => {
                     ) : (
                       <tr className="cb-campaign-row empty">
                         <td colSpan="3" className="cb-no-campaigns">
-                          {__("No scheduled campaigns", "campaignbay")}
+                          <Placeholder
+                            image={table_placeholder}
+                            mainText={__(
+                              "No Upcoming Campaigns",
+                              "campaignbay"
+                            )}
+                            seconderyText={
+                              <button
+                                className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-mx-auto "
+                                onClick={() => navigate("/campaigns/add")}
+                              >
+                                Add New Campaign
+                              </button>
+                            }
+                            opacity={70}
+                          />
                         </td>
                       </tr>
                     )}
@@ -769,28 +803,34 @@ const Dashboard = () => {
           <div className="cb-insight-card">
             <h3>{__("Recent Activity", "campaignbay")}</h3>
             <div className="cb-activity-list">
-              {dashboardData?.recent_activity
-                ?.slice(0, 5)
-                .map((activity, index) => (
-                  <div key={index} className="cb-activity-item">
-                    <div className="cb-dashboard-timestamp">
-                      {formatTimeDifference(activity.timestamp)}
+              {dashboardData?.recent_activity?.length > 0 ? (
+                dashboardData?.recent_activity
+                  ?.slice(0, 5)
+                  .map((activity, index) => (
+                    <div key={index} className="cb-activity-item">
+                      <div className="cb-dashboard-timestamp">
+                        {formatTimeDifference(activity.timestamp)}
+                      </div>
+                      <div className="cb-activity-content">
+                        <span className="cb-activity-campaign">
+                          <a
+                            href={`#/campaigns/${activity.campaign_id}`}
+                            className="campaignbay-dashboard-campaigns-link"
+                          >
+                            {activity.campaign_title}
+                          </a>
+                        </span>
+                        <span className="cb-activity-action">
+                          {activity.action + " by " + activity.user}
+                        </span>
+                      </div>
                     </div>
-                    <div className="cb-activity-content">
-                      <span className="cb-activity-campaign">
-                        <a
-                          href={`#/campaigns/${activity.campaign_id}`}
-                          className="campaignbay-dashboard-campaigns-link"
-                        >
-                          {activity.campaign_title}
-                        </a>
-                      </span>
-                      <span className="cb-activity-action">
-                        {activity.action + " by " + activity.user}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  ))
+              ) : (
+                <p className="campaignbay-text-slate-700 campaignbay-mt-2">
+                  {__("No Recent Activity", "campaignbay")}
+                </p>
+              )}
             </div>
             <div className="cb-activity-footer">
               <button
@@ -803,6 +843,7 @@ const Dashboard = () => {
                   color: "inherit",
                   textDecoration: "underline",
                 }}
+                disabled={dashboardData?.recent_activity?.length < 5}
               >
                 {__("View Full Activity Log", "campaignbay")}
               </button>
@@ -811,14 +852,14 @@ const Dashboard = () => {
         </div>
 
         {/* Floating Help Button */}
-        <div className="cb-floating-help">
+        {/* <div className="cb-floating-help">
           <button
             className="cb-help-button"
             title={__("Help & Documentation", "campaignbay")}
           >
             ?
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Activity Log Modal */}
@@ -831,3 +872,24 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+const Placeholder = ({ image, mainText, seconderyText, opacity = 30 }) => {
+  return (
+    <div className="campaignbay-relative campaignbay-h-full campaignbay-w-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-overflow-hidden">
+      <img
+        src={image}
+        alt="top Perfprming chart"
+        className={`campaignbay-opacity-${opacity} campaignbay-object-contain campaignbay-h-full campaignbay-w-full campaignbay-sacale-[1.4]`}
+      />
+      <div className="campaignbay-absolute campaignbay-top-1/2 campaignbay-left-1/2 campaignbay--translate-x-1/2 campaignbay--translate-y-1/2 campaignbay-w-3/4 campaignbay-text-center">
+        <h2 className="campaignbay-text-gray-500 campaignbay-text-2xl campaignbay-font-bold">
+          {mainText}
+        </h2>
+
+        <p className="campaignbay-text-slate-700 campaignbay-mt-2">
+          {seconderyText || " "}
+        </p>
+      </div>
+    </div>
+  );
+};

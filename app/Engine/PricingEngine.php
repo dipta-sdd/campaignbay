@@ -44,6 +44,9 @@ class PricingEngine extends Base
 
 	public $coupons = array();
 
+
+	private $discount_applied = false;
+
 	private $calculated_totals = false;
 
 	/**
@@ -433,6 +436,9 @@ class PricingEngine extends Base
 	{
 		$this->coupons = CartDiscount::calculate_cart_discount($cart);
 		$this->calculated_totals = true;
+		$discount_breakdown = $cart->campaignbay_discount_breakdown ?? array();
+		if (is_array($discount_breakdown) && !empty($discount_breakdown))
+			$this->discount_applied = true;
 	}
 
 	public function after_calculate_totals($cart)
@@ -504,7 +510,7 @@ class PricingEngine extends Base
 				'customer_email' => '',
 				'discount_type' => $this->coupons[$coupon_code]['type']
 			);
-		} elseif ($this->calculated_totals === false) {
+		} elseif ($this->calculated_totals === false && is_string($coupon_code) && strlen($coupon_code) >= 11 && substr($coupon_code, 0, 11) === 'campaignbay') {
 			// before calculating total
 			$data = array(
 				'id' => $coupon_code,
@@ -545,8 +551,13 @@ class PricingEngine extends Base
 		if (isset($this->coupons[$coupon->get_code()])) {
 			return true;
 		}
-		if (!$this->settings['cart_allowWcCouponStacking'] && !empty($this->coupons))
+		campaignbay_log('validate_fake_coupon__________________');
+		campaignbay_log('cart_allowWcCouponStacking  ' . $this->settings['cart_allowWcCouponStacking']);
+		campaignbay_log('discount_applied  ' . $this->discount_applied);
+		if (!$this->settings['cart_allowWcCouponStacking'] && $this->discount_applied) {
+			campaignbay_log('returning false');
 			return false;
+		}
 		return $value;
 	}
 

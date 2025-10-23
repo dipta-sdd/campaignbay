@@ -5,7 +5,7 @@ import Input from "./Input";
 import Placeholders from "./PlaceHolders";
 import { __ } from "@wordpress/i18n";
 
-const CartSettings = ({ cartSettings, setCartSettings }) => {
+const CartSettings = ({ cartSettings, setCartSettings, setEdited }) => {
   return (
     <div className="wpab-cb-settings-tab">
       <SettingCard title="Cart Page Display">
@@ -25,12 +25,13 @@ const CartSettings = ({ cartSettings, setCartSettings }) => {
               />
             }
             value={cartSettings.cart_quantity_message_format_percentage}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
                 cart_quantity_message_format_percentage: value,
-              }))
-            }
+              }));
+            }}
           />
           <Input
             className="w-100"
@@ -44,24 +45,26 @@ const CartSettings = ({ cartSettings, setCartSettings }) => {
               />
             }
             value={cartSettings.cart_quantity_message_format_fixed}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
                 cart_quantity_message_format_fixed: value,
-              }))
-            }
+              }));
+            }}
           />
           <Input
             className="w-100"
             label={__("Cart Page BOGO Discount Message Format", "campaignbay")}
             help={<Placeholders options={["title"]} />}
             value={cartSettings.cart_bogo_message_format}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
                 cart_bogo_message_format: value,
-              }))
-            }
+              }));
+            }}
           />
         </div>
       </SettingCard>
@@ -69,23 +72,25 @@ const CartSettings = ({ cartSettings, setCartSettings }) => {
         <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full">
           <Checkbox
             checked={cartSettings.cart_allowWcCouponStacking}
-            onChange={() =>
+            onChange={() => {
+              setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
                 cart_allowWcCouponStacking: !prev.cart_allowWcCouponStacking,
-              }))
-            }
+              }));
+            }}
             label="Allow Stacking with WooCommerce Coupons"
             help="If checked, your campaign discounts can be combined with standard WooCommerce coupons."
           />
           <Checkbox
             checked={cartSettings.cart_allowCampaignStacking}
-            onChange={() =>
+            onChange={() => {
+              setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
                 cart_allowCampaignStacking: !prev.cart_allowCampaignStacking,
-              }))
-            }
+              }));
+            }}
             label="Allow Stacking with Other Discount Campaigns"
             help="If checked, multiple active discount campaigns can apply to the same cart."
           />

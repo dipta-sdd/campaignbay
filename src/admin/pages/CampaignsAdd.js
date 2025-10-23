@@ -71,6 +71,7 @@ const CampaignsAdd = () => {
   const [tags, setTags] = useState([]);
 
   const [errors, setErrors] = useState({});
+  const [isTmpScheduledEnabled, setIsTmpScheduledEnabled] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -140,8 +141,17 @@ const CampaignsAdd = () => {
   useEffect(() => {
     if (campaignStatus === "scheduled") {
       setScheduleEnabled(true);
+      setIsTmpScheduledEnabled(true);
+    } else if (isTmpScheduledEnabled) {
+      setScheduleEnabled(false);
+      setIsTmpScheduledEnabled(false);
     }
-  }, [campaignType]);
+  }, [campaignStatus]);
+
+  const handleScheduledChange = (value) => {
+    setScheduleEnabled(value);
+    setIsTmpScheduledEnabled(false);
+  };
 
   const handleSelectionTypeChange = (value) => {
     setTargetType(value);
@@ -150,7 +160,6 @@ const CampaignsAdd = () => {
 
   const handleCampaignTypeChange = (value) => {
     setCampaignType(value);
-    console.log("object");
     // if (value === "scheduled") {
     //   setCampaignStatus("scheduled");
     // }
@@ -290,7 +299,10 @@ const CampaignsAdd = () => {
         <div className="cb-form-input-con ">
           <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4 campaignbay-gap-[10px]">
             <div className="cb-form-input-con campaignbay-col-span-2 !campaignbay-p-0">
-              <label htmlFor="campaign-title">
+              <label
+                htmlFor="campaign-title"
+                className="!campaignbay-capitalize"
+              >
                 {__("Campaign Title", "campaignbay")} <Required />
               </label>
               <input
@@ -306,8 +318,11 @@ const CampaignsAdd = () => {
             </div>
 
             <div className="cb-form-input-con campaignbay-col-span-2 md:campaignbay-col-span-1 !campaignbay-p-0">
-              <label htmlFor="campaign-type">
-                {__("SELECT DISCOUNT TYPE", "campaignbay")} <Required />
+              <label
+                htmlFor="campaign-type"
+                className="!campaignbay-capitalize"
+              >
+                {__("Select Discount Type", "campaignbay")} <Required />
               </label>
               <select
                 type="text"
@@ -333,8 +348,11 @@ const CampaignsAdd = () => {
             </div>
 
             <div className="cb-form-input-con campaignbay-col-span-2  md:campaignbay-col-span-1 !campaignbay-p-0">
-              <label htmlFor="campaign-status">
-                {__("SELECT STATUS", "campaignbay")} <Required />
+              <label
+                htmlFor="campaign-status"
+                className="!campaignbay-capitalize"
+              >
+                {__("Select Status", "campaignbay")} <Required />
               </label>
               <select
                 type="text"
@@ -378,7 +396,7 @@ const CampaignsAdd = () => {
               {__("By Product Category", "campaignbay")}
             </option>
             <option value="product">{__("By Product", "campaignbay")}</option>
-            <option value="tag">{__("By Tags", "campaignbay")}</option>
+            {/* <option value="tag">{__("By Tags", "campaignbay")}</option> */}
           </select>
           {renderError(errors?.target_type)}
 
@@ -624,7 +642,7 @@ const CampaignsAdd = () => {
             {renderError(errors?.exclude_sale_items, false)}
           </div>
 
-          {/* Exclude Sale Items */}
+          {/* usage limit */}
           <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
             <CbCheckbox
               id="enable-usage-limit"
@@ -674,7 +692,7 @@ const CampaignsAdd = () => {
               id="schedule"
               checked={scheduleEnabled}
               onChange={(e) => setScheduleEnabled(e.target.checked)}
-              // disabled={campaignStatus === "active" && !scheduleEnabled}
+              disabled={campaignStatus === "scheduled"}
             />
             <label htmlFor="schedule" className="">
               {__("Schedule", "campaignbay")}
@@ -707,6 +725,7 @@ const CampaignsAdd = () => {
                   style={{ display: "block", marginBottom: "10px" }}
                 >
                   {__("Start Time", "campaignbay")}
+                  {<Required />}
                 </span>
                 <DateTimePicker
                   timezone={timezone}

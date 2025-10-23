@@ -11,6 +11,7 @@ import Placeholders from "./PlaceHolders";
 const ProductSettings = ({
   productSettings,
   setProductSettings,
+  setEdited,
   isSaving,
   updateSettings,
 }) => {
@@ -24,24 +25,26 @@ const ProductSettings = ({
             label="Product Page Percentage Schedule or Early Bird Discount Message Format"
             help={<Placeholders options={["percentage_off"]} />}
             value={productSettings.product_message_format_percentage}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setProductSettings((prev) => ({
                 ...prev,
                 product_message_format_percentage: value,
-              }))
-            }
+              }));
+            }}
           />
           <Input
             className="w-100"
             label="Product Page Fixed Schedule or Early Bird Discount Message Format"
             help={<Placeholders options={["ampount_of"]} />}
             value={productSettings.product_message_format_fixed}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setProductSettings((prev) => ({
                 ...prev,
                 product_message_format_fixed: value,
-              }))
-            }
+              }));
+            }}
           />
 
           <Input
@@ -49,22 +52,24 @@ const ProductSettings = ({
             label="Product Page BOGO Discount Message Format"
             help={<Placeholders options={["buy_quantity", "get_quantity"]} />}
             value={productSettings.bogo_banner_message_format}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setProductSettings((prev) => ({
                 ...prev,
                 bogo_banner_message_format: value,
-              }))
-            }
+              }));
+            }}
           />
           <span>
             <Checkbox
               checked={productSettings.show_discount_table}
-              onChange={() =>
+              onChange={() => {
+                setEdited(true);
                 setProductSettings((prev) => ({
                   ...prev,
                   show_discount_table: !prev.show_discount_table,
-                }))
-              }
+                }));
+              }}
               label={__(
                 "Enable Quantity Discounts Table on Product Page",
                 "campaignbay"
@@ -111,12 +116,13 @@ const ProductSettings = ({
             },
           ]}
           value={productSettings.product_priorityMethod}
-          onChange={(value) =>
+          onChange={(value) => {
+            setEdited(true);
             setProductSettings((prev) => ({
               ...prev,
               product_priorityMethod: value,
-            }))
-          }
+            }));
+          }}
         />
       </SettingCard>
       <QuantityTableEditModal
@@ -124,10 +130,13 @@ const ProductSettings = ({
         setIsModalOpen={setIsModalOpen}
         options={productSettings.discount_table_options}
         setOptions={(value) => {
-          setProductSettings((prev) => ({
-            ...prev,
-            discount_table_options: { ...value },
-          }));
+          {
+            setEdited(true);
+            setProductSettings((prev) => ({
+              ...prev,
+              discount_table_options: { ...value },
+            }));
+          }
         }}
         isSaving={isSaving}
         updateSettings={updateSettings}

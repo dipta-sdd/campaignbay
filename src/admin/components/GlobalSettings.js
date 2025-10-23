@@ -11,7 +11,7 @@ import LogViewerModal from "./LogViewerModal";
 import { useToast } from "../store/toast/use-toast";
 import apiFetch from "@wordpress/api-fetch";
 
-const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
+const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [isClearingLogs, setIsClearingLogs] = useState(false);
   const { addToast } = useToast();
@@ -56,12 +56,13 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
             "campaignbay"
           )}
           checked={globalSettings.global_enableAddon}
-          onChange={() =>
+          onChange={() => {
+            setEdited(true);
             setGlobalSettings((prev) => ({
               ...prev,
               global_enableAddon: !prev.global_enableAddon,
-            }))
-          }
+            }));
+          }}
         />
 
         <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full">
@@ -91,12 +92,13 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
               },
             ]}
             value={globalSettings.position_to_show_bulk_table}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setGlobalSettings((prev) => ({
                 ...prev,
                 position_to_show_bulk_table: value,
-              }))
-            }
+              }));
+            }}
           />
           <Select
             className="w-100"
@@ -124,12 +126,13 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
               },
             ]}
             value={globalSettings.position_to_show_discount_bar}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setGlobalSettings((prev) => ({
                 ...prev,
                 position_to_show_discount_bar: value,
-              }))
-            }
+              }));
+            }}
           />
 
           <Select
@@ -147,24 +150,26 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
               { label: __("Sale Price", "campaignbay"), value: "sale_price" },
             ]}
             value={globalSettings.global_calculate_discount_from}
-            onChange={(value) =>
+            onChange={(value) => {
+              setEdited(true);
               setGlobalSettings((prev) => ({
                 ...prev,
                 global_calculate_discount_from: value,
-              }))
-            }
+              }));
+            }}
           />
         </div>
       </SettingCard>
       <SettingCard title={__("Performence & Caching", "campaignbay")}>
         <Checkbox
           checked={globalSettings.perf_enableCaching}
-          onChange={() =>
+          onChange={() => {
+            setEdited(true);
             setGlobalSettings((prev) => ({
               ...prev,
               perf_enableCaching: !prev.perf_enableCaching,
-            }))
-          }
+            }));
+          }}
           label={__("Enable Discount Caching", "campaignbay")}
           help={__(
             "Improve performance by caching discount rule calculations. Clear cache if rules don't seem to apply immediately",
@@ -182,12 +187,13 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings }) => {
       <SettingCard title={__("Debugging & Logging", "campaignbay")}>
         <Checkbox
           checked={globalSettings.debug_enableMode}
-          onChange={() =>
+          onChange={() => {
+            setEdited(true);
             setGlobalSettings((prev) => ({
               ...prev,
               debug_enableMode: !prev.debug_enableMode,
-            }))
-          }
+            }));
+          }}
           label={__("Enable Debug Mode", "campaignbay")}
           help={__(
             "Show detailed error messages and logging for troubleshooting.",

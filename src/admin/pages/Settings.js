@@ -15,6 +15,7 @@ const Settings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [edited, setEdited] = useState(false);
   const { addToast } = useToast();
   const [productSettings, setProductSettings] = useState({});
   const [globalSettings, setGlobalSettings] = useState({});
@@ -79,7 +80,7 @@ const Settings = () => {
       advanced_customCss: settings.advanced_customCss,
       advanced_customJs: settings.advanced_customJs,
     });
-  }, [settings]);
+  }, [settings, activeTab]);
 
   const updateSettings = async () => {
     try {
@@ -127,6 +128,7 @@ const Settings = () => {
       setSettings(response);
       setIsSaving();
       addToast(__("Settings updated successfully", "campaignbay"), "success");
+      setEdited(false);
     } catch (error) {
       console.log(error);
       setError(error);
@@ -136,6 +138,14 @@ const Settings = () => {
         "error"
       );
     }
+  };
+
+  const changeActiveTab = (tab) => {
+    if (tab === activeTab) {
+      return;
+    }
+    setActiveTab(tab);
+    setEdited(false);
   };
   if (isLoading) {
     return <Loader />;
@@ -152,7 +162,7 @@ const Settings = () => {
           </h1>
           <button
             className="wpab-cb-btn wpab-cb-btn-primary"
-            disabled={isSaving}
+            disabled={isSaving || !edited}
             onClick={updateSettings}
           >
             <Icon icon={check} fill="currentColor" />
@@ -163,7 +173,7 @@ const Settings = () => {
       {/* <div className="wpab-cb-settings-tabs-container"> */}
       <TabPanel
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={changeActiveTab}
         className="wpab-cb-settings-tabs"
         // activeClass='wpab-cb-settings-active-tab'
         tabs={[
@@ -189,6 +199,7 @@ const Settings = () => {
           <GlobalSettings
             globalSettings={globalSettings}
             setGlobalSettings={setGlobalSettings}
+            setEdited={setEdited}
           />
         )}
         {activeTab === "product" && (
@@ -197,18 +208,21 @@ const Settings = () => {
             setProductSettings={setProductSettings}
             isSaving={isSaving}
             updateSettings={updateSettings}
+            setEdited={setEdited}
           />
         )}
         {activeTab === "cart" && (
           <CartSettings
             cartSettings={cartSettings}
             setCartSettings={setCartSettings}
+            setEdited={setEdited}
           />
         )}
         {activeTab === "advanced" && (
           <AdvancedSettings
             advancedSettings={advancedSettings}
             setAdvancedSettings={setAdvancedSettings}
+            setEdited={setEdited}
           />
         )}
       </TabPanel>
@@ -216,7 +230,7 @@ const Settings = () => {
         <div className="cb-container ">
           <button
             className="wpab-cb-btn wpab-cb-btn-primary"
-            disabled={isSaving}
+            disabled={isSaving || !edited}
             onClick={updateSettings}
           >
             <Icon icon={check} fill="currentColor" />

@@ -3,7 +3,11 @@ import MultiSelect from "./Multiselect";
 import SettingCard from "./SettingCard";
 import Checkbox from "./Checkbox";
 
-const AdvancedSettings = ({ advancedSettings, setAdvancedSettings }) => {
+const AdvancedSettings = ({
+  advancedSettings,
+  setAdvancedSettings,
+  setEdited,
+}) => {
   const [selected, setSelected] = useState(["africa"]);
   const options = [
     {
@@ -28,13 +32,14 @@ const AdvancedSettings = ({ advancedSettings, setAdvancedSettings }) => {
       <SettingCard title="Advanced Settings">
         <Checkbox
           checked={advancedSettings.advanced_deleteAllOnUninstall}
-          onChange={() =>
+          onChange={() => {
+            setEdited(true);
             setAdvancedSettings((prev) => ({
               ...prev,
               advanced_deleteAllOnUninstall:
                 !prev.advanced_deleteAllOnUninstall,
-            }))
-          }
+            }));
+          }}
           label="Delete All Data on Uninstall"
           help={"Delete all data when the plugin is uninstalled"}
         />

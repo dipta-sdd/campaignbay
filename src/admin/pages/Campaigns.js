@@ -481,6 +481,7 @@ const Campaigns = () => {
                   onChange={(e) => {
                     handleBulkAction(e.target.value);
                   }}
+                  disabled={!selectedCampaigns?.length}
                 >
                   <option value="">Bulk Actions</option>
                   <option value="activate">Activate</option>
@@ -632,7 +633,7 @@ const Campaigns = () => {
                       )
                     ) : campaigns.length === 0 ? (
                       <tr>
-                        <td colSpan="10" style={{ textAlign: "center" }}>
+                        <td colSpan="11" style={{ textAlign: "center" }}>
                           No campaigns found.
                         </td>
                       </tr>
@@ -646,7 +647,7 @@ const Campaigns = () => {
                               : ""
                           }
                         >
-                          <td className="campaignbay-table-checkbox-cell campaignbay-sticky-l-td">
+                          <td className="campaignbay-table-checkbox-cell campaignbay-sticky-l-td ">
                             <CbCheckbox
                               checked={selectedCampaigns.includes(campaign.id)}
                               onChange={(isChecked) =>
@@ -671,10 +672,10 @@ const Campaigns = () => {
                               {campaign?.status?.replace("", "") || ""}
                             </span>
                           </td>
-                          <td className="campaignbay-capitalize campaignbay-text-secondary">
+                          <td className="campaignbay-capitalize campaignbay-text-secondary ">
                             {campaign.type}
                           </td>
-                          <td className="campaignbay-capitalize campaignbay-text-secondary">
+                          <td className="campaignbay-capitalize campaignbay-text-secondary ">
                             {getTargetType(campaign.target_type)}
                           </td>
                           <td>{getCampaignValue(campaign)}</td>
@@ -732,160 +733,265 @@ const Campaigns = () => {
               {/* ==================================================================== */}
 
               <div>
-                <div className="campaignbay-grid campaign-grid campaignbay-gap-3  campaignbay-bg-body campaignbay-py-3.5">
-                  {campaigns.map((campaign) => (
-                    <div
-                      key={campaign.id}
-                      className="campaignbay-bg-white campaignbay-rounded-xs campaignbay-border campaignbay-border-gray-200 campaignbay-p-3.5 campaignbay-pb-1.5 campaignbay-hover:shadow-md campaignbay-hover:border-gray-300 campaignbay-transition-all campaignbay-duration-200 campaignbay-group"
-                    >
-                      {/* Card Header */}
-                      <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-mb-2.5">
-                        <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-1 campaignbay-min-w-0">
-                          <CbCheckbox
-                            checked={selectedCampaigns.includes(campaign.id)}
-                            onChange={(isChecked) =>
-                              handleSelectCampaign(campaign.id)
-                            }
+                {isLoading ? (
+                  <div className="campaignbay-grid campaign-grid campaignbay-gap-3  campaignbay-bg-body campaignbay-py-3.5">
+                    {Array.from({ length: itemsPerPage || 10 }).map(
+                      (_, index) => (
+                        <div
+                          key={index}
+                          className="campaignbay-skeleton-animation campaignbay-bg-[#fdfdfd] campaignbay-rounded-xs campaignbay-border campaignbay-border-gray-200 campaignbay-p-3.5 campaignbay-pb-1.5 campaignbay-hover:shadow-md campaignbay-hover:border-gray-300 campaignbay-transition-all campaignbay-duration-200 campaignbay-group"
+                        >
+                          {/* Card Header */}
+                          <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-mb-2.5  campaignbay-gap-4">
+                            <Skeleton className="!campaignbay-w-[40px]" />
+                            <Skeleton />
+                            <Skeleton className="!campaignbay-w-[40px]" />
+                          </div>
+
+                          {/* Campaign Details */}
+                          <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-x-3 campaignbay-gap-y-2  campaignbay-mb-2.5">
+                            {/* Left Column */}
+                            <div className="campaignbay-space-y-2">
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                                <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-blue-100 campaignbay-text-blue-600 campaignbay-flex-shrink-0 ">
+                                  <Skeleton />
+                                </div>
+                                <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                                  <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-medium campaignbay-truncate campaignbay-capitalize">
+                                    <Skeleton />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                                <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-purple-100 campaignbay-text-purple-600 campaignbay-flex-shrink-0">
+                                  <Skeleton />
+                                </div>
+                                <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                                  <div className="campaignbay-text-xs campaignbay-text-gray-800 campaignbay-truncatecampaignbay-capitalize">
+                                    <Skeleton />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Right Column */}
+                            <div className="campaignbay-space-y-2">
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                                <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-amber-100 campaignbay-text-amber-600 campaignbay-flex-shrink-0">
+                                  <Skeleton />
+                                </div>
+                                <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                                  <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-semibold campaignbay-truncate">
+                                    <Skeleton />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                                <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-indigo-100 campaignbay-text-indigo-600 campaignbay-flex-shrink-0">
+                                  <Skeleton />
+                                </div>
+                                <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                                  <div className="campaignbay-text-xs campaignbay-text-gray-800 campaignbay-truncate">
+                                    <Skeleton />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Dates Section */}
+                          <div className="campaignbay-pt-2.5 campaignbay-border-t campaignbay-border-gray-200 campaignbay-mb-2.5">
+                            <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-x-3 campaignbay-gap-y-1">
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1">
+                                <Skeleton className="!campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-gray-500 campaignbay-flex-shrink-0" />
+                                <Skeleton />
+                              </div>
+                              <div className="campaignbay-text-xs campaignbay-text-gray-700 campaignbay-truncate">
+                                <Skeleton />
+                              </div>
+
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1">
+                                <Skeleton className="!campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-gray-500 campaignbay-flex-shrink-0" />
+                                <Skeleton />
+                              </div>
+                              <div className="campaignbay-text-xs campaignbay-text-gray-700 campaignbay-truncate">
+                                <Skeleton />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Footer */}
+                          <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-pt-1.5 campaignbay-gap-3 campaignbay-border-t campaignbay-border-gray-200">
+                            <Skeleton className="!campaignbay-w-[40px]" />
+                            <Skeleton />
+                            <Skeleton />
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                ) : campaigns.length === 0 ? (
+                  <div className="campaignbay-text-center campaignbay-text-secondary campaignbay-bg-body campaignbay-py-3.5">
+                    No campaigns found.
+                  </div>
+                ) : (
+                  <div className="campaignbay-grid campaign-grid campaignbay-gap-3  campaignbay-bg-body campaignbay-py-3.5">
+                    {campaigns.map((campaign) => (
+                      <div
+                        key={campaign.id}
+                        className="campaignbay-bg-white campaignbay-rounded-xs campaignbay-border campaignbay-border-gray-200 campaignbay-p-3.5 campaignbay-pb-1.5 campaignbay-hover:shadow-md campaignbay-hover:border-gray-300 campaignbay-transition-all campaignbay-duration-200 campaignbay-group"
+                      >
+                        {/* Card Header */}
+                        <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-mb-2.5">
+                          <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-1 campaignbay-min-w-0">
+                            <CbCheckbox
+                              checked={selectedCampaigns.includes(campaign.id)}
+                              onChange={(isChecked) =>
+                                handleSelectCampaign(campaign.id)
+                              }
+                            />
+                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                              <a
+                                className="campaignbay-capitalize campaignbay-campaign-link"
+                                href={`#/campaigns/${campaign.id}`}
+                              >
+                                {campaign.title}
+                              </a>
+                            </div>
+                          </div>
+                          <DropdownMenu
+                            controls={[
+                              {
+                                title: "Edit",
+                                icon: edit,
+                                onClick: () =>
+                                  navigate(`/campaigns/${campaign.id}`),
+                              },
+                              {
+                                title: "Duplicate",
+                                icon: copySmall,
+                                onClick: async () => {
+                                  setIsLoading(true);
+                                  duplicateCampaign(campaign.id);
+                                },
+                              },
+                              {
+                                title: "Delete",
+                                icon: trash,
+                                onClick: () => {
+                                  setSelectedCampaignId(campaign.id);
+                                  setIsDeleteModalOpen(true);
+                                },
+                              },
+                            ]}
                           />
-                          <div className="campaignbay-flex-1 campaignbay-min-w-0">
-                            <a
-                              className="campaignbay-capitalize campaignbay-campaign-link"
-                              href={`#/campaigns/${campaign.id}`}
+                        </div>
+
+                        {/* Campaign Details */}
+                        <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-x-3 campaignbay-gap-y-2  campaignbay-mb-2.5">
+                          {/* Left Column */}
+                          <div className="campaignbay-space-y-2">
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-blue-100 campaignbay-text-blue-600 campaignbay-flex-shrink-0 ">
+                                {getCampaignTypeIcon(campaign.type)}
+                              </div>
+                              <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                                <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-medium campaignbay-truncate campaignbay-capitalize">
+                                  {campaign.type}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-purple-100 campaignbay-text-purple-600 campaignbay-flex-shrink-0">
+                                <Target className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                              </div>
+                              <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                                <div className="campaignbay-text-xs campaignbay-text-gray-800 campaignbay-truncatecampaignbay-capitalize">
+                                  {getTargetType(campaign.target_type)}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right Column */}
+                          <div className="campaignbay-space-y-2">
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-amber-100 campaignbay-text-amber-600 campaignbay-flex-shrink-0">
+                                <TrendingUp className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                              </div>
+                              <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                                <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-semibold campaignbay-truncate">
+                                  {getCampaignValue(campaign)}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
+                              <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-indigo-100 campaignbay-text-indigo-600 campaignbay-flex-shrink-0">
+                                <BarChart3 className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                              </div>
+                              <div className="campaignbay-flex-1 campaignbay-min-w-0">
+                                <div className="campaignbay-text-xs campaignbay-text-gray-800 campaignbay-truncate">
+                                  Usage: {campaign.usage_count || 0}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Dates Section */}
+                        <div className="campaignbay-pt-2.5 campaignbay-border-t campaignbay-border-gray-200 campaignbay-mb-2.5">
+                          <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-x-3 campaignbay-gap-y-1">
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1">
+                              <Calendar className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-gray-500 campaignbay-flex-shrink-0" />
+                              <span className="campaignbay-text-xs campaignbay-text-gray-600">
+                                Start:
+                              </span>
+                            </div>
+                            <div className="campaignbay-text-xs campaignbay-text-gray-700 campaignbay-truncate">
+                              {formatDateTime(campaign.start_datetime_unix)}
+                            </div>
+
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1">
+                              <Calendar className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-gray-500 campaignbay-flex-shrink-0" />
+                              <span className="campaignbay-text-xs campaignbay-text-gray-600">
+                                End:
+                              </span>
+                            </div>
+                            <div className="campaignbay-text-xs campaignbay-text-gray-700 campaignbay-truncate">
+                              {formatDateTime(campaign.end_datetime_unix)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-pt-1.5 campaignbay-border-t campaignbay-border-gray-200">
+                          <div className="">
+                            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5 campaignbay-text-xs campaignbay-text-gray-500">
+                              <Clock className="campaignbay-w-3.5 campaignbay-h-3.5" />
+                              <span className="campaignbay-text-xs campaignbay-text-gray-600">
+                                {timeDiff(campaign.date_modified_unix)}
+                              </span>
+                            </div>
+                          </div>
+                          {/* Status Badge */}
+                          <div className="campaignbay-my-1.5">
+                            <span
+                              className={`campaignbay-status-pill campaignbay-status-${
+                                campaign?.status?.replace("", "") || ""
+                              }`}
                             >
-                              {campaign.title}
-                            </a>
-                          </div>
-                        </div>
-                        <DropdownMenu
-                          controls={[
-                            {
-                              title: "Edit",
-                              icon: edit,
-                              onClick: () =>
-                                navigate(`/campaigns/${campaign.id}`),
-                            },
-                            {
-                              title: "Duplicate",
-                              icon: copySmall,
-                              onClick: async () => {
-                                setIsLoading(true);
-                                duplicateCampaign(campaign.id);
-                              },
-                            },
-                            {
-                              title: "Delete",
-                              icon: trash,
-                              onClick: () => {
-                                setSelectedCampaignId(campaign.id);
-                                setIsDeleteModalOpen(true);
-                              },
-                            },
-                          ]}
-                        />
-                      </div>
-
-                      {/* Campaign Details */}
-                      <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-x-3 campaignbay-gap-y-2  campaignbay-mb-2.5">
-                        {/* Left Column */}
-                        <div className="campaignbay-space-y-2">
-                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
-                            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-blue-100 campaignbay-text-blue-600 campaignbay-flex-shrink-0 ">
-                              {getCampaignTypeIcon(campaign.type)}
-                            </div>
-                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
-                              <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-medium campaignbay-truncate campaignbay-capitalize">
-                                {campaign.type}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
-                            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-purple-100 campaignbay-text-purple-600 campaignbay-flex-shrink-0">
-                              <Target className="campaignbay-w-3.5 campaignbay-h-3.5" />
-                            </div>
-                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
-                              <div className="campaignbay-text-xs campaignbay-text-gray-800 campaignbay-truncatecampaignbay-capitalize">
-                                {getTargetType(campaign.target_type)}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Right Column */}
-                        <div className="campaignbay-space-y-2">
-                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
-                            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-amber-100 campaignbay-text-amber-600 campaignbay-flex-shrink-0">
-                              <TrendingUp className="campaignbay-w-3.5 campaignbay-h-3.5" />
-                            </div>
-                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
-                              <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-semibold campaignbay-truncate">
-                                {getCampaignValue(campaign)}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5">
-                            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-5 campaignbay-h-5 campaignbay-rounded campaignbay-bg-indigo-100 campaignbay-text-indigo-600 campaignbay-flex-shrink-0">
-                              <BarChart3 className="campaignbay-w-3.5 campaignbay-h-3.5" />
-                            </div>
-                            <div className="campaignbay-flex-1 campaignbay-min-w-0">
-                              <div className="campaignbay-text-xs campaignbay-text-gray-800 campaignbay-truncate">
-                                Usage: {campaign.usage_count || 0}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Dates Section */}
-                      <div className="campaignbay-pt-2.5 campaignbay-border-t campaignbay-border-gray-200 campaignbay-mb-2.5">
-                        <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-x-3 campaignbay-gap-y-1">
-                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1">
-                            <Calendar className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-gray-500 campaignbay-flex-shrink-0" />
-                            <span className="campaignbay-text-xs campaignbay-text-gray-600">
-                              Start:
-                            </span>
-                          </div>
-                          <div className="campaignbay-text-xs campaignbay-text-gray-700 campaignbay-truncate">
-                            {formatDateTime(campaign.start_datetime_unix)}
-                          </div>
-
-                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1">
-                            <Calendar className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-gray-500 campaignbay-flex-shrink-0" />
-                            <span className="campaignbay-text-xs campaignbay-text-gray-600">
-                              End:
-                            </span>
-                          </div>
-                          <div className="campaignbay-text-xs campaignbay-text-gray-700 campaignbay-truncate">
-                            {formatDateTime(campaign.end_datetime_unix)}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Footer */}
-                      <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-pt-1.5 campaignbay-border-t campaignbay-border-gray-200">
-                        <div className="">
-                          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-1.5 campaignbay-text-xs campaignbay-text-gray-500">
-                            <Clock className="campaignbay-w-3.5 campaignbay-h-3.5" />
-                            <span className="campaignbay-text-xs campaignbay-text-gray-600">
-                              {timeDiff(campaign.date_modified_unix)}
+                              {campaign?.status?.replace("", "") || ""}
                             </span>
                           </div>
                         </div>
-                        {/* Status Badge */}
-                        <div className="campaignbay-my-1.5">
-                          <span
-                            className={`campaignbay-status-pill campaignbay-status-${
-                              campaign?.status?.replace("", "") || ""
-                            }`}
-                          >
-                            {campaign?.status?.replace("", "") || ""}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -955,7 +1061,10 @@ const Campaigns = () => {
       <ConfirmDialog
         isOpen={isDeleteModalOpen}
         onConfirm={handleCampaignDelete}
-        onCancel={() => setIsDeleteModalOpen(false)}
+        onCancel={() => {
+          setIsDeleteModalOpen(false);
+          setBulkAction("");
+        }}
       >
         {__("Are you sure you want to delete this campaign?", "campaignbay")}
       </ConfirmDialog>
@@ -963,7 +1072,10 @@ const Campaigns = () => {
       <ConfirmDialog
         isOpen={isBulkActionModalOpen}
         onConfirm={handleBulkActionModal}
-        onCancel={() => setIsBulkActionModalOpen(false)}
+        onCancel={() => {
+          setIsBulkActionModalOpen(false);
+          setBulkAction("");
+        }}
       >
         {selectedCampaigns?.length > 0
           ? confirmationMessage
@@ -977,114 +1089,3 @@ const Campaigns = () => {
 };
 
 export default Campaigns;
-
-const campaignsData = [
-  {
-    id: 1,
-    name: "Happy Hour Sale Sssssssssssssss",
-    status: "Inactive",
-    campaignType: "Scheduled",
-    target: "All Products",
-    value: "50.00 %",
-    startDate: "September 16, 2025 3:26 pm",
-    endDate: "—",
-    usage: 0,
-    lastModified: "4 days ago",
-  },
-  {
-    id: 2,
-    name: "Earlybird",
-    status: "Active",
-    campaignType: "Earlybird",
-    target: "All Products",
-    value: "16 %",
-    startDate: "—",
-    endDate: "—",
-    usage: 5,
-    lastModified: "4 days ago",
-  },
-  {
-    id: 3,
-    name: "Bogo (Copy)",
-    status: "Active",
-    campaignType: "Bogo",
-    target: "All Products",
-    value: "undefined ℬ",
-    startDate: "—",
-    endDate: "—",
-    usage: 0,
-    lastModified: "4 days ago",
-  },
-  {
-    id: 4,
-    name: "Bogo (Copy) (Copy)",
-    status: "Active",
-    campaignType: "Bogo",
-    target: "All Products",
-    value: "undefined ℬ",
-    startDate: "—",
-    endDate: "—",
-    usage: 0,
-    lastModified: "4 days ago",
-  },
-  {
-    id: 5,
-    name: "Minimal Test Campaign",
-    status: "Active",
-    campaignType: "Scheduled",
-    target: "All Products",
-    value: "10.00 %",
-    startDate: "—",
-    endDate: "—",
-    usage: 0,
-    lastModified: "2 days ago",
-  },
-  {
-    id: 6,
-    name: "Bogo",
-    status: "Active",
-    campaignType: "Bogo",
-    target: "All Products",
-    value: "undefined ℬ",
-    startDate: "—",
-    endDate: "—",
-    usage: 5,
-    lastModified: "19 hours ago",
-  },
-  {
-    id: 7,
-    name: "Happy Hour Sale",
-    status: "Active",
-    campaignType: "Quantity",
-    target: "All Products",
-    value: "10 %",
-    startDate: "—",
-    endDate: "—",
-    usage: 5,
-    lastModified: "17 hours ago",
-  },
-  {
-    id: 8,
-    name: "Happy Hour Sale (Copy)",
-    status: "Active",
-    campaignType: "Quantity",
-    target: "All Products",
-    value: "9 %",
-    startDate: "—",
-    endDate: "—",
-    usage: 4,
-    lastModified: "14 hours ago",
-  },
-  {
-    id: 9,
-    name: "Happy Hour Sale (Copy) (Copy)",
-    status: "Active",
-    campaignType: "Quantity",
-    target: "All Products",
-    value: "9 %",
-    startDate: "—",
-    endDate: "—",
-    usage: 0,
-    lastModified: "14 hours ago",
-  },
-];

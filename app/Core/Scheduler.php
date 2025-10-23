@@ -100,56 +100,51 @@ class Scheduler extends Base
 			$campaign = new Campaign($campaign_id);
 		}
 		$this->clear_campaign_schedules($campaign_id);
-		if (!$campaign->get_schedule_enabled()) {
-			campaignbay_log(sprintf('Campaign #%d is not enabled for scheduling. No new events will be scheduled.', $campaign_id), 'DEBUG');
-			return;
-		}
 
-		if ($campaign->get_status() !== 'scheduled' && $campaign->get_status() !== 'active') {
-			campaignbay_log(sprintf('Campaign #%d is not active or scheduled, current status: %s', $campaign_id, $campaign->get_status()), 'DEBUG');
-			return;
-		}
 		$start_timestamp = $campaign->get_start_timestamp();
 		$end_timestamp = $campaign->get_end_timestamp();
 
-		if (!$start_timestamp) {
-			campaignbay_log(sprintf('Campaign #%d is missing start timestamps. Cannot schedule.', $campaign_id), 'WARNING');
-		} else {
-			wp_schedule_single_event(
-				$start_timestamp,
-				self::ACTIVATION_HOOK,
-				array('campaign_id' => $campaign_id)
-			);
-			campaignbay_log(
-				sprintf(
-					'Scheduled campaign #%d: activation at %s.',
-					$campaign_id,
-					wp_date('Y-m-d H:i:s T', $start_timestamp)
-				),
-				'INFO'
-			);
+		if ($campaign->get_status() === 'scheduled' || $campaign->get_schedule_enabled()) {
+			if (!$start_timestamp) {
+				campaignbay_log(sprintf('Campaign #%d is missing start timestamps. Cannot schedule.', $campaign_id), 'WARNING');
+			} else {
+				wp_schedule_single_event(
+					$start_timestamp,
+					self::ACTIVATION_HOOK,
+					array('campaign_id' => $campaign_id)
+				);
+				campaignbay_log(
+					sprintf(
+						'Scheduled campaign #%d: activation at %s.',
+						$campaign_id,
+						wp_date('Y-m-d H:i:s T', $start_timestamp)
+					),
+					'INFO'
+				);
+			}
+
+			if (!$end_timestamp) {
+				campaignbay_log(sprintf('Campaign #%d is missing end timestamps. Cannot schedule deactivation.', $campaign_id), 'WARNING');
+				return;
+			} else {
+				// Schedule the deactivation event.
+				wp_schedule_single_event(
+					$end_timestamp,
+					self::DEACTIVATION_HOOK,
+					array('campaign_id' => $campaign_id)
+				);
+				campaignbay_log(
+					sprintf(
+						'Scheduled campaign #%d: deactivation at %s.',
+						$campaign_id,
+						wp_date('Y-m-d H:i:s T', $end_timestamp)
+					),
+					'INFO'
+				);
+			}
 		}
 
 
-		if (!$end_timestamp) {
-			campaignbay_log(sprintf('Campaign #%d is missing end timestamps. Cannot schedule deactivation.', $campaign_id), 'WARNING');
-			return;
-		} else {
-			// Schedule the deactivation event.
-			wp_schedule_single_event(
-				$end_timestamp,
-				self::DEACTIVATION_HOOK,
-				array('campaign_id' => $campaign_id)
-			);
-			campaignbay_log(
-				sprintf(
-					'Scheduled campaign #%d: deactivation at %s.',
-					$campaign_id,
-					wp_date('Y-m-d H:i:s T', $end_timestamp)
-				),
-				'INFO'
-			);
-		}
 	}
 
 	/**
@@ -171,7 +166,7 @@ class Scheduler extends Base
 		// Get all campaigns that are currently in a state that could potentially change
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id FROM {$table_name} WHERE status IN (%s, %s) AND schedule_enabled = 1",
+				"SELECT id FROM {$table_name} WHERE status IN (%s, %s) OR schedule_enabled = 1",
 				'scheduled',
 				'active'
 			)
@@ -193,7 +188,7 @@ class Scheduler extends Base
 			$start_timestamp = $campaign->get_start_timestamp();
 			$end_timestamp = $campaign->get_end_timestamp();
 
-			if ('scheduled' === $campaign->get_status() && $start_timestamp && $start_timestamp <= $current_timestamp) {
+			if (($campaign->get_status() === 'scheduled' || $campaign->get_schedule_enabled()) && $start_timestamp && $start_timestamp <= $current_timestamp) {
 				//phpcs:ignore
 				campaignbay_log(sprintf('Failsafe: Activating campaign #%d (%s) as its start time (%s) has passed. Current time: %s.', $campaign_id, $campaign->get_title(), date('Y-m-d H:i:s', $start_timestamp), date('Y-m-d H:i:s', $current_timestamp)), 'INFO');
 				$this->run_campaign_activation($campaign->get_id());
@@ -202,7 +197,7 @@ class Scheduler extends Base
 
 			// --- Check for Deactivation ---
 			// If the campaign is active and its end time has passed, expire it.
-			if ('active' === $campaign->get_status() && $end_timestamp && $end_timestamp <= $current_timestamp) {
+			if (('active' === $campaign->get_status() || 'scheduled' === $campaign->get_status()) && $end_timestamp && $end_timestamp <= $current_timestamp) {
 				//phpcs:ignore
 				campaignbay_log(sprintf('Failsafe: Expiring campaign #%d (%s) as its end time (%s) has passed. Current time: %s.', $campaign_id, $campaign->get_title(), date('Y-m-d H:i:s', $end_timestamp), date('Y-m-d H:i:s', $current_timestamp)), 'INFO');
 				$this->run_campaign_deactivation($campaign->get_id());

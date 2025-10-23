@@ -74,6 +74,10 @@ export default function CampaignSettings({
                 type="text"
                 id="message-format"
                 aria-label={__("Discount Message Format", "campaignbay")}
+                placeholder={__(
+                  "Leave it blank for default message.",
+                  "campaignbay"
+                )}
                 className={`wpab-input w-100  ${
                   errors?.message_format ? "wpab-input-error" : ""
                 }`}
@@ -84,6 +88,7 @@ export default function CampaignSettings({
                     message_format: e.target.value,
                   }))
                 }
+                disabled={settings?.display_as_regular_price}
               />
               <span className="wpab-input-help">
                 {__(
@@ -141,15 +146,14 @@ export default function CampaignSettings({
             <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px]">
               <div className="cb-form-input-con !campaignbay-p-0">
                 <label htmlFor="apply_as">
-                  {__("APPLY DISCOUNT AS", "campaignbay")} <Required />
+                  {__("Apply Discount As", "campaignbay")} <Required />
                 </label>
                 <select
-                  type="text"
                   id="apply_as"
                   className={`wpab-input w-100 ${
                     errors?.apply_as ? "wpab-input-error" : ""
                   }`}
-                  value={settings?.apply_as || "coupon"}
+                  value={settings?.apply_as || "line_total"}
                   onChange={(e) =>
                     setSettings({
                       ...settings,
@@ -176,6 +180,10 @@ export default function CampaignSettings({
                 <input
                   type="text"
                   id="message-format"
+                  placeholder={__(
+                    "Leave it blank for default message.",
+                    "campaignbay"
+                  )}
                   aria-label={__(
                     "Cart Page Next Discount Message Format",
                     "campaignbay"
@@ -253,12 +261,11 @@ export default function CampaignSettings({
 
             <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px]">
               {/* apply as  */}
-              <div className="cb-form-input-con !campaignbay-p-0">
+              {/* <div className="cb-form-input-con !campaignbay-p-0">
                 <label htmlFor="apply_as">
                   {__("APPLY DISCOUNT AS", "campaignbay")} <Required />
                 </label>
                 <select
-                  type="text"
                   id="apply_as"
                   className={`wpab-input w-100 ${
                     errors?.apply_as ? "wpab-input-error" : ""
@@ -278,7 +285,7 @@ export default function CampaignSettings({
                   <option value="fee">{__("Fee", "campaignbay")}</option>
                 </select>
                 {renderError(errors?.apply_as)}
-              </div>
+              </div> */}
 
               {/* prduct page message format */}
               <div className="cb-form-input-con !campaignbay-p-0">
@@ -290,6 +297,10 @@ export default function CampaignSettings({
                 </label>
                 <input
                   type="text"
+                  placeholder={__(
+                    "Leave it blank for default message.",
+                    "campaignbay"
+                  )}
                   id="message-format"
                   aria-label={__(
                     "Product Page Discount Message Format",
@@ -326,6 +337,10 @@ export default function CampaignSettings({
                 <input
                   type="text"
                   id="message-format"
+                  placeholder={__(
+                    "Leave it blank for default message.",
+                    "campaignbay"
+                  )}
                   aria-label={__(
                     "Cart Page Discount Message Format",
                     "campaignbay"
@@ -356,7 +371,6 @@ export default function CampaignSettings({
                   {__("Cart Page Message Location", "campaignbay")} <Required />
                 </label>
                 <select
-                  type="text"
                   id="cart-message-location"
                   className={`wpab-input w-100  ${
                     errors?.bogo_cart_message_location ? "wpab-input-error" : ""

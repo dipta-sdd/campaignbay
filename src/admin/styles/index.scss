@@ -83,7 +83,7 @@
   $cb-fs-md: 12px;
   $cb-lh-md: 16px;
 
-  $cb-fs-sm: 11px;
+  $cb-fs-sm: 12px;
   $cb-lh-sm: 16px;
 
   $cb-fw-normal: 500;
@@ -305,7 +305,6 @@
   }
 
   & .cb-container {
-    max-width: #{$cb-max-width-container};
     width: 100%;
     margin: 0;
     padding: 0;
@@ -339,8 +338,8 @@
   & .wpab-cb-page-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: #{$cb-page-header-con-p} 0;
+    justify-content: stretch;
+    padding: #{$cb-page-header-con-p} var(--padding-page-x);
     background-color: #{$bg-white};
     border-bottom: #{$cb-border-width-base} solid #{$cb-border-color-base};
 
@@ -442,6 +441,7 @@
     justify-content: center;
     width: 100%;
     background: #{$bg-white};
+    padding-inline: var(--padding-page-x);
 
     & .components-tab-panel__tabs {
       width: 100%;
@@ -534,7 +534,7 @@
   }
 
   & .wpab-input-label {
-    font-size: #{$cb-fs-base};
+    font-size: #{$cb-fs-sm};
     line-height: #{$cb-lh-base};
     font-weight: #{$cb-fw-normal};
     color: #{$bg-black};
@@ -835,7 +835,7 @@
       padding: 0;
       margin: 0;
       padding-block: 2px;
-      text-transform: uppercase;
+      text-transform: capitalize;
     }
 
     & .wpab-input-help {
@@ -1761,7 +1761,17 @@
     overflow: hidden; // This is crucial for the shimmer effect
     border-radius: #{$cb-border-radius-base}; // Default border-radius
 
-    // The shimmer pseudo-element
+    
+
+    & > * {
+      opacity: 0;
+    }
+  }
+  .campaignbay-skeleton-animation,
+  .campaignbay-skeleton{
+    position: relative;
+    overflow: hidden;
+// The shimmer pseudo-element
     &::before {
       content: "";
       position: absolute;
@@ -1778,10 +1788,6 @@
       );
       transform: translateX(-100%); // Start off-screen
       animation: shimmer 1.5s infinite; // Apply the animation
-    }
-
-    & > * {
-      opacity: 0;
     }
   }
 
@@ -2069,6 +2075,8 @@
     padding: 24px;
     min-height: 420px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
 
     & h3 {
       font-size: 18px;
@@ -2175,6 +2183,7 @@
     text-align: center;
     padding-top: 16px;
     border-top: 1px solid #{$cb-border-color-base-light};
+    margin-top: auto;
 
     & .cb-view-all-link {
       color: #{$cb-color-primary};

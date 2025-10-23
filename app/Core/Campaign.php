@@ -136,8 +136,8 @@ class Campaign
 			'is_exclude' => 'nullable|boolean',
 
 			'schedule_enabled' => 'boolean',
-			'start_datetime' => 'datetime|required_if:status,scheduled',
-			'end_datetime' => (!isset($args['start_datetime']) || $args['start_datetime'] === null || empty($args['start_datetime']) || $args['start_datetime'] === '') ? 'datetime|required_if:schedule_enabled,1' : 'datetime|nullable',
+			'start_datetime' => 'datetime|required_if:schedule_enabled,1',
+			'end_datetime' => 'datetime|nullable',
 
 			'conditions' => 'nullable|array',
 			'settings' => 'nullable|array',
@@ -305,8 +305,8 @@ class Campaign
 			'is_exclude' => 'nullable|boolean',
 
 			'schedule_enabled' => 'boolean',
-			'start_datetime' => 'datetime|required_if:status,scheduled',
-			'end_datetime' => (!isset($args['start_datetime']) || $args['start_datetime'] === null || empty($args['start_datetime']) || $args['start_datetime'] === '') ? 'datetime|required_if:schedule_enabled,1' : 'datetime|nullable',
+			'start_datetime' => 'datetime|required_if:schedule_enabled,1',
+			'end_datetime' => 'datetime|nullable',
 
 			'conditions' => 'nullable',
 			'settings' => 'nullable',
@@ -986,13 +986,14 @@ class Campaign
 			)
 		);
 		// update status 
-		$result = $wpdb->query(
-			$wpdb->prepare(
-				"UPDATE {$campaigns_table} SET status = 'expired' WHERE id = %d AND usage_count >= usage_limit",
-				$this->id
-			)
-		);
-
+		if (isset($this->data['usage_count']) && $this->data['usage_count'] !== null && $this->data['usage_count'] !== 0) {
+			$result = $wpdb->query(
+				$wpdb->prepare(
+					"UPDATE {$campaigns_table} SET status = 'expired' WHERE id = %d AND usage_count >= usage_limit",
+					$this->id
+				)
+			);
+		}
 
 
 		if (is_wp_error($result) || false === $result) {
