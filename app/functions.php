@@ -294,7 +294,8 @@ if (!function_exists('campaignbay_log')) {
 	function campaignbay_log($message, $level = 'INFO', $dev_mode = true)
 	{
 		$enable_logging = campaignbay_get_options('debug_enableMode');
-		if (!$enable_logging || !defined('WP_DEBUG') || !WP_DEBUG) {
+		// if (!$enable_logging && !defined('WP_DEBUG') && !WP_DEBUG && $level !== 'error') {
+		if (!$enable_logging && $level !== 'error') {
 			return;
 		}
 		$upload_dir = wp_upload_dir();

@@ -106,7 +106,7 @@ class Scheduler extends Base
 
 		if ($campaign->get_status() === 'scheduled' || $campaign->get_schedule_enabled()) {
 			if (!$start_timestamp) {
-				campaignbay_log(sprintf('Campaign #%d is missing start timestamps. Cannot schedule.', $campaign_id), 'WARNING');
+				campaignbay_log(sprintf('Campaign #%d is missing start timestamps. Cannot schedule. %d', $campaign_id, $start_timestamp), 'WARNING');
 			} else {
 				wp_schedule_single_event(
 					$start_timestamp,
@@ -160,19 +160,9 @@ class Scheduler extends Base
 	 */
 	public function run_scheduled_campaigns_cron()
 	{
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+		$campaigns = CampaignManager::get_instance()->get_scheduled_campaigns();
 
-		// Get all campaigns that are currently in a state that could potentially change
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT id FROM {$table_name} WHERE status IN (%s, %s) OR schedule_enabled = 1",
-				'scheduled',
-				'active'
-			)
-		);
-
-		if (empty($results)) {
+		if (empty($campaigns)) {
 			campaignbay_log('no scheduled or active campaigns found for failsafe check.', 'DEBUG');
 			return;
 		}
@@ -181,14 +171,13 @@ class Scheduler extends Base
 		$current_timestamp = time();
 		$cache_needs_clearing = false;
 
-		foreach ($results as $row) {
-			$campaign_id = $row->id;
-			$campaign = new Campaign($campaign_id);
+		foreach ($campaigns as $campaign) {
+
 
 			$start_timestamp = $campaign->get_start_timestamp();
 			$end_timestamp = $campaign->get_end_timestamp();
 
-			if (($campaign->get_status() === 'scheduled' || $campaign->get_schedule_enabled()) && $start_timestamp && $start_timestamp <= $current_timestamp) {
+			if (($campaign->get_status() === 'scheduled' && $campaign->get_schedule_enabled()) && $start_timestamp && $start_timestamp <= $current_timestamp) {
 				//phpcs:ignore
 				campaignbay_log(sprintf('Failsafe: Activating campaign #%d (%s) as its start time (%s) has passed. Current time: %s.', $campaign_id, $campaign->get_title(), date('Y-m-d H:i:s', $start_timestamp), date('Y-m-d H:i:s', $current_timestamp)), 'INFO');
 				$this->run_campaign_activation($campaign->get_id());
@@ -197,7 +186,7 @@ class Scheduler extends Base
 
 			// --- Check for Deactivation ---
 			// If the campaign is active and its end time has passed, expire it.
-			if (('active' === $campaign->get_status() || 'scheduled' === $campaign->get_status()) && $end_timestamp && $end_timestamp <= $current_timestamp) {
+			if (('active' === $campaign->get_status() || 'scheduled' === $campaign->get_status()) && $campaign->get_schedule_enabled() && $end_timestamp && $end_timestamp <= $current_timestamp) {
 				//phpcs:ignore
 				campaignbay_log(sprintf('Failsafe: Expiring campaign #%d (%s) as its end time (%s) has passed. Current time: %s.', $campaign_id, $campaign->get_title(), date('Y-m-d H:i:s', $end_timestamp), date('Y-m-d H:i:s', $current_timestamp)), 'INFO');
 				$this->run_campaign_deactivation($campaign->get_id());

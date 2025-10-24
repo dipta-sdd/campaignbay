@@ -135,8 +135,8 @@ class Campaign
 			'exclude_sale_items' => 'required|boolean',
 			'is_exclude' => 'nullable|boolean',
 
-			'schedule_enabled' => 'boolean',
-			'start_datetime' => 'datetime|required_if:schedule_enabled,1',
+			'schedule_enabled' => 'boolean||required_if:status,scheduled',
+			'start_datetime' => 'datetime|required_if:status,scheduled',
 			'end_datetime' => 'datetime|nullable',
 
 			'conditions' => 'nullable|array',
@@ -304,8 +304,8 @@ class Campaign
 			'exclude_sale_items' => 'required|boolean',
 			'is_exclude' => 'nullable|boolean',
 
-			'schedule_enabled' => 'boolean',
-			'start_datetime' => 'datetime|required_if:schedule_enabled,1',
+			'schedule_enabled' => 'boolean||required_if:status,scheduled',
+			'start_datetime' => 'datetime|required_if:status,scheduled',
 			'end_datetime' => 'datetime|nullable',
 
 			'conditions' => 'nullable',
@@ -850,6 +850,8 @@ class Campaign
 	 */
 	public function get_start_datetime_utc()
 	{
+		$start_datetime_site = $this->data->start_datetime;
+
 		if (empty($start_datetime_site)) {
 			return null;
 		}

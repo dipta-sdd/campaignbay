@@ -112,10 +112,6 @@ class Admin
 			'menu_title' => 'Settings',
 			'menu_slug' => '#/settings',
 		);
-		$submenu_pages[] = array(
-			'menu_title' => 'Help',
-			'menu_slug' => '#/help',
-		);
 		foreach ($submenu_pages as $submenu_page) {
 			add_submenu_page(
 				$this->menu_info['menu_slug'],
@@ -511,7 +507,6 @@ class Admin
 		$row_meta = array(
 			'docs' => '<a href="' . esc_url($docs_url) . '" target="_blank">' . esc_html__('Docs', 'campaignbay') . '</a>',
 			'support' => '<a href="' . esc_url($support_url) . '" target="_blank">' . esc_html__('Support', 'campaignbay') . '</a>',
-			// 'reviews' => '<a href="https://wordpress.org/support/plugin/campaignbay/reviews/" target="_blank">' . esc_html__( 'Reviews', 'campaignbay' ) . '</a>', 
 		);
 
 		return array_merge($links, $row_meta);

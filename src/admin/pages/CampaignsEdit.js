@@ -85,12 +85,7 @@ const CampaignsEdit = () => {
   const [isTmpScheduledEnabled, setIsTmpScheduledEnabled] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      fetchCategories(),
-      fetchProducts(),
-      fetchTags(),
-      fetchCampaign(),
-    ]);
+    Promise.all([fetchProducts(), fetchCampaign()]);
   }, [id]);
 
   useEffect(() => {
@@ -197,32 +192,20 @@ const CampaignsEdit = () => {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const response = await apiFetch({
-        path: "/wc/v3/products/categories?per_page=-1&_timestamp=" + Date.now(),
-      });
-      setCategories(
-        response.map((item) => ({
-          label: item.name,
-          value: item.id,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      addToast(
-        __("Something went wrong, Please reload the page.", "campaignbay"),
-        "error"
-      );
-    }
-  };
   const fetchProducts = async () => {
     try {
       const response = await apiFetch({
-        path: "/wc/v3/products?per_page=-1&_timestamp=" + Date.now(),
+        path: "/campaignbay/v1/campaigns/dependents?_timestamp=" + Date.now(),
+        method: "GET",
       });
       setProducts(
-        response.map((item) => ({
+        response?.products?.map((item) => ({
+          label: item.name,
+          value: item.id,
+        }))
+      );
+      setCategories(
+        response?.categories?.map((item) => ({
           label: item.name,
           value: item.id,
         }))
@@ -235,25 +218,7 @@ const CampaignsEdit = () => {
       );
     }
   };
-  const fetchTags = async () => {
-    try {
-      const response = await apiFetch({
-        path: "/wc/v3/products/tags?per_page=-1&_timestamp=" + Date.now(),
-      });
-      setTags(
-        response.map((item) => ({
-          label: item.name,
-          value: item.id,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching Products:", error);
-      addToast(
-        __("Something went wrong, Please reload the page.", "campaignbay"),
-        "error"
-      );
-    }
-  };
+
   const fetchCampaign = async () => {
     try {
       const response = await apiFetch({
@@ -352,7 +317,6 @@ const CampaignsEdit = () => {
     }
     return tmpSettings;
   };
-  console.log(scheduleEnabled);
   return (
     <>
       {isLoading ? (
@@ -485,6 +449,9 @@ const CampaignsEdit = () => {
                     </option>
                     <option value="scheduled">
                       {__("Scheduled", "campaignbay")}
+                    </option>
+                    <option value="expired" disabled>
+                      {__("Expired", "campaignbay")}
                     </option>
                   </select>
                   {renderError(errors?.status)}

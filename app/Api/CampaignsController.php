@@ -216,6 +216,86 @@ class CampaignsController extends ApiController
 				),
 			)
 		);
+
+		register_rest_route(
+			$namespace,
+			'/' . $this->rest_base . '/dependents',
+			array(
+				array(
+					'methods' => WP_REST_Server::READABLE,
+					'callback' => array($this, 'get_dependents'),
+					'permission_callback' => array($this, 'get_item_permissions_check'),
+					'args' => array(),
+				),
+			)
+		);
+
+
+	}
+
+
+	/**
+	 * Retrieves dependent data like all products and product categories.
+	 *
+	 * This endpoint is designed to populate the "Select Products" and "Select Categories"
+	 * searchable dropdowns in the campaign editor. It returns a lightweight list of
+	 * items containing only their ID and name.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_dependents($request)
+	{
+		// --- 1. Fetch All Published Products ---
+		$product_posts = get_posts(
+			array(
+				'post_type' => 'product',
+				'post_status' => 'publish',
+				'numberposts' => -1,          // Get all products
+				'orderby' => 'title',
+				'order' => 'ASC',
+			)
+		);
+
+		$products = array();
+		foreach ($product_posts as $post) {
+			// We only need the ID and title for the selector component.
+			$products[] = array(
+				'id' => $post->ID,
+				'name' => $post->post_title,
+			);
+		}
+
+		// --- 2. Fetch All Product Categories ---
+		$category_terms = get_terms(
+			array(
+				'taxonomy' => 'product_cat',
+				'hide_empty' => false, // Include categories that don't have products yet
+				'orderby' => 'name',
+				'order' => 'ASC',
+			)
+		);
+
+		$categories = array();
+		// get_terms can return a WP_Error, so we must check for it.
+		if (!is_wp_error($category_terms)) {
+			foreach ($category_terms as $term) {
+				$categories[] = array(
+					'id' => $term->term_id,
+					'name' => $term->name,
+				);
+			}
+		}
+
+		// --- 3. Return the Combined Data in a REST Response ---
+		$response_data = array(
+			'products' => $products,
+			'categories' => $categories,
+		);
+
+		return new WP_REST_Response($response_data, 200);
 	}
 
 
@@ -688,6 +768,8 @@ class CampaignsController extends ApiController
 			),
 		);
 	}
+
+
 
 	/**
 	 * Prepare a single campaign output for response.

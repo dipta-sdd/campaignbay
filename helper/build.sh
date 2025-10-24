@@ -32,6 +32,14 @@ if [ $? -ne 0 ]; then
     echo -e "\n${RED}❌ NPM build failed. Please check the errors above. Aborting.${NC}"
     exit 1
 fi
+# 2. Run the NPM build command from the project root.
+npm run build:legacy
+
+# Check if the build command was successful
+if [ $? -ne 0 ]; then
+    echo -e "\n${RED}❌ NPM build failed. Please check the errors above. Aborting.${NC}"
+    exit 1
+fi
 
 echo -e "${GREEN}✅ Build complete.${NC}"
 
@@ -43,8 +51,8 @@ echo -e "\n${YELLOW}🔍 Step 2: Previewing the file structure to be zipped...${
 # 4. Define all files and folders to be excluded.
 # Paths are now relative to the project root.
 EXCLUDE_PATTERNS=(
-    "*.zip"
     "helper"
+    "*.zip"
     ".git"
     ".gitignore"
     "node_modules"
@@ -60,6 +68,7 @@ EXCLUDE_PATTERNS=(
     "postcss.config.js"
     "tailwind.config.js"
     ".DS_Store"
+    ".babelrc"
     "all_php_code.txt"
     "collector.js"
     "Documentation"
