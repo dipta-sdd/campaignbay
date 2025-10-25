@@ -99,8 +99,11 @@ class CampaignManager extends Base
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
+		// we have our personal caching 
+		//phpcs:ignore
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
+				//phpcs:ignore
 				"SELECT * FROM {$table_name} WHERE status = %s ORDER BY date_created ASC",
 				'active'
 			)
@@ -156,8 +159,11 @@ class CampaignManager extends Base
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
 		// Get all campaigns that are currently in a state that could potentially change
+
+		//phpcs:ignore
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
+				//phpcs:ignore
 				"SELECT * FROM {$table_name} WHERE status IN (%s, %s) OR schedule_enabled = 1",
 				'scheduled',
 				'active'

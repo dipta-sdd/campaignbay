@@ -131,7 +131,6 @@ class PricingEngine extends Base
 		$cart = WC()->cart;
 
 
-		campaignbay_log('___________________________________________');
 
 
 		if (!$cart)
@@ -142,8 +141,6 @@ class PricingEngine extends Base
 
 
 		$applied_coupons = $cart->get_coupon_discount_totals();
-		$applied_coupons_taxes = $cart->get_coupon_discount_tax_totals();
-		campaignbay_log('coupon taxes' . print_r($applied_coupons_taxes, true));
 		$our_coupons = $this->coupons;
 		if (is_array($applied_coupons) && !empty($applied_coupons) && !empty($our_coupons)) {
 			foreach ($applied_coupons as $key => $value) {
@@ -162,24 +159,11 @@ class PricingEngine extends Base
 			}
 		}
 
-		// campaignbay_log(message: print_r($discount_breakdown, true));
-
-
-
-
-
 		// Save the entire breakdown array to a single meta key on the order.
 		$order->update_meta_data('_campaignbay_discount_breakdown', $discount_breakdown);
 		campaignbay_log(sprintf('Saved discount breakdown to order #%d .', $order->get_id()), 'INFO');
 	}
 
-	public function woocommerce_cart_updated()
-	{
-		// campaignbay_log('woo_cart_updated');
-		$wc_session = WC()->session->get('cart', null);
-		// campaignbay_log(print_r($wc_session, true));
-
-	}
 	public function get_price_html($price_html, $product)
 	{
 		if (Woocommerce::product_type_is($product, 'variable')) {
@@ -195,9 +179,6 @@ class PricingEngine extends Base
 				$product->get_price(),
 				false
 			);
-
-		campaignbay_log(print_r($product->get_name(), true));
-		campaignbay_log(print_r($meta, true));
 		$price_html = Woocommerce::get_price_html(
 			$price_html,
 			$product,
@@ -260,8 +241,6 @@ class PricingEngine extends Base
 			if ($quantity['settings']['apply_as'] === 'line_total') {
 				$price = $quantity['price'];
 			}
-			// campaignbay_log('setting quantity price');
-			// campaignbay_log(print_r($price, true));
 		} elseif (isset($meta['simple'])) {
 			$price = $meta['simple']['price'];
 			$as_reg_price = $meta['simple']['display_as_regular_price'];
@@ -319,8 +298,6 @@ class PricingEngine extends Base
 			return $price_html;
 		}
 
-
-		// print_r($meta);
 		$price_html = Woocommerce::get_price_html(
 			$price_html,
 			$cart_item['data'],
@@ -417,6 +394,9 @@ class PricingEngine extends Base
 		$tiers = Helper::get_unique_quantity_tiers($tiers, $price);
 		if (empty($tiers))
 			return;
+
+		//  alrady escaped  and cleared
+		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo Helper::generate_quantity_table($tiers);
 
 		return;
@@ -447,14 +427,11 @@ class PricingEngine extends Base
 		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
 			foreach ($cart->cart_contents as $key => $cart_item) {
 				$quantity = $cart_item['quantity'];
-				// campaignbay_log($cart_item);
+
 				$meta = isset($cart_item['campaignbay']) ? $cart_item['campaignbay'] : null;
 				if ($meta === null || !isset($meta['is_bogo']) || !isset($meta['bogo']['free_quantity']))
 					continue;
-				// campaignbay_log(print_r('woo_calculated_totals ' . $cart->cart_contents[$key]['quantity'], true));
-				// print_r($meta);
 				if (isset($meta['bogo']['free_quantity'])) {
-					// $cart->cart_contents[$key]['quantity'] = $cart_item['quantity'] + $meta['bogo']['free_quantity'];
 
 					$free_quantity = $meta['bogo']['free_quantity'];
 					$cart->set_quantity($key, $quantity + $free_quantity, false);
@@ -470,13 +447,10 @@ class PricingEngine extends Base
 						);
 					$cart->campaignbay_discount_breakdown[$campaign_id]['old_price'] = $cart->campaignbay_discount_breakdown[$campaign_id]['old_price'] + (($quantity + $free_quantity) * $price);
 					$cart->campaignbay_discount_breakdown[$campaign_id]['discount'] = $cart->campaignbay_discount_breakdown[$campaign_id]['discount'] + ($free_quantity * $price);
-					// print_r('woo_calculated_totals' . $cart->cart_contents[$key]['quantity'] . '<br/>');
 				}
 
-				// campaignbay_log(print_r('woo_calculated_totals ' . $cart->cart_contents[$key]['quantity'], true));
 			}
 		}
-		// print_r('after_calculate_totals');
 		Helper::set_cart_session($cart);
 	}
 
@@ -551,11 +525,7 @@ class PricingEngine extends Base
 		if (isset($this->coupons[$coupon->get_code()])) {
 			return true;
 		}
-		campaignbay_log('validate_fake_coupon__________________');
-		campaignbay_log('cart_allowWcCouponStacking  ' . $this->settings['cart_allowWcCouponStacking']);
-		campaignbay_log('discount_applied  ' . $this->discount_applied);
 		if (!$this->settings['cart_allowWcCouponStacking'] && $this->discount_applied) {
-			campaignbay_log('returning false');
 			return false;
 		}
 		return $value;

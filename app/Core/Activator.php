@@ -59,7 +59,7 @@ class Activator
 		self::secure_log_directory();
 
 		// Add custom capabilities.
-		self::add_custom_capabilities();
+		self::add_plugin_roles_and_capabilities();
 	}
 
 	/**
@@ -111,26 +111,37 @@ class Activator
 	}
 
 	/**
-	 * Adds custom capabilities to the Administrator and Contributor roles.
+	 * Adds custom roles and capabilities required by the plugin.
+	 *
+	 * This function should be called once on plugin activation. It performs three tasks:
+	 * 1. Adds the 'manage_campaignbay' capability to the Administrator role.
+	 * 2. Adds the 'manage_campaignbay' capability to the Shop Manager role.
+	 * 3. Creates a new 'Demo User' role with the 'read' capability (to access the dashboard)
+	 *    and the 'manage_campaignbay' capability.
 	 *
 	 * @since 1.0.0
 	 * @access private
-	 * @return void
+	 * @static
 	 */
-	private static function add_custom_capabilities()
+	private static function add_plugin_roles_and_capabilities()
 	{
-		// Get the roles we want to modify.
-		$admin_role = get_role('administrator');
-		$manager_role = get_role('shop_manager');
-
+		// Define the unique capability slug for your plugin.
 		$custom_capability = 'manage_campaignbay';
 
-		if ($admin_role) {
+		$admin_role = get_role('administrator');
+		if ($admin_role && !$admin_role->has_cap($custom_capability)) {
 			$admin_role->add_cap($custom_capability);
 		}
 
-		if ($manager_role) {
+		$manager_role = get_role('shop_manager');
+		if ($manager_role && !$manager_role->has_cap($custom_capability)) {
 			$manager_role->add_cap($custom_capability);
 		}
+		// only for demo user
+		// $contributor = get_role('contributor');
+		// if ($contributor && !$contributor->has_cap($custom_capability)) {
+		// 	$contributor->add_cap($custom_capability);
+		// }
+
 	}
 }

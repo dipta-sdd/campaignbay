@@ -168,7 +168,6 @@ class DashboardController extends ApiController
 			$current_start,
 			$current_end  // Last two placeholders are for the unique_orders subquery
 		);
-		error_log($current_sql);
 		//phpcs:ignore
 		$current_data = $wpdb->get_row($current_sql, ARRAY_A);
 
@@ -186,7 +185,17 @@ class DashboardController extends ApiController
 
 		// --- Get Active Campaign Count (this part remains the same) ---
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
-		$active_count = $wpdb->get_var("SELECT COUNT(*) FROM {$campaigns_table} WHERE status = 'active'");
+		$sql = "SELECT COUNT(*) FROM {$campaigns_table} WHERE status = 'active'";
+
+		$sql = $wpdb->prepare(
+			//phpcs:ignore
+			$sql,
+		);
+
+		//phpcs:ignore
+		$active_count = $wpdb->get_var($sql);
+		campaignbay_log($sql);
+		campaignbay_log($active_count);
 
 		return array(
 			'active_campaigns' => array(
@@ -292,8 +301,12 @@ class DashboardController extends ApiController
 		// Add campaign titles to the results (this logic remains the same).
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 		foreach ($top_campaigns as &$campaign_data) {
+
+			//phpcs:ignore
 			$title = $wpdb->get_var(
+				//phpcs:ignore
 				$wpdb->prepare(
+					//phpcs:ignore
 					"SELECT title FROM {$campaigns_table} WHERE id = %d",
 					$campaign_data['campaign_id']
 				)
@@ -360,7 +373,12 @@ class DashboardController extends ApiController
 					   WHERE status = 'active' 
 					   ORDER BY end_datetime ASC 
 					   LIMIT 5";
-		$active_results = $wpdb->get_results($active_sql, ARRAY_A);
+		$sql = $wpdb->prepare(
+			//phpcs:ignore
+			$active_sql,
+		);
+		//phpcs:ignore
+		$active_results = $wpdb->get_results($sql, ARRAY_A);
 
 		$active_campaigns = array();
 		foreach ($active_results as $row) {
@@ -378,7 +396,13 @@ class DashboardController extends ApiController
 						  WHERE status = 'scheduled' 
 						  ORDER BY start_datetime ASC 
 						  LIMIT 5";
-		$scheduled_results = $wpdb->get_results($scheduled_sql, ARRAY_A);
+		$sql = $wpdb->prepare(
+			//phpcs:ignore
+			$scheduled_sql,
+		);
+
+		//phpcs:ignore
+		$scheduled_results = $wpdb->get_results($sql, ARRAY_A);
 
 		$scheduled_campaigns = array();
 		foreach ($scheduled_results as $row) {

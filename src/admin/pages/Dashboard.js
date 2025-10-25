@@ -189,20 +189,20 @@ const Dashboard = () => {
           pointRadius: 6,
           pointHoverRadius: 8,
         },
-        {
-          label: __("Orginal Order Value ($)", "campaignbay"),
-          data: data.map((item) => parseFloat(item.total_base)),
-          borderColor: "#ffc107",
-          backgroundColor: "rgba(255, 193, 7, 0.1)",
-          borderWidth: 2,
-          fill: false,
-          tension: 0.4,
-          pointBackgroundColor: "#ffc107",
-          pointBorderColor: "#ffffff",
-          pointBorderWidth: 2,
-          pointRadius: 6,
-          pointHoverRadius: 8,
-        },
+        // {
+        //   label: __("Orginal Order Value ($)", "campaignbay"),
+        //   data: data.map((item) => parseFloat(item.total_base)),
+        //   borderColor: "#ffc107",
+        //   backgroundColor: "rgba(255, 193, 7, 0.1)",
+        //   borderWidth: 2,
+        //   fill: false,
+        //   tension: 0.4,
+        //   pointBackgroundColor: "#ffc107",
+        //   pointBorderColor: "#ffffff",
+        //   pointBorderWidth: 2,
+        //   pointRadius: 6,
+        //   pointHoverRadius: 8,
+        // },
         {
           label: __("Discounted Order Value ($)", "campaignbay"),
           data: data.map((item) => parseFloat(item.total_sales)),
@@ -637,7 +637,7 @@ const Dashboard = () => {
                 />
               ) : (
                 <Placeholder
-                  image={table_placeholder}
+                  image={chart_placeholder}
                   mainText={__("No Data Available", "campaignbay")}
                   seconderyText={__(
                     "Run a campaign to see performance data.",
@@ -699,15 +699,9 @@ const Dashboard = () => {
                         <td colSpan="3" className="cb-no-campaigns">
                           <Placeholder
                             image={table_placeholder}
-                            mainText={__(
-                              "No Upcoming Campaigns",
-                              "campaignbay"
-                            )}
+                            mainText={__("No Live Campaigns", "campaignbay")}
                             seconderyText={
-                              <button
-                                className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-mx-auto "
-                                onClick={() => navigate("/campaigns/add")}
-                              >
+                              <button className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 ">
                                 Add New Campaign
                               </button>
                             }
@@ -782,13 +776,13 @@ const Dashboard = () => {
                             )}
                             seconderyText={
                               <button
-                                className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-mx-auto "
+                                className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
                                 onClick={() => navigate("/campaigns/add")}
                               >
                                 Add New Campaign
                               </button>
                             }
-                            opacity={70}
+                            opacity={40}
                           />
                         </td>
                       </tr>
@@ -873,16 +867,17 @@ const Dashboard = () => {
 
 export default Dashboard;
 
-const Placeholder = ({ image, mainText, seconderyText, opacity = 30 }) => {
+const Placeholder = ({ image, mainText, seconderyText, opacity = 40 }) => {
   return (
     <div className="campaignbay-relative campaignbay-h-full campaignbay-w-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-overflow-hidden">
       <img
         src={image}
         alt="top Perfprming chart"
-        className={`campaignbay-opacity-${opacity} campaignbay-object-contain campaignbay-h-full campaignbay-w-full campaignbay-sacale-[1.4]`}
+        className={`campaignbay-object-contain campaignbay-h-full campaignbay-w-full `}
+        style={{ opacity: opacity / 100 }}
       />
-      <div className="campaignbay-absolute campaignbay-top-1/2 campaignbay-left-1/2 campaignbay--translate-x-1/2 campaignbay--translate-y-1/2 campaignbay-w-3/4 campaignbay-text-center">
-        <h2 className="campaignbay-text-gray-500 campaignbay-text-2xl campaignbay-font-bold">
+      <div className="campaignbay-absolute campaignbay-m-[4px] campaignbay-top-1/2 campaignbay-left-1/2 campaignbay--translate-x-1/2 campaignbay--translate-y-1/2 campaignbay-w-3/4 campaignbay-text-center campaignbay-bg-white !campaignbay-border-0">
+        <h2 className="campaignbay-text-gray-500 campaignbay-text-2xl campaignbay-font-bold campaignbay-text-wrap">
           {mainText}
         </h2>
 

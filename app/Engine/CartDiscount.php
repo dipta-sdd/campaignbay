@@ -65,7 +65,6 @@ class CartDiscount
 				$meta = self::get_cart_discount($cart_item);
 				$simple_applied = false;
 
-				// error_log(print_r($meta, true));
 				if ($meta === null)
 					continue;
 				$cart_quantity = $cart_item['quantity'];
@@ -82,12 +81,10 @@ class CartDiscount
 
 
 				if (isset($meta['bogo']) && isset($meta['bogo']['free_quantity'])) {
-					// campaignbay_log(print_r('before_totals ' . $cart->cart_contents[$key]['quantity'], true));
 
 					$cart_quantity -= $meta['bogo']['free_quantity'];
 					$cart_quantity = max($cart_quantity, 0);
 					$cart->set_quantity($key, $cart_quantity, false);
-					// campaignbay_log(print_r('before_totals ' . $cart->cart_contents[$key]['quantity'], true));
 
 				}
 
@@ -180,7 +177,6 @@ class CartDiscount
 
 		$cart->campaignbay_discount_breakdown = $discount_breakdown ?? array();
 
-		// error_log('______++++++======' . print_r($cart->campaignbay, true));
 		foreach ($cart->campaignbay['coupon'] as $key => $coupon) {
 			self::apply_fake_coupons($key, $cart);
 		}
@@ -286,7 +282,6 @@ class CartDiscount
 				'product_ids' => $data['product_id'],
 			);
 		}
-		// error_log('add_data' . print_r($cart->campaignbay['coupon'][$code], true));
 	}
 
 	public static function apply_fake_coupons($coupon_code, $cart)
@@ -312,8 +307,6 @@ class CartDiscount
 
 	public static function add_fee($cart, $data)
 	{
-		// error_log('before add fee   ' . print_r($cart->campaignbay['fee'], true));
-		// error_log('adding fee___' . print_r($data, true));
 		$code = 'campaignbay_' . $data['id'];
 		if (!isset($cart->campaignbay['fee'][$code]))
 			$cart->campaignbay['fee'][$code] = array(
@@ -322,7 +315,6 @@ class CartDiscount
 			);
 		$cart->campaignbay['fee'][$code]['discount'] += $data['discount'];
 
-		// error_log('add_fee   ' . print_r($cart->campaignbay['fee'], true));
 	}
 
 }

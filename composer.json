@@ -1,5 +1,5 @@
 {
-  "name": "wp-anchor-bay/campaign-bay",
+  "name": "campaignbay",
   "description": "CampaignBay for WooCommerce Product Discount WordPress Plugin.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",

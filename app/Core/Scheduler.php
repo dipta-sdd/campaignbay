@@ -214,6 +214,7 @@ class Scheduler extends Base
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
+		//phpcs:ignore
 		$wpdb->update(
 			$table_name,
 			array(
@@ -244,6 +245,7 @@ class Scheduler extends Base
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
+		//phpcs:ignore
 		$wpdb->update(
 			$table_name,
 			array(

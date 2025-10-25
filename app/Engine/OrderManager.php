@@ -67,7 +67,6 @@ class OrderManager extends Base
 
 		foreach ($discount_breakdown as $campaign_id => $data) {
 			campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG');
-			campaignbay_log('data: ' . print_r($data, true), 'DEBUG');
 			$campaign = new Campaign($campaign_id);
 			$campaign->increment_usage_count();
 			campaignbay_log('incrementing usage count' . $campaign_id);

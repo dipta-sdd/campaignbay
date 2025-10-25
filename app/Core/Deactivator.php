@@ -3,7 +3,7 @@
 namespace WpabCb\Core;
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
@@ -27,7 +27,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBayincludes
  * @author     dipta-sdd <sankarsandipta@gmail.com>
  */
-class Deactivator {
+class Deactivator
+{
 
 	/**
 	 * Fired during plugin deactivation.
@@ -38,7 +39,8 @@ class Deactivator {
 	 * @access public
 	 * @return void
 	 */
-	public static function deactivate() {
+	public static function deactivate()
+	{
 		self::remove_custom_capabilities();
 	}
 
@@ -52,18 +54,45 @@ class Deactivator {
 	 * @access private
 	 * @return void
 	 */
-	private static function remove_custom_capabilities() {
+	private static function remove_custom_capabilities()
+	{
 		// Get all editable roles.
 		$roles = get_editable_roles();
-		
+
 		$custom_capability = 'manage_campaignbay';
 
 		// Loop through all roles and remove our capability if it exists.
-		foreach ( $roles as $role_name => $role_info ) {
-			$role = get_role( $role_name );
-			if ( $role && $role->has_cap( $custom_capability ) ) {
-				$role->remove_cap( $custom_capability );
+		foreach ($roles as $role_name => $role_info) {
+			$role = get_role($role_name);
+			if ($role && $role->has_cap($custom_capability)) {
+				$role->remove_cap($custom_capability);
 			}
 		}
 	}
-} 
+	/**
+	 * Removes custom roles and capabilities added by the plugin.
+	 *
+	 * This function should be called on plugin deactivation or uninstallation
+	 * to clean up the database.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @static
+	 */
+	private static function remove_plugin_roles_and_capabilities()
+	{
+		$custom_capability = 'manage_campaignbay';
+
+		$admin_role = get_role('administrator');
+		if ($admin_role && $admin_role->has_cap($custom_capability)) {
+			$admin_role->remove_cap($custom_capability);
+		}
+
+		$manager_role = get_role('shop_manager');
+		if ($manager_role && $manager_role->has_cap($custom_capability)) {
+			$manager_role->remove_cap($custom_capability);
+		}
+
+
+	}
+}

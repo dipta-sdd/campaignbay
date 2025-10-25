@@ -362,8 +362,10 @@ class CampaignsController extends ApiController
 		// Get total count for headers
 		$count_sql = "SELECT COUNT(*) FROM {$table_name} {$where_sql}";
 		if (!empty($query_params)) {
+			//phpcs:ignore
 			$total_items = $wpdb->get_var($wpdb->prepare($count_sql, $query_params));
 		} else {
+			//phpcs:ignore
 			$total_items = $wpdb->get_var($count_sql);
 		}
 
@@ -372,6 +374,7 @@ class CampaignsController extends ApiController
 		$query_params[] = $per_page;
 		$query_params[] = $offset;
 
+		//phpcs:ignore
 		$results = $wpdb->get_results($wpdb->prepare($sql, $query_params));
 
 		$response_data = array();
@@ -531,7 +534,7 @@ class CampaignsController extends ApiController
 				$result = $campaign->update(array('status' => $status), true);
 
 				if ($result === true && !is_wp_error($result)) {
-					error_log('title : ' . $campaign->get_title() . ' ' . $status);
+					campaignbay_log('title : ' . $campaign->get_title() . ' ' . $status, 'error');
 					$updated_count++;
 					// Log the activity.
 					Logger::get_instance()->log(
@@ -546,7 +549,8 @@ class CampaignsController extends ApiController
 					);
 				}
 				if (is_wp_error($result)) {
-					error_log(print_r($result, true));
+					//phpcs:ignore
+					campaignbay_log(print_r($result, true), 'error');
 				}
 			}
 		}
@@ -657,9 +661,10 @@ class CampaignsController extends ApiController
 	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-		$sql = "SELECT 
-		`title`, `status`, `type`, `discount_type`, `discount_value`, `tiers`, `conditions`, `settings`, `target_type`, `target_ids`, `is_exclude`,
-		 `exclude_sale_items`, `schedule_enabled`, `start_datetime`, `end_datetime`, `usage_count`, `usage_limit`, `date_created`, `date_modified` FROM {$table_name} ORDER BY date_modified DESC";
+
+
+		$sql = "SELECT `title`, `status`, `type`, `discount_type`, `discount_value`, `tiers`, `conditions`, `settings`, `target_type`, `target_ids`, `is_exclude`, `exclude_sale_items`, `schedule_enabled`, `start_datetime`, `end_datetime`, `usage_count`, `usage_limit`, `date_created`, `date_modified` FROM {$table_name} ORDER BY date_modified DESC";
+		//phpcs:ignore
 		$results = $wpdb->get_results($sql);
 		return new WP_REST_Response($results, 200);
 	}
@@ -710,8 +715,6 @@ class CampaignsController extends ApiController
 				'usage_limit' => isset($campaign_data['usage_limit']) && is_numeric($campaign_data['usage_limit']) ? absint($campaign_data['usage_limit']) : null,
 				'usage_count' => isset($campaign_data['usage_count']) ? absint($campaign_data['usage_count']) : 0, // Allow importing a previous usage count
 			);
-
-			// campaignbay_log( 'Importing campaign:'. $args['title']  . print_r($args, true ), true );
 			$result = Campaign::create($args);
 
 			if (is_wp_error($result)) {

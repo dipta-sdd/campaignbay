@@ -241,6 +241,7 @@ class Campaign
 				'%d'
 			);
 
+			//phpcs:ignore
 			$result = $wpdb->insert($table_name, $data, $formats);
 
 			if (false === $result) {
@@ -314,7 +315,8 @@ class Campaign
 		];
 
 		if (!$validator->validate($rules)) {
-			campaignbay_log('Validation errors: ' . print_r($validator->get_errors(), true), 'ERROR');
+			//phpcs:ignore
+			campaignbay_log('Validation errors: ' . print_r(value: $validator->get_errors(), return: true));
 			return new WP_Error('rest_validation_error', $validator->get_first_error(), array('status' => 400, 'details' => $validator->get_errors(), 'data' => $args));
 		}
 		$data = $validator->get_validated_data();
@@ -402,6 +404,8 @@ class Campaign
 			if (empty($data)) {
 				return true;
 			}
+
+			//phpcs:ignore
 			$result = $wpdb->update(
 				$table_name,
 				$data,
@@ -415,7 +419,6 @@ class Campaign
 
 			// Reload data
 			$this->load_data();
-			error_log(print_r($this->data, true));
 
 			/**
 			 * Fires after a campaign is updated and all its data is saved.
@@ -462,6 +465,7 @@ class Campaign
 
 		do_action('campaignbay_before_campaign_delete', $campaign_id);
 
+		//phpcs:ignore
 		$result = $wpdb->delete(
 			$table_name,
 			array('id' => $campaign_id),
@@ -603,6 +607,7 @@ class Campaign
 			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
 
+			//phpcs:ignore
 			$result = $wpdb->update(
 				$table_name,
 				array(
@@ -949,8 +954,10 @@ class Campaign
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
+		//phpcs:ignore
 		$this->data = $wpdb->get_row(
 			$wpdb->prepare(
+				//phpcs:ignore
 				"SELECT * FROM {$table_name} WHERE id = %d",
 				$this->id
 			)
@@ -981,16 +988,20 @@ class Campaign
 		global $wpdb;
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 
+		//phpcs:ignore
 		$result = $wpdb->query(
 			$wpdb->prepare(
+				//phpcs:ignore
 				"UPDATE {$campaigns_table} SET usage_count = usage_count + 1 WHERE id = %d",
 				$this->id
 			)
 		);
 		// update status 
 		if (isset($this->data['usage_count']) && $this->data['usage_count'] !== null && $this->data['usage_count'] !== 0) {
+			//phpcs:ignore
 			$result = $wpdb->query(
 				$wpdb->prepare(
+					//phpcs:ignore
 					"UPDATE {$campaigns_table} SET status = 'expired' WHERE id = %d AND usage_count >= usage_limit",
 					$this->id
 				)

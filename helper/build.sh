@@ -80,7 +80,8 @@ EXCLUDE_PATTERNS=(
     "hooks.md"
     "hooks.txt"
     "tmp.json"
-
+    "Woocommerce copy.txt"
+    "admin-legacy.js.LICENSE.txt"
 )
 
 # 5. Check if the 'tree' command is available.

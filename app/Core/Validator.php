@@ -87,7 +87,7 @@ class Validator
 			case 'required':
 				// $value === null || ( is_string( $value ) && trim( $value ) === '' ) || ( is_array( $value ) && empty( $value ) ) 
 				if ($value === null || (is_string($value) && trim($value) === '') || (is_array($value) && empty($value))) {
-					$this->add_error($field, __('This field is required.' . $value, 'campaignbay'));
+					$this->add_error($field, __('This field is required.', 'campaignbay'));
 				}
 				break;
 
@@ -167,8 +167,10 @@ class Validator
 			case 'max':
 				$max_val = (int) $param_str;
 				if (is_string($value) && mb_strlen($value) > $max_val) {
+					// translators: %d: maximum number of characters
 					$this->add_error($field, sprintf(__('This field may not be greater than %d characters.', 'campaignbay'), $max_val));
 				} elseif (is_numeric($value) && (float) $value > $max_val) {
+					// translators: %d: maximum numeric value
 					$this->add_error($field, sprintf(__('This field may not be greater than %d.', 'campaignbay'), $max_val));
 				}
 				break;
@@ -176,8 +178,10 @@ class Validator
 			case 'min':
 				$min_val = (int) $param_str;
 				if (is_string($value) && mb_strlen($value) < $min_val) {
+					// translators: %d: minimum number of characters
 					$this->add_error($field, sprintf(__('This field must be at least %d characters.', 'campaignbay'), $min_val));
 				} elseif (is_numeric($value) && (float) $value < $min_val) {
+					// translators: %d: minimum numeric value
 					$this->add_error($field, sprintf(__('This field must be at least %d.', 'campaignbay'), $min_val));
 				}
 				break;
@@ -192,10 +196,13 @@ class Validator
 					$min_val = (int) array_pop($rule_params);
 					if (is_string($value)) {
 						if (mb_strlen($value) < $min_val) {
+
+							// translators: %d: minimum number of characters
 							$this->add_error($field, sprintf(__('This field must be at least %d characters.', 'campaignbay'), $min_val));
 						}
 					} elseif (is_numeric($value)) {
 						if ((float) $value < $min_val) {
+							// translators: %d: minimum numeric value
 							$this->add_error($field, sprintf(__('This field must be at least %d', 'campaignbay'), $min_val));
 						}
 					}
@@ -211,10 +218,12 @@ class Validator
 					$max_val = (int) array_pop($rule_params);
 					if (is_numeric($value)) {
 						if ((float) $value > $max_val) {
+							// translators: %d: maximum numeric value
 							$this->add_error($field, sprintf(__('This field must be at least %d', 'campaignbay'), $max_val));
 						}
 					} elseif (is_string($value)) {
 						if (mb_strlen($value) > $max_val) {
+							// translators: %d: maximum number of characters
 							$this->add_error($field, sprintf(__('This field may not be greater than %d characters.', 'campaignbay'), $max_val));
 						}
 					}
@@ -226,6 +235,7 @@ class Validator
 				$other_value = $this->data[$other_field] ?? null;
 				if (is_numeric($value) && is_numeric($other_value)) {
 					if ((float) $value < (float) $other_value) {
+						// translators: %d: maximum numeric value
 						$this->add_error($field, sprintf(__('This field must be greater than or equal to the %s field.', 'campaignbay'), $other_field));
 					}
 				}
@@ -235,6 +245,7 @@ class Validator
 				$other_value = $this->data[$other_field] ?? null;
 				if (is_numeric($value) && is_numeric($other_value)) {
 					if ((float) $value > (float) $other_value) {
+						// translators: %d: maximum numeric value
 						$this->add_error($field, sprintf(__('This field must be less than or equal to the %s field.', 'campaignbay'), $other_field));
 					}
 				}

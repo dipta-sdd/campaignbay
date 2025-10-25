@@ -9,50 +9,88 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-27T09:17:18+00:00\n"
+"POT-Creation-Date: 2025-10-25T10:20:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: campaignbay\n"
 
 #. Plugin Name of the plugin
-#: campaign-bay.php
+#: campaignbay.php
 msgid "CampaignBay"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: campaign-bay.php
+#: campaignbay.php
 msgid "https://campaignbay.github.io"
 msgstr ""
 
 #. Description of the plugin
-#: campaign-bay.php
-msgid "CampaignBay for WooCommerce Product Discount WordPress Plugin."
+#: campaignbay.php
+msgid "Automated Discount Campaigns & Flash Sales for WooCommerce."
 msgstr ""
 
 #. Author of the plugin
-#: campaign-bay.php
+#: campaignbay.php
 msgid "WP Anchor Bay"
 msgstr ""
 
 #. Author URI of the plugin
-#: campaign-bay.php
+#: campaignbay.php
 msgid "https://wpanchorbay.com"
 msgstr ""
 
-#: app/Admin/Admin.php:94
+#: app/Admin/Admin.php:97
+#: build/admin.js:4
 msgid "Dashboard"
 msgstr ""
 
-#: app/Admin/Admin.php:500
+#: app/Admin/Admin.php:480
+#: build/admin.js:4
 msgid "Settings"
 msgstr ""
 
-#: app/Admin/Admin.php:526
+#: app/Admin/Admin.php:508
 msgid "Docs"
 msgstr ""
 
-#: app/Admin/Admin.php:527
+#: app/Admin/Admin.php:509
 msgid "Support"
+msgstr ""
+
+#: app/Api/ActivityLogController.php:94
+msgid "Unique identifier for the log entry."
+msgstr ""
+
+#: app/Api/ActivityLogController.php:308
+msgid "Log entry not found."
+msgstr ""
+
+#: app/Api/ActivityLogController.php:388
+msgid "Sort collection by object attribute."
+msgstr ""
+
+#: app/Api/ActivityLogController.php:395
+msgid "Order sort attribute ascending or descending."
+msgstr ""
+
+#: app/Api/ActivityLogController.php:402
+msgid "Filter by log type."
+msgstr ""
+
+#: app/Api/ActivityLogController.php:408
+msgid "Filter by campaign ID."
+msgstr ""
+
+#: app/Api/ActivityLogController.php:413
+msgid "Filter by order status."
+msgstr ""
+
+#: app/Api/ActivityLogController.php:419
+msgid "Filter logs from this date (Y-m-d format)."
+msgstr ""
+
+#: app/Api/ActivityLogController.php:425
+msgid "Filter logs to this date (Y-m-d format)."
 msgstr ""
 
 #: app/Api/ApiController.php:126
@@ -73,242 +111,1283 @@ msgstr ""
 msgid "Invalid or missing nonce."
 msgstr ""
 
-#: app/Api/CampaignsController.php:112
-#: app/Api/CampaignsController.php:465
+#: app/Api/CampaignsController.php:120
+#: app/Api/CampaignsController.php:832
 msgid "Unique identifier for the campaign."
 msgstr ""
 
-#: app/Api/CampaignsController.php:138
+#: app/Api/CampaignsController.php:146
 msgid "Whether to bypass trash and force deletion."
 msgstr ""
 
-#: app/Api/CampaignsController.php:240
-#: app/Api/CampaignsController.php:278
-#: app/Api/CampaignsController.php:307
+#: app/Api/CampaignsController.php:165
+msgid "Unique identifier for the campaign to duplicate."
+msgstr ""
+
+#: app/Api/CampaignsController.php:415
+#: app/Api/CampaignsController.php:461
+#: app/Api/CampaignsController.php:496
+#: app/Api/CampaignsController.php:613
 msgid "Campaign not found."
 msgstr ""
 
-#: app/Api/CampaignsController.php:313
+#: app/Api/CampaignsController.php:472
+msgid "Failed to update campaign."
+msgstr ""
+
+#: app/Api/CampaignsController.php:502
 msgid "Failed to delete campaign."
 msgstr ""
 
-#: app/Api/CampaignsController.php:332
-#: app/Api/CampaignsController.php:386
+#: app/Api/CampaignsController.php:523
+#: app/Api/CampaignsController.php:584
 msgid "Campaign IDs are required."
 msgstr ""
 
-#: app/Api/CampaignsController.php:335
+#: app/Api/CampaignsController.php:526
 msgid "A valid status is required."
 msgstr ""
 
-#: app/Api/CampaignsController.php:471
+#: app/Api/CampaignsController.php:648
+msgid "Failed to duplicate campaign."
+msgstr ""
+
+#: app/Api/CampaignsController.php:685
+msgid "Campaign data is missing or not an array."
+msgstr ""
+
+#: app/Api/CampaignsController.php:734
+msgid "Some campaigns could not be imported."
+msgstr ""
+
+#: app/Api/CampaignsController.php:765
+msgid "An array of campaign objects to import."
+msgstr ""
+
+#: app/Api/CampaignsController.php:838
 msgid "The title for the campaign."
 msgstr ""
 
-#: app/Api/CampaignsController.php:477
+#: app/Api/CampaignsController.php:844
 msgid "A named status for the campaign."
 msgstr ""
 
-#: app/Api/CampaignsController.php:483
+#: app/Api/CampaignsController.php:850
 msgid "The core type of the campaign."
 msgstr ""
 
-#: app/Api/CampaignsController.php:490
-msgid "The type of discount (percentage, fixed)."
+#: app/Api/CampaignsController.php:862
+msgid "The type of discount (percentage, fixed, fixed_per_item)."
 msgstr ""
 
-#: app/Api/CampaignsController.php:496
+#: app/Api/CampaignsController.php:868
 msgid "The numeric value of the discount."
 msgstr ""
 
-#: app/Api/CampaignsController.php:501
-msgid "The scope of the rule (store, categories, products, tags)."
-msgstr ""
-
-#: app/Api/CampaignsController.php:507
-msgid "Array of category, product, or tag IDs."
-msgstr ""
-
-#: app/Api/CampaignsController.php:513
-msgid "Prevent double-discounting."
-msgstr ""
-
-#: app/Api/CampaignsController.php:519
-msgid "The rule's start date/time (ISO 8601 string)."
-msgstr ""
-
-#: app/Api/CampaignsController.php:525
-msgid "The rule's end date/time (ISO 8601 string)."
-msgstr ""
-
-#: app/Api/CampaignsController.php:531
-msgid "The timezone identifier."
-msgstr ""
-
-#: app/Api/CampaignsController.php:537
+#: app/Api/CampaignsController.php:873
 msgid "The tiers of the campaign."
 msgstr ""
 
-#: app/Api/CampaignsController.php:543
+#: app/Api/CampaignsController.php:879
+msgid "The scope of the rule (store, categories, products, tags)."
+msgstr ""
+
+#: app/Api/CampaignsController.php:885
+msgid "Array of category, product, or tag IDs."
+msgstr ""
+
+#: app/Api/CampaignsController.php:891
+msgid "Whether to exclude the specified targets."
+msgstr ""
+
+#: app/Api/CampaignsController.php:896
+msgid "Prevent double-discounting."
+msgstr ""
+
+#: app/Api/CampaignsController.php:901
+msgid "Whether scheduling is enabled for the campaign."
+msgstr ""
+
+#: app/Api/CampaignsController.php:906
+msgid "The rule's start date/time (ISO 8601 string)."
+msgstr ""
+
+#: app/Api/CampaignsController.php:911
+msgid "The rule's end date/time (ISO 8601 string)."
+msgstr ""
+
+#: app/Api/CampaignsController.php:916
 msgid "The number of times the campaign has been used."
 msgstr ""
 
-#: app/Api/CampaignsController.php:564
+#: app/Api/CampaignsController.php:922
+msgid "The maximum number of times the campaign can be used."
+msgstr ""
+
+#: app/Api/CampaignsController.php:927
+msgid "The date the campaign was created."
+msgstr ""
+
+#: app/Api/CampaignsController.php:934
+msgid "The date the campaign was last modified."
+msgstr ""
+
+#: app/Api/CampaignsController.php:941
+msgid "User ID who created the campaign."
+msgstr ""
+
+#: app/Api/CampaignsController.php:947
+msgid "User ID who last updated the campaign."
+msgstr ""
+
+#: app/Api/CampaignsController.php:971
 msgid "An array of campaign IDs to update."
 msgstr ""
 
-#: app/Api/CampaignsController.php:570
+#: app/Api/CampaignsController.php:977
 msgid "The new status to apply to the campaigns."
 msgstr ""
 
-#: app/Api/CampaignsController.php:587
+#: app/Api/CampaignsController.php:996
 msgid "An array of campaign IDs to delete."
 msgstr ""
 
-#: app/Api/DashboardController.php:492
-msgid "The time period for the report."
+#: app/Api/DashboardController.php:596
+msgid "Time period for the dashboard data."
 msgstr ""
 
-#: app/Api/DashboardController.php:498
-msgid "Custom start date for the report (Y-m-d)."
+#: app/Api/DashboardController.php:603
+msgid "Custom start date (required when period is custom)."
 msgstr ""
 
-#: app/Api/DashboardController.php:503
-msgid "Custom end date for the report (Y-m-d)."
+#: app/Api/DashboardController.php:609
+msgid "Custom end date (required when period is custom)."
 msgstr ""
 
-#: app/Api/LogsController.php:93
-msgid "Could not read the log file. Check file permissions."
+#: app/Api/LogsController.php:191
+msgid "The date of the log file in YYYY-MM-DD format."
 msgstr ""
 
-#: app/Api/LogsController.php:108
+#: app/Api/LogsController.php:224
+msgid "No logs found."
+msgstr ""
+
+#: app/Api/LogsController.php:242
 msgid "No logs recorded for today."
 msgstr ""
 
-#: app/Api/LogsController.php:119
+#: app/Api/LogsController.php:287
+msgid "Could not read the log file."
+msgstr ""
+
+#: app/Api/LogsController.php:316
 msgid "Log directory does not exist. Nothing to clear."
 msgstr ""
 
 #. translators: %d: number of log files deleted.
-#: app/Api/LogsController.php:142
+#: app/Api/LogsController.php:339
 #, php-format
 msgid "%d log file cleared."
 msgid_plural "%d log files cleared."
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/Api/LogsController.php:150
+#: app/Api/LogsController.php:347
 msgid "No log files to clear."
 msgstr ""
 
 #. translators: %s: The name of the plugin setting or property.
-#: app/Api/SettingsController.php:151
+#: app/Api/SettingsController.php:154
 #, php-format
 msgid "The %s property has an invalid stored value, and cannot be updated to null."
 msgstr ""
 
-#: app/Data/PostTypes.php:100
-msgctxt "Post Type General Name"
+#: app/Core/Campaign.php:277
+msgid "Cannot create campaign."
+msgstr ""
+
+#: app/Core/Campaign.php:446
+#: app/Core/Campaign.php:656
+msgid "Cannot update campaign."
+msgstr ""
+
+#. Translators: %s is the invalid status provided.
+#: app/Core/Campaign.php:599
+#, php-format
+msgid "Invalid status \"%s\" provided. Status must be one of: active, inactive, scheduled, expired."
+msgstr ""
+
+#: app/Core/Validator.php:90
+#: app/Core/Validator.php:112
+msgid "This field is required."
+msgstr ""
+
+#: app/Core/Validator.php:108
+msgid "This field cannot be empty."
+msgstr ""
+
+#: app/Core/Validator.php:130
+msgid "The selected value is invalid."
+msgstr ""
+
+#: app/Core/Validator.php:136
+msgid "This field must be a number."
+msgstr ""
+
+#: app/Core/Validator.php:142
+msgid "This field must be an integer."
+msgstr ""
+
+#: app/Core/Validator.php:148
+#: app/Core/Validator.php:155
+msgid "This field must be an array."
+msgstr ""
+
+#: app/Core/Validator.php:159
+msgid "All items in this field must be integers."
+msgstr ""
+
+#. translators: %d: maximum number of characters
+#: app/Core/Validator.php:171
+#: app/Core/Validator.php:228
+#, php-format
+msgid "This field may not be greater than %d characters."
+msgstr ""
+
+#. translators: %d: maximum numeric value
+#: app/Core/Validator.php:174
+#, php-format
+msgid "This field may not be greater than %d."
+msgstr ""
+
+#. translators: %d: minimum number of characters
+#: app/Core/Validator.php:182
+#: app/Core/Validator.php:201
+#, php-format
+msgid "This field must be at least %d characters."
+msgstr ""
+
+#. translators: %d: minimum numeric value
+#: app/Core/Validator.php:185
+#, php-format
+msgid "This field must be at least %d."
+msgstr ""
+
+#. translators: %d: minimum numeric value
+#. translators: %d: maximum numeric value
+#: app/Core/Validator.php:207
+#: app/Core/Validator.php:223
+#, php-format
+msgid "This field must be at least %d"
+msgstr ""
+
+#. translators: %d: maximum numeric value
+#: app/Core/Validator.php:240
+#, php-format
+msgid "This field must be greater than or equal to the %s field."
+msgstr ""
+
+#. translators: %d: maximum numeric value
+#: app/Core/Validator.php:250
+#, php-format
+msgid "This field must be less than or equal to the %s field."
+msgstr ""
+
+#: build/admin.js:1
+#: build/admin.js:5
+msgid "Add Campaign"
+msgstr ""
+
+#: build/admin.js:1
+msgid "All Types"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Activity"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Sale"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Campaign Created"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Campaign Updated"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Campaign Deleted"
+msgstr ""
+
+#: build/admin.js:1
+msgid "10 per page"
+msgstr ""
+
+#: build/admin.js:1
+msgid "20 per page"
+msgstr ""
+
+#: build/admin.js:1
+msgid "50 per page"
+msgstr ""
+
+#: build/admin.js:1
+msgid "100 per page"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Time"
+msgstr ""
+
+#: build/admin.js:1
+#: build/admin.js:4
+msgid "Type"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Campaign"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Order"
+msgstr ""
+
+#: build/admin.js:1
+msgid "User"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Amount"
+msgstr ""
+
+#: build/admin.js:1
+#: build/admin.js:4
+msgid "Discount"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Total"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Activity Log"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Filters"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Log Type"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Date From"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Date To"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Items per page"
+msgstr ""
+
+#: build/admin.js:1
+#, js-format
+msgid "Showing %d of %d log entry"
+msgid_plural "Showing %d of %d log entries"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/admin.js:1
+msgid "Refresh"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Pending"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Processing"
+msgstr ""
+
+#: build/admin.js:1
+msgid "On Hold"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Completed"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Cancelled"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Refunded"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Failed"
+msgstr ""
+
+#: build/admin.js:1
+msgid "No activity logs found for the selected filters."
+msgstr ""
+
+#: build/admin.js:1
+#, js-format
+msgid "Page %d of %d"
+msgstr ""
+
+#: build/admin.js:1
+msgid "First"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Previous"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Next"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Last"
+msgstr ""
+
+#: build/admin.js:1
+msgid "Just now"
+msgstr ""
+
+#: build/admin.js:1
+msgid "A moment ago"
+msgstr ""
+
+#. translators: %d: number of minutes.
+#: build/admin.js:2
+#, js-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of hours.
+#: build/admin.js:3
+#, js-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of days.
+#: build/admin.js:4
+#, js-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/admin.js:4
+msgid "Discount Value ($)"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Discounted Order Value ($)"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Last 7 Days"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Last 30 Days"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Last 1 Year"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Active Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "View All Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Total Discounted Amount"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Discounted Orders"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Sales from Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Daily Discount Value Trends"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Line Chart"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Line"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Bar Chart"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Bar"
+msgstr ""
+
+#: build/admin.js:4
+msgid "No discount data available for the selected period"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Top Performing Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "No Data Available"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Run a campaign to see performance data."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Top Performing Types"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Live Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Campaign Name"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Ending Time"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Standard"
+msgstr ""
+
+#: build/admin.js:4
+msgid "No end date"
+msgstr ""
+
+#: build/admin.js:4
+msgid "No Live Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Upcoming Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Starting Time"
+msgstr ""
+
+#: build/admin.js:4
+msgid "No start date"
+msgstr ""
+
+#: build/admin.js:4
+msgid "No Upcoming Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Recent Activity"
+msgstr ""
+
+#: build/admin.js:4
+msgid "No Recent Activity"
+msgstr ""
+
+#: build/admin.js:4
+msgid "View Full Activity Log"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Log files cleared successfully."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Error clearing logs: "
+msgstr ""
+
+#: build/admin.js:4
+msgid "Global Options"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Enable Discount Add-on"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Turn off to temporarily disable all discount campaigns."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Bulk Table Position"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Select the position to show the bulk table"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Below Cart"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Above Cart"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Below Meta"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Above Meta"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Discount Bar Position"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Select the position to show the discount bar"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Calculate Discount From"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Select the price to calculate discounts from"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Regular Price"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Sale Price"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Performence & Caching"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Enable Discount Caching"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Improve performance by caching discount rule calculations. Clear cache if rules don't seem to apply immediately"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Clear Discount Cache"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Debugging & Logging"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Enable Debug Mode"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Show detailed error messages and logging for troubleshooting."
+msgstr ""
+
+#: build/admin.js:4
+msgid "View Logs"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Clear Log Files"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Show Table Header"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Show/Hide table header column names"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Content To Show"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Preview Table"
+msgstr ""
+
+#: build/admin.js:4
+msgid "This table contains sample content for design purpose."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Title"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Range"
+msgstr ""
+
+#: build/admin.js:4
+#: build/admin.js:5
+msgid "Save Changes"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Product Page Display"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Enable Quantity Discounts Table on Product Page"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Show a table outlining tiered quantity based discounts"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Customize Table"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Product Exclusion & Prioritization"
+msgstr ""
+
+#: build/admin.js:4
+#: build/admin.js:5
+msgid "Product Page Discount Message Format"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Defines how multiple product-level discounts are applied."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Apply Highest Discount"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Apply Lowest Discount"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Cart Page Quantity Discount Message Format (Percentage)"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Cart Page Quantity Discount Message Format (Fixed)"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Cart Page BOGO Discount Message Format"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Something went wrong . Please refresh the page."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Settings updated successfully"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Save Settings"
+msgstr ""
+
+#: build/admin.js:4
+msgid "The CSV file is empty or does not contain data rows."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Failed to read the file."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Invalid file type. Please upload a .csv file."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Import Campaigns from CSV"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Data Preview"
+msgstr ""
+
+#: build/admin.js:4
+msgid "rows found"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Click to upload"
+msgstr ""
+
+#: build/admin.js:4
+msgid "or drag and drop"
+msgstr ""
+
+#: build/admin.js:4
+msgid "CSV file (max. 2MB)"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Error:"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Cancel"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Import Campaigns"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Campaigns exported successfully."
+msgstr ""
+
+#: build/admin.js:4
+msgid "There are no campaigns to export."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Error exporting campaigns."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Campaigns imported successfully."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Error importing campaigns."
+msgstr ""
+
+#: build/admin.js:4
+msgid "Import"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Export"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Confirm Action"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Confirm"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Close dialog"
+msgstr ""
+
+#: build/admin.js:4
+msgid "Error fetching campaigns."
+msgstr ""
+
+#: build/admin.js:4
+#: build/admin.js:5
+msgid "Campaign deleted successfully"
+msgid_plural "Campaigns deleted successfully"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/admin.js:4
+#: build/admin.js:5
+msgid "Error deleting campaign"
+msgid_plural "Error deleting campaigns"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/admin.js:4
+msgid "Select Action"
+msgstr ""
+
+#: build/admin.js:4
+msgid "activate"
+msgstr ""
+
+#: build/admin.js:4
+msgid "deactivate"
+msgstr ""
+
+#: build/admin.js:4
+msgid "delete"
+msgstr ""
+
+#. translators: %1$s: the action to perform (e.g., "delete"), %2$d: the number of campaigns.
+#: build/admin.js:5
+#, js-format
+msgid "Are you sure you want to %1$s %2$d selected campaign?"
+msgid_plural "Are you sure you want to %1$s %2$d selected campaigns?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/admin.js:5
+msgid "Campaign status updated successfully"
+msgid_plural "Campaigns status updated successfully"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/admin.js:5
+msgid "Error updating campaign status"
+msgid_plural "Error updating campaigns status"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/admin.js:5
+msgid "Campaign duplicated successfully."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Error duplicating campaign. Please try again."
+msgstr ""
+
+#: build/admin.js:5
 msgid "Campaigns"
 msgstr ""
 
-#: app/Data/PostTypes.php:101
-msgctxt "Post Type Singular Name"
-msgid "Campaign"
+#: build/admin.js:5
+msgid "Are you sure you want to delete this campaign?"
 msgstr ""
 
-#: app/Data/PostTypes.php:102
-msgid "All Campaigns"
+#: build/admin.js:5
+msgid "Please select campaigns to perform this action."
 msgstr ""
 
-#: app/Data/PostTypes.php:103
-msgid "Add New Campaign"
+#: build/admin.js:5
+msgid "The maximum quantity must be greater than the minimum quantity."
 msgstr ""
 
-#: app/Data/PostTypes.php:104
-msgid "Add New"
+#: build/admin.js:5
+msgid "Please fill in the previous tier's value first."
 msgstr ""
 
-#: app/Data/PostTypes.php:105
-msgid "Edit Campaign"
+#: build/admin.js:5
+msgid "Please fill in the previous tier's maximum quantity first."
 msgstr ""
 
-#: app/Data/PostTypes.php:106
+#: build/admin.js:5
+msgid "DEFINE QUANTITY TIERS"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Define quantity tiers for the discount"
+msgstr ""
+
+#: build/admin.js:5
+msgid "For First"
+msgstr ""
+
+#: build/admin.js:5
+msgid "For Next"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Sales "
+msgstr ""
+
+#: build/admin.js:5
+msgid "give "
+msgstr ""
+
+#: build/admin.js:5
+msgid "Please fill in the previous tier's quantity first."
+msgstr ""
+
+#: build/admin.js:5
+msgid "DISCOUNT TIERS FOR FIRST SALES"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Define discount tiers based on the number of sales of the selected products"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Campaign saved successfully"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Something went wrong, Please reload the page."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Delete Campaign"
+msgstr ""
+
+#: build/admin.js:5
 msgid "Update Campaign"
 msgstr ""
 
-#: app/Data/PostTypes.php:107
-msgid "Search Campaign"
+#: build/admin.js:5
+msgid "Campaign Title"
 msgstr ""
 
-#: app/Data/PostTypes.php:111
-msgid "Campaign"
+#: build/admin.js:5
+msgid "Select Discount Type"
 msgstr ""
 
-#: app/Data/PostTypes.php:112
-msgid "Discount Campaigns for WooCommerce"
+#: build/admin.js:5
+msgid "Buy X Get X"
 msgstr ""
 
-#: app/Data/PostTypes.php:147
-msgctxt "post status"
+#: build/admin.js:5
+msgid "Scheduled Discount"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Quantity Based Discount"
+msgstr ""
+
+#: build/admin.js:5
+msgid "EarlyBird Discount"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Select Status"
+msgstr ""
+
+#: build/admin.js:5
 msgid "Active"
 msgstr ""
 
-#. translators: %s: number of posts.
-#: app/Data/PostTypes.php:152
-#, php-format
-msgid "Active <span class=\"count\">(%s)</span>"
-msgid_plural "Active <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/Data/PostTypes.php:159
-msgctxt "post status"
-msgid "Scheduled"
-msgstr ""
-
-#. translators: %s: number of posts.
-#: app/Data/PostTypes.php:164
-#, php-format
-msgid "Scheduled <span class=\"count\">(%s)</span>"
-msgid_plural "Scheduled <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/Data/PostTypes.php:171
-msgctxt "post status"
-msgid "Expired"
-msgstr ""
-
-#. translators: %s: number of posts.
-#: app/Data/PostTypes.php:176
-#, php-format
-msgid "Expired <span class=\"count\">(%s)</span>"
-msgid_plural "Expired <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/Data/PostTypes.php:182
-msgctxt "post status"
+#: build/admin.js:5
 msgid "Inactive"
 msgstr ""
 
-#. translators: %s: number of posts.
-#: app/Data/PostTypes.php:187
-#, php-format
-msgid "Inactive <span class=\"count\">(%s)</span>"
-msgid_plural "Inactive <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: app/Data/PostTypes.php:252
-msgid "Active"
-msgstr ""
-
-#: app/Data/PostTypes.php:256
+#: build/admin.js:5
 msgid "Scheduled"
 msgstr ""
 
-#: app/Data/PostTypes.php:260
+#: build/admin.js:5
 msgid "Expired"
+msgstr ""
+
+#: build/admin.js:5
+msgid "DISCOUNT TARGET"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Entire Store"
+msgstr ""
+
+#: build/admin.js:5
+msgid "By Product Category"
+msgstr ""
+
+#: build/admin.js:5
+msgid "By Product"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Select Products *"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Select Tags *"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Select Categories *"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Exclude Items"
+msgstr ""
+
+#: build/admin.js:5
+msgid "When checked , selected items will be excluded from the discount"
+msgstr ""
+
+#: build/admin.js:5
+msgid "How much you want to discount?"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Percentage %"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Currency "
+msgstr ""
+
+#: build/admin.js:5
+msgid "It will be applied per item , not in total "
+msgstr ""
+
+#: build/admin.js:5
+msgid "Buy Amount"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Get Quantity"
+msgstr ""
+
+#: build/admin.js:5
+msgid "OTHER CONFIGURATIONS"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Exclude Sale Items"
+msgstr ""
+
+#: build/admin.js:5
+msgid "When checked , sale items will be excluded from the discount"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Enable Usage Limit"
+msgstr ""
+
+#: build/admin.js:5
+msgid "When checked , usage limit will be enabled for the campaign. Campaign will be disabled when the limit is reached."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Usage Limit"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Schedule"
+msgstr ""
+
+#: build/admin.js:5
+msgid "When checked , the campaign will be scheduled to run between the start and end dates"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Start Time"
+msgstr ""
+
+#: build/admin.js:5
+msgid "End Time"
+msgstr ""
+
+#: build/admin.js:5
+msgid "DISPLAY CONFIGURATIONS"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Display as Regular Price"
+msgstr ""
+
+#: build/admin.js:5
+msgid "When checked , the campaign price will be displayed as the regular price of the product."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Discount Message Format"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Leave it blank for default message."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Product Page Discount Message Format. Leave Blank for default message."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Apply Discount As"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Strike through in line total"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Coupon"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Fee"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Next Discount Message Format"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Cart Page Next Discount Message Format"
+msgstr ""
+
+#: build/admin.js:5
+msgid "This message will be displayed on the cart item name. Leave blank for the default message."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Automatically add free product to cart"
+msgstr ""
+
+#: build/admin.js:5
+msgid "When checked, the free product will be automatically added to the cart."
+msgstr ""
+
+#: build/admin.js:5
+msgid "This message will be displayed on the product page. Leave blank for the default message."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Cart Page Discount Message Format"
+msgstr ""
+
+#: build/admin.js:5
+msgid "This message will be displayed on the cart page. Leave blank for the default message."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Cart Page Message Location"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Line Item Name"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Notice"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Don't Show"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Choose where the BOGO discount message will be displayed on the cart page."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Save Campaign"
 msgstr ""

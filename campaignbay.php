@@ -1,17 +1,18 @@
 <?php
 /**
  * Plugin Name:       CampaignBay
- * Plugin URI:        https://campaignbay.github.io
- * Description:       CampaignBay for WooCommerce Product Discount WordPress Plugin.
- * Requires at least: 5.6
+ * Plugin URI:        https://wpanchorbay.com/campaignbay
+ * Description:       Automated Discount Campaigns & Flash Sales for WooCommerce.
+ * Requires at least: 5.8
  * Requires PHP:      7.0
  * Requires Plugins:  woocommerce
  * WC requires at least: 6.1
- * Version:           0.0.9
+ * Version:           1.0.0
+ * Stable tag:        1.0.0
  * Author:            WP Anchor Bay
  * Author URI:        https://wpanchorbay.com
- * License:           GPLv3
- * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       campaignbay
  * Domain Path:       /languages
  */
@@ -57,9 +58,11 @@ register_deactivation_hook(__FILE__, [\WpabCb\Core\Deactivator::class, 'deactiva
  *
  * @since    1.0.0
  */
-function campaignbay_run()
-{
-	$plugin = \WpabCb\Core\Plugin::get_instance();
-	$plugin->run();
+if (!function_exists('campaignbay_run')) {
+	function campaignbay_run()
+	{
+		$plugin = \WpabCb\Core\Plugin::get_instance();
+		$plugin->run();
+	}
 }
 campaignbay_run();

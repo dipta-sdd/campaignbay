@@ -221,7 +221,7 @@ class LogsController extends ApiController
 		$log_dir = $upload_dir['basedir'] . '/' . CAMPAIGNBAY_TEXT_DOMAIN . '-logs/';
 		$log_file = $log_dir . 'plugin-log-' . $target_date . '.log';
 
-		return $this->read_and_respond_with_log_content($log_file, sprintf(__('No logs found for %d day(s) ago.', 'campaignbay'), $days_ago));
+		return $this->read_and_respond_with_log_content($log_file, __('No logs found.', 'campaignbay'));
 	}
 
 	/**

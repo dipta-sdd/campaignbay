@@ -38,7 +38,9 @@ if (!empty($options['advanced_deleteAllOnUninstall']) && true === $options['adva
 	$logs_table = $wpdb->prefix . 'campaignbay' . '_logs';
 
 	// --- 2. Drop the custom database tables ---
+	//phpcs:ignore
 	$wpdb->query("DROP TABLE IF EXISTS {$campaigns_table}");
+	//phpcs:ignore
 	$wpdb->query("DROP TABLE IF EXISTS {$logs_table}");
 
 	// --- 3. Delete the plugin's options from the wp_options table ---
@@ -52,5 +54,17 @@ if (!empty($options['advanced_deleteAllOnUninstall']) && true === $options['adva
 		if ($role && $role->has_cap('manage_campaignbay')) { // Example capability
 			$role->remove_cap('manage_campaignbay');
 		}
+	}
+
+	$custom_capability = 'manage_campaignbay';
+
+	$admin_role = get_role('administrator');
+	if ($admin_role && $admin_role->has_cap($custom_capability)) {
+		$admin_role->remove_cap($custom_capability);
+	}
+
+	$manager_role = get_role('shop_manager');
+	if ($manager_role && $manager_role->has_cap($custom_capability)) {
+		$manager_role->remove_cap($custom_capability);
 	}
 }

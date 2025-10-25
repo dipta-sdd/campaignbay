@@ -86,28 +86,12 @@ class Plugin
 	{
 		// Initialize the loader first
 		$this->loader = Loader::get_instance();
-
-		$this->set_locale();
 		$this->define_core_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 	}
 
-	/**
-	 * Define the locale for this plugin for internationalization.
-	 *
-	 * Uses the I18n class in order to set the domain and to register the hook
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @return void
-	 */
-	private function set_locale()
-	{
-		$plugin_i18n = new I18n();
-		$this->loader->add_action('init', $plugin_i18n, 'load_plugin_textdomain');
-	}
+
 
 	/**
 	 * Register all of the hooks related to the core functionality
@@ -145,7 +129,6 @@ class Plugin
 		foreach ($components_with_hooks as $component) {
 			$hooks = $component->get_hooks();
 			foreach ($hooks as $hook) {
-				// error_log( print_r( $component, true ) );
 				if ('action' === $hook['type']) {
 					$this->loader->add_action(
 						$hook['hook'],
@@ -212,6 +195,7 @@ class Plugin
 	{
 		$plugin_admin = Admin::get_instance();
 		if (!is_admin()) {
+			campaignbay_log('return non admin');
 			return;
 		}
 		$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
@@ -221,7 +205,7 @@ class Plugin
 		/*Register Settings*/
 		$this->loader->add_action('rest_api_init', $plugin_admin, 'register_settings');
 		$this->loader->add_action('admin_init', $plugin_admin, 'register_settings');
-		$plugin_basename = plugin_basename(CAMPAIGNBAY_PATH . 'campaign-bay.php');
+		$plugin_basename = plugin_basename(CAMPAIGNBAY_PATH . 'campaignbay.php');
 		$this->loader->add_filter('plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_plugin_action_links', 10, 4);
 		$this->loader->add_filter('plugin_row_meta', $plugin_admin, 'add_plugin_row_meta', 10, 2);
 	}
