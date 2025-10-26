@@ -8,10 +8,11 @@ import CampaignsEdit from "./pages/CampaignsEdit";
 import { ToastProvider } from "./store/toast/toast-provider";
 import { ToastContainer } from "./components/ToastContainer";
 import { CbStoreProvider } from "./store/cbStore";
+import { CbStore } from "./types";
 
 const App = () => {
   return (
-    <CbStoreProvider value={window.campaignbay_Localize}>
+    <CbStoreProvider value={window.campaignbay_Localize as CbStore} >
       <ToastProvider>
         <ToastContainer />
         <HashRouter>

@@ -14,17 +14,22 @@ import { useCbStore } from "../store/cbStore";
  * @param {string|number} dateTimeString - The date-time string or timestamp to format.
  * @returns {string} The formatted date and time, or "—" if invalid.
  */
-export default function formatDateTime(dateTimeString) {
+export default function formatDateTime(dateTimeString: string | number | null | undefined) : string {
   const { wpSettings } = useCbStore();
   const { timezone } = getDateSettings();
+
+  
+
   if (
     !dateTimeString ||
     new Date(dateTimeString).toString() === "Invalid Date"
   ) {
     return "—";
   }
-  const format = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
-  const dateTime = getDate(dateTimeString * 1000);
+
+  
+  const format : string = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
+  const dateTime : Date = getDate(dateTimeString * 1000);
   return date(format, dateTime, timezone?.offset);
 }
 
@@ -37,7 +42,7 @@ export default function formatDateTime(dateTimeString) {
  * @param {string|number} dateTimeString - The date-time string or timestamp to compare.
  * @returns {string} Human-readable time difference or formatted date-time, or "—" if invalid.
  */
-export function timeDiff(dateTimeString) {
+export function timeDiff(dateTimeString: string | number | null | undefined) : string {
   if (
     !dateTimeString ||
     new Date(dateTimeString).toString() === "Invalid Date"
@@ -54,11 +59,5 @@ export function timeDiff(dateTimeString) {
   if (diffDays > 10) {
     return formatDateTime(dateTimeString);
   }
-  // console.table({
-  //   dateTimeString,
-  //   dateTime,
-  //   currentTime,
-  //   diffDays,
-  // });
   return humanTimeDiff(dateTime, currentTime.getTime());
 }
