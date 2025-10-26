@@ -49,7 +49,7 @@
     "react-router-dom": "^7.6.3"
   },
   "wp-i18n": {
-    "domain": "wpab-cb",
+    "domain": "campaignbay",
     "potFile": "languages/wpab-cb.pot"
   }
 }
