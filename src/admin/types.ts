@@ -94,3 +94,17 @@ export interface CbStore {
   wpSettings: WpSettings;
   campaignbay_settings: CampaignBaySettings;
 }
+
+
+
+export interface QuantityTier {
+  id: number;
+  min: number;
+  max?: number| ''; 
+  value?: number | ''; 
+  type?: 'percentage' | 'currency';
+}
+export type QuantityTierError = Partial<Record<'min' | 'max' | 'value' | 'type', { message: string }>>;
+
+// Represents a map of tier IDs to their corresponding error objects
+export type QuantityTierErrorMap = Record<string | number, QuantityTierError>;

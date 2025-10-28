@@ -1,30 +1,48 @@
-"use client";
+import React, { 
+  useState, 
+  useRef, 
+  useEffect, 
+  FC, 
+  ReactNode 
+} from 'react';
+import { Icon, cautionFilled } from '@wordpress/icons';
 
-import { Icon, cautionFilled } from "@wordpress/icons";
-import { useState, useRef, useEffect, Children } from "react";
+type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
-export default function Tooltip({
+interface TooltipProps {
+  children?: ReactNode; 
+  content: ReactNode; 
+  position?: TooltipPosition;
+  delay?: number;
+  className?: string;
+  contentClassName?: string;
+}
+
+interface PositionState {
+  top: number;
+  left: number;
+}
+
+export const Tooltip: FC<TooltipProps> = ({
   children = (
-    <>
-      {" "}
       <Icon
         icon={cautionFilled}
         className="campaignbay-text-gray-400"
         fill="currentColor"
       />
-    </>
   ),
   content,
-  position = "top",
+  position = 'top',
   delay = 200,
-  className = "",
-  contentClassName = "",
-}) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
-  const triggerRef = useRef(null);
-  const tooltipRef = useRef(null);
-  const timeoutRef = useRef(null);
+  className = '',
+  contentClassName = '',
+}) => {
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [tooltipPosition, setTooltipPosition] = useState<PositionState>({ top: 0, left: 0 });
+  
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const showTooltip = () => {
     if (timeoutRef.current) {
@@ -52,7 +70,6 @@ export default function Tooltip({
       window.pageXOffset || document.documentElement.scrollLeft;
 
     let top, left;
-    // for positioning error remove scrollTop
     switch (position) {
       case "top":
         top = triggerRect.top + scrollTop - tooltipRect.height - 8;
@@ -89,7 +106,6 @@ export default function Tooltip({
           (triggerRect.width - tooltipRect.width) / 2;
     }
 
-    // Keep tooltip within viewport bounds
     const padding = 8;
     if (left < padding) left = padding;
     if (left + tooltipRect.width > window.innerWidth - padding) {
@@ -179,3 +195,6 @@ export default function Tooltip({
     </>
   );
 }
+
+
+export default Tooltip;

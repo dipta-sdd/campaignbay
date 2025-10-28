@@ -5,10 +5,10 @@ import Settings from "./pages/Settings";
 import Campaigns from "./pages/Campaigns";
 import CampaignsAdd from "./pages/CampaignsAdd";
 import CampaignsEdit from "./pages/CampaignsEdit";
-import { ToastProvider } from "./store/toast/toast-provider";
 import { ToastContainer } from "./components/ToastContainer";
 import { CbStoreProvider } from "./store/cbStore";
 import { CbStore } from "./types";
+import { ToastProvider } from "./store/toast/use-toast";
 
 const App = () => {
   return (

@@ -32672,9 +32672,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pages_Campaigns__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pages/Campaigns */ "./src/admin/pages/Campaigns.js");
 /* harmony import */ var _pages_CampaignsAdd__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pages/CampaignsAdd */ "./src/admin/pages/CampaignsAdd.js");
 /* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/CampaignsEdit */ "./src/admin/pages/CampaignsEdit.js");
-/* harmony import */ var _store_toast_toast_provider__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./store/toast/toast-provider */ "./src/admin/store/toast/toast-provider.js");
-/* harmony import */ var _components_ToastContainer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/ToastContainer */ "./src/admin/components/ToastContainer.js");
-/* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./store/cbStore */ "./src/admin/store/cbStore.tsx");
+/* harmony import */ var _components_ToastContainer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/ToastContainer */ "./src/admin/components/ToastContainer.js");
+/* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./store/cbStore */ "./src/admin/store/cbStore.tsx");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__);
 
@@ -32689,10 +32689,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const App = () => {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_store_cbStore__WEBPACK_IMPORTED_MODULE_9__.CbStoreProvider, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_store_cbStore__WEBPACK_IMPORTED_MODULE_8__.CbStoreProvider, {
     value: window.campaignbay_Localize,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_store_toast_toast_provider__WEBPACK_IMPORTED_MODULE_7__.ToastProvider, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_ToastContainer__WEBPACK_IMPORTED_MODULE_8__.ToastContainer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.HashRouter, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_9__.ToastProvider, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_ToastContainer__WEBPACK_IMPORTED_MODULE_7__.ToastContainer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.HashRouter, {
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Routes, {
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
             path: "/",
@@ -33363,7 +33363,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Required__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Required */ "./src/admin/components/Required.js");
 /* harmony import */ var _CbCheckbox__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CbCheckbox */ "./src/admin/components/CbCheckbox.js");
-/* harmony import */ var _Tooltip__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Tooltip */ "./src/admin/components/Tooltip.js");
+/* harmony import */ var _Tooltip__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Tooltip */ "./src/admin/components/Tooltip.tsx");
 /* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../pages/CampaignsEdit */ "./src/admin/pages/CampaignsEdit.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
@@ -34378,12 +34378,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _Toggle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Toggle */ "./src/admin/components/Toggle.js");
+/* harmony import */ var _Toggle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Toggle */ "./src/admin/components/Toggle.tsx");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/seen.js");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/trash.js");
 /* harmony import */ var _LogViewerModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./LogViewerModal */ "./src/admin/components/LogViewerModal.js");
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
@@ -34611,7 +34611,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/hard-drive-download.js");
 /* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/hard-drive-upload.js");
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var _exportDataToCsv__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./exportDataToCsv */ "./src/admin/components/exportDataToCsv.js");
 /* harmony import */ var _ImportModal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ImportModal */ "./src/admin/components/ImportModal.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
@@ -36006,10 +36006,10 @@ const QuantityTableEditModal = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/QuantityTiers.js":
-/*!***********************************************!*\
-  !*** ./src/admin/components/QuantityTiers.js ***!
-  \***********************************************/
+/***/ "./src/admin/components/QuantityTiers.tsx":
+/*!************************************************!*\
+  !*** ./src/admin/components/QuantityTiers.tsx ***!
+  \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -36019,10 +36019,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _Required__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Required */ "./src/admin/components/Required.js");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _TierRow__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./TierRow */ "./src/admin/components/TierRow.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _TierRow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TierRow */ "./src/admin/components/TierRow.tsx");
+/* harmony import */ var _Required__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Required */ "./src/admin/components/Required.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
@@ -36037,35 +36037,47 @@ const QuantityTiers = ({
 }) => {
   const handleAddTier = setError => {
     const lastTier = tiers[tiers.length - 1];
-    if (!lastTier.max) {
-      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Please fill in the previous tier's maximum quantity first.", "campaignbay"));
+    const maxAsNumber = Number(lastTier.max);
+    const valueAsNumber = Number(lastTier.value);
+    if (!lastTier.max || isNaN(maxAsNumber)) {
+      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Please fill in the previous tier's maximum quantity first.", 'campaignbay'));
       return;
     }
-    if (lastTier.max <= lastTier.min) {
-      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("The maximum quantity must be greater than the minimum quantity.", "campaignbay"));
+    if (lastTier.min && maxAsNumber <= lastTier.min) {
+      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("The maximum quantity must be greater than the minimum quantity.", 'campaignbay'));
       return;
     }
-    if (!lastTier.value) {
-      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Please fill in the previous tier's value first.", "campaignbay"));
+    if (!lastTier.value || isNaN(valueAsNumber)) {
+      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Please fill in the previous tier's value first.", 'campaignbay'));
       return;
     }
     const newTier = {
+      // Revert to using array length for the ID, as required by the backend.
       id: tiers.length,
-      min: parseInt(lastTier.max, 10) + 1,
-      max: "",
-      value: "",
+      min: maxAsNumber + 1,
+      max: '',
+      value: '',
       type: lastTier.type
     };
     setTiers([...tiers, newTier]);
   };
   const handleRemoveTier = idToRemove => {
     if (tiers.length <= 1) return;
-    setTiers(tiers.filter(tier => tier.id !== idToRemove));
+    const newTiers = tiers.filter(tier => tier.id !== idToRemove).map((tier, index) => ({
+      ...tier,
+      id: index
+    }));
+    setTiers(newTiers);
   };
   const handleTierUpdate = updatedTier => {
     const newTiers = tiers.map(tier => tier.id === updatedTier.id ? updatedTier : tier);
-    if (updatedTier.id < tiers.length - 1 && updatedTier.max) {
-      newTiers[updatedTier.id + 1].min = parseInt(updatedTier.max, 10) + 1;
+
+    // The ID is the index, so we can use it directly.
+    const currentIndex = Number(updatedTier.id);
+    const nextTierIndex = currentIndex + 1;
+    if (nextTierIndex < newTiers.length && updatedTier.max) {
+      // Ensure `updatedTier.max` is treated as a number.
+      newTiers[nextTierIndex].min = Number(updatedTier.max) + 1;
     }
     setTiers(newTiers);
   };
@@ -36073,11 +36085,12 @@ const QuantityTiers = ({
     className: "cb-form-input-con",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("label", {
       htmlFor: "quantity-discount",
-      children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("DEFINE QUANTITY TIERS", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Required__WEBPACK_IMPORTED_MODULE_1__["default"], {})]
+      children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('DEFINE QUANTITY TIERS', 'campaignbay'), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Required__WEBPACK_IMPORTED_MODULE_3__["default"], {})]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
       className: "wpab-input-help",
-      children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Define quantity tiers for the discount", "campaignbay")
-    }), tiers.map((tier, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_TierRow__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Define quantity tiers for the discount', 'campaignbay')
+    }), tiers.map((tier, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_TierRow__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      // The key is now always a unique, sequential number.
       tierData: tier,
       onUpdate: handleTierUpdate,
       onRemove: handleRemoveTier,
@@ -36287,10 +36300,10 @@ function TabPanel({
 
 /***/ }),
 
-/***/ "./src/admin/components/TierRow.js":
-/*!*****************************************!*\
-  !*** ./src/admin/components/TierRow.js ***!
-  \*****************************************/
+/***/ "./src/admin/components/TierRow.tsx":
+/*!******************************************!*\
+  !*** ./src/admin/components/TierRow.tsx ***!
+  \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -36298,20 +36311,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../store/cbStore */ "./src/admin/store/cbStore.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__);
-// src/components/TierRow.jsx
+// FILE: TierRow.tsx
 
 
 
 
 const TierRow = ({
-  id,
   tierData,
   onUpdate,
   onRemove,
@@ -36320,38 +36332,33 @@ const TierRow = ({
   isFirst,
   errors
 }) => {
-  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("");
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   const {
     woocommerce_currency_symbol
   } = (0,_store_cbStore__WEBPACK_IMPORTED_MODULE_2__.useCbStore)();
-  const handleChange = e => {
-    const {
-      name,
-      value
-    } = e.target;
-
-    // Create a new object for the update
+  const handleChange = (name, rawValue) => {
+    // Keep value as a string for empty input, otherwise convert to number for calculations
+    const value = rawValue === '' ? '' : Number(rawValue);
     const updatedTier = {
       ...tierData,
       [name]: value
     };
-
-    // **Inline Validation Logic**
-    if (name === "max" && value && parseInt(value, 10) < tierData.min) {
-      setError("Max quantity must be greater than min quantity.");
+    if (name === 'max' && value !== '' && value < tierData.min) {
+      setError('Max quantity must be greater than min quantity.');
     } else {
-      setError("");
+      setError('');
     }
     onUpdate(updatedTier);
   };
   const handleTypeToggle = newType => {
+    if (newType !== 'percentage' && newType !== 'currency') return;
     onUpdate({
       ...tierData,
       type: newType
     });
   };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
-    className: `cb-quantity-tier-row ${error ? "has-error" : ""}`,
+    className: `cb-quantity-tier-row ${error ? 'has-error' : ''}`,
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
       className: "tier-inputs",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
@@ -36365,9 +36372,8 @@ const TierRow = ({
             type: "number",
             name: "min",
             value: tierData.min,
-            readOnly: true // Min is non-editable to enforce connected tiers
-            ,
-            className: `min-input wpab-input ${errors?.min ? "wpab-input-error" : ""}`
+            readOnly: true,
+            className: `min-input wpab-input ${errors?.min ? 'wpab-input-error' : ''}`
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
             className: "wpab-input-label",
             children: "to"
@@ -36376,9 +36382,9 @@ const TierRow = ({
             name: "max",
             value: tierData.max,
             min: tierData.min,
-            onChange: handleChange,
+            onChange: e => handleChange('max', e.target.value),
             placeholder: "e.g., 5",
-            className: `max-input wpab-input ${errors?.max ? "wpab-input-error" : ""}`
+            className: `max-input wpab-input ${errors?.max ? 'wpab-input-error' : ''}`
           })]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
           className: "wpab-tier-input-grid-child",
@@ -36390,9 +36396,9 @@ const TierRow = ({
             name: "value",
             min: "0",
             value: tierData.value,
-            onChange: handleChange,
+            onChange: e => handleChange('value', e.target.value),
             placeholder: "e.g., 10",
-            className: `value-input wpab-input ${errors?.value ? "wpab-input-error" : ""}`
+            className: `value-input wpab-input ${errors?.value ? 'wpab-input-error' : ''}`
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
             className: "type-toggle",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.__experimentalToggleGroupControl, {
@@ -36403,17 +36409,17 @@ const TierRow = ({
               value: tierData.type,
               onChange: value => handleTypeToggle(value),
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.__experimentalToggleGroupControlOption, {
-                label: "%",
+                label: '%',
                 value: "percentage"
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.__experimentalToggleGroupControlOption, {
-                label: woocommerce_currency_symbol || "$",
+                label: woocommerce_currency_symbol || '$',
                 value: "currency"
               })]
             })
           })]
         })]
       })
-    }), isFirst || isLast ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+    }), (isFirst || isLast) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
       className: "tier-actions",
       children: [!isFirst && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
         type: "button",
@@ -36423,12 +36429,10 @@ const TierRow = ({
       }), isLast && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
         type: "button",
         className: "add-tier",
-        onClick: () => {
-          onAdd(setError);
-        },
+        onClick: () => onAdd(setError),
         children: "+ Add another tier"
       })]
-    }) : null, error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
+    }), error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("p", {
       className: "error-message m-0",
       children: error
     })]
@@ -36438,16 +36442,17 @@ const TierRow = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/Toast.js":
-/*!***************************************!*\
-  !*** ./src/admin/components/Toast.js ***!
-  \***************************************/
+/***/ "./src/admin/components/Toast.tsx":
+/*!****************************************!*\
+  !*** ./src/admin/components/Toast.tsx ***!
+  \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Toast: () => (/* binding */ Toast)
+/* harmony export */   Toast: () => (/* binding */ Toast),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
@@ -36455,44 +36460,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
 
 
-/**
- * Represents a single toast notification with closing animation.
- *
- * @param {Object}   toast      The toast object ({id, message, type}).
- * @param {Function} onDismiss  The function to call to remove the toast from the global state.
- */
-
 const Toast = ({
   toast,
   onDismiss
 }) => {
-  // 1. Add a local state to track the closing animation
   const [isClosing, setIsClosing] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-
-  // 2. Create a handler that starts the closing animation
-  //    and then calls the real dismiss function after the animation finishes.
   const handleDismiss = () => {
-    setIsClosing(true); // Trigger the closing animation
-
-    // Wait for the animation to complete (300ms) before removing from the DOM
+    setIsClosing(true);
     setTimeout(() => {
       onDismiss(toast.id);
-    }, 300);
+    }, 300); // 300ms animation
   };
-
-  // 3. The auto-dismiss timer now calls our new handler
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const timer = setTimeout(() => {
       handleDismiss();
-    }, 5000); // 5-second timeout
-
+    }, 5000); // 5 seconds
     return () => {
       clearTimeout(timer);
     };
-    // The dependency array is updated to use the stable handleDismiss function.
-  }, [toast.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // 4. We add a dynamic class based on the closing state
+  }, [toast.id]);
   const toastClasses = `toast toast--${toast.type} ${isClosing ? 'toast--closing' : ''}`;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
     className: toastClasses,
@@ -36501,12 +36487,13 @@ const Toast = ({
       children: toast.message
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
       className: "toast__close-button",
-      onClick: handleDismiss // The close button also calls our new handler
-      ,
+      onClick: handleDismiss,
+      "aria-label": "Dismiss",
       children: "\xD7"
     })]
   });
 };
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Toast);
 
 /***/ }),
 
@@ -36521,17 +36508,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ToastContainer: () => (/* binding */ ToastContainer)
 /* harmony export */ });
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.js");
-/* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Toast */ "./src/admin/components/Toast.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
+/* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Toast */ "./src/admin/components/Toast.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
 
 
-
-/**
- * A container that renders all active toasts.
- * This should be placed at the top level of your app layout.
- */
 
 const ToastContainer = () => {
   const {
@@ -36549,19 +36531,20 @@ const ToastContainer = () => {
 
 /***/ }),
 
-/***/ "./src/admin/components/Toggle.js":
-/*!****************************************!*\
-  !*** ./src/admin/components/Toggle.js ***!
-  \****************************************/
+/***/ "./src/admin/components/Toggle.tsx":
+/*!*****************************************!*\
+  !*** ./src/admin/components/Toggle.tsx ***!
+  \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Toggle: () => (/* binding */ Toggle),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
 
@@ -36574,7 +36557,7 @@ const Toggle = ({
   className,
   ...props
 }) => {
-  const inputId = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useId)();
+  const inputId = (0,react__WEBPACK_IMPORTED_MODULE_0__.useId)();
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
     className: "wpab-input-con",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
@@ -36589,9 +36572,9 @@ const Toggle = ({
           id: inputId,
           ...props,
           type: "checkbox",
-          checked: checked !== undefined ? checked : false,
+          checked: checked,
           onChange: onChange,
-          className: `wpab-toggle${className ? " " + className : ""}`
+          className: `wpab-toggle${className ? ` ${className}` : ''}`
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
           className: "wpab-toggle-slider"
         })]
@@ -36599,7 +36582,7 @@ const Toggle = ({
     }), help && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
       className: "wpab-input-help",
       style: {
-        marginTop: "-4px"
+        marginTop: '-4px'
       },
       children: help
     })]
@@ -36609,50 +36592,47 @@ const Toggle = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/Tooltip.js":
-/*!*****************************************!*\
-  !*** ./src/admin/components/Tooltip.js ***!
-  \*****************************************/
+/***/ "./src/admin/components/Tooltip.tsx":
+/*!******************************************!*\
+  !*** ./src/admin/components/Tooltip.tsx ***!
+  \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ Tooltip)
+/* harmony export */   Tooltip: () => (/* binding */ Tooltip),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/caution-filled.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/caution-filled.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__);
-"use client";
 
 
 
-
-function Tooltip({
-  children = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.Fragment, {
-    children: [" ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_0__["default"], {
-      icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["default"],
-      className: "campaignbay-text-gray-400",
-      fill: "currentColor"
-    })]
+const Tooltip = ({
+  children = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_2__["default"],
+    className: "campaignbay-text-gray-400",
+    fill: "currentColor"
   }),
   content,
-  position = "top",
+  position = 'top',
   delay = 200,
-  className = "",
-  contentClassName = ""
-}) {
-  const [isVisible, setIsVisible] = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
-  const [tooltipPosition, setTooltipPosition] = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)({
+  className = '',
+  contentClassName = ''
+}) => {
+  const [isVisible, setIsVisible] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [tooltipPosition, setTooltipPosition] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
     top: 0,
     left: 0
   });
-  const triggerRef = (0,react__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
-  const tooltipRef = (0,react__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
-  const timeoutRef = (0,react__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
+  const triggerRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const tooltipRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const timeoutRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   const showTooltip = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -36674,7 +36654,6 @@ function Tooltip({
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
     let top, left;
-    // for positioning error remove scrollTop
     switch (position) {
       case "top":
         top = triggerRect.top + scrollTop - tooltipRect.height - 8;
@@ -36696,8 +36675,6 @@ function Tooltip({
         top = triggerRect.top + scrollTop - tooltipRect.height - 8;
         left = triggerRect.left + scrollLeft + (triggerRect.width - tooltipRect.width) / 2;
     }
-
-    // Keep tooltip within viewport bounds
     const padding = 8;
     if (left < padding) left = padding;
     if (left + tooltipRect.width > window.innerWidth - padding) {
@@ -36709,7 +36686,7 @@ function Tooltip({
       left
     });
   };
-  (0,react__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (isVisible) {
       calculatePosition();
       const handleResize = () => calculatePosition();
@@ -36722,7 +36699,7 @@ function Tooltip({
       };
     }
   }, [isVisible, position]);
-  (0,react__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -36772,7 +36749,8 @@ function Tooltip({
       })
     })]
   });
-}
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Tooltip);
 
 /***/ }),
 
@@ -37010,7 +36988,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_23__);
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_24__);
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var _components_CbCheckbox__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ../components/CbCheckbox */ "./src/admin/components/CbCheckbox.js");
 /* harmony import */ var _wordpress_url__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! @wordpress/url */ "@wordpress/url");
 /* harmony import */ var _wordpress_url__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(_wordpress_url__WEBPACK_IMPORTED_MODULE_27__);
@@ -38025,11 +38003,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/check.js");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var _components_Required__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/Required */ "./src/admin/components/Required.js");
-/* harmony import */ var _components_QuantityTiers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../components/QuantityTiers */ "./src/admin/components/QuantityTiers.js");
+/* harmony import */ var _components_QuantityTiers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../components/QuantityTiers */ "./src/admin/components/QuantityTiers.tsx");
 /* harmony import */ var _components_EBTiers__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../components/EBTiers */ "./src/admin/components/EBTiers.js");
 /* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../store/cbStore */ "./src/admin/store/cbStore.tsx");
 /* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @wordpress/date */ "@wordpress/date");
@@ -38038,7 +38016,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../components/Navbar */ "./src/admin/components/Navbar.js");
 /* harmony import */ var _components_DateTimePicker__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../components/DateTimePicker */ "./src/admin/components/DateTimePicker.js");
 /* harmony import */ var _components_CbCheckbox__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../components/CbCheckbox */ "./src/admin/components/CbCheckbox.js");
-/* harmony import */ var _components_Tooltip__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../components/Tooltip */ "./src/admin/components/Tooltip.js");
+/* harmony import */ var _components_Tooltip__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../components/Tooltip */ "./src/admin/components/Tooltip.tsx");
 /* harmony import */ var _components_CampaignSettings__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../components/CampaignSettings */ "./src/admin/components/CampaignSettings.js");
 /* harmony import */ var _CampaignsEdit__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./CampaignsEdit */ "./src/admin/pages/CampaignsEdit.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
@@ -38655,11 +38633,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/trash.js");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var _components_Required__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../components/Required */ "./src/admin/components/Required.js");
-/* harmony import */ var _components_QuantityTiers__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../components/QuantityTiers */ "./src/admin/components/QuantityTiers.js");
+/* harmony import */ var _components_QuantityTiers__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../components/QuantityTiers */ "./src/admin/components/QuantityTiers.tsx");
 /* harmony import */ var _components_EBTiers__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../components/EBTiers */ "./src/admin/components/EBTiers.js");
 /* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../store/cbStore */ "./src/admin/store/cbStore.tsx");
 /* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @wordpress/date */ "@wordpress/date");
@@ -38667,7 +38645,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../components/Loader */ "./src/admin/components/Loader.js");
 /* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../components/Navbar */ "./src/admin/components/Navbar.js");
 /* harmony import */ var _components_CbCheckbox__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../components/CbCheckbox */ "./src/admin/components/CbCheckbox.js");
-/* harmony import */ var _components_Tooltip__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../components/Tooltip */ "./src/admin/components/Tooltip.js");
+/* harmony import */ var _components_Tooltip__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../components/Tooltip */ "./src/admin/components/Tooltip.tsx");
 /* harmony import */ var _components_DateTimePicker__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../components/DateTimePicker */ "./src/admin/components/DateTimePicker.js");
 /* harmony import */ var _components_CampaignSettings__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../components/CampaignSettings */ "./src/admin/components/CampaignSettings.js");
 /* harmony import */ var _utils_getBool__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../utils/getBool */ "./src/admin/utils/getBool.ts");
@@ -40169,7 +40147,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/Loader */ "./src/admin/components/Loader.js");
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/check.js");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
@@ -40417,25 +40395,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
 
 
-// Assuming your types are in '../types.ts'
 
-// 1. Define the type for the context value. It can be the full CbStore object or null initially.
-
-// 2. Create the context with the correct type.
 const CbStoreContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)(null);
-
-// 3. Define the props for the provider component.
-
-/**
- * The provider component that makes the cbStore available to all child components.
- * It also configures the @wordpress/api-fetch instance with the nonce and root URL.
- */
 const CbStoreProvider = ({
   children,
   value
 }) => {
-  // Configure api-fetch once when the provider mounts.
-  // The value object is now strongly typed.
   _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default().use(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default().createNonceMiddleware(value.nonce));
   _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default().use(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default().createRootURLMiddleware(value.rest_url));
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(CbStoreContext.Provider, {
@@ -40443,94 +40408,55 @@ const CbStoreProvider = ({
     children: children
   });
 };
-
-/**
- * Custom hook for easy and type-safe access to the cbStore context.
- * It ensures the context is available and returns the strongly-typed store object.
- */
 const useCbStore = () => {
   const context = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(CbStoreContext);
-
-  // This check acts as a type guard.
-  // If context is null, we throw an error.
-  // TypeScript knows that if the hook proceeds, 'context' is guaranteed to be of type 'CbStore'.
   if (!context) {
     throw new Error("useCbStore must be used within a CbStoreProvider");
   }
-
-  // The return type is correctly inferred as `CbStore`, not `CbStore | null`.
   return context;
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CbStoreContext);
 
 /***/ }),
 
-/***/ "./src/admin/store/toast/toast-context.js":
-/*!************************************************!*\
-  !*** ./src/admin/store/toast/toast-context.js ***!
-  \************************************************/
+/***/ "./src/admin/store/toast/use-toast.tsx":
+/*!*********************************************!*\
+  !*** ./src/admin/store/toast/use-toast.tsx ***!
+  \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ToastContext: () => (/* binding */ ToastContext)
+/* harmony export */   ToastContext: () => (/* binding */ ToastContext),
+/* harmony export */   ToastProvider: () => (/* binding */ ToastProvider),
+/* harmony export */   useToast: () => (/* binding */ useToast)
 /* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-
-const ToastContext = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createContext)(null);
-
-/***/ }),
-
-/***/ "./src/admin/store/toast/toast-provider.js":
-/*!*************************************************!*\
-  !*** ./src/admin/store/toast/toast-provider.js ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ToastProvider: () => (/* binding */ ToastProvider)
-/* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _toast_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./toast-context */ "./src/admin/store/toast/toast-context.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
 
 
-
-/**
- * ToastProvider is a component that manages the state for toast notifications.
- * It provides the `toasts` array, an `addToast` function, and a `removeToast` function
- * to all child components via the ToastContext.
- */
-
+const ToastContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)(null);
 const ToastProvider = ({
   children
 }) => {
-  const [toasts, setToasts] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  // The state is typed, so `toasts` is always known to be `Toast[]`.
+  const [toasts, setToasts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
 
   /**
    * Removes a toast from the state by its ID.
-   * Wrapped in useCallback for performance optimization.
    */
-  const removeToast = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useCallback)(id => {
+  const removeToast = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(id => {
     setToasts(currentToasts => currentToasts.filter(toast => toast.id !== id));
   }, []);
 
   /**
    * Adds a new toast to the state.
-   * Generates a unique ID for each toast.
-   * Wrapped in useCallback for performance optimization.
-   *
-   * @param {string} message The message to display.
-   * @param {string} type    The type of toast (e.g., 'success', 'error', 'info'). Defaults to 'info'.
    */
-  const addToast = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useCallback)((message, type = 'info') => {
-    const id = Date.now() + Math.random(); // Simple unique ID generator
+  const addToast = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((message, type = 'info') => {
+    const id = Date.now() + Math.random();
     const newToast = {
       id,
       message,
@@ -40539,51 +40465,26 @@ const ToastProvider = ({
     setToasts(currentToasts => [...currentToasts, newToast]);
   }, []);
 
-  // The value object provided to all consumer components of this context.
+  // The value object automatically conforms to the `ToastContextValue` interface.
   const value = {
     toasts,
     addToast,
     removeToast
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_toast_context__WEBPACK_IMPORTED_MODULE_1__.ToastContext.Provider, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(ToastContext.Provider, {
     value: value,
     children: children
   });
 };
-
-/***/ }),
-
-/***/ "./src/admin/store/toast/use-toast.js":
-/*!********************************************!*\
-  !*** ./src/admin/store/toast/use-toast.js ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   useToast: () => (/* binding */ useToast)
-/* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _toast_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./toast-context */ "./src/admin/store/toast/toast-context.js");
-
-
-
-/**
- * A custom hook that provides easy access to the toast context.
- *
- * @returns {{
- *   toasts: Array<Object>,
- *   addToast: (message: string, type: string) => void,
- *   removeToast: (id: number) => void
- * }}
- */
 const useToast = () => {
-  const context = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useContext)(_toast_context__WEBPACK_IMPORTED_MODULE_1__.ToastContext);
+  const context = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(ToastContext);
+
+  // This check acts as a runtime safeguard and a TypeScript type guard.
   if (context === null) {
     throw new Error('useToast must be used within a ToastProvider');
   }
+
+  // After the check, TypeScript knows `context` is of type `ToastContextValue`.
   return context;
 };
 

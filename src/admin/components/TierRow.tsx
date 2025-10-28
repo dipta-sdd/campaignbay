@@ -1,12 +1,23 @@
-// src/components/TierRow.jsx
-import { useState } from "@wordpress/element";
+// FILE: TierRow.tsx
+import React, { useState, FC } from 'react';
 import {
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
-} from "@wordpress/components";
-import { useCbStore } from "../store/cbStore";
-const TierRow = ({
-  id,
+} from '@wordpress/components';
+import { useCbStore } from '../store/cbStore';
+import { QuantityTier, QuantityTierError } from '../types';
+
+interface TierRowProps {
+  tierData: QuantityTier;
+  onUpdate: (updatedTier: QuantityTier) => void;
+  onRemove: (id: number | string) => void;
+  onAdd: (setError: React.Dispatch<React.SetStateAction<string>>) => void;
+  isLast: boolean;
+  isFirst: boolean;
+  errors?: QuantityTierError;
+}
+
+const TierRow: FC<TierRowProps> = ({
   tierData,
   onUpdate,
   onRemove,
@@ -15,32 +26,30 @@ const TierRow = ({
   isFirst,
   errors,
 }) => {
-  const [error, setError] = useState("");
-
+  const [error, setError] = useState<string>('');
   const { woocommerce_currency_symbol } = useCbStore();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    // Create a new object for the update
+  const handleChange = (name: 'max' | 'value', rawValue: string) => {
+    // Keep value as a string for empty input, otherwise convert to number for calculations
+    const value = rawValue === '' ? '' : Number(rawValue);
     const updatedTier = { ...tierData, [name]: value };
 
-    // **Inline Validation Logic**
-    if (name === "max" && value && parseInt(value, 10) < tierData.min) {
-      setError("Max quantity must be greater than min quantity.");
+    if (name === 'max' && value !== '' && value < tierData.min) {
+      setError('Max quantity must be greater than min quantity.');
     } else {
-      setError("");
+      setError('');
     }
-
+    
     onUpdate(updatedTier);
   };
 
-  const handleTypeToggle = (newType) => {
+  const handleTypeToggle = (newType: 'percentage' | 'currency') => {
+    if (newType !== 'percentage' && newType !== 'currency') return;
     onUpdate({ ...tierData, type: newType });
   };
 
   return (
-    <div className={`cb-quantity-tier-row ${error ? "has-error" : ""}`}>
+    <div className={`cb-quantity-tier-row ${error ? 'has-error' : ''}`}>
       <div className="tier-inputs">
         <div className="wpab-grid-2">
           <div className="wpab-tier-input-grid-child">
@@ -49,10 +58,8 @@ const TierRow = ({
               type="number"
               name="min"
               value={tierData.min}
-              readOnly // Min is non-editable to enforce connected tiers
-              className={`min-input wpab-input ${
-                errors?.min ? "wpab-input-error" : ""
-              }`}
+              readOnly
+              className={`min-input wpab-input ${errors?.min ? 'wpab-input-error' : ''}`}
             />
             <span className="wpab-input-label">to</span>
             <input
@@ -60,11 +67,9 @@ const TierRow = ({
               name="max"
               value={tierData.max}
               min={tierData.min}
-              onChange={handleChange}
+              onChange={(e) => handleChange('max', e.target.value)}
               placeholder="e.g., 5"
-              className={`max-input wpab-input ${
-                errors?.max ? "wpab-input-error" : ""
-              }`}
+              className={`max-input wpab-input ${errors?.max ? 'wpab-input-error' : ''}`}
             />
           </div>
           <div className="wpab-tier-input-grid-child">
@@ -74,11 +79,9 @@ const TierRow = ({
               name="value"
               min="0"
               value={tierData.value}
-              onChange={handleChange}
+              onChange={(e) => handleChange('value', e.target.value)}
               placeholder="e.g., 10"
-              className={`value-input wpab-input ${
-                errors?.value ? "wpab-input-error" : ""
-              }`}
+              className={`value-input wpab-input ${errors?.value ? 'wpab-input-error' : ''}`}
             />
             <div className="type-toggle">
               <ToggleGroupControl
@@ -87,11 +90,11 @@ const TierRow = ({
                 __nextHasNoMarginBottom
                 isBlock
                 value={tierData.type}
-                onChange={(value) => handleTypeToggle(value)}
+                onChange={(value: 'percentage' | 'currency') => handleTypeToggle(value)}
               >
-                <ToggleGroupControlOption label={"%"} value="percentage" />
+                <ToggleGroupControlOption label={'%'} value="percentage" />
                 <ToggleGroupControlOption
-                  label={woocommerce_currency_symbol || "$"}
+                  label={woocommerce_currency_symbol || '$'}
                   value="currency"
                 />
               </ToggleGroupControl>
@@ -99,8 +102,7 @@ const TierRow = ({
           </div>
         </div>
       </div>
-
-      {isFirst || isLast ? (
+      {(isFirst || isLast) && (
         <div className="tier-actions">
           {!isFirst && (
             <button
@@ -115,15 +117,13 @@ const TierRow = ({
             <button
               type="button"
               className="add-tier"
-              onClick={() => {
-                onAdd(setError);
-              }}
+              onClick={() => onAdd(setError)}
             >
               + Add another tier
             </button>
           )}
         </div>
-      ) : null}
+      )}
       {error && <p className="error-message m-0">{error}</p>}
     </div>
   );
