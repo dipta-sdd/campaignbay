@@ -1,31 +1,51 @@
+import React, { useState, FC, Dispatch, SetStateAction } from "react";
+import { __ } from "@wordpress/i18n";
+import { Icon, pencil } from "@wordpress/icons";
+
 import SettingCard from "./SettingCard";
 import Checkbox from "./Checkbox";
-import { __ } from "@wordpress/i18n";
 import Select from "./Select";
 import Input from "./Input";
-import { Icon, pencil } from "@wordpress/icons";
 import QuantityTableEditModal from "./QuantityTableEditModal";
-import { useState } from "react";
 import Placeholders from "./PlaceHolders";
+import { DiscountTableOptionsType } from "../types";
 
-const ProductSettings = ({
+export interface ProductSettingsType {
+  product_message_format_percentage: string;
+  product_message_format_fixed: string;
+  bogo_banner_message_format: string;
+  show_discount_table: boolean;
+  product_priorityMethod: "apply_highest" | "apply_lowest";
+  discount_table_options: DiscountTableOptionsType;
+}
+
+interface ProductSettingsProps {
+  productSettings: ProductSettingsType;
+  setProductSettings: Dispatch<SetStateAction<ProductSettingsType>>;
+  setEdited: Dispatch<SetStateAction<boolean>>;
+  isSaving: boolean;
+  updateSettings: () => void;
+}
+
+const ProductSettings: FC<ProductSettingsProps> = ({
   productSettings,
   setProductSettings,
   setEdited,
   isSaving,
   updateSettings,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   return (
     <div className="wpab-cb-settings-tab">
       <SettingCard title={__("Product Page Display", "campaignbay")}>
-        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full">
+        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-[10px] campaignbay-w-full">
           <Input
             className="w-100"
             label="Product Page Percentage Schedule or Early Bird Discount Message Format"
             help={<Placeholders options={["percentage_off"]} />}
             value={productSettings.product_message_format_percentage}
-            onChange={(value) => {
+            onChange={(value: string) => {
               setEdited(true);
               setProductSettings((prev) => ({
                 ...prev,
@@ -36,9 +56,9 @@ const ProductSettings = ({
           <Input
             className="w-100"
             label="Product Page Fixed Schedule or Early Bird Discount Message Format"
-            help={<Placeholders options={["ampount_of"]} />}
+            help={<Placeholders options={["amount_off"]} />}
             value={productSettings.product_message_format_fixed}
-            onChange={(value) => {
+            onChange={(value: string) => {
               setEdited(true);
               setProductSettings((prev) => ({
                 ...prev,
@@ -46,13 +66,12 @@ const ProductSettings = ({
               }));
             }}
           />
-
           <Input
             className="w-100"
             label="Product Page BOGO Discount Message Format"
             help={<Placeholders options={["buy_quantity", "get_quantity"]} />}
             value={productSettings.bogo_banner_message_format}
-            onChange={(value) => {
+            onChange={(value: string) => {
               setEdited(true);
               setProductSettings((prev) => ({
                 ...prev,
@@ -60,14 +79,14 @@ const ProductSettings = ({
               }));
             }}
           />
-          <span>
+          <div>
             <Checkbox
               checked={productSettings.show_discount_table}
-              onChange={() => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setEdited(true);
                 setProductSettings((prev) => ({
                   ...prev,
-                  show_discount_table: !prev.show_discount_table,
+                  show_discount_table: e.target.checked,
                 }));
               }}
               label={__(
@@ -88,7 +107,7 @@ const ProductSettings = ({
                 {__("Customize Table", "campaignbay")}
               </button>
             </div>
-          </span>
+          </div>
         </div>
       </SettingCard>
 
@@ -96,11 +115,7 @@ const ProductSettings = ({
         title={__("Product Exclusion & Prioritization", "campaignbay")}
       >
         <Select
-          label={
-            <span className="wpab-input-label">
-              {__("Product Page Discount Message Format", "campaignbay")}
-            </span>
-          }
+          label="Product Page Discount Message Format"
           help={__(
             "Defines how multiple product-level discounts are applied.",
             "campaignbay"
@@ -120,23 +135,22 @@ const ProductSettings = ({
             setEdited(true);
             setProductSettings((prev) => ({
               ...prev,
-              product_priorityMethod: value,
+              product_priorityMethod: value as "apply_highest" | "apply_lowest",
             }));
           }}
         />
       </SettingCard>
+
       <QuantityTableEditModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         options={productSettings.discount_table_options}
-        setOptions={(value) => {
-          {
-            setEdited(true);
-            setProductSettings((prev) => ({
-              ...prev,
-              discount_table_options: { ...value },
-            }));
-          }
+        setOptions={(value: DiscountTableOptionsType) => {
+          setEdited(true);
+          setProductSettings((prev) => ({
+            ...prev,
+            discount_table_options: value,
+          }));
         }}
         isSaving={isSaving}
         updateSettings={updateSettings}

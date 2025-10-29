@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, FC, ReactNode } from "react";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { useNavigate } from "react-router-dom";
 import {
@@ -45,31 +45,70 @@ import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import formatDateTime, { timeDiff } from "../utils/Dates";
 import DropdownMenu from "../components/DropdownMenu";
 import ConfirmDialog from "../components/ConfirmDialog";
+import {
+  BogoTier,
+  Campaign,
+  CampaignType,
+  QuantityTier,
+  TargetType,
+} from "../types";
 
-const Campaigns = () => {
-  const [campaigns, setCampaigns] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+type SortableHeadValue =
+  | "post_name"
+  | "status"
+  | "type"
+  | "start_date"
+  | "end_date"
+  | "usage_count"
+  | "modified";
+type OrderDirection = "asc" | "desc";
+type ViewType = "table" | "grid" | null;
+type BulkActionType = "" | "activate" | "deactivate" | "delete";
+
+interface TableHeadConfig {
+  label: string;
+  value: string;
+  isSortable: boolean;
+}
+
+interface TableHeadProps {
+  label: ReactNode;
+  isSortable: boolean;
+  value: SortableHeadValue;
+  onClick: () => void;
+}
+
+const Campaigns: FC = () => {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const { wpSettings, woocommerce_currency_symbol } = useCbStore();
-  const [selectedCampaignId, setSelectedCampaignId] = useState(null);
-  const [selectedCampaigns, setSelectedCampaigns] = useState([]);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [orderby, setOrderby] = useState("modified");
-  const [order, setOrder] = useState("desc");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [bulkAction, setBulkAction] = useState("");
-  const [isBulkActionModalOpen, setIsBulkActionModalOpen] = useState(false);
-  const [view, setView] = useState();
+  const { woocommerce_currency_symbol } = useCbStore();
+
+  const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(
+    null
+  );
+  const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+
+  const [orderby, setOrderby] = useState<SortableHeadValue>("modified");
+  const [order, setOrder] = useState<OrderDirection>("desc");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [typeFilter, setTypeFilter] = useState<string>("");
+  const [bulkAction, setBulkAction] = useState<BulkActionType>("");
+  const [isBulkActionModalOpen, setIsBulkActionModalOpen] =
+    useState<boolean>(false);
+  const [view, setView] = useState<ViewType>("table");
 
   useEffect(() => {
-    const savedView = localStorage.getItem("campaignbay_campaigns_view");
+    // @ts-ignore
+    const savedView: ViewType = localStorage.getItem(
+      "campaignbay_campaigns_view"
+    ) as ViewType;
 
     if (savedView) {
       setView(savedView);
@@ -84,7 +123,7 @@ const Campaigns = () => {
     }
   }, [view]);
 
-  const tableHeads = [
+  const tableHeads: TableHeadConfig[] = [
     { label: "Campaign Name", value: "post_name", isSortable: true },
     { label: "Status", value: "status", isSortable: true },
     { label: "Campaign Type", value: "type", isSortable: true },
@@ -114,14 +153,14 @@ const Campaigns = () => {
         type: typeFilter,
         _timestamp: Date.now(),
       };
-      const response = await apiFetch({
+      const response: any = await apiFetch({
         path: addQueryArgs("/campaignbay/v1/campaigns", queryParams),
         method: "GET",
         parse: false,
       });
 
-      setTotalPages(response.headers.get("x-wp-totalpages"));
-      setTotalItems(response.headers.get("x-wp-total"));
+      setTotalPages(response?.headers?.get("x-wp-totalpages"));
+      // setTotalItems(response?.headers?.get("x-wp-total"));
       setCampaigns(await response.json());
     } catch (error) {
       addToast(__("Error fetching campaigns.", "campaignbay"), "error");
@@ -129,18 +168,6 @@ const Campaigns = () => {
       setIsLoading(false);
     }
   };
-
-  // const formatDateTime = (dateTimeString) => {
-  //   if (
-  //     !dateTimeString ||
-  //     new Date(dateTimeString).toString() === "Invalid Date"
-  //   ) {
-  //     return "—";
-  //   }
-  //   const format = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
-  //   const dateTime = getDate(dateTimeString);
-  //   return date(format, dateTime, null);
-  // };
 
   const handleSelectAll = () => {
     if (isAllSelected) {
@@ -150,7 +177,7 @@ const Campaigns = () => {
     }
   };
 
-  const handleSelectCampaign = (campaignId) => {
+  const handleSelectCampaign = (campaignId: number) => {
     if (selectedCampaigns.includes(campaignId)) {
       setSelectedCampaigns((prev) => prev.filter((id) => id !== campaignId));
     } else {
@@ -176,18 +203,22 @@ const Campaigns = () => {
     }
   };
 
-  const handleSort = (newSortBy) => {
+  const handleSort = (newSortBy: SortableHeadValue) => {
     if (orderby === newSortBy) {
       setOrder(order === "asc" ? "desc" : "asc");
     } else {
-      // If clicking a new column, set it as the sort column and default to ascending.
       setOrderby(newSortBy);
       setOrder("asc");
     }
     console.log(orderby, order);
   };
 
-  const TableHead = ({ label, isSortable, value, onClick }) => {
+  const TableHead: React.FC<TableHeadProps> = ({
+    label,
+    isSortable,
+    value,
+    onClick,
+  }) => {
     if (isSortable) {
       return (
         <th>
@@ -208,7 +239,7 @@ const Campaigns = () => {
     );
   };
 
-  const SortIndicator = ({ value }) => {
+  const SortIndicator: FC<{ value: SortableHeadValue }> = ({ value }) => {
     if (orderby !== value) {
       return null; // Don't show an icon if it's not the active sort column
     }
@@ -239,7 +270,7 @@ const Campaigns = () => {
   const isAllSelected =
     campaigns.length > 0 && selectedCampaigns.length === campaigns.length;
 
-  const getTargetType = (target_type) => {
+  const getTargetType = (target_type: TargetType) => {
     if (target_type === "product") {
       return "Selected Products";
     }
@@ -259,7 +290,7 @@ const Campaigns = () => {
     }
   };
 
-  const handleBulkAction = (action) => {
+  const handleBulkAction = (action: BulkActionType) => {
     setBulkAction(action);
     if (action !== "" && action !== null && action !== undefined) {
       setIsBulkActionModalOpen(true);
@@ -267,6 +298,7 @@ const Campaigns = () => {
   };
 
   const handleBulkActionModal = () => {
+    // @ts-ignore
     if (!selectedCampaigns?.length || !bulkAction || bulkAction === "") {
       setIsBulkActionModalOpen(false);
       return;
@@ -305,7 +337,7 @@ const Campaigns = () => {
   const handleCampaignsDelete = async () => {
     // Ensure all campaign IDs are integers
     const campaignsToDeleteInt = selectedCampaigns
-      .map((id) => parseInt(id, 10))
+      .map((id) => id)
       .filter((id) => !isNaN(id));
     setIsLoading(true);
     try {
@@ -343,7 +375,7 @@ const Campaigns = () => {
 
   const handleCampaignsStatusUpdate = async () => {
     const campaignsToUpdateInt = selectedCampaigns
-      .map((id) => parseInt(id, 10))
+      .map((id) => id)
       .filter((id) => !isNaN(id));
     setIsLoading(true);
     try {
@@ -365,11 +397,10 @@ const Campaigns = () => {
         "success"
       );
       setSelectedCampaigns([]);
-      console.log(campaignsToUpdateInt);
       setCampaigns((prev) =>
         prev.map((c) => {
           console.log(c);
-          if (campaignsToUpdateInt.includes(parseInt(c.id, 10))) {
+          if (campaignsToUpdateInt.includes(c.id)) {
             return {
               ...c,
               status: bulkAction === "activate" ? "active" : "inactive",
@@ -393,7 +424,7 @@ const Campaigns = () => {
     }
   };
 
-  const getCampaignValue = (campaign) => {
+  const getCampaignValue = (campaign: Campaign) => {
     if (campaign.type === "scheduled") {
       return (
         campaign?.discount_value +
@@ -403,9 +434,12 @@ const Campaigns = () => {
           : woocommerce_currency_symbol)
       );
     }
-    const tier = campaign?.tiers[0];
-    if (campaign?.type === "bogo")
+    if (campaign?.type === "bogo") {
+      const tier: BogoTier | undefined = campaign?.tiers[0] as BogoTier;
       return tier?.get_quantity + " / " + tier?.buy_quantity;
+    }
+    const tier: QuantityTier | undefined = campaign?.tiers[0] as QuantityTier;
+
     return (
       tier?.value +
       " " +
@@ -413,7 +447,7 @@ const Campaigns = () => {
     );
   };
 
-  const duplicateCampaign = async (campaignId) => {
+  const duplicateCampaign = async (campaignId: number) => {
     try {
       const response = await apiFetch({
         path: `/campaignbay/v1/campaigns/${campaignId}/duplicate`,
@@ -433,7 +467,7 @@ const Campaigns = () => {
     }
   };
 
-  const getCampaignTypeIcon = (type) => {
+  const getCampaignTypeIcon = (type: CampaignType) => {
     switch (type) {
       case "scheduled":
         return <Calendar className="campaignbay-w-3.5 campaignbay-h-3.5" />;
@@ -478,8 +512,8 @@ const Campaigns = () => {
                 <select
                   className="wpab-select"
                   value={bulkAction}
-                  onChange={(e) => {
-                    handleBulkAction(e.target.value);
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    handleBulkAction(e.target.value as BulkActionType);
                   }}
                   disabled={!selectedCampaigns?.length}
                 >
@@ -519,20 +553,22 @@ const Campaigns = () => {
                 >
                   Apply
                 </button>
-
+                {/* @ts-ignore */}
                 <ToggleGroupControl
                   className={`cb-toggle-group-control campaignbay-mt-[-8px]`}
                   __next40pxDefaultSize
                   __nextHasNoMarginBottom
                   isBlock
-                  value={view}
-                  onChange={(value) => setView(value)}
+                  value={view as string}
+                  onChange={(value: any) => setView(value as ViewType)}
                 >
                   <ToggleGroupControlOption
+                    // @ts-ignore
                     label={<Table2 size={16} />}
                     value="table"
                   />
                   <ToggleGroupControlOption
+                    // @ts-ignore
                     label={<LayoutGrid size={16} />}
                     value="grid"
                   />
@@ -575,8 +611,10 @@ const Campaigns = () => {
                           key={head.value}
                           label={head.label}
                           isSortable={head.isSortable}
-                          value={head.value}
-                          onClick={() => handleSort(head.value)}
+                          value={head.value as SortableHeadValue}
+                          onClick={() =>
+                            handleSort(head.value as SortableHeadValue)
+                          }
                         />
                       ))}
                     </tr>
@@ -633,7 +671,7 @@ const Campaigns = () => {
                       )
                     ) : campaigns.length === 0 ? (
                       <tr>
-                        <td colSpan="11" style={{ textAlign: "center" }}>
+                        <td colSpan={11} style={{ textAlign: "center" }}>
                           No campaigns found.
                         </td>
                       </tr>
@@ -1028,7 +1066,9 @@ const Campaigns = () => {
               <select
                 className="wpab-select campaignbay-hidden-border"
                 value={currentPage}
-                onChange={(e) => setCurrentPage(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setCurrentPage(Number(e.target.value))
+                }
               >
                 {Array.from({ length: totalPages }, (_, index) => (
                   <option key={index + 1} value={index + 1}>
@@ -1047,7 +1087,7 @@ const Campaigns = () => {
                 </button>
                 <button
                   className="wpab-cb-btn campaignbay-arrow-button"
-                  disabled={currentPage === parseInt(totalPages)}
+                  disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >
                   <Icon icon={next} fill="currentColor" />

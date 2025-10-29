@@ -1,42 +1,55 @@
-import Checkbox from "./Checkbox";
-import SettingCard from "./SettingCard";
-import Select from "./Select";
+import React, { useState, FC, Dispatch, SetStateAction } from "react";
 import { __ } from "@wordpress/i18n";
-import { useState } from "@wordpress/element";
-
-import Toggle from "./Toggle";
-import { Eye, Save, Trash2 } from "lucide-react";
+import apiFetch from "@wordpress/api-fetch";
 import { Icon, seen, trash } from "@wordpress/icons";
+
+import SettingCard from "./SettingCard";
+import Checkbox from "./Checkbox";
+import Select from "./Select";
+import Toggle from "./Toggle";
 import LogViewerModal from "./LogViewerModal";
 import { useToast } from "../store/toast/use-toast";
-import apiFetch from "@wordpress/api-fetch";
 
-const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
-  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
-  const [isClearingLogs, setIsClearingLogs] = useState(false);
+export interface GlobalSettingsType {
+  global_enableAddon: boolean;
+  position_to_show_bulk_table: string;
+  position_to_show_discount_bar: string;
+  global_calculate_discount_from: "regular_price" | "sale_price";
+  perf_enableCaching: boolean;
+  debug_enableMode: boolean;
+}
+
+interface GlobalSettingsProps {
+  globalSettings: GlobalSettingsType;
+  setGlobalSettings: Dispatch<SetStateAction<GlobalSettingsType>>;
+  setEdited: Dispatch<SetStateAction<boolean>>;
+}
+
+const GlobalSettings: FC<GlobalSettingsProps> = ({
+  globalSettings,
+  setGlobalSettings,
+  setEdited,
+}) => {
+  const [isLogModalOpen, setIsLogModalOpen] = useState<boolean>(false);
+  const [isClearingLogs, setIsClearingLogs] = useState<boolean>(false);
   const { addToast } = useToast();
+
   const openLogViewer = () => {
     setIsLogModalOpen(true);
   };
 
-  const handleClearLogs = async () => {
+  const handleClearLogs = async (): Promise<boolean> => {
     setIsClearingLogs(true);
     let wasSuccessful = false;
-
     try {
-      const response = await apiFetch({
-        path: "/campaignbay/v1/logs",
-        method: "DELETE",
-      });
-
-      // 3. Display a success notice.
+      await apiFetch({ path: "/campaignbay/v1/logs", method: "DELETE" });
       addToast(__("Log files cleared successfully.", "campaignbay"), "success");
       wasSuccessful = true;
-    } catch (error) {
-      // 4. Display an error notice if something goes wrong.
-      const errorMessage = error.message || "An unknown error occurred.";
+    } catch (error: any) {
+      const errorMessage =
+        error.message || __("An unknown error occurred.", "campaignbay");
       addToast(
-        __("Error clearing logs: ", "campaignbay") + errorMessage,
+        `${__("Error clearing logs:", "campaignbay")} ${errorMessage}`,
         "error"
       );
       console.error("Clear logs error:", error);
@@ -56,16 +69,15 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
             "campaignbay"
           )}
           checked={globalSettings.global_enableAddon}
-          onChange={() => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setEdited(true);
             setGlobalSettings((prev) => ({
               ...prev,
-              global_enableAddon: !prev.global_enableAddon,
+              global_enableAddon: e.target.checked,
             }));
           }}
         />
-
-        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full">
+        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-[10px] campaignbay-w-full">
           <Select
             className="w-100"
             label={__("Bulk Table Position", "campaignbay")}
@@ -96,7 +108,7 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
               setEdited(true);
               setGlobalSettings((prev) => ({
                 ...prev,
-                position_to_show_bulk_table: value,
+                position_to_show_bulk_table: String(value),
               }));
             }}
           />
@@ -130,11 +142,10 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
               setEdited(true);
               setGlobalSettings((prev) => ({
                 ...prev,
-                position_to_show_discount_bar: value,
+                position_to_show_discount_bar: String(value),
               }));
             }}
           />
-
           <Select
             className="w-100"
             label={__("Calculate Discount From", "campaignbay")}
@@ -154,20 +165,22 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
               setEdited(true);
               setGlobalSettings((prev) => ({
                 ...prev,
-                global_calculate_discount_from: value,
+                global_calculate_discount_from: value as
+                  | "regular_price"
+                  | "sale_price",
               }));
             }}
           />
         </div>
       </SettingCard>
-      <SettingCard title={__("Performence & Caching", "campaignbay")}>
+      <SettingCard title={__("Performance & Caching", "campaignbay")}>
         <Checkbox
           checked={globalSettings.perf_enableCaching}
-          onChange={() => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setEdited(true);
             setGlobalSettings((prev) => ({
               ...prev,
-              perf_enableCaching: !prev.perf_enableCaching,
+              perf_enableCaching: e.target.checked,
             }));
           }}
           label={__("Enable Discount Caching", "campaignbay")}
@@ -176,7 +189,6 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
             "campaignbay"
           )}
         />
-
         <div className="wpab-cb-btn-con-bottom">
           <button className="wpab-cb-btn wpab-cb-btn-outline-danger">
             <Icon icon={trash} fill="currentColor" />
@@ -187,11 +199,11 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
       <SettingCard title={__("Debugging & Logging", "campaignbay")}>
         <Checkbox
           checked={globalSettings.debug_enableMode}
-          onChange={() => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setEdited(true);
             setGlobalSettings((prev) => ({
               ...prev,
-              debug_enableMode: !prev.debug_enableMode,
+              debug_enableMode: e.target.checked,
             }));
           }}
           label={__("Enable Debug Mode", "campaignbay")}
@@ -200,7 +212,6 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
             "campaignbay"
           )}
         />
-
         <div className="wpab-cb-btn-con-bottom">
           <button
             className="wpab-cb-btn wpab-cb-btn-outline-primary"

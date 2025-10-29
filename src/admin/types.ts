@@ -117,8 +117,6 @@ export interface EBTier {
 export type EBTierError = Partial<Record<'quantity' | 'value', { message: string }>>;
 export type EBTierErrorMap = Record<string | number, EBTierError>;
 
-export type CampaignType = 'scheduled' | 'earlybird' | 'quantity' | 'bogo';
-
 export type ApplyAsType = "line_total" | "coupon" | "fee";
 export type BogoMessageLocationType = "line_item_name" | "notice" | "dont_show";
 
@@ -139,3 +137,93 @@ export interface CampaignSettingsType {
   bogo_cart_message_location?: BogoMessageLocationType;
 }
 export type CampaignSettingsErrorsType = Partial<Record<keyof CampaignSettingsType, { message: string }>>;
+
+export type CampaignStatusType = 'active' | 'inactive' | 'scheduled' | 'expired';
+export type CampaignType = 'bogo' | 'scheduled' | 'quantity' | 'earlybird';
+export type DiscountType = 'percentage' | 'fixed';
+export type TargetType = 'entire_store' | 'category' | 'product' | 'tag';
+// add /edit campaigns
+export interface SelectOptionType {
+  label: string;
+  value: number;
+}
+
+
+export interface DependentType {
+  id: number;
+  name: string;
+}
+
+export interface TargetOptionType{
+  label: string;
+  value: number;
+}
+
+export interface DependentResponseType {
+  products: DependentType[];
+  categories: DependentType[];
+}
+
+export interface BogoTier {
+  id: number;
+  buy_quantity: number | '';
+  get_quantity: number | '';
+}
+export type BogoTierError = Partial<Record<'buy_quantity' | 'get_quantity', { message: string }>>;
+export type CampaignErrorsType = {
+  title?: { message: string };
+  status?: { message: string };
+  type?: { message: string };
+  discount_type?: { message: string };
+  discount_value?: { message: string };
+  target_type?: { message: string };
+  target_ids?: { message: string };
+  isExclude?: { message: string };
+  exclude_sale_items?: { message: string };
+  usage_limit?: { message: string };
+  schedule_enabled?: { message: string };
+  start_datetime?: { message: string };
+  end_datetime?: { message: string };
+  tiers?:  QuantityTierError[] | EBTierError[] | BogoTierError[];
+  settings?: CampaignSettingsErrorsType;
+};
+
+export type Tier = QuantityTier | EBTier | BogoTier;
+
+export interface Campaign {
+  id: number;
+  title: string;
+  status: CampaignStatusType;
+  type: CampaignType;
+  
+  discount_type: 'percentage' | 'fixed' | null;
+  discount_value: number | null | '';
+  
+  tiers: Tier[];
+
+  target_type: TargetType;
+  target_ids: number[];
+  is_exclude: boolean;
+  exclude_sale_items: boolean;
+
+  schedule_enabled: boolean;
+  start_datetime: string| Date | null;
+  end_datetime: string | Date |null;
+
+  usage_count: number;
+  usage_limit: number | null;
+  
+  date_created: string | Date | Number;
+  date_modified: string | Date | Number;
+  created_by: number;
+  updated_by: number;
+  
+  start_datetime_unix: number | null;
+  end_datetime_unix: number | null;
+  date_modified_unix: number | null;
+  date_created_unix: number | null;
+
+  conditions: any[];
+
+  settings: CampaignSettingsType;
+};

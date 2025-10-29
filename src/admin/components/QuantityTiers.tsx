@@ -1,13 +1,17 @@
 import { __ } from "@wordpress/i18n";
 import React, { FC } from "react";
 import TierRow from "./TierRow";
-import { QuantityTier, QuantityTierErrorMap } from "../types";
+import {
+  QuantityTier,
+  QuantityTierError,
+  QuantityTierErrorMap,
+} from "../types";
 import Required from "./Required";
 
 interface QuantityTiersProps {
   tiers: QuantityTier[];
   setTiers: React.Dispatch<React.SetStateAction<QuantityTier[]>>;
-  errors?: QuantityTierErrorMap;
+  errors?: QuantityTierError[];
 }
 
 const QuantityTiers: FC<QuantityTiersProps> = ({ tiers, setTiers, errors }) => {

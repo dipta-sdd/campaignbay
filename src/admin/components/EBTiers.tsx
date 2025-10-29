@@ -1,19 +1,19 @@
-import { FC} from 'react';
+import { FC } from "react";
 import { __ } from "@wordpress/i18n";
 import Required from "./Required";
 import EBTierRow from "./EBTierRow";
-import { EBTier, EBTierErrorMap } from '../types';
-
-
+import { EBTier, EBTierError, EBTierErrorMap } from "../types";
 
 interface EBTiersProps {
   tiers: EBTier[];
   setTiers: React.Dispatch<React.SetStateAction<EBTier[]>>;
-  errors?: EBTierErrorMap;
+  errors?: EBTierError[];
 }
 
-const EBTiers : FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
-  const handleAddTier = (setError : React.Dispatch<React.SetStateAction<string>>) => {
+const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
+  const handleAddTier = (
+    setError: React.Dispatch<React.SetStateAction<string>>
+  ) => {
     const lastTier = tiers[tiers.length - 1];
     if (!lastTier.quantity) {
       setError(
@@ -27,7 +27,7 @@ const EBTiers : FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
       );
       return;
     }
-    const newTier : EBTier = {
+    const newTier: EBTier = {
       id: tiers.length,
       quantity: "",
       value: "",
@@ -37,13 +37,13 @@ const EBTiers : FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
     setTiers([...tiers, newTier]);
   };
 
-  const handleRemoveTier = (idToRemove : number ) => {
+  const handleRemoveTier = (idToRemove: number) => {
     if (tiers.length <= 1) return;
-    setTiers(tiers.filter((tier : EBTier) => tier.id !== idToRemove));
+    setTiers(tiers.filter((tier: EBTier) => tier.id !== idToRemove));
   };
 
-  const handleTierUpdate = (updatedTier : EBTier) => {
-    const newTiers = tiers.map((tier : EBTier, index) => {
+  const handleTierUpdate = (updatedTier: EBTier) => {
+    const newTiers = tiers.map((tier: EBTier, index) => {
       if (tier.id === updatedTier.id) {
         return updatedTier;
       }
@@ -53,12 +53,11 @@ const EBTiers : FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
     setTiers(tmpTiers);
   };
 
-  const calculateTotal = (tiers : EBTier[]) => {
+  const calculateTotal = (tiers: EBTier[]) => {
     let total = 0;
     return tiers.map((tier, index) => {
       if (index !== 0) {
-        total =
-          total + (tiers[index - 1].quantity || 0);
+        total = total + (tiers[index - 1].quantity || 0);
       }
       return {
         ...tier,

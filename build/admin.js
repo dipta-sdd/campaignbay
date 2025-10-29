@@ -27636,9 +27636,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_AppLayout__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/AppLayout */ "./src/admin/components/AppLayout.tsx");
 /* harmony import */ var _pages_Dashboard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pages/Dashboard */ "./src/admin/pages/Dashboard.js");
 /* harmony import */ var _pages_Settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pages/Settings */ "./src/admin/pages/Settings.js");
-/* harmony import */ var _pages_Campaigns__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pages/Campaigns */ "./src/admin/pages/Campaigns.js");
-/* harmony import */ var _pages_CampaignsAdd__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pages/CampaignsAdd */ "./src/admin/pages/CampaignsAdd.js");
-/* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/CampaignsEdit */ "./src/admin/pages/CampaignsEdit.js");
+/* harmony import */ var _pages_Campaigns__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pages/Campaigns */ "./src/admin/pages/Campaigns.tsx");
+/* harmony import */ var _pages_CampaignsAdd__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pages/CampaignsAdd */ "./src/admin/pages/CampaignsAdd.tsx");
+/* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/CampaignsEdit */ "./src/admin/pages/CampaignsEdit.tsx");
 /* harmony import */ var _components_ToastContainer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/ToastContainer */ "./src/admin/components/ToastContainer.tsx");
 /* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./store/cbStore */ "./src/admin/store/cbStore.tsx");
 /* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
@@ -28223,24 +28223,22 @@ const ActivityLogModal = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/AdvancedSettings.js":
-/*!**************************************************!*\
-  !*** ./src/admin/components/AdvancedSettings.js ***!
-  \**************************************************/
+/***/ "./src/admin/components/AdvancedSettings.tsx":
+/*!***************************************************!*\
+  !*** ./src/admin/components/AdvancedSettings.tsx ***!
+  \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _Multiselect__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Multiselect */ "./src/admin/components/Multiselect.tsx");
-/* harmony import */ var _SettingCard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SettingCard */ "./src/admin/components/SettingCard.tsx");
-/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Checkbox */ "./src/admin/components/Checkbox.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
-
+/* harmony import */ var _SettingCard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SettingCard */ "./src/admin/components/SettingCard.tsx");
+/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Checkbox */ "./src/admin/components/Checkbox.tsx");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__);
 
 
 
@@ -28250,35 +28248,21 @@ const AdvancedSettings = ({
   setAdvancedSettings,
   setEdited
 }) => {
-  const [selected, setSelected] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(["africa"]);
-  const options = [{
-    label: "Africa",
-    value: "africa"
-  }, {
-    label: "America",
-    value: "america"
-  }, {
-    label: "Antarctica",
-    value: "antarctica"
-  }, {
-    label: "Asia",
-    value: "asia"
-  }];
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
     className: "wpab-cb-settings-tab",
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_2__["default"], {
-      title: "Advanced Settings",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_0__["default"], {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Advanced Settings", "campaignbay"),
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_1__["default"], {
         checked: advancedSettings.advanced_deleteAllOnUninstall,
-        onChange: () => {
+        onChange: e => {
           setEdited(true);
           setAdvancedSettings(prev => ({
             ...prev,
-            advanced_deleteAllOnUninstall: !prev.advanced_deleteAllOnUninstall
+            advanced_deleteAllOnUninstall: e.target.checked
           }));
         },
-        label: "Delete All Data on Uninstall",
-        help: "Delete all data when the plugin is uninstalled"
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Delete All Data on Uninstall", "campaignbay"),
+        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Delete all data when the plugin is uninstalled", "campaignbay")
       })
     })
   });
@@ -28327,7 +28311,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Required__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Required */ "./src/admin/components/Required.tsx");
 /* harmony import */ var _CbCheckbox__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CbCheckbox */ "./src/admin/components/CbCheckbox.tsx");
 /* harmony import */ var _Tooltip__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Tooltip */ "./src/admin/components/Tooltip.tsx");
-/* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../pages/CampaignsEdit */ "./src/admin/pages/CampaignsEdit.js");
+/* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../pages/CampaignsEdit */ "./src/admin/pages/CampaignsEdit.tsx");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _PlaceHolders__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./PlaceHolders */ "./src/admin/components/PlaceHolders.tsx");
@@ -28576,26 +28560,24 @@ const CampaignSettings = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/CartSettings.js":
-/*!**********************************************!*\
-  !*** ./src/admin/components/CartSettings.js ***!
-  \**********************************************/
+/***/ "./src/admin/components/CartSettings.tsx":
+/*!***********************************************!*\
+  !*** ./src/admin/components/CartSettings.tsx ***!
+  \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Checkbox */ "./src/admin/components/Checkbox.tsx");
-/* harmony import */ var _SettingCard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SettingCard */ "./src/admin/components/SettingCard.tsx");
-/* harmony import */ var _Select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Select */ "./src/admin/components/Select.tsx");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Checkbox */ "./src/admin/components/Checkbox.tsx");
+/* harmony import */ var _SettingCard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SettingCard */ "./src/admin/components/SettingCard.tsx");
 /* harmony import */ var _Input__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Input */ "./src/admin/components/Input.tsx");
 /* harmony import */ var _PlaceHolders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./PlaceHolders */ "./src/admin/components/PlaceHolders.tsx");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__);
-
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__);
 
 
 
@@ -28607,16 +28589,16 @@ const CartSettings = ({
   setCartSettings,
   setEdited
 }) => {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
     className: "wpab-cb-settings-tab",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "Cart Page Display",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-        className: "campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Cart Page Display", "campaignbay"),
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+        className: "campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-[10px] campaignbay-w-full",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_3__["default"], {
           className: "w-100",
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Cart Page Quantity Discount Message Format (Percentage)", "campaignbay"),
-          help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_4__["default"], {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Cart Page Quantity Discount Message Format (Percentage)", "campaignbay"),
+          help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_4__["default"], {
             options: ["remainging_quantity_for_next_offer", "percentage_off"]
           }),
           value: cartSettings.cart_quantity_message_format_percentage,
@@ -28627,10 +28609,10 @@ const CartSettings = ({
               cart_quantity_message_format_percentage: value
             }));
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_3__["default"], {
           className: "w-100",
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Cart Page Quantity Discount Message Format (Fixed)", "campaignbay"),
-          help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_4__["default"], {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Cart Page Quantity Discount Message Format (Fixed)", "campaignbay"),
+          help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_4__["default"], {
             options: ["remainging_quantity_for_next_offer", "amount_off"]
           }),
           value: cartSettings.cart_quantity_message_format_fixed,
@@ -28641,10 +28623,10 @@ const CartSettings = ({
               cart_quantity_message_format_fixed: value
             }));
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_3__["default"], {
           className: "w-100",
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Cart Page BOGO Discount Message Format", "campaignbay"),
-          help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_4__["default"], {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Cart Page BOGO Discount Message Format", "campaignbay"),
+          help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_4__["default"], {
             options: ["title"]
           }),
           value: cartSettings.cart_bogo_message_format,
@@ -28657,28 +28639,28 @@ const CartSettings = ({
           }
         })]
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "Cart Discount Options",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-        className: "campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_0__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Cart Discount Options", "campaignbay"),
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+        className: "campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-[10px] campaignbay-w-full",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_1__["default"], {
           checked: cartSettings.cart_allowWcCouponStacking,
-          onChange: () => {
+          onChange: e => {
             setEdited(true);
             setCartSettings(prev => ({
               ...prev,
-              cart_allowWcCouponStacking: !prev.cart_allowWcCouponStacking
+              cart_allowWcCouponStacking: e.target.checked
             }));
           },
           label: "Allow Stacking with WooCommerce Coupons",
           help: "If checked, your campaign discounts can be combined with standard WooCommerce coupons."
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_0__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_1__["default"], {
           checked: cartSettings.cart_allowCampaignStacking,
-          onChange: () => {
+          onChange: e => {
             setEdited(true);
             setCartSettings(prev => ({
               ...prev,
-              cart_allowCampaignStacking: !prev.cart_allowCampaignStacking
+              cart_allowCampaignStacking: e.target.checked
             }));
           },
           label: "Allow Stacking with Other Discount Campaigns",
@@ -28953,52 +28935,52 @@ const CopyToClipboard = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/DateTimePicker.js":
-/*!************************************************!*\
-  !*** ./src/admin/components/DateTimePicker.js ***!
-  \************************************************/
+/***/ "./src/admin/components/DateTimePicker.tsx":
+/*!*************************************************!*\
+  !*** ./src/admin/components/DateTimePicker.tsx ***!
+  \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ DateTimePicker)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/date */ "@wordpress/date");
-/* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_date__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/date */ "@wordpress/date");
+/* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_date__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
 
 
 
-function DateTimePicker({
+const DateTimePicker = ({
   dateTime,
   onDateTimeChange,
   disabled = false,
   timezone,
   wpSettings,
   ...props
-}) {
-  const [currentTime, setCurrentTime] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(new Date().toLocaleString());
-  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
+}) => {
+  const [currentTime, setCurrentTime] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(new Date().toLocaleString());
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     loadTime();
   }, [wpSettings, timezone]);
-  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const timer = setInterval(loadTime, 6000);
     return () => clearInterval(timer);
   }, []);
   const loadTime = () => {
     const localTime = new Date();
     const format = `${wpSettings?.dateFormat} ${wpSettings?.timeFormat}`;
-    const formatedDate = (0,_wordpress_date__WEBPACK_IMPORTED_MODULE_0__.date)(format, localTime, timezone?.offset);
+    const formatedDate = (0,_wordpress_date__WEBPACK_IMPORTED_MODULE_1__.date)(format, localTime, timezone?.offset);
     setCurrentTime(formatedDate);
   };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
       className: "wpab-input w-100 ",
       type: "datetime-local",
-      value: dateTime,
+      value: dateTime ? dateTime : "",
       onChange: e => onDateTimeChange(e.target.value.replace("T", " ").slice(0, 16)),
       disabled: disabled
     }), timezone && wpSettings && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("p", {
@@ -29006,7 +28988,8 @@ function DateTimePicker({
       children: ["Current time: ", currentTime]
     })]
   });
-}
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (DateTimePicker);
 
 /***/ }),
 
@@ -29340,34 +29323,33 @@ const EBTiers = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/GlobalSettings.js":
-/*!************************************************!*\
-  !*** ./src/admin/components/GlobalSettings.js ***!
-  \************************************************/
+/***/ "./src/admin/components/GlobalSettings.tsx":
+/*!*************************************************!*\
+  !*** ./src/admin/components/GlobalSettings.tsx ***!
+  \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Checkbox */ "./src/admin/components/Checkbox.tsx");
-/* harmony import */ var _SettingCard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SettingCard */ "./src/admin/components/SettingCard.tsx");
-/* harmony import */ var _Select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Select */ "./src/admin/components/Select.tsx");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _Toggle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Toggle */ "./src/admin/components/Toggle.tsx");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/seen.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/trash.js");
-/* harmony import */ var _LogViewerModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./LogViewerModal */ "./src/admin/components/LogViewerModal.tsx");
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
-/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
-/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/seen.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/trash.js");
+/* harmony import */ var _SettingCard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./SettingCard */ "./src/admin/components/SettingCard.tsx");
+/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Checkbox */ "./src/admin/components/Checkbox.tsx");
+/* harmony import */ var _Select__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Select */ "./src/admin/components/Select.tsx");
+/* harmony import */ var _Toggle__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Toggle */ "./src/admin/components/Toggle.tsx");
+/* harmony import */ var _LogViewerModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./LogViewerModal */ "./src/admin/components/LogViewerModal.tsx");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__);
-
 
 
 
@@ -29384,11 +29366,11 @@ const GlobalSettings = ({
   setGlobalSettings,
   setEdited
 }) => {
-  const [isLogModalOpen, setIsLogModalOpen] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false);
-  const [isClearingLogs, setIsClearingLogs] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false);
+  const [isLogModalOpen, setIsLogModalOpen] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [isClearingLogs, setIsClearingLogs] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const {
     addToast
-  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_10__.useToast)();
+  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_11__.useToast)();
   const openLogViewer = () => {
     setIsLogModalOpen(true);
   };
@@ -29396,18 +29378,15 @@ const GlobalSettings = ({
     setIsClearingLogs(true);
     let wasSuccessful = false;
     try {
-      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_11___default()({
+      await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default()({
         path: "/campaignbay/v1/logs",
         method: "DELETE"
       });
-
-      // 3. Display a success notice.
-      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Log files cleared successfully.", "campaignbay"), "success");
+      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Log files cleared successfully.", "campaignbay"), "success");
       wasSuccessful = true;
     } catch (error) {
-      // 4. Display an error notice if something goes wrong.
-      const errorMessage = error.message || "An unknown error occurred.";
-      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Error clearing logs: ", "campaignbay") + errorMessage, "error");
+      const errorMessage = error.message || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("An unknown error occurred.", "campaignbay");
+      addToast(`${(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Error clearing logs:", "campaignbay")} ${errorMessage}`, "error");
       console.error("Clear logs error:", error);
       wasSuccessful = false;
     }
@@ -29416,36 +29395,36 @@ const GlobalSettings = ({
   };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
     className: "wpab-cb-settings-tab",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_SettingCard__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Global Options", "campaignbay"),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Toggle__WEBPACK_IMPORTED_MODULE_5__["default"], {
-        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Enable Discount Add-on", "campaignbay"),
-        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Turn off to temporarily disable all discount campaigns.", "campaignbay"),
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_SettingCard__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Global Options", "campaignbay"),
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Toggle__WEBPACK_IMPORTED_MODULE_9__["default"], {
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Enable Discount Add-on", "campaignbay"),
+        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Turn off to temporarily disable all discount campaigns.", "campaignbay"),
         checked: globalSettings.global_enableAddon,
-        onChange: () => {
+        onChange: e => {
           setEdited(true);
           setGlobalSettings(prev => ({
             ...prev,
-            global_enableAddon: !prev.global_enableAddon
+            global_enableAddon: e.target.checked
           }));
         }
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
-        className: "campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        className: "campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-[10px] campaignbay-w-full",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_8__["default"], {
           className: "w-100",
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Bulk Table Position", "campaignbay"),
-          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Select the position to show the bulk table", "campaignbay"),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Bulk Table Position", "campaignbay"),
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Select the position to show the bulk table", "campaignbay"),
           options: [{
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Below Cart", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Below Cart", "campaignbay"),
             value: "woocommerce_after_add_to_cart_form"
           }, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Above Cart", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Above Cart", "campaignbay"),
             value: "woocommerce_before_add_to_cart_form"
           }, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Below Meta", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Below Meta", "campaignbay"),
             value: "woocommerce_product_meta_end"
           }, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Above Meta", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Above Meta", "campaignbay"),
             value: "woocommerce_product_meta_start"
           }],
           value: globalSettings.position_to_show_bulk_table,
@@ -29453,24 +29432,24 @@ const GlobalSettings = ({
             setEdited(true);
             setGlobalSettings(prev => ({
               ...prev,
-              position_to_show_bulk_table: value
+              position_to_show_bulk_table: String(value)
             }));
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_8__["default"], {
           className: "w-100",
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Discount Bar Position", "campaignbay"),
-          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Select the position to show the discount bar", "campaignbay"),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Discount Bar Position", "campaignbay"),
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Select the position to show the discount bar", "campaignbay"),
           options: [{
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Below Cart", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Below Cart", "campaignbay"),
             value: "woocommerce_after_add_to_cart_form"
           }, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Above Cart", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Above Cart", "campaignbay"),
             value: "woocommerce_before_add_to_cart_form"
           }, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Below Meta", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Below Meta", "campaignbay"),
             value: "woocommerce_product_meta_end"
           }, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Above Meta", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Above Meta", "campaignbay"),
             value: "woocommerce_product_meta_start"
           }],
           value: globalSettings.position_to_show_discount_bar,
@@ -29478,18 +29457,18 @@ const GlobalSettings = ({
             setEdited(true);
             setGlobalSettings(prev => ({
               ...prev,
-              position_to_show_discount_bar: value
+              position_to_show_discount_bar: String(value)
             }));
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_8__["default"], {
           className: "w-100",
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Calculate Discount From", "campaignbay"),
-          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Select the price to calculate discounts from", "campaignbay"),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Calculate Discount From", "campaignbay"),
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Select the price to calculate discounts from", "campaignbay"),
           options: [{
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Regular Price", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Regular Price", "campaignbay"),
             value: "regular_price"
           }, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Sale Price", "campaignbay"),
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Sale Price", "campaignbay"),
             value: "sale_price"
           }],
           value: globalSettings.global_calculate_discount_from,
@@ -29502,62 +29481,62 @@ const GlobalSettings = ({
           }
         })]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_SettingCard__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Performence & Caching", "campaignbay"),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_0__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_SettingCard__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Performance & Caching", "campaignbay"),
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_7__["default"], {
         checked: globalSettings.perf_enableCaching,
-        onChange: () => {
+        onChange: e => {
           setEdited(true);
           setGlobalSettings(prev => ({
             ...prev,
-            perf_enableCaching: !prev.perf_enableCaching
+            perf_enableCaching: e.target.checked
           }));
         },
-        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Enable Discount Caching", "campaignbay"),
-        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Improve performance by caching discount rule calculations. Clear cache if rules don't seem to apply immediately", "campaignbay")
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Enable Discount Caching", "campaignbay"),
+        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Improve performance by caching discount rule calculations. Clear cache if rules don't seem to apply immediately", "campaignbay")
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
         className: "wpab-cb-btn-con-bottom",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("button", {
           className: "wpab-cb-btn wpab-cb-btn-outline-danger",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_6__["default"], {
-            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__["default"],
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
+            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"],
             fill: "currentColor"
-          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Clear Discount Cache", "campaignbay")]
+          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Clear Discount Cache", "campaignbay")]
         })
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_SettingCard__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Debugging & Logging", "campaignbay"),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_0__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_SettingCard__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Debugging & Logging", "campaignbay"),
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_7__["default"], {
         checked: globalSettings.debug_enableMode,
-        onChange: () => {
+        onChange: e => {
           setEdited(true);
           setGlobalSettings(prev => ({
             ...prev,
-            debug_enableMode: !prev.debug_enableMode
+            debug_enableMode: e.target.checked
           }));
         },
-        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Enable Debug Mode", "campaignbay"),
-        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Show detailed error messages and logging for troubleshooting.", "campaignbay")
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Enable Debug Mode", "campaignbay"),
+        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Show detailed error messages and logging for troubleshooting.", "campaignbay")
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
         className: "wpab-cb-btn-con-bottom",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("button", {
           className: "wpab-cb-btn wpab-cb-btn-outline-primary",
           onClick: openLogViewer,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_6__["default"], {
-            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__["default"],
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
+            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"],
             fill: "currentColor"
-          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("View Logs", "campaignbay")]
+          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("View Logs", "campaignbay")]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("button", {
           className: "wpab-cb-btn wpab-cb-btn-outline-danger",
           onClick: handleClearLogs,
           disabled: isClearingLogs,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_6__["default"], {
-            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__["default"],
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
+            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"],
             fill: "currentColor"
-          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Clear Log Files", "campaignbay")]
+          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Clear Log Files", "campaignbay")]
         })]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_LogViewerModal__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_LogViewerModal__WEBPACK_IMPORTED_MODULE_10__["default"], {
       isLogModalOpen: isLogModalOpen,
       setIsLogModalOpen: setIsLogModalOpen,
       handleClearLogs: handleClearLogs,
@@ -30302,8 +30281,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// Define the shape of a single option object
-
 // Define the component's props, extending standard input attributes
 
 const MultiSelect = ({
@@ -30323,7 +30300,9 @@ const MultiSelect = ({
   const listRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
 
   // Filter options by input and remove already selected
-  const filteredOptions = options.filter(option => !value.includes(option.value) && option.label.toLowerCase().includes(inputValue.toLowerCase()));
+  const filteredOptions = options.filter(option =>
+  // @ts-ignore
+  !value.includes(option.value) && option.label.toLowerCase().includes(inputValue.toLowerCase()));
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     // Reset highlight when filter changes
     setHighlightedIndex(0);
@@ -30611,27 +30590,27 @@ const Placeholders = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/ProductSettings.js":
-/*!*************************************************!*\
-  !*** ./src/admin/components/ProductSettings.js ***!
-  \*************************************************/
+/***/ "./src/admin/components/ProductSettings.tsx":
+/*!**************************************************!*\
+  !*** ./src/admin/components/ProductSettings.tsx ***!
+  \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _SettingCard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SettingCard */ "./src/admin/components/SettingCard.tsx");
-/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Checkbox */ "./src/admin/components/Checkbox.tsx");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _Select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Select */ "./src/admin/components/Select.tsx");
-/* harmony import */ var _Input__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Input */ "./src/admin/components/Input.tsx");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/pencil.js");
-/* harmony import */ var _QuantityTableEditModal__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./QuantityTableEditModal */ "./src/admin/components/QuantityTableEditModal.tsx");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/pencil.js");
+/* harmony import */ var _SettingCard__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./SettingCard */ "./src/admin/components/SettingCard.tsx");
+/* harmony import */ var _Checkbox__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Checkbox */ "./src/admin/components/Checkbox.tsx");
+/* harmony import */ var _Select__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Select */ "./src/admin/components/Select.tsx");
+/* harmony import */ var _Input__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Input */ "./src/admin/components/Input.tsx");
+/* harmony import */ var _QuantityTableEditModal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./QuantityTableEditModal */ "./src/admin/components/QuantityTableEditModal.tsx");
 /* harmony import */ var _PlaceHolders__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./PlaceHolders */ "./src/admin/components/PlaceHolders.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__);
@@ -30652,14 +30631,14 @@ const ProductSettings = ({
   isSaving,
   updateSettings
 }) => {
-  const [isModalOpen, setIsModalOpen] = (0,react__WEBPACK_IMPORTED_MODULE_8__.useState)(false);
+  const [isModalOpen, setIsModalOpen] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
     className: "wpab-cb-settings-tab",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_0__["default"], {
-      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Product Page Display", "campaignbay"),
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Product Page Display", "campaignbay"),
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
-        className: "campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        className: "campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-[10px] campaignbay-w-full",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_7__["default"], {
           className: "w-100",
           label: "Product Page Percentage Schedule or Early Bird Discount Message Format",
           help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_9__["default"], {
@@ -30673,11 +30652,11 @@ const ProductSettings = ({
               product_message_format_percentage: value
             }));
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_7__["default"], {
           className: "w-100",
           label: "Product Page Fixed Schedule or Early Bird Discount Message Format",
           help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_9__["default"], {
-            options: ["ampount_of"]
+            options: ["amount_off"]
           }),
           value: productSettings.product_message_format_fixed,
           onChange: value => {
@@ -30687,7 +30666,7 @@ const ProductSettings = ({
               product_message_format_fixed: value
             }));
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_7__["default"], {
           className: "w-100",
           label: "Product Page BOGO Discount Message Format",
           help: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_PlaceHolders__WEBPACK_IMPORTED_MODULE_9__["default"], {
@@ -30701,44 +30680,41 @@ const ProductSettings = ({
               bogo_banner_message_format: value
             }));
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("span", {
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Checkbox__WEBPACK_IMPORTED_MODULE_5__["default"], {
             checked: productSettings.show_discount_table,
-            onChange: () => {
+            onChange: e => {
               setEdited(true);
               setProductSettings(prev => ({
                 ...prev,
-                show_discount_table: !prev.show_discount_table
+                show_discount_table: e.target.checked
               }));
             },
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Enable Quantity Discounts Table on Product Page", "campaignbay"),
-            help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Show a table outlining tiered quantity based discounts", "campaignbay")
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Enable Quantity Discounts Table on Product Page", "campaignbay"),
+            help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Show a table outlining tiered quantity based discounts", "campaignbay")
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
             className: "wpab-cb-btn-con-bottom !campaignbay-justify-start",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("button", {
               className: "wpab-cb-btn wpab-cb-btn-outline-primary",
               onClick: () => setIsModalOpen(true),
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"], {
-                icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__["default"],
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_2__["default"], {
+                icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"],
                 fill: "currentColor"
-              }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Customize Table", "campaignbay")]
+              }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Customize Table", "campaignbay")]
             })
           })]
         })]
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_0__["default"], {
-      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Product Exclusion & Prioritization", "campaignbay"),
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        label: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
-          className: "wpab-input-label",
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Product Page Discount Message Format", "campaignbay")
-        }),
-        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Defines how multiple product-level discounts are applied.", "campaignbay"),
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_SettingCard__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Product Exclusion & Prioritization", "campaignbay"),
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        label: "Product Page Discount Message Format",
+        help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Defines how multiple product-level discounts are applied.", "campaignbay"),
         options: [{
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Apply Highest Discount", "campaignbay"),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Apply Highest Discount", "campaignbay"),
           value: "apply_highest"
         }, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Apply Lowest Discount", "campaignbay"),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Apply Lowest Discount", "campaignbay"),
           value: "apply_lowest"
         }],
         value: productSettings.product_priorityMethod,
@@ -30750,20 +30726,16 @@ const ProductSettings = ({
           }));
         }
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_QuantityTableEditModal__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_QuantityTableEditModal__WEBPACK_IMPORTED_MODULE_8__["default"], {
       isModalOpen: isModalOpen,
       setIsModalOpen: setIsModalOpen,
       options: productSettings.discount_table_options,
       setOptions: value => {
-        {
-          setEdited(true);
-          setProductSettings(prev => ({
-            ...prev,
-            discount_table_options: {
-              ...value
-            }
-          }));
-        }
+        setEdited(true);
+        setProductSettings(prev => ({
+          ...prev,
+          discount_table_options: value
+        }));
       },
       isSaving: isSaving,
       updateSettings: updateSettings
@@ -31916,10 +31888,10 @@ const exportDataToCsv = (campaigns, filename = "campaigns-export.csv") => {
 
 /***/ }),
 
-/***/ "./src/admin/pages/Campaigns.js":
-/*!**************************************!*\
-  !*** ./src/admin/pages/Campaigns.js ***!
-  \**************************************/
+/***/ "./src/admin/pages/Campaigns.tsx":
+/*!***************************************!*\
+  !*** ./src/admin/pages/Campaigns.tsx ***!
+  \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -31997,7 +31969,6 @@ const Campaigns = () => {
     addToast
   } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_25__.useToast)();
   const {
-    wpSettings,
     woocommerce_currency_symbol
   } = (0,_store_cbStore__WEBPACK_IMPORTED_MODULE_28__.useCbStore)();
   const [selectedCampaignId, setSelectedCampaignId] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
@@ -32007,15 +31978,15 @@ const Campaigns = () => {
   const [order, setOrder] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("desc");
   const [currentPage, setCurrentPage] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
   const [totalPages, setTotalPages] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
-  const [totalItems, setTotalItems] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
   const [itemsPerPage, setItemsPerPage] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(10);
   const [searchQuery, setSearchQuery] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const [statusFilter, setStatusFilter] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const [typeFilter, setTypeFilter] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const [bulkAction, setBulkAction] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const [isBulkActionModalOpen, setIsBulkActionModalOpen] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-  const [view, setView] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)();
+  const [view, setView] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("table");
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    // @ts-ignore
     const savedView = localStorage.getItem("campaignbay_campaigns_view");
     if (savedView) {
       setView(savedView);
@@ -32090,8 +32061,8 @@ const Campaigns = () => {
         method: "GET",
         parse: false
       });
-      setTotalPages(response.headers.get("x-wp-totalpages"));
-      setTotalItems(response.headers.get("x-wp-total"));
+      setTotalPages(response?.headers?.get("x-wp-totalpages"));
+      // setTotalItems(response?.headers?.get("x-wp-total"));
       setCampaigns(await response.json());
     } catch (error) {
       addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Error fetching campaigns.", "campaignbay"), "error");
@@ -32099,19 +32070,6 @@ const Campaigns = () => {
       setIsLoading(false);
     }
   };
-
-  // const formatDateTime = (dateTimeString) => {
-  //   if (
-  //     !dateTimeString ||
-  //     new Date(dateTimeString).toString() === "Invalid Date"
-  //   ) {
-  //     return "—";
-  //   }
-  //   const format = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
-  //   const dateTime = getDate(dateTimeString);
-  //   return date(format, dateTime, null);
-  // };
-
   const handleSelectAll = () => {
     if (isAllSelected) {
       setSelectedCampaigns([]);
@@ -32145,7 +32103,6 @@ const Campaigns = () => {
     if (orderby === newSortBy) {
       setOrder(order === "asc" ? "desc" : "asc");
     } else {
-      // If clicking a new column, set it as the sort column and default to ascending.
       setOrderby(newSortBy);
       setOrder("asc");
     }
@@ -32226,6 +32183,7 @@ const Campaigns = () => {
     }
   };
   const handleBulkActionModal = () => {
+    // @ts-ignore
     if (!selectedCampaigns?.length || !bulkAction || bulkAction === "") {
       setIsBulkActionModalOpen(false);
       return;
@@ -32254,7 +32212,7 @@ const Campaigns = () => {
   );
   const handleCampaignsDelete = async () => {
     // Ensure all campaign IDs are integers
-    const campaignsToDeleteInt = selectedCampaigns.map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+    const campaignsToDeleteInt = selectedCampaigns.map(id => id).filter(id => !isNaN(id));
     setIsLoading(true);
     try {
       await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_24___default()({
@@ -32273,7 +32231,7 @@ const Campaigns = () => {
     }
   };
   const handleCampaignsStatusUpdate = async () => {
-    const campaignsToUpdateInt = selectedCampaigns.map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+    const campaignsToUpdateInt = selectedCampaigns.map(id => id).filter(id => !isNaN(id));
     setIsLoading(true);
     try {
       await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_24___default()({
@@ -32286,10 +32244,9 @@ const Campaigns = () => {
       });
       addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__._n)("Campaign status updated successfully", "Campaigns status updated successfully", campaignsToUpdateInt.length, "campaignbay"), "success");
       setSelectedCampaigns([]);
-      console.log(campaignsToUpdateInt);
       setCampaigns(prev => prev.map(c => {
         console.log(c);
-        if (campaignsToUpdateInt.includes(parseInt(c.id, 10))) {
+        if (campaignsToUpdateInt.includes(c.id)) {
           return {
             ...c,
             status: bulkAction === "activate" ? "active" : "inactive"
@@ -32309,8 +32266,11 @@ const Campaigns = () => {
     if (campaign.type === "scheduled") {
       return campaign?.discount_value + " " + (campaign?.discount_type === "percentage" ? "%" : woocommerce_currency_symbol);
     }
+    if (campaign?.type === "bogo") {
+      const tier = campaign?.tiers[0];
+      return tier?.get_quantity + " / " + tier?.buy_quantity;
+    }
     const tier = campaign?.tiers[0];
-    if (campaign?.type === "bogo") return tier?.get_quantity + " / " + tier?.buy_quantity;
     return tier?.value + " " + (tier?.type === "percentage" ? "%" : woocommerce_currency_symbol);
   };
   const duplicateCampaign = async campaignId => {
@@ -32446,12 +32406,16 @@ const Campaigns = () => {
                 isBlock: true,
                 value: view,
                 onChange: value => setView(value),
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_23__.__experimentalToggleGroupControlOption, {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_23__.__experimentalToggleGroupControlOption
+                // @ts-ignore
+                , {
                   label: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(lucide_react__WEBPACK_IMPORTED_MODULE_9__["default"], {
                     size: 16
                   }),
                   value: "table"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_23__.__experimentalToggleGroupControlOption, {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_23__.__experimentalToggleGroupControlOption
+                // @ts-ignore
+                , {
                   label: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(lucide_react__WEBPACK_IMPORTED_MODULE_8__["default"], {
                     size: 16
                   }),
@@ -32536,7 +32500,7 @@ const Campaigns = () => {
                   })]
                 }, index)) : campaigns.length === 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)("tr", {
                   children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)("td", {
-                    colSpan: "11",
+                    colSpan: 11,
                     style: {
                       textAlign: "center"
                     },
@@ -32891,7 +32855,7 @@ const Campaigns = () => {
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)("select", {
               className: "wpab-select campaignbay-hidden-border",
               value: currentPage,
-              onChange: e => setCurrentPage(e.target.value),
+              onChange: e => setCurrentPage(Number(e.target.value)),
               children: Array.from({
                 length: totalPages
               }, (_, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)("option", {
@@ -32913,7 +32877,7 @@ const Campaigns = () => {
                 })
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)("button", {
                 className: "wpab-cb-btn campaignbay-arrow-button",
-                disabled: currentPage === parseInt(totalPages),
+                disabled: currentPage === totalPages,
                 onClick: () => setCurrentPage(currentPage + 1),
                 children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_14__["default"], {
                   icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_20__["default"],
@@ -32947,10 +32911,10 @@ const Campaigns = () => {
 
 /***/ }),
 
-/***/ "./src/admin/pages/CampaignsAdd.js":
-/*!*****************************************!*\
-  !*** ./src/admin/pages/CampaignsAdd.js ***!
-  \*****************************************/
+/***/ "./src/admin/pages/CampaignsAdd.tsx":
+/*!******************************************!*\
+  !*** ./src/admin/pages/CampaignsAdd.tsx ***!
+  \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -32980,11 +32944,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_wordpress_date__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/dist/development/chunk-NISHYRIK.mjs");
 /* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../components/Navbar */ "./src/admin/components/Navbar.tsx");
-/* harmony import */ var _components_DateTimePicker__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../components/DateTimePicker */ "./src/admin/components/DateTimePicker.js");
+/* harmony import */ var _components_DateTimePicker__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../components/DateTimePicker */ "./src/admin/components/DateTimePicker.tsx");
 /* harmony import */ var _components_CbCheckbox__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../components/CbCheckbox */ "./src/admin/components/CbCheckbox.tsx");
 /* harmony import */ var _components_Tooltip__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../components/Tooltip */ "./src/admin/components/Tooltip.tsx");
 /* harmony import */ var _components_CampaignSettings__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../components/CampaignSettings */ "./src/admin/components/CampaignSettings.tsx");
-/* harmony import */ var _CampaignsEdit__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./CampaignsEdit */ "./src/admin/pages/CampaignsEdit.js");
+/* harmony import */ var _CampaignsEdit__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./CampaignsEdit */ "./src/admin/pages/CampaignsEdit.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__);
 
@@ -33014,6 +32978,12 @@ const CampaignsAdd = () => {
     woocommerce_currency_symbol
   } = (0,_store_cbStore__WEBPACK_IMPORTED_MODULE_12__.useCbStore)();
   const navigate = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_14__.useNavigate)();
+  const {
+    addToast
+  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__.useToast)();
+  const {
+    timezone
+  } = (0,_wordpress_date__WEBPACK_IMPORTED_MODULE_13__.getSettings)();
   const [campaignTitle, setCampaignTitle] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const [campaignStatus, setCampaignStatus] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("active");
   const [campaignType, setCampaignType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("bogo");
@@ -33032,8 +33002,8 @@ const CampaignsAdd = () => {
   }]);
   const [ebTiers, setEBTiers] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([{
     id: 0,
-    quantity: null,
-    value: null,
+    quantity: "",
+    value: "",
     type: "percentage",
     total: 0
   }]);
@@ -33043,19 +33013,28 @@ const CampaignsAdd = () => {
     get_quantity: 1
   });
   const [scheduleEnabled, setScheduleEnabled] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-  const [startDate, setStartDate] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)();
+  const [startDate, setStartDate] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const [endDate, setEndDate] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const [enableUsageLimit, setEnableUsageLimit] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [usageLimit, setUsageLimit] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const [settings, setSettings] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)({});
-  const {
-    addToast
-  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__.useToast)();
   const [categories, setCategories] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [products, setProducts] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [tags, setTags] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [errors, setErrors] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)({});
   const [isTmpScheduledEnabled, setIsTmpScheduledEnabled] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  (0,react__WEBPACK_IMPORTED_MODULE_8__.useEffect)(() => {
+    fetchProducts();
+  }, []);
+  (0,react__WEBPACK_IMPORTED_MODULE_8__.useEffect)(() => {
+    if (campaignStatus === "scheduled") {
+      setScheduleEnabled(true);
+      setIsTmpScheduledEnabled(true);
+    } else if (isTmpScheduledEnabled) {
+      setScheduleEnabled(false);
+      setIsTmpScheduledEnabled(false);
+    }
+  }, [campaignStatus]);
   const fetchProducts = async () => {
     try {
       const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
@@ -33071,25 +33050,8 @@ const CampaignsAdd = () => {
         value: item.id
       })));
     } catch (error) {
-      console.error("Error fetching Products:", error);
       addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("Something went wrong, Please reload the page.", "campaignbay"), "error");
     }
-  };
-  (0,react__WEBPACK_IMPORTED_MODULE_8__.useEffect)(() => {
-    fetchProducts();
-  }, []);
-  (0,react__WEBPACK_IMPORTED_MODULE_8__.useEffect)(() => {
-    if (campaignStatus === "scheduled") {
-      setScheduleEnabled(true);
-      setIsTmpScheduledEnabled(true);
-    } else if (isTmpScheduledEnabled) {
-      setScheduleEnabled(false);
-      setIsTmpScheduledEnabled(false);
-    }
-  }, [campaignStatus]);
-  const handleScheduledChange = value => {
-    setScheduleEnabled(value);
-    setIsTmpScheduledEnabled(false);
   };
   const handleSelectionTypeChange = value => {
     setTargetType(value);
@@ -33097,16 +33059,10 @@ const CampaignsAdd = () => {
   };
   const handleCampaignTypeChange = value => {
     setCampaignType(value);
-    // if (value === "scheduled") {
-    //   setCampaignStatus("scheduled");
-    // }
   };
   const handleCampaignStatusChange = value => {
     setCampaignStatus(value);
   };
-  const {
-    timezone
-  } = (0,_wordpress_date__WEBPACK_IMPORTED_MODULE_13__.getSettings)();
   const handleSaveCampaign = async () => {
     const campaignData = {
       title: campaignTitle,
@@ -33223,7 +33179,6 @@ const CampaignsAdd = () => {
               className: "!campaignbay-capitalize",
               children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("Select Discount Type", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_9__["default"], {})]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("select", {
-              type: "text",
               id: "campaign-type",
               className: `wpab-input w-100 ${errors?.type ? "wpab-input-error" : ""}`,
               value: campaignType,
@@ -33249,7 +33204,6 @@ const CampaignsAdd = () => {
               className: "!campaignbay-capitalize",
               children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("Select Status", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_9__["default"], {})]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("select", {
-              type: "text",
               id: "campaign-status",
               className: `wpab-input w-100 ${errors?.status ? "wpab-input-error" : ""}`,
               value: campaignStatus,
@@ -33273,7 +33227,6 @@ const CampaignsAdd = () => {
           htmlFor: "selection-type",
           children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("DISCOUNT TARGET", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_9__["default"], {})]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("select", {
-          type: "text",
           id: "selection-type",
           className: `wpab-input w-100 ${errors?.target_type ? "wpab-input-error" : ""}`,
           value: targetType,
@@ -33304,7 +33257,7 @@ const CampaignsAdd = () => {
             className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_17__["default"], {
               id: "exclude-items",
-              checked: isExclude,
+              checked: !!isExclude,
               onChange: e => setIsExclude(e.target.checked)
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)("label", {
               htmlFor: "exclude-items",
@@ -33319,12 +33272,16 @@ const CampaignsAdd = () => {
             }), (0,_CampaignsEdit__WEBPACK_IMPORTED_MODULE_20__.renderError)(errors?.isExclude)]
           })]
         }) : null]
-      }), campaignType === "quantity" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_QuantityTiers__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      }), campaignType === "quantity" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_QuantityTiers__WEBPACK_IMPORTED_MODULE_10__["default"]
+      // @ts-ignore
+      , {
         className: `${errors?.tiers ? "wpab-input-error" : ""}`,
         tiers: quantityTiers,
         setTiers: setQuantityTiers,
         errors: errors?.tiers
-      }), campaignType === "earlybird" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_EBTiers__WEBPACK_IMPORTED_MODULE_11__["default"], {
+      }), campaignType === "earlybird" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_EBTiers__WEBPACK_IMPORTED_MODULE_11__["default"]
+      // @ts-ignore
+      , {
         className: `${errors?.tiers ? "wpab-input-error" : ""}`,
         tiers: ebTiers,
         setTiers: setEBTiers,
@@ -33385,7 +33342,9 @@ const CampaignsAdd = () => {
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)("input", {
                   type: "text",
                   id: "bogo-buy-amount",
-                  className: `wpab-input  ${errors?.tiers?.[0]?.buy_quantity ? "wpab-input-error" : ""}`,
+                  className: `wpab-input  ${
+                  // @ts-ignore
+                  errors?.tiers?.[0]?.buy_quantity ? "wpab-input-error" : ""}`,
                   value: bogoTiers.buy_quantity ? bogoTiers.buy_quantity : "",
                   onChange: e => setBogoTiers(prev => ({
                     ...prev,
@@ -33406,7 +33365,9 @@ const CampaignsAdd = () => {
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)("input", {
                   type: "text",
                   id: "bogo-get-quantity",
-                  className: `wpab-input  ${errors?.tiers?.[0]?.get_quantity ? "wpab-input-error" : ""}`,
+                  className: `wpab-input  ${
+                  // @ts-ignore
+                  errors?.tiers?.[0]?.get_quantity ? "wpab-input-error" : ""}`,
                   value: bogoTiers.get_quantity ? bogoTiers.get_quantity : "",
                   onChange: e => setBogoTiers(prev => ({
                     ...prev,
@@ -33426,7 +33387,7 @@ const CampaignsAdd = () => {
           className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_17__["default"], {
             id: "exclude-sale-items",
-            checked: isExcludeSaleItems,
+            checked: !!isExcludeSaleItems,
             onChange: e => setIsExcludeSaleItems(e.target.checked)
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)("label", {
             htmlFor: "exclude-sale-items",
@@ -33551,9 +33512,18 @@ const CampaignsAdd = () => {
   });
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CampaignsAdd);
+
+/**
+ * Formats a JavaScript Date object into a MySQL DATETIME string (YYYY-MM-DD HH:mm:ss).
+ * Returns null if the input is not a valid Date object.
+ *
+ * @param jsDate The Date object to format. Can be null or undefined.
+ * @returns A formatted string or null.
+ */
 const formatJsDateForDb = jsDate => {
   // 1. Validate the input to ensure it's a valid Date object.
-  if (!jsDate || !(jsDate instanceof Date) || isNaN(jsDate)) {
+  //    Checking `getTime()` for NaN is the most robust way to check for an invalid date.
+  if (!jsDate || !(jsDate instanceof Date) || isNaN(jsDate.getTime())) {
     return null;
   }
   const year = jsDate.getFullYear();
@@ -33571,10 +33541,10 @@ const formatJsDateForDb = jsDate => {
 
 /***/ }),
 
-/***/ "./src/admin/pages/CampaignsEdit.js":
-/*!******************************************!*\
-  !*** ./src/admin/pages/CampaignsEdit.js ***!
-  \******************************************/
+/***/ "./src/admin/pages/CampaignsEdit.tsx":
+/*!*******************************************!*\
+  !*** ./src/admin/pages/CampaignsEdit.tsx ***!
+  \*******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -33609,7 +33579,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../components/Navbar */ "./src/admin/components/Navbar.tsx");
 /* harmony import */ var _components_CbCheckbox__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../components/CbCheckbox */ "./src/admin/components/CbCheckbox.tsx");
 /* harmony import */ var _components_Tooltip__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../components/Tooltip */ "./src/admin/components/Tooltip.tsx");
-/* harmony import */ var _components_DateTimePicker__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../components/DateTimePicker */ "./src/admin/components/DateTimePicker.js");
+/* harmony import */ var _components_DateTimePicker__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../components/DateTimePicker */ "./src/admin/components/DateTimePicker.tsx");
 /* harmony import */ var _components_CampaignSettings__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../components/CampaignSettings */ "./src/admin/components/CampaignSettings.tsx");
 /* harmony import */ var _utils_getBool__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../utils/getBool */ "./src/admin/utils/getBool.ts");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
@@ -33643,6 +33613,12 @@ const CampaignsEdit = () => {
   } = (0,_store_cbStore__WEBPACK_IMPORTED_MODULE_15__.useCbStore)();
   const navigate = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_0__.useNavigate)();
   const {
+    addToast
+  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_10__.useToast)();
+  const {
+    timezone
+  } = (0,_wordpress_date__WEBPACK_IMPORTED_MODULE_16__.getSettings)();
+  const {
     id
   } = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_0__.useParams)();
   const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(true);
@@ -33651,7 +33627,7 @@ const CampaignsEdit = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
   const [campaignTitle, setCampaignTitle] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
   const [campaignStatus, setCampaignStatus] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("active");
-  const [campaignType, setCampaignType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("quantity");
+  const [campaignType, setCampaignType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("bogo");
   const [discountType, setDiscountType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("percentage");
   const [discountValue, setDiscountValue] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
   const [targetType, setTargetType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("entire_store");
@@ -33667,8 +33643,8 @@ const CampaignsEdit = () => {
   }]);
   const [ebTiers, setEBTiers] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)([{
     id: 0,
-    quantity: null,
-    value: null,
+    quantity: "",
+    value: "",
     type: "percentage",
     total: 0
   }]);
@@ -33678,14 +33654,11 @@ const CampaignsEdit = () => {
     get_quantity: 1
   });
   const [scheduleEnabled, setScheduleEnabled] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
-  const [startDate, setStartDate] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)();
+  const [startDate, setStartDate] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
   const [endDate, setEndDate] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
   const [enableUsageLimit, setEnableUsageLimit] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
   const [usageLimit, setUsageLimit] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
   const [settings, setSettings] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)({});
-  const {
-    addToast
-  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_10__.useToast)();
   const [categories, setCategories] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
   const [products, setProducts] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
   const [tags, setTags] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
@@ -33705,9 +33678,23 @@ const CampaignsEdit = () => {
       setIsTmpScheduledEnabled(false);
     }
   }, [campaignStatus]);
-  const handleScheduledChange = value => {
-    setScheduleEnabled(value);
-    setIsTmpScheduledEnabled(false);
+  const fetchProducts = async () => {
+    try {
+      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default()({
+        path: "/campaignbay/v1/campaigns/dependents?_timestamp=" + Date.now(),
+        method: "GET"
+      });
+      setProducts(response?.products?.map(item => ({
+        label: item.name,
+        value: item.id
+      })));
+      setCategories(response?.categories?.map(item => ({
+        label: item.name,
+        value: item.id
+      })));
+    } catch (error) {
+      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Something went wrong, Please reload the page.", "campaignbay"), "error");
+    }
   };
   const handleSelectionTypeChange = value => {
     setTargetType(value);
@@ -33715,16 +33702,10 @@ const CampaignsEdit = () => {
   };
   const handleCampaignTypeChange = value => {
     setCampaignType(value);
-    // if (value === "scheduled") {
-    //   setCampaignStatus("scheduled");
-    // }
   };
   const handleCampaignStatusChange = value => {
     setCampaignStatus(value);
   };
-  const {
-    timezone
-  } = (0,_wordpress_date__WEBPACK_IMPORTED_MODULE_16__.getSettings)();
   const handleSaveCampaign = async () => {
     const campaignData = {
       title: campaignTitle,
@@ -33778,55 +33759,36 @@ const CampaignsEdit = () => {
       setIsDeleting(false);
     }
   };
-  const fetchProducts = async () => {
-    try {
-      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default()({
-        path: "/campaignbay/v1/campaigns/dependents?_timestamp=" + Date.now(),
-        method: "GET"
-      });
-      setProducts(response?.products?.map(item => ({
-        label: item.name,
-        value: item.id
-      })));
-      setCategories(response?.categories?.map(item => ({
-        label: item.name,
-        value: item.id
-      })));
-    } catch (error) {
-      console.error("Error fetching Products:", error);
-      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Something went wrong, Please reload the page.", "campaignbay"), "error");
-    }
-  };
   const fetchCampaign = async () => {
     try {
       const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default()({
         path: `/campaignbay/v1/campaigns/${id}?_timestamp=${Date.now()}`
       });
-      setCampaignTitle(response.title);
-      setCampaignStatus(response.status);
-      setCampaignType(response.type);
-      setDiscountType(response.discount_type);
-      setDiscountValue(response.discount_value);
-      setTargetType(response.target_type);
-      setTargetIds(response.target_ids);
-      setIsExclude((0,_utils_getBool__WEBPACK_IMPORTED_MODULE_23__["default"])(response.is_exclude));
-      setIsExcludeSaleItems((0,_utils_getBool__WEBPACK_IMPORTED_MODULE_23__["default"])(response.exclude_sale_items));
-      setScheduleEnabled((0,_utils_getBool__WEBPACK_IMPORTED_MODULE_23__["default"])(response.schedule_enabled));
-      setEnableUsageLimit(response.usage_limit ? true : false);
-      setUsageLimit(response.usage_limit);
-      setStartDate(response.start_datetime);
-      setEndDate(response.end_datetime);
-      if (response.type === "quantity") {
-        setQuantityTiers([...response.tiers]);
-      } else if (response.type === "earlybird") {
-        setEBTiers([...response.tiers]);
-      } else if (response.type === "bogo") {
+      setCampaignTitle(response?.title);
+      setCampaignStatus(response?.status);
+      setCampaignType(response?.type);
+      setDiscountType(response?.discount_type);
+      setDiscountValue(response?.discount_value);
+      setTargetType(response?.target_type);
+      setTargetIds(response?.target_ids);
+      setIsExclude((0,_utils_getBool__WEBPACK_IMPORTED_MODULE_23__["default"])(response?.is_exclude));
+      setIsExcludeSaleItems((0,_utils_getBool__WEBPACK_IMPORTED_MODULE_23__["default"])(response?.exclude_sale_items));
+      setScheduleEnabled((0,_utils_getBool__WEBPACK_IMPORTED_MODULE_23__["default"])(response?.schedule_enabled));
+      setEnableUsageLimit(response?.usage_limit ? true : false);
+      setUsageLimit(response?.usage_limit);
+      setStartDate(response?.start_datetime);
+      setEndDate(response?.end_datetime);
+      if (response?.type === "quantity") {
+        setQuantityTiers([...response?.tiers]);
+      } else if (response?.type === "earlybird") {
+        setEBTiers([...response?.tiers]);
+      } else if (response?.type === "bogo") {
         setBogoTiers({
-          ...(response.tiers[0] || {})
+          ...(response?.tiers[0] || {})
         });
       }
       setSettings({
-        ...response.settings
+        ...response?.settings
       } || {});
       setIsLoading(false);
     } catch (error) {
@@ -33848,11 +33810,9 @@ const CampaignsEdit = () => {
       if (settings?.enable_quantity_table !== undefined) {
         tmpSettings["enable_quantity_table"] = settings.enable_quantity_table;
       }
-      if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
-        tmpSettings["apply_as"] = settings.apply_as;
-      }
-      // cart_quantity_message_format
+      tmpSettings["apply_as"] = settings?.apply_as || "line_total";
 
+      // cart_quantity_message_format
       if (settings?.cart_quantity_message_format !== undefined && settings?.cart_quantity_message_format !== "") {
         tmpSettings["cart_quantity_message_format"] = settings.cart_quantity_message_format;
       }
@@ -33946,7 +33906,6 @@ const CampaignsEdit = () => {
                 className: "!campaignbay-capitalize",
                 children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Select Discount Type", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_12__["default"], {})]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("select", {
-                type: "text",
                 id: "campaign-type",
                 className: `wpab-input w-100 ${errors?.type ? "wpab-input-error" : ""}`,
                 value: campaignType,
@@ -33972,7 +33931,6 @@ const CampaignsEdit = () => {
                 className: "!campaignbay-capitalize",
                 children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Select Status", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_12__["default"], {})]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("select", {
-                type: "text",
                 id: "campaign-status",
                 className: `wpab-input w-100 ${errors?.status ? "wpab-input-error" : ""}`,
                 value: campaignStatus,
@@ -33986,10 +33944,6 @@ const CampaignsEdit = () => {
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("option", {
                   value: "scheduled",
                   children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Scheduled", "campaignbay")
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("option", {
-                  value: "expired",
-                  disabled: true,
-                  children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Expired", "campaignbay")
                 })]
               }), renderError(errors?.status)]
             })]
@@ -33998,10 +33952,8 @@ const CampaignsEdit = () => {
           className: "cb-form-input-con",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("label", {
             htmlFor: "selection-type",
-            className: "!campaignbay-capitalize",
             children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("DISCOUNT TARGET", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_12__["default"], {})]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("select", {
-            type: "text",
             id: "selection-type",
             className: `wpab-input w-100 ${errors?.target_type ? "wpab-input-error" : ""}`,
             value: targetType,
@@ -34032,7 +33984,7 @@ const CampaignsEdit = () => {
               className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_19__["default"], {
                 id: "exclude-items",
-                checked: isExclude,
+                checked: !!isExclude,
                 onChange: e => setIsExclude(e.target.checked)
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("label", {
                 htmlFor: "exclude-items",
@@ -34047,12 +33999,16 @@ const CampaignsEdit = () => {
               }), renderError(errors?.isExclude)]
             })]
           }) : null]
-        }), campaignType === "quantity" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_QuantityTiers__WEBPACK_IMPORTED_MODULE_13__["default"], {
+        }), campaignType === "quantity" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_QuantityTiers__WEBPACK_IMPORTED_MODULE_13__["default"]
+        // @ts-ignore
+        , {
           className: `${errors?.tiers ? "wpab-input-error" : ""}`,
           tiers: quantityTiers,
           setTiers: setQuantityTiers,
           errors: errors?.tiers
-        }), campaignType === "earlybird" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_EBTiers__WEBPACK_IMPORTED_MODULE_14__["default"], {
+        }), campaignType === "earlybird" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_EBTiers__WEBPACK_IMPORTED_MODULE_14__["default"]
+        // @ts-ignore
+        , {
           className: `${errors?.tiers ? "wpab-input-error" : ""}`,
           tiers: ebTiers,
           setTiers: setEBTiers,
@@ -34113,7 +34069,9 @@ const CampaignsEdit = () => {
                   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("input", {
                     type: "text",
                     id: "bogo-buy-amount",
-                    className: `wpab-input  ${errors?.tiers?.[0]?.buy_quantity ? "wpab-input-error" : ""}`,
+                    className: `wpab-input  ${
+                    // @ts-ignore
+                    errors?.tiers?.[0]?.buy_quantity ? "wpab-input-error" : ""}`,
                     value: bogoTiers.buy_quantity ? bogoTiers.buy_quantity : "",
                     onChange: e => setBogoTiers(prev => ({
                       ...prev,
@@ -34134,7 +34092,9 @@ const CampaignsEdit = () => {
                   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("input", {
                     type: "text",
                     id: "bogo-get-quantity",
-                    className: `wpab-input  ${errors?.tiers?.[0]?.get_quantity ? "wpab-input-error" : ""}`,
+                    className: `wpab-input  ${
+                    // @ts-ignore
+                    errors?.tiers?.[0]?.get_quantity ? "wpab-input-error" : ""}`,
                     value: bogoTiers.get_quantity ? bogoTiers.get_quantity : "",
                     onChange: e => setBogoTiers(prev => ({
                       ...prev,
@@ -34154,7 +34114,7 @@ const CampaignsEdit = () => {
             className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_19__["default"], {
               id: "exclude-sale-items",
-              checked: isExcludeSaleItems,
+              checked: !!isExcludeSaleItems,
               onChange: e => setIsExcludeSaleItems(e.target.checked)
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("label", {
               htmlFor: "exclude-sale-items",
@@ -34264,24 +34224,16 @@ const CampaignsEdit = () => {
           setSettings: setSettings,
           errors: errors?.settings,
           type: campaignType
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("div", {
-          className: "wpab-btn-bottom-con campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-4",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("button", {
-            className: "wpab-cb-btn wpab-cb-btn-danger ",
-            disabled: isDeleting,
-            onClick: handleDeleteCampaign,
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"], {
-              icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__["default"],
-              fill: "currentColor"
-            }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Delete Campaign", "campaignbay")]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("button", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("div", {
+          className: "wpab-btn-bottom-con",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("button", {
             className: "wpab-cb-btn wpab-cb-btn-primary",
             onClick: handleSaveCampaign,
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"], {
               icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__["default"],
               fill: "currentColor"
             }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Save Changes", "campaignbay")]
-          })]
+          })
         })]
       })]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.__experimentalConfirmDialog, {
@@ -34294,9 +34246,13 @@ const CampaignsEdit = () => {
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CampaignsEdit);
 const renderError = (error, negativeMargin = true) => {
-  if (!error) return null;
+  if (!error) {
+    return null;
+  }
+  const marginClass = negativeMargin ? "campaignbay--mt-2" : "campaignbay-mt-1";
+  const className = `campaignbay-text-red-600 ${marginClass} campaignbay-text-xs`;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("p", {
-    className: `campaignbay-text-red-600 ${negativeMargin ? "campaignbay--mt-2" : "campaignbay-mt-1"} campaignbay-text-xs`,
+    className: className,
     children: error.message
   });
 };
@@ -35099,10 +35055,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _components_GlobalSettings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/GlobalSettings */ "./src/admin/components/GlobalSettings.js");
-/* harmony import */ var _components_ProductSettings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../components/ProductSettings */ "./src/admin/components/ProductSettings.js");
-/* harmony import */ var _components_CartSettings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../components/CartSettings */ "./src/admin/components/CartSettings.js");
-/* harmony import */ var _components_AdvancedSettings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../components/AdvancedSettings */ "./src/admin/components/AdvancedSettings.js");
+/* harmony import */ var _components_GlobalSettings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/GlobalSettings */ "./src/admin/components/GlobalSettings.tsx");
+/* harmony import */ var _components_ProductSettings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../components/ProductSettings */ "./src/admin/components/ProductSettings.tsx");
+/* harmony import */ var _components_CartSettings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../components/CartSettings */ "./src/admin/components/CartSettings.tsx");
+/* harmony import */ var _components_AdvancedSettings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../components/AdvancedSettings */ "./src/admin/components/AdvancedSettings.tsx");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");

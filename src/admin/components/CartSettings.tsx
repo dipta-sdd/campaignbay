@@ -1,15 +1,33 @@
+import { FC, Dispatch, SetStateAction } from "react";
+import { __ } from "@wordpress/i18n";
 import Checkbox from "./Checkbox";
 import SettingCard from "./SettingCard";
-import Select from "./Select";
 import Input from "./Input";
 import Placeholders from "./PlaceHolders";
-import { __ } from "@wordpress/i18n";
 
-const CartSettings = ({ cartSettings, setCartSettings, setEdited }) => {
+export interface CartSettingsType {
+  cart_quantity_message_format_percentage: string;
+  cart_quantity_message_format_fixed: string;
+  cart_bogo_message_format: string;
+  cart_allowWcCouponStacking: boolean;
+  cart_allowCampaignStacking: boolean;
+}
+
+interface CartSettingsProps {
+  cartSettings: CartSettingsType;
+  setCartSettings: Dispatch<SetStateAction<CartSettingsType>>;
+  setEdited: Dispatch<SetStateAction<boolean>>;
+}
+
+const CartSettings: FC<CartSettingsProps> = ({
+  cartSettings,
+  setCartSettings,
+  setEdited,
+}) => {
   return (
     <div className="wpab-cb-settings-tab">
-      <SettingCard title="Cart Page Display">
-        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full">
+      <SettingCard title={__("Cart Page Display", "campaignbay")}>
+        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-[10px] campaignbay-w-full">
           <Input
             className="w-100"
             label={__(
@@ -25,7 +43,7 @@ const CartSettings = ({ cartSettings, setCartSettings, setEdited }) => {
               />
             }
             value={cartSettings.cart_quantity_message_format_percentage}
-            onChange={(value) => {
+            onChange={(value: string) => {
               setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
@@ -45,7 +63,7 @@ const CartSettings = ({ cartSettings, setCartSettings, setEdited }) => {
               />
             }
             value={cartSettings.cart_quantity_message_format_fixed}
-            onChange={(value) => {
+            onChange={(value: string) => {
               setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
@@ -58,7 +76,7 @@ const CartSettings = ({ cartSettings, setCartSettings, setEdited }) => {
             label={__("Cart Page BOGO Discount Message Format", "campaignbay")}
             help={<Placeholders options={["title"]} />}
             value={cartSettings.cart_bogo_message_format}
-            onChange={(value) => {
+            onChange={(value: string) => {
               setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
@@ -68,15 +86,15 @@ const CartSettings = ({ cartSettings, setCartSettings, setEdited }) => {
           />
         </div>
       </SettingCard>
-      <SettingCard title="Cart Discount Options">
-        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-w-full">
+      <SettingCard title={__("Cart Discount Options", "campaignbay")}>
+        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-[10px] campaignbay-w-full">
           <Checkbox
             checked={cartSettings.cart_allowWcCouponStacking}
-            onChange={() => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
-                cart_allowWcCouponStacking: !prev.cart_allowWcCouponStacking,
+                cart_allowWcCouponStacking: e.target.checked,
               }));
             }}
             label="Allow Stacking with WooCommerce Coupons"
@@ -84,11 +102,11 @@ const CartSettings = ({ cartSettings, setCartSettings, setEdited }) => {
           />
           <Checkbox
             checked={cartSettings.cart_allowCampaignStacking}
-            onChange={() => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setEdited(true);
               setCartSettings((prev) => ({
                 ...prev,
-                cart_allowCampaignStacking: !prev.cart_allowCampaignStacking,
+                cart_allowCampaignStacking: e.target.checked,
               }));
             }}
             label="Allow Stacking with Other Discount Campaigns"

@@ -8,21 +8,16 @@ import React, {
   InputHTMLAttributes,
 } from "react";
 import { X } from "lucide-react";
-
-// Define the shape of a single option object
-interface SelectOption {
-  value: string | number;
-  label: string;
-}
+import { SelectOptionType } from "../types";
 
 // Define the component's props, extending standard input attributes
 interface MultiSelectProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> {
   label: ReactNode;
   help?: ReactNode;
-  options?: SelectOption[];
-  value?: (string | number)[];
-  onChange: (value: (string | number)[]) => void;
+  options?: SelectOptionType[];
+  value?: number[];
+  onChange: React.Dispatch<React.SetStateAction<number[]>>;
   className?: string;
 }
 
@@ -43,8 +38,9 @@ const MultiSelect: FC<MultiSelectProps> = ({
   const listRef = useRef<HTMLUListElement>(null);
 
   // Filter options by input and remove already selected
-  const filteredOptions = options.filter(
+  const filteredOptions: SelectOptionType[] = options.filter(
     (option) =>
+      // @ts-ignore
       !value.includes(option.value) &&
       option.label.toLowerCase().includes(inputValue.toLowerCase())
   );
@@ -54,14 +50,14 @@ const MultiSelect: FC<MultiSelectProps> = ({
     setHighlightedIndex(0);
   }, [inputValue, filteredOptions.length]);
 
-  const handleSelect = (val: string | number) => {
+  const handleSelect = (val: number) => {
     onChange([...value, val]);
     setInputValue("");
     setDropdownOpen(true);
     inputRef.current?.focus();
   };
 
-  const handleRemove = (val: string | number) => {
+  const handleRemove = (val: number) => {
     onChange(value.filter((v) => v !== val));
   };
 

@@ -1,14 +1,33 @@
-import { date, getDate } from "@wordpress/date";
-import { useState, useEffect } from "react";
+import {
+  useState,
+  useEffect,
+  FC,
+  InputHTMLAttributes,
+  useCallback,
+} from "react";
+import { date, TimezoneConfig } from "@wordpress/date";
+import { WpSettings } from "../types";
 
-export default function DateTimePicker({
+interface DateTimePickerProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "value" | "onChange" | "type"
+  > {
+  dateTime: string | undefined | null;
+  onDateTimeChange: (dateTime: string) => void;
+  disabled?: boolean;
+  timezone: TimezoneConfig;
+  wpSettings: WpSettings;
+}
+
+const DateTimePicker: FC<DateTimePickerProps> = ({
   dateTime,
   onDateTimeChange,
   disabled = false,
   timezone,
   wpSettings,
   ...props
-}) {
+}) => {
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
   useEffect(() => {
     loadTime();
@@ -29,7 +48,7 @@ export default function DateTimePicker({
       <input
         className="wpab-input w-100 "
         type="datetime-local"
-        value={dateTime}
+        value={dateTime ? dateTime : ""}
         onChange={(e) =>
           onDateTimeChange(e.target.value.replace("T", " ").slice(0, 16))
         }
@@ -42,4 +61,6 @@ export default function DateTimePicker({
       )}
     </>
   );
-}
+};
+
+export default DateTimePicker;

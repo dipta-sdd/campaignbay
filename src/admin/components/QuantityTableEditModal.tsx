@@ -9,7 +9,7 @@ interface QuantityTableEditModalProps {
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
   options: DiscountTableOptionsType;
-  setOptions: Dispatch<SetStateAction<DiscountTableOptionsType>>;
+  setOptions: (v: DiscountTableOptionsType) => void;
   isSaving: boolean;
   updateSettings: () => void;
 }
