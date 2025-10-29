@@ -1,10 +1,19 @@
+import { FC} from 'react';
 import { __ } from "@wordpress/i18n";
 import Required from "./Required";
-import { useEffect, useState } from "@wordpress/element";
 import EBTierRow from "./EBTierRow";
+import { EBTier, EBTierErrorMap } from '../types';
 
-const EBTiers = ({ tiers, setTiers, errors }) => {
-  const handleAddTier = (setError) => {
+
+
+interface EBTiersProps {
+  tiers: EBTier[];
+  setTiers: React.Dispatch<React.SetStateAction<EBTier[]>>;
+  errors?: EBTierErrorMap;
+}
+
+const EBTiers : FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
+  const handleAddTier = (setError : React.Dispatch<React.SetStateAction<string>>) => {
     const lastTier = tiers[tiers.length - 1];
     if (!lastTier.quantity) {
       setError(
@@ -18,23 +27,23 @@ const EBTiers = ({ tiers, setTiers, errors }) => {
       );
       return;
     }
-    const newTier = {
+    const newTier : EBTier = {
       id: tiers.length,
       quantity: "",
       value: "",
       type: lastTier.type,
-      total: parseInt(lastTier.total, 10) + parseInt(lastTier.quantity, 10),
+      total: lastTier.total + lastTier.quantity,
     };
     setTiers([...tiers, newTier]);
   };
 
-  const handleRemoveTier = (idToRemove) => {
+  const handleRemoveTier = (idToRemove : number ) => {
     if (tiers.length <= 1) return;
-    setTiers(tiers.filter((tier) => tier.id !== idToRemove));
+    setTiers(tiers.filter((tier : EBTier) => tier.id !== idToRemove));
   };
 
-  const handleTierUpdate = (updatedTier) => {
-    const newTiers = tiers.map((tier, index) => {
+  const handleTierUpdate = (updatedTier : EBTier) => {
+    const newTiers = tiers.map((tier : EBTier, index) => {
       if (tier.id === updatedTier.id) {
         return updatedTier;
       }
@@ -44,12 +53,12 @@ const EBTiers = ({ tiers, setTiers, errors }) => {
     setTiers(tmpTiers);
   };
 
-  const calculateTotal = (tiers) => {
+  const calculateTotal = (tiers : EBTier[]) => {
     let total = 0;
     return tiers.map((tier, index) => {
       if (index !== 0) {
         total =
-          parseInt(total, 10) + (parseInt(tiers[index - 1].quantity, 10) || 0);
+          total + (tiers[index - 1].quantity || 0);
       }
       return {
         ...tier,

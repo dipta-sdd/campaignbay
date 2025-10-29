@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC } from '@wordpress/element';
+import React, { useEffect, useState, FC } from 'react';
 
 import { Toast as ToastType } from "../store/toast/use-toast";
 

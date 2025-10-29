@@ -1,40 +1,55 @@
-import { useState, useEffect } from "@wordpress/element";
+import { useState, useEffect, FC, ReactNode } from "react";
 import { Button } from "@wordpress/components";
 import { Icon, close } from "@wordpress/icons";
 
-const Modal = ({
+type ModalSize = "small" | "medium" | "large";
+
+interface ModalProps {
+  isOpen?: boolean;
+  onRequestClose: () => void;
+  title: ReactNode;
+  children: ReactNode;
+  size?: ModalSize;
+  shouldCloseOnOverlayClick?: boolean;
+  shouldCloseOnEsc?: boolean;
+  className?: string;
+  contentClassName?: string;
+  titleClassName?: string;
+  footer?: ReactNode;
+}
+
+const Modal: FC<ModalProps> = ({
   isOpen = true,
   onRequestClose,
   title,
   children,
-  size = "large", // 'small', 'medium', 'large'
+  size = "large",
   shouldCloseOnOverlayClick = true,
   shouldCloseOnEsc = true,
   className = "",
   contentClassName = "",
   titleClassName = "",
-  footer, // Optional: ReactNode for custom footer
+  footer,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
     if (isOpen) {
       setIsMounted(true);
-      document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ""; // Restore scrolling
-      // Delay unmounting to allow exit animation if any
+      document.body.style.overflow = "";
       const timer = setTimeout(() => setIsMounted(false), 300);
       return () => clearTimeout(timer);
     }
 
     return () => {
-      document.body.style.overflow = ""; // Ensure scrolling is restored on unmount
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
   useEffect(() => {
-    const handleEscape = (event) => {
+    const handleEscape = (event: KeyboardEvent) => {
       if (shouldCloseOnEsc && event.key === "Escape") {
         onRequestClose();
       }
@@ -51,13 +66,13 @@ const Modal = ({
     return null;
   }
 
-  const handleOverlayClick = (event) => {
+  const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (shouldCloseOnOverlayClick && event.target === event.currentTarget) {
       onRequestClose();
     }
   };
 
-  const getSizeClasses = () => {
+  const getSizeClasses = (): string => {
     switch (size) {
       case "small":
         return "campaignbay-max-w-md";
@@ -70,20 +85,30 @@ const Modal = ({
     }
   };
 
+  const overlayClasses: string = `
+    campaignbay-fixed campaignbay-inset-0 campaignbay-z-[9999] campaignbay-flex 
+    campaignbay-items-center campaignbay-justify-center campaignbay-bg-black 
+    campaignbay-bg-opacity-50 campaignbay-p-4 campaignbay-transition-opacity campaignbay-duration-300
+    ${
+      isOpen
+        ? "campaignbay-opacity-100"
+        : "campaignbay-opacity-0 campaignbay-pointer-events-none"
+    }
+  `;
+
+  const modalClasses: string = `
+    campaignbay-relative campaignbay-py-[24px] campaignbay-px-[32px] campaignbay-w-full 
+    campaignbay-rounded-lg campaignbay-bg-white campaignbay-shadow-xl campaignbay-transform 
+    campaignbay-transition-all campaignbay-duration-300
+    ${getSizeClasses()} ${className}
+    ${isOpen ? "campaignbay-scale-100" : "campaignbay-scale-95"}
+  `;
+
   return (
-    <div
-      className={`campaignbay-fixed campaignbay-inset-0 campaignbay-z-[9999] campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-bg-black campaignbay-bg-opacity-50 campaignbay-p-4 campaignbay-transition-opacity campaignbay-duration-300 ${
-        isOpen
-          ? "campaignbay-opacity-100"
-          : "campaignbay-opacity-0 campaignbay-pointer-events-none"
-      }`}
-      onClick={handleOverlayClick}
-    >
+    <div className={overlayClasses} onClick={handleOverlayClick}>
       <div
-        className={`campaignbay-relative campaignbay-py-[24px] campaignbay-px-[32px] campaignbay-w-full campaignbay-rounded-lg campaignbay-bg-white campaignbay-shadow-xl campaignbay-transform campaignbay-transition-all campaignbay-duration-300 ${getSizeClasses()} ${className} ${
-          isOpen ? "campaignbay-scale-100" : "campaignbay-scale-95"
-        }`}
-        onClick={(e) => e.stopPropagation()} // Prevent clicks inside modal from closing it
+        className={modalClasses}
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between  campaignbay-p-4">
           <h3

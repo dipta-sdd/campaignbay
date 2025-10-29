@@ -759,7 +759,6 @@ export const formatJsDateForDb = (jsDate) => {
     return null;
   }
 
-  // 2. Get all the date and time components.
   const year = jsDate.getFullYear();
 
   // getMonth() is zero-based (0=Jan, 11=Dec), so we must add 1.

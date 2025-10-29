@@ -1,10 +1,22 @@
 import { __ } from "@wordpress/i18n";
+import { FC, Dispatch, SetStateAction } from "react";
+import { Icon, check } from "@wordpress/icons";
 import Checkbox from "./Checkbox";
 import Modal from "./Modal";
-import { check, Icon } from "@wordpress/icons";
-import { update } from "immutable";
+import { DiscountTableOptionsType } from "../types";
 
-const QuantityTableEditModal = ({
+interface QuantityTableEditModalProps {
+  isModalOpen: boolean;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  options: DiscountTableOptionsType;
+  setOptions: Dispatch<SetStateAction<DiscountTableOptionsType>>;
+  isSaving: boolean;
+  updateSettings: () => void;
+}
+
+type KeyType = "title" | "range" | "discount";
+
+const QuantityTableEditModal: FC<QuantityTableEditModalProps> = ({
   isModalOpen,
   setIsModalOpen,
   options,
@@ -16,12 +28,17 @@ const QuantityTableEditModal = ({
     setIsModalOpen(false);
   };
 
-  const handleOptionChange = (key, subKey, value) => {
+  const handleOptionChange = (
+    key: KeyType | "show_header",
+    subKey: "show" | "label" | "content" | null,
+    value: string | boolean
+  ) => {
     setOptions(
       subKey
         ? {
             ...options,
             [key]: {
+              // @ts-ignore
               ...options[key],
               [subKey]: value,
             },
@@ -42,7 +59,7 @@ const QuantityTableEditModal = ({
     return null;
   }
 
-  const columnOptions = ["title", "range", "discount"];
+  const columnOptions: KeyType[] = ["title", "range", "discount"];
 
   console.log("options : ", options);
 
@@ -59,7 +76,7 @@ const QuantityTableEditModal = ({
           <div className="campaignbay-mb-4 campaignbay-flex campaignbay-items-center">
             <Checkbox
               checked={options.show_header}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleOptionChange("show_header", null, e.target.checked)
               }
               label={__("Show Table Header", "campaignbay")}
@@ -68,12 +85,12 @@ const QuantityTableEditModal = ({
             />
           </div>
 
-          {columnOptions.map((key) => (
+          {columnOptions.map((key: KeyType) => (
             <div key={key}>
               <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-3 campaignbay-mb-[12px] campaignbay-items-center">
                 <Checkbox
                   checked={options[key]?.show}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleOptionChange(key, "show", e.target.checked)
                   }
                   label={`Show ${key} column`}
@@ -100,7 +117,6 @@ const QuantityTableEditModal = ({
                         {__("Content To Show", "campaignbay")}
                       </label>
                       <select
-                        type="text"
                         className={`wpab-input w-100`}
                         id="discount_content"
                         value={options.discount?.content}

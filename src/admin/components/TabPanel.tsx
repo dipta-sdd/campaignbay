@@ -1,13 +1,30 @@
-import { useState } from "react";
+import { FC, ReactNode, Dispatch, SetStateAction } from "react";
 
-export default function TabPanel({ tabs, activeTab, setActiveTab, children }) {
-  const style = {
+interface Tab {
+  name: string;
+  title: string;
+}
+interface TabPanelProps {
+  tabs: Tab[];
+  activeTab: string;
+  setActiveTab: Dispatch<SetStateAction<string>>;
+  children: ReactNode;
+}
+
+const TabPanel: FC<TabPanelProps> = ({
+  tabs,
+  activeTab,
+  setActiveTab,
+  children,
+}) => {
+  const style: React.CSSProperties = {
     width: "100%",
     maxWidth: "min(100% - 20px, 1500px)",
   };
+
   return (
     <>
-      <div className="wpab-cb-settings-tabs ">
+      <div className="wpab-cb-settings-tabs">
         <div
           className="campaignbay-flex campaignbay-flex-row campaignbay-gap-0 campaignbay-justify-start campaignbay-items-center"
           style={style}
@@ -30,4 +47,6 @@ export default function TabPanel({ tabs, activeTab, setActiveTab, children }) {
       <div className="wpab-cb-settings-tab-content">{children}</div>
     </>
   );
-}
+};
+
+export default TabPanel;

@@ -1,14 +1,24 @@
 // src/components/TierRow.jsx
-import { useState } from "@wordpress/element";
+import { useState, FC } from "react";
 import {
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useCbStore } from "../store/cbStore";
+import { EBTier, EBTierError } from "../types";
 
-const EBTierRow = ({
-  id,
+interface EBTierRowProps {
+  tierData: EBTier;
+  onUpdate: (updatedTier: EBTier) => void;
+  onRemove: (id: number) => void;
+  onAdd: (setError: React.Dispatch<React.SetStateAction<string>>) => void;
+  isLast: boolean;
+  isFirst: boolean;
+  errors?: EBTierError;
+}
+
+const EBTierRow: FC<EBTierRowProps> = ({
   tierData,
   onUpdate,
   onRemove,
@@ -17,18 +27,19 @@ const EBTierRow = ({
   isFirst,
   errors,
 }) => {
-  const [error, setError] = useState("");
-
+  const [error, setError] = useState<string>("");
   const { woocommerce_currency_symbol } = useCbStore();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const updatedTier = { ...tierData, [name]: value };
+    const tmpValue = name === "value" ? Number(value) : value;
+    const updatedTier: EBTier = { ...tierData, [name]: tmpValue };
     setError("");
     onUpdate(updatedTier);
   };
 
-  const handleTypeToggle = (newType) => {
+  const handleTypeToggle = (newType: string | number | undefined) => {
+    if (newType !== "percentage" && newType !== "currency") return;
     onUpdate({ ...tierData, type: newType });
   };
 
@@ -54,11 +65,11 @@ const EBTierRow = ({
               placeholder="e.g., 10"
             />
             <span className="wpab-input-label">
-              {__("Sales ", "campaignbay")}
+              {__("Orders ", "campaignbay")}
 
-              {"( " + (parseInt(tierData.total, 10) + parseInt(1)) + " - "}
+              {"( " + (Number(tierData.total) + 1) + " - "}
               {tierData.quantity
-                ? parseInt(tierData.total, 10) + parseInt(tierData.quantity, 10)
+                ? Number(tierData.total) + Number(tierData.quantity)
                 : ""}
               {" ),"}
             </span>

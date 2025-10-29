@@ -5,7 +5,7 @@
 /**
  * Interface for the nested options within the discount pricing table.
  */
-export interface DiscountTableOptions {
+export interface DiscountTableOptionsType {
   show_header: boolean;
   title: {
     show: boolean;
@@ -25,7 +25,7 @@ export interface DiscountTableOptions {
 /**
  * Represents the complete settings object for the CampaignBay plugin.
  */
-export interface CampaignBaySettings {
+export interface CampaignBaySettingsType {
   global_enableAddon: boolean;
   global_calculate_discount_from: 'regular_price' | 'sale_price';
   position_to_show_bulk_table: string;
@@ -38,7 +38,7 @@ export interface CampaignBaySettings {
   product_priorityMethod: 'apply_highest' | 'apply_lowest' | 'apply_first';
   show_discount_table: boolean;
   product_enableQuantityTable: boolean;
-  discount_table_options: DiscountTableOptions;
+  discount_table_options: DiscountTableOptionsType;
   cart_allowWcCouponStacking: boolean;
   cart_allowCampaignStacking: boolean;
   cart_quantity_message_format_percentage: string;
@@ -92,7 +92,7 @@ export interface CbStore {
   white_label: WhiteLabel;
   woocommerce_currency_symbol: string;
   wpSettings: WpSettings;
-  campaignbay_settings: CampaignBaySettings;
+  campaignbay_settings: CampaignBaySettingsType;
 }
 
 
@@ -105,6 +105,37 @@ export interface QuantityTier {
   type?: 'percentage' | 'currency';
 }
 export type QuantityTierError = Partial<Record<'min' | 'max' | 'value' | 'type', { message: string }>>;
-
-// Represents a map of tier IDs to their corresponding error objects
 export type QuantityTierErrorMap = Record<string | number, QuantityTierError>;
+
+export interface EBTier {
+  id: number | string;
+  quantity: number | '';
+  value: number | '';
+  type: 'percentage' | 'currency';
+  total: number; 
+}
+export type EBTierError = Partial<Record<'quantity' | 'value', { message: string }>>;
+export type EBTierErrorMap = Record<string | number, EBTierError>;
+
+export type CampaignType = 'scheduled' | 'earlybird' | 'quantity' | 'bogo';
+
+export type ApplyAsType = "line_total" | "coupon" | "fee";
+export type BogoMessageLocationType = "line_item_name" | "notice" | "dont_show";
+
+export interface CampaignSettingsType {
+  // scheduled & earlybird
+  display_as_regular_price?: boolean;
+  message_format?: string;
+
+  // quantity
+  enable_quantity_table?: boolean;
+  apply_as?: ApplyAsType;
+  cart_quantity_message_format?: string;
+
+  // bogo
+  auto_add_free_product?: boolean;
+  bogo_banner_message_format?: string;
+  cart_bogo_message_format?: string;
+  bogo_cart_message_location?: BogoMessageLocationType;
+}
+export type CampaignSettingsErrorsType = Partial<Record<keyof CampaignSettingsType, { message: string }>>;

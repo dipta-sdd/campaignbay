@@ -1,7 +1,9 @@
-import { useToast } from "../store/toast/use-toast";
-import { Toast } from "./Toast";
 
-export const ToastContainer = () => {
+import { FC } from 'react';
+import { useToast } from '../store/toast/use-toast';
+import { Toast } from './Toast';
+
+export const ToastContainer: FC = () => {
   const { toasts, removeToast } = useToast();
 
   return (

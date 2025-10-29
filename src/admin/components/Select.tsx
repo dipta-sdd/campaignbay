@@ -1,6 +1,20 @@
-import { useId } from "@wordpress/element";
+import React, { useId, FC, ReactNode, SelectHTMLAttributes } from "react";
 
-const Select = ({
+interface SelectOption {
+  id?: string | number;
+  label: string;
+  value: string | number;
+}
+// @ts-ignore
+interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  label: ReactNode;
+  help?: ReactNode;
+  options?: SelectOption[];
+  value: string | number;
+  onChange: (value: string) => void;
+}
+
+const Select: FC<SelectProps> = ({
   label,
   help,
   options = [],
@@ -19,8 +33,10 @@ const Select = ({
       <select
         id={selectId}
         value={value ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-        className={`wpab-select${className ? " " + className : ""}`}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+          onChange(e.target.value)
+        }
+        className={`wpab-select${className ? ` ${className}` : ""}`}
         {...props}
       >
         {options?.map((option, index) => {
@@ -32,7 +48,7 @@ const Select = ({
           );
         })}
       </select>
-      <span className="wpab-input-help">{help}</span>
+      {help && <span className="wpab-input-help">{help}</span>}
     </div>
   );
 };

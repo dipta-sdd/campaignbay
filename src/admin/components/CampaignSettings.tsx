@@ -3,15 +3,28 @@ import Required from "./Required";
 import CbCheckbox from "./CbCheckbox";
 import Tooltip from "./Tooltip";
 import { renderError } from "../pages/CampaignsEdit";
-import { useEffect, useState } from "react";
+import { useEffect, FC, ReactNode, Dispatch, SetStateAction } from "react";
 import Placeholders from "./PlaceHolders";
+import {
+  CampaignSettingsErrorsType,
+  CampaignSettingsType,
+  CampaignType,
+} from "../types";
+import { handle } from "@wordpress/icons";
 
-export default function CampaignSettings({
+interface CampaignSettingsProps {
+  settings: CampaignSettingsType;
+  setSettings: Dispatch<SetStateAction<CampaignSettingsType>>;
+  errors?: CampaignSettingsErrorsType;
+  type: CampaignType;
+}
+
+const CampaignSettings: FC<CampaignSettingsProps> = ({
   settings,
   setSettings,
   errors,
   type,
-}) {
+}) => {
   useEffect(() => {
     if (type === "bogo" && settings?.apply_as === "coupon") {
       setSettings((prev) => ({
@@ -20,6 +33,32 @@ export default function CampaignSettings({
       }));
     }
   }, [type]);
+
+  const handleApplyAsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value: string = e.target.value;
+    if (value !== "coupon" && value !== "line_total" && value !== "fee") return;
+    setSettings((prev: CampaignSettingsType) => ({
+      ...settings,
+      apply_as: value,
+    }));
+  };
+
+  const handleCartMessageLocationChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const value = e.target.value;
+    if (
+      value !== "line_item_name" &&
+      value !== "notice" &&
+      value !== "dont_show"
+    )
+      return;
+    setSettings((prev: CampaignSettingsType) => ({
+      ...prev,
+      bogo_cart_message_location: value,
+    }));
+  };
+
   return (
     <>
       <div className="cb-form-input-con">
@@ -38,8 +77,8 @@ export default function CampaignSettings({
                     : settings?.display_as_regular_price
                 }
                 aria-label={__("Display as Regular Price", "campaignbay")}
-                onChange={(e) =>
-                  setSettings((prev) => ({
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSettings((prev: CampaignSettingsType) => ({
                     ...settings,
                     display_as_regular_price: e.target.checked,
                   }))
@@ -82,8 +121,8 @@ export default function CampaignSettings({
                   errors?.message_format ? "wpab-input-error" : ""
                 }`}
                 value={settings?.message_format}
-                onChange={(e) =>
-                  setSettings((prev) => ({
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSettings((prev: CampaignSettingsType) => ({
                     ...prev,
                     message_format: e.target.value,
                   }))
@@ -154,12 +193,7 @@ export default function CampaignSettings({
                     errors?.apply_as ? "wpab-input-error" : ""
                   }`}
                   value={settings?.apply_as || "line_total"}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      apply_as: e.target.value,
-                    })
-                  }
+                  onChange={handleApplyAsChange}
                 >
                   <option value="line_total">
                     {__("Strike through in line total", "campaignbay")}
@@ -235,8 +269,8 @@ export default function CampaignSettings({
                   "Automatically add free product to cart",
                   "campaignbay"
                 )}
-                onChange={(e) =>
-                  setSettings((prev) => ({
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSettings((prev: CampaignSettingsType) => ({
                     ...settings,
                     auto_add_free_product: e.target.checked,
                   }))
@@ -310,8 +344,8 @@ export default function CampaignSettings({
                     errors?.bogo_banner_message_format ? "wpab-input-error" : ""
                   }`}
                   value={settings?.bogo_banner_message_format}
-                  onChange={(e) =>
-                    setSettings((prev) => ({
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSettings((prev: CampaignSettingsType) => ({
                       ...prev,
                       bogo_banner_message_format: e.target.value,
                     }))
@@ -349,8 +383,8 @@ export default function CampaignSettings({
                     errors?.cart_bogo_message_format ? "wpab-input-error" : ""
                   }`}
                   value={settings?.cart_bogo_message_format}
-                  onChange={(e) =>
-                    setSettings((prev) => ({
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSettings((prev: CampaignSettingsType) => ({
                       ...prev,
                       cart_bogo_message_format: e.target.value,
                     }))
@@ -379,12 +413,7 @@ export default function CampaignSettings({
                     settings?.bogo_cart_message_location || "line_item_name"
                   }
                   aria-label={__("Cart Page Message Location", "campaignbay")}
-                  onChange={(e) =>
-                    setSettings((prev) => ({
-                      ...prev,
-                      bogo_cart_message_location: e.target.value,
-                    }))
-                  }
+                  onChange={handleCartMessageLocationChange}
                 >
                   <option value="line_item_name">
                     {__("Line Item Name", "campaignbay")}
@@ -408,4 +437,6 @@ export default function CampaignSettings({
       </div>
     </>
   );
-}
+};
+
+export default CampaignSettings;

@@ -1,33 +1,42 @@
 import { Icon, plus } from "@wordpress/icons";
+// @ts-ignore
 import logo_32px from "../../../assets/img/campaign_bay.svg";
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
-export default function Navbar() {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const menus = [
+
+interface MenuLink {
+  label: string;
+  path: string;
+}
+
+const Navbar: FC = () => {
+  const [activeTab, setActiveTab] = useState<string>("dashboard");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
+  const menus: MenuLink[] = [
     {
-      label: "Dashboard",
+      label: __("Dashboard", "campaignbay"),
       path: "/",
     },
-
     {
-      label: "Campaigns",
+      label: __("Campaigns", "campaignbay"),
       path: "/campaigns",
     },
-
     {
-      label: "Settings",
+      label: __("Settings", "campaignbay"),
       path: "/settings",
     },
   ];
+
   const location = useLocation();
   const currentPath = location.pathname;
   const navigate = useNavigate();
+
   useEffect(() => {
-    setActiveTab(currentPath);
-    // alert(currentPath);
+    const basePath = "/" + (currentPath.split("/")[1] || "");
+    // setActiveTab(currentPath);
+    setActiveTab(basePath);
   }, [currentPath]);
 
   return (
@@ -42,17 +51,17 @@ export default function Navbar() {
             />
           </div>
           <div
-            className={` campaignbay-flex-1 md:campaignbay-flex-none campaignbay-flex-col md:campaignbay-flex-row campaignbay-justify-stretch md:campaignbay-items-center campaignbay-absolute md:campaignbay-relative campaignbay-top-[102%] md:campaignbay-top-auto campaignbay-left-0  campaignbay-w-full md:campaignbay-w-auto campaignbay-gap-0 md:campaignbay-gap-[6px] campaignbay-bg-white !campaignbay-border-0  ${
+            className={`campaignbay-flex-1 md:campaignbay-flex-none campaignbay-flex-col md:campaignbay-flex-row campaignbay-justify-stretch md:campaignbay-items-center campaignbay-absolute md:campaignbay-relative campaignbay-top-[102%] md:campaignbay-top-auto campaignbay-left-0 campaignbay-w-full md:campaignbay-w-auto campaignbay-gap-0 md:campaignbay-gap-[6px] campaignbay-bg-white !campaignbay-border-0 ${
               isMobileMenuOpen
-                ? "campaignbay-flex  "
-                : " campaignbay-hidden md:campaignbay-flex"
+                ? "campaignbay-flex"
+                : "campaignbay-hidden md:campaignbay-flex"
             }`}
           >
-            <nav className="campaignbay-items-stretch md:campaignbay-items-center  campaignbay-gap-0 campaignbay-flex campaignbay-flex-col md:campaignbay-flex-row campaignbay-w-full">
+            <nav className="campaignbay-items-stretch md:campaignbay-items-center campaignbay-gap-0 campaignbay-flex campaignbay-flex-col md:campaignbay-flex-row campaignbay-w-full">
               {menus.map((menu) => (
                 <span
                   key={menu.path}
-                  className={`campaignbay-text-base campaignbay-font-medium campaignbay-cursor-pointer campaignbay-p-[12px]  campaignbay-py-[8px] campaignbay-pl-[8px] campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
+                  className={`campaignbay-text-base campaignbay-font-medium campaignbay-cursor-pointer campaignbay-p-[12px] campaignbay-py-[8px] campaignbay-pl-[8px] campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
                     activeTab === menu.path
                       ? "campaignbay-text-blue-800"
                       : "campaignbay-text-gray-800 hover:campaignbay-text-blue-800"
@@ -66,10 +75,8 @@ export default function Navbar() {
                 </span>
               ))}
             </nav>
-
             <button
-              className="campaignbay-flex campaignbay-justify-center
-               campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-12 md:campaignbay-m-0"
+              className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-12 md:campaignbay-m-0"
               onClick={() => navigate("/campaigns/add")}
             >
               {__("Add Campaign", "campaignbay")}
@@ -81,11 +88,11 @@ export default function Navbar() {
               />
             </button>
           </div>
-
-          {/* toggle button for mobile */}
           <button
-            className="campaignbay-flex md:campaignbay-hidden campaignbay-items-center campaignbay-gap-[2px] campaignbay-text-gray-800 hover:campaignbay-text-blue-800 tr"
+            className="campaignbay-flex md:campaignbay-hidden campaignbay-items-center campaignbay-gap-[2px] campaignbay-text-gray-800 hover:campaignbay-text-blue-800"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             <svg
               width="24"
@@ -94,19 +101,20 @@ export default function Navbar() {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               className="campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out"
+              aria-hidden="true"
             >
               {isMobileMenuOpen ? (
                 <>
                   <path
                     d="M6 6L18 18"
-                    stroke="#6B7280"
+                    stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                   <path
                     d="M6 18L18 6"
-                    stroke="#6B7280"
+                    stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -116,21 +124,21 @@ export default function Navbar() {
                 <>
                   <path
                     d="M3 12H21"
-                    stroke="#6B7280"
+                    stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                   <path
                     d="M3 6H21"
-                    stroke="#6B7280"
+                    stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                   <path
                     d="M3 18H21"
-                    stroke="#6B7280"
+                    stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -141,13 +149,14 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-      {/* menu backdrop */}
       {isMobileMenuOpen && (
         <div
           className="campaignbay-fixed campaignbay-top-0 campaignbay-left-0 campaignbay-w-full campaignbay-h-full campaignbay-bg-black campaignbay-opacity-60 campaignbay-z-40 md:campaignbay-hidden"
           onClick={() => setIsMobileMenuOpen(false)}
-        ></div>
+        />
       )}
     </>
   );
-}
+};
+
+export default Navbar;

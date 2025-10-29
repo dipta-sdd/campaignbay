@@ -1,8 +1,18 @@
-import React, { useEffect } from "react";
+import { useEffect, FC, ReactNode } from "react";
 import { __ } from "@wordpress/i18n";
 import { X } from "lucide-react";
 
-function ConfirmDialog({
+interface ConfirmDialogProps {
+  isOpen: boolean;
+  title?: ReactNode;
+  onConfirm: () => void;
+  onCancel: () => void;
+  children: ReactNode;
+  confirmText?: string;
+  cancelText?: string;
+}
+
+const ConfirmDialog: FC<ConfirmDialogProps> = ({
   isOpen,
   title = __("Confirm Action", "campaignbay"),
   onConfirm,
@@ -10,9 +20,9 @@ function ConfirmDialog({
   children,
   confirmText = __("Confirm", "campaignbay"),
   cancelText = __("Cancel", "campaignbay"),
-}) {
+}) => {
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onCancel();
       }
@@ -41,9 +51,8 @@ function ConfirmDialog({
     >
       <div
         className="campaignbay-relative campaignbay-w-full campaignbay-max-w-[448px] campaignbay-p-[4px] campaignbay-mx-[16px] campaignbay-bg-white campaignbay-rounded-[10px] campaignbay-shadow-xl"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-p-[16px] campaignbay-border-b campaignbay-border-gray-200">
           <h2
             id="confirm-dialog-title"
@@ -59,13 +68,9 @@ function ConfirmDialog({
             <X size={20} />
           </button>
         </div>
-
-        {/* Body Content */}
         <div className="campaignbay-p-[20px] campaignbay-text-gray-700">
           {children}
         </div>
-
-        {/* Footer with Action Buttons */}
         <div className="campaignbay-flex campaignbay-justify-end campaignbay-p-[16px] campaignbay-space-x-[12px] campaignbay-border-t campaignbay-border-gray-200">
           <button
             onClick={onCancel}
@@ -83,6 +88,6 @@ function ConfirmDialog({
       </div>
     </div>
   );
-}
+};
 
 export default ConfirmDialog;
