@@ -8,8 +8,8 @@
  * @param {string} rowString The string for a single CSV row.
  * @returns {string[]} An array of cell values.
  */
-const parseCsvRow = (rowString) => {
-  const result = [];
+const parseCsvRow = (rowString: string): string[] =>{
+  const result : string[] = [];
   let currentVal = "";
   let inQuotes = false;
 
@@ -42,6 +42,8 @@ const parseCsvRow = (rowString) => {
   });
 };
 
+type JsonDataObject = Record<string, any>;
+
 /**
  * Converts a CSV string into an array of JSON objects, optionally keeping only specified columns.
  *
@@ -51,7 +53,7 @@ const parseCsvRow = (rowString) => {
  * @returns {Array<object>} An array of objects representing the rows.
  * @throws {Error} If the CSV is malformed.
  */
-export const csvToJson = (csvString, columnsToKeep = []) => {
+export const csvToJson = (csvString: string, columnsToKeep: string[] = []): JsonDataObject[] => {
   if (!csvString) {
     throw new Error("CSV string is empty or invalid.");
   }
@@ -64,18 +66,18 @@ export const csvToJson = (csvString, columnsToKeep = []) => {
     throw new Error("CSV must have a header row and at least one data row.");
   }
 
-  const allHeaders = lines.shift().trim().split(",");
+  const allHeaders = lines?.shift()?.trim().split(",");
 
-  let headersToProcess = allHeaders;
-  let headerIndices = allHeaders.map((_, index) => index);
+  let headersToProcess: string[] = allHeaders || [];
+  let headerIndices : number[] = allHeaders?.map((_, index) => index) || [];
 
   if (columnsToKeep && columnsToKeep.length > 0) {
     headersToProcess = [];
     headerIndices = [];
 
     columnsToKeep.forEach((columnName) => {
-      const index = allHeaders.indexOf(columnName);
-      if (index > -1) {
+      const index = allHeaders?.indexOf(columnName);
+      if (index !== undefined && index > -1) {
         headersToProcess.push(columnName);
         headerIndices.push(index);
       } else {
@@ -90,18 +92,18 @@ export const csvToJson = (csvString, columnsToKeep = []) => {
     }
   }
 
-  const jsonArray = lines.map((line, index) => {
+  const jsonArray : JsonDataObject[] = lines.map((line, index) => {
     const values = parseCsvRow(line.trim());
 
-    if (values.length !== allHeaders.length) {
+    if (values.length !== allHeaders?.length) {
       throw new Error(
         `Row ${index + 2}: Column count mismatch. Expected ${
-          allHeaders.length
+          allHeaders?.length
         }, but got ${values.length}.`
       );
     }
 
-    return headersToProcess.reduce((obj, header, i) => {
+    return headersToProcess.reduce((obj:JsonDataObject, header, i) => {
       const originalIndex = headerIndices[i];
       obj[header] = values[originalIndex];
       return obj;

@@ -1,15 +1,17 @@
-/**
- * A helper function to properly escape a single value for a CSV cell.
- * It handles commas, quotes, and newlines.
- * @param {*} value The value to escape.
- * @returns {string} The CSV-safe string.
- */
-const escapeCsvCell = (value) => {
+type DataObject = Record<string, any>;
+
+const escapeCsvCell = (value: unknown) => {
   // If the value is null or undefined, return an empty string.
   if (value == null) {
     return "";
   }
-
+  if (typeof value === "object") {
+    try {
+      value = JSON.stringify(value);
+    } catch {
+      value = "[unserializable object]";
+    }
+  }
   const stringValue = String(value);
 
   // If the string contains a comma, a double quote, or a newline,
@@ -33,7 +35,7 @@ const escapeCsvCell = (value) => {
  * @param {string} filename The desired filename for the download (e.g., 'campaigns.csv').
  */
 export const exportDataToCsv = (
-  campaigns,
+  campaigns: DataObject[],
   filename = "campaigns-export.csv"
 ) => {
   if (!campaigns || campaigns.length === 0) {

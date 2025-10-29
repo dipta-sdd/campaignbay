@@ -4,18 +4,11 @@ import Checkbox from "./Checkbox";
 import SettingCard from "./SettingCard";
 import Input from "./Input";
 import Placeholders from "./PlaceHolders";
-
-export interface CartSettingsType {
-  cart_quantity_message_format_percentage: string;
-  cart_quantity_message_format_fixed: string;
-  cart_bogo_message_format: string;
-  cart_allowWcCouponStacking: boolean;
-  cart_allowCampaignStacking: boolean;
-}
+import { CartSettingsType } from "../types";
 
 interface CartSettingsProps {
   cartSettings: CartSettingsType;
-  setCartSettings: Dispatch<SetStateAction<CartSettingsType>>;
+  setCartSettings: Dispatch<SetStateAction<CartSettingsType | null>>;
   setEdited: Dispatch<SetStateAction<boolean>>;
 }
 

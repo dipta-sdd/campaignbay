@@ -9,19 +9,11 @@ import Select from "./Select";
 import Toggle from "./Toggle";
 import LogViewerModal from "./LogViewerModal";
 import { useToast } from "../store/toast/use-toast";
-
-export interface GlobalSettingsType {
-  global_enableAddon: boolean;
-  position_to_show_bulk_table: string;
-  position_to_show_discount_bar: string;
-  global_calculate_discount_from: "regular_price" | "sale_price";
-  perf_enableCaching: boolean;
-  debug_enableMode: boolean;
-}
+import { GlobalSettingsType } from "../types";
 
 interface GlobalSettingsProps {
   globalSettings: GlobalSettingsType;
-  setGlobalSettings: Dispatch<SetStateAction<GlobalSettingsType>>;
+  setGlobalSettings: Dispatch<SetStateAction<GlobalSettingsType | null>>;
   setEdited: Dispatch<SetStateAction<boolean>>;
 }
 

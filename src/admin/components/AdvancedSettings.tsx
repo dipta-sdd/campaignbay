@@ -2,14 +2,11 @@ import { FC, Dispatch, SetStateAction } from "react";
 import SettingCard from "./SettingCard";
 import Checkbox from "./Checkbox";
 import { __ } from "@wordpress/i18n";
-
-export interface AdvancedSettingsType {
-  advanced_deleteAllOnUninstall: boolean;
-}
+import { AdvancedSettingsType } from "../types";
 
 interface AdvancedSettingsProps {
   advancedSettings: AdvancedSettingsType;
-  setAdvancedSettings: Dispatch<SetStateAction<AdvancedSettingsType>>;
+  setAdvancedSettings: Dispatch<SetStateAction<AdvancedSettingsType | null>>;
   setEdited: Dispatch<SetStateAction<boolean>>;
 }
 

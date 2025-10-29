@@ -1,19 +1,24 @@
+import { useState, FC } from "react";
 import { __ } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
-import { Modal } from "@wordpress/components";
-import { useState } from "@wordpress/element";
 import { HardDriveDownload, HardDriveUpload } from "lucide-react";
 import { useToast } from "../store/toast/use-toast";
 import { exportDataToCsv } from "./exportDataToCsv";
 import ImportModal from "./ImportModal";
+import { Campaign } from "../types";
 
-const ImportExport = ({ refresh }) => {
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+interface ImportExportProps {
+  refresh: () => void;
+}
+type CampaignExportData = Partial<Campaign>;
+
+const ImportExport: FC<ImportExportProps> = ({ refresh }) => {
+  const [isImportModalOpen, setIsImportModalOpen] = useState<boolean>(false);
   const { addToast } = useToast();
 
   const exportCampaigns = async () => {
     try {
-      const campaignsToExport = await apiFetch({
+      const campaignsToExport: CampaignExportData[] = await apiFetch({
         path: "/campaignbay/v1/campaigns/export",
         method: "GET",
       });
@@ -41,10 +46,9 @@ const ImportExport = ({ refresh }) => {
     }
   };
 
-  const handleImport = async (jsonData) => {
+  const handleImport = async (jsonData: any[]) => {
     try {
-      console.log(jsonData);
-      const response = await apiFetch({
+      const response: any = await apiFetch({
         path: "/campaignbay/v1/campaigns/import",
         method: "POST",
         data: {
@@ -52,7 +56,7 @@ const ImportExport = ({ refresh }) => {
         },
       });
 
-      if (response && response.success) {
+      if (response && response?.success) {
         addToast(
           __("Campaigns imported successfully.", "campaignbay"),
           "success"

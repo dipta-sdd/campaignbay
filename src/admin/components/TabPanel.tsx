@@ -1,13 +1,14 @@
 import { FC, ReactNode, Dispatch, SetStateAction } from "react";
+import { ActiveTab } from "../pages/Settings";
 
 interface Tab {
-  name: string;
+  name: ActiveTab;
   title: string;
 }
 interface TabPanelProps {
   tabs: Tab[];
-  activeTab: string;
-  setActiveTab: Dispatch<SetStateAction<string>>;
+  activeTab: ActiveTab;
+  setActiveTab: (v: ActiveTab) => void;
   children: ReactNode;
 }
 

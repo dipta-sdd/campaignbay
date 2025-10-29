@@ -8,20 +8,11 @@ import Select from "./Select";
 import Input from "./Input";
 import QuantityTableEditModal from "./QuantityTableEditModal";
 import Placeholders from "./PlaceHolders";
-import { DiscountTableOptionsType } from "../types";
-
-export interface ProductSettingsType {
-  product_message_format_percentage: string;
-  product_message_format_fixed: string;
-  bogo_banner_message_format: string;
-  show_discount_table: boolean;
-  product_priorityMethod: "apply_highest" | "apply_lowest";
-  discount_table_options: DiscountTableOptionsType;
-}
+import { DiscountTableOptionsType, ProductSettingsType } from "../types";
 
 interface ProductSettingsProps {
   productSettings: ProductSettingsType;
-  setProductSettings: Dispatch<SetStateAction<ProductSettingsType>>;
+  setProductSettings: Dispatch<SetStateAction<ProductSettingsType | null>>;
   setEdited: Dispatch<SetStateAction<boolean>>;
   isSaving: boolean;
   updateSettings: () => void;

@@ -856,6 +856,9 @@ video {
 .campaignbay-items-stretch {
   align-items: stretch;
 }
+.\!campaignbay-items-stretch {
+  align-items: stretch !important;
+}
 .\!campaignbay-justify-start {
   justify-content: flex-start !important;
 }

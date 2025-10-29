@@ -27635,7 +27635,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/dist/development/chunk-NISHYRIK.mjs");
 /* harmony import */ var _components_AppLayout__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/AppLayout */ "./src/admin/components/AppLayout.tsx");
 /* harmony import */ var _pages_Dashboard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pages/Dashboard */ "./src/admin/pages/Dashboard.js");
-/* harmony import */ var _pages_Settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pages/Settings */ "./src/admin/pages/Settings.js");
+/* harmony import */ var _pages_Settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pages/Settings */ "./src/admin/pages/Settings.tsx");
 /* harmony import */ var _pages_Campaigns__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pages/Campaigns */ "./src/admin/pages/Campaigns.tsx");
 /* harmony import */ var _pages_CampaignsAdd__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pages/CampaignsAdd */ "./src/admin/pages/CampaignsAdd.tsx");
 /* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/CampaignsEdit */ "./src/admin/pages/CampaignsEdit.tsx");
@@ -27690,18 +27690,18 @@ const App = () => {
 
 /***/ }),
 
-/***/ "./src/admin/components/ActivityLogModal.js":
-/*!**************************************************!*\
-  !*** ./src/admin/components/ActivityLogModal.js ***!
-  \**************************************************/
+/***/ "./src/admin/components/ActivityLogModal.tsx":
+/*!***************************************************!*\
+  !*** ./src/admin/components/ActivityLogModal.tsx ***!
+  \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
@@ -27714,8 +27714,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/chevron-down.js");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/chevron-up.js");
 /* harmony import */ var _Modal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Modal */ "./src/admin/components/Modal.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _Select__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Select */ "./src/admin/components/Select.tsx");
+/* harmony import */ var _Input__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Input */ "./src/admin/components/Input.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__);
+
+
 
 
 
@@ -27728,19 +27732,17 @@ const ActivityLogModal = ({
   isActivityModalOpen,
   setIsActivityModalOpen
 }) => {
-  const [activityLogs, setActivityLogs] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
-  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-  const [currentPage, setCurrentPage] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
-  const [totalPages, setTotalPages] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
-  const [totalItems, setTotalItems] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
-  const [perPage, setPerPage] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(10);
-
-  // Sorting states
-  const [orderby, setOrderby] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("timestamp");
-  const [order, setOrder] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("desc");
+  const [activityLogs, setActivityLogs] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [isLoading, setIsLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [currentPage, setCurrentPage] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
+  const [totalPages, setTotalPages] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
+  const [totalItems, setTotalItems] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
+  const [perPage, setPerPage] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(10);
+  const [orderby, setOrderby] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("timestamp");
+  const [order, setOrder] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("desc");
 
   // Filter states - removed campaign_id and order_status
-  const [filters, setFilters] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)({
+  const [filters, setFilters] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
     log_type: "activity",
     date_from: "",
     date_to: ""
@@ -27777,13 +27779,9 @@ const ActivityLogModal = ({
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("100 per page", "campaignbay"),
     value: 100
   }];
-
-  // Check if financial columns should be shown
   const shouldShowFinancialColumns = () => {
     return filters.log_type === "sale" || filters.log_type === "";
   };
-
-  // Define sortable columns - conditionally include financial columns
   const getTableHeads = () => {
     const baseColumns = [{
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Time", "campaignbay"),
@@ -27823,7 +27821,7 @@ const ActivityLogModal = ({
     }
     return baseColumns;
   };
-  const fetchActivityLogs = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async (page = 1, newFilters = filters) => {
+  const fetchActivityLogs = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async (page = 1, newFilters = filters) => {
     setIsLoading(true);
     try {
       const params = {
@@ -27847,10 +27845,10 @@ const ActivityLogModal = ({
       setCurrentPage(page);
 
       // Get pagination info from headers
-      const totalItemsHeader = response.headers?.get("X-WP-Total") || response.headers?.get("x-wp-total");
-      const totalPagesHeader = response.headers?.get("X-WP-TotalPages") || response.headers?.get("x-wp-total-pages");
-      setTotalItems(parseInt(totalItemsHeader) || 0);
-      setTotalPages(parseInt(totalPagesHeader) || 1);
+      const totalItemsHeader = response.headers?.get("X-WP-Total") || response.headers?.get("x-wp-total") || "";
+      const totalPagesHeader = response.headers?.get("X-WP-TotalPages") || response.headers?.get("x-wp-total-pages") || "";
+      setTotalItems(parseInt(totalItemsHeader, 10));
+      setTotalPages(parseInt(totalPagesHeader, 10));
       setActivityLogs(await response.json());
     } catch (error) {
       console.error("Error fetching activity logs:", error);
@@ -27858,7 +27856,7 @@ const ActivityLogModal = ({
     }
     setIsLoading(false);
   }, [perPage, filters, orderby, order]);
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (isActivityModalOpen) {
       fetchActivityLogs(1);
     }
@@ -27873,7 +27871,7 @@ const ActivityLogModal = ({
     fetchActivityLogs(1, newFilters);
   };
   const handlePerPageChange = value => {
-    setPerPage(parseInt(value));
+    setPerPage(Number(value));
     setCurrentPage(1);
     fetchActivityLogs(1);
   };
@@ -27986,21 +27984,21 @@ const ActivityLogModal = ({
     onClick
   }) => {
     if (isSortable) {
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("th", {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("span", {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("th", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("span", {
           className: "campaignbay-table-header campaignbay-flex campaignbay-items-center campaignbay-p-4",
           onClick: onClick,
           style: {
             cursor: "pointer"
           },
-          children: [label, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(SortIndicator, {
+          children: [label, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(SortIndicator, {
             value: value
           })]
         })
       });
     }
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("th", {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("th", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
         className: "campaignbay-table-header",
         children: label
       })
@@ -28012,7 +28010,7 @@ const ActivityLogModal = ({
     if (orderby !== value) {
       return null; // Don't show an icon if it's not the active sort column
     }
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"], {
       className: "campaignbay-table-header-icon",
       icon: order === "asc" ? _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__["default"] : _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__["default"],
       fill: "currentColor",
@@ -28026,82 +28024,86 @@ const ActivityLogModal = ({
   }
   const tableHeads = getTableHeads();
   const colSpan = tableHeads.length;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_Modal__WEBPACK_IMPORTED_MODULE_8__["default"], {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_Modal__WEBPACK_IMPORTED_MODULE_8__["default"], {
     title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Activity Log", "campaignbay"),
     onRequestClose: closeModal,
     className: "wpab-cb-activity-log-modal campaignbay-w-[95vw] md:campaignbay-w-[90vw] lg:campaignbay-w-[85vw] campaignbay-max-w-7xl campaignbay-rounded-none",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
       className: "campaignbay-mb-6 campaignbay-p-4 campaignbay-bg-gray-50 campaignbay-rounded campaignbay-border campaignbay-border-gray-200",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("h3", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("h3", {
         className: "campaignbay-text-lg campaignbay-font-semibold campaignbay-mb-4",
         children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Filters", "campaignbay")
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
         className: "campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4 campaignbay-gap-4",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.SelectControl, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_9__["default"], {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Log Type", "campaignbay"),
           value: filters.log_type,
           options: logTypeOptions,
-          onChange: value => handleFilterChange("log_type", value)
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
+          onChange: value => handleFilterChange("log_type", value),
+          conClassName: "!campaignbay-items-stretch !campaignbay-p-0"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_10__["default"], {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Date From", "campaignbay"),
           value: filters.date_from,
           onChange: value => handleFilterChange("date_from", value),
-          type: "date"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
+          type: "date",
+          conClassName: "!campaignbay-items-stretch !campaignbay-p-0"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_Input__WEBPACK_IMPORTED_MODULE_10__["default"], {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Date To", "campaignbay"),
           value: filters.date_to,
           onChange: value => handleFilterChange("date_to", value),
-          type: "date"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.SelectControl, {
+          type: "date",
+          conClassName: "!campaignbay-items-stretch !campaignbay-p-0"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_Select__WEBPACK_IMPORTED_MODULE_9__["default"], {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Items per page", "campaignbay"),
-          value: perPage,
+          value: String(perPage),
           options: perPageOptions,
-          onChange: handlePerPageChange
+          onChange: handlePerPageChange,
+          conClassName: "!campaignbay-items-stretch !campaignbay-p-0"
         })]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
       className: "campaignbay-mb-4 campaignbay-flex campaignbay-justify-between campaignbay-items-center",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
         className: "campaignbay-text-sm campaignbay-text-gray-600",
         children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.sprintf)((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__._n)("Showing %d of %d log entry", "Showing %d of %d log entries", totalItems, "campaignbay"), activityLogs.length, totalItems)
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
         variant: "secondary",
         onClick: () => fetchActivityLogs(currentPage),
         isBusy: isLoading,
         children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Refresh", "campaignbay")
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
       className: "campaignbay-border campaignbay-border-gray-200 campaignbay-rounded campaignbay-overflow-hidden",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
         className: "campaignbay-overflow-x-auto",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("table", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("table", {
           className: "campaignbay-w-full campaignbay-text-sm",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("thead", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("thead", {
             className: "campaignbay-bg-gray-50 campaignbay-border-b campaignbay-border-gray-200",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("tr", {
-              children: tableHeads.map(head => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(TableHead, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("tr", {
+              children: tableHeads.map(head => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(TableHead, {
                 label: head.label,
-                isSortable: head.isSortable,
+                isSortable: !!head.isSortable,
                 value: head.value,
                 onClick: () => handleSort(head.value)
               }, head.value))
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("tbody", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("tbody", {
             className: "campaignbay-divide-y campaignbay-divide-gray-200",
-            children: isLoading ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("tr", {
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+            children: isLoading ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("tr", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                 colSpan: colSpan,
                 className: "campaignbay-px-4 campaignbay-py-8 campaignbay-text-center",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Spinner, {})
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Spinner, {})
               })
-            }) : activityLogs.length > 0 ? activityLogs.map(log => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("tr", {
+            }) : activityLogs.length > 0 ? activityLogs.map(log => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("tr", {
               className: "hover:campaignbay-bg-gray-50",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                 className: "campaignbay-px-4 campaignbay-py-3 campaignbay-text-gray-600",
                 children: formatDateTime(log.timestamp)
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                 className: "campaignbay-px-4 campaignbay-py-3",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
                   className: "campaignbay-inline-flex campaignbay-px-2 campaignbay-py-1 campaignbay-text-xs campaignbay-font-medium campaignbay-rounded-full",
                   style: {
                     backgroundColor: getLogTypeColor(log.log_type) + "20",
@@ -28109,66 +28111,66 @@ const ActivityLogModal = ({
                   },
                   children: getLogTypeLabel(log.log_type)
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                 className: "campaignbay-px-4 campaignbay-py-3",
-                children: log.campaign_id > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("a", {
+                children: log.campaign_id > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("a", {
                   href: log.campaign_edit_link,
                   target: "_blank",
                   rel: "noopener noreferrer",
                   className: "campaignbay-text-blue-600 hover:campaignbay-text-blue-800 campaignbay-underline",
                   children: log.campaign_title || `Campaign #${log.campaign_id}`
-                }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+                }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
                   className: "campaignbay-text-gray-400",
                   children: "\u2014"
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                 className: "campaignbay-px-4 campaignbay-py-3",
-                children: log.order_id > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("a", {
+                children: log.order_id > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("a", {
                     href: log.order_edit_link,
                     target: "_blank",
                     rel: "noopener noreferrer",
                     className: "campaignbay-text-blue-600 hover:campaignbay-text-blue-800 campaignbay-underline",
                     children: ["#", log.order_number || log.order_id]
-                  }), log.order_status && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+                  }), log.order_status && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
                     className: "campaignbay-text-xs campaignbay-text-gray-500",
                     children: getOrderStatusLabel(log.order_status)
                   })]
-                }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+                }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
                   className: "campaignbay-text-gray-400",
                   children: "\u2014"
                 })
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                 className: "campaignbay-px-4 campaignbay-py-3",
-                children: log.user_name ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
-                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+                children: log.user_name ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
                     className: "campaignbay-font-medium",
                     children: log.user_name
-                  }), log.user_email && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+                  }), log.user_email && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
                     className: "campaignbay-text-xs campaignbay-text-gray-500",
                     children: log.user_email
                   })]
-                }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+                }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
                   className: "campaignbay-text-gray-400",
                   children: "\u2014"
                 })
-              }), shouldShowFinancialColumns() && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.Fragment, {
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+              }), shouldShowFinancialColumns() && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.Fragment, {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                   className: "campaignbay-px-4 campaignbay-py-3 campaignbay-text-right campaignbay-font-mono",
                   children: log.base_total > 0 ? formatCurrency(log.base_total) : "—"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                   className: "campaignbay-px-4 campaignbay-py-3 campaignbay-text-right campaignbay-font-mono",
-                  children: log.total_discount > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("span", {
+                  children: log.total_discount > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("span", {
                     className: "campaignbay-text-green-600",
                     children: ["-", formatCurrency(log.total_discount)]
                   }) : "—"
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                   className: "campaignbay-px-4 campaignbay-py-3 campaignbay-text-right campaignbay-font-mono campaignbay-font-medium",
                   children: log.order_total > 0 ? formatCurrency(log.order_total) : "—"
                 })]
               })]
-            }, log.id)) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("tr", {
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("td", {
+            }, log.id)) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("tr", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("td", {
                 colSpan: colSpan,
                 className: "campaignbay-px-4 campaignbay-py-8 campaignbay-text-center campaignbay-text-gray-500",
                 children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("No activity logs found for the selected filters.", "campaignbay")
@@ -28177,38 +28179,38 @@ const ActivityLogModal = ({
           })]
         })
       })
-    }), totalPages > 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+    }), totalPages > 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
       className: "campaignbay-mt-6 campaignbay-flex campaignbay-justify-between campaignbay-items-center",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
         className: "campaignbay-text-sm campaignbay-text-gray-600",
         children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.sprintf)((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Page %d of %d", "campaignbay"), currentPage, totalPages)
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
         className: "campaignbay-flex campaignbay-gap-1",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
           variant: "secondary",
           onClick: () => handlePageChange(1),
           disabled: currentPage <= 1,
           className: "campaignbay-px-3 campaignbay-py-1",
           children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("First", "campaignbay")
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
           variant: "secondary",
           onClick: () => handlePageChange(currentPage - 1),
           disabled: currentPage <= 1,
           className: "campaignbay-px-3 campaignbay-py-1",
           children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Previous", "campaignbay")
-        }), getPageNumbers().map((page, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        }), getPageNumbers().map((page, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
           variant: page === currentPage ? "primary" : "secondary",
           onClick: () => typeof page === "number" ? handlePageChange(page) : null,
           disabled: page === "...",
           className: "campaignbay-px-3 campaignbay-py-1 campaignbay-min-w-[40px]",
           children: page
-        }, index)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        }, index)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
           variant: "secondary",
           onClick: () => handlePageChange(currentPage + 1),
           disabled: currentPage >= totalPages,
           className: "campaignbay-px-3 campaignbay-py-1",
           children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Next", "campaignbay")
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
           variant: "secondary",
           onClick: () => handlePageChange(totalPages),
           disabled: currentPage >= totalPages,
@@ -29548,32 +29550,29 @@ const GlobalSettings = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/ImportExport.js":
-/*!**********************************************!*\
-  !*** ./src/admin/components/ImportExport.js ***!
-  \**********************************************/
+/***/ "./src/admin/components/ImportExport.tsx":
+/*!***********************************************!*\
+  !*** ./src/admin/components/ImportExport.tsx ***!
+  \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
-/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/hard-drive-download.js");
-/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/hard-drive-upload.js");
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
-/* harmony import */ var _exportDataToCsv__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./exportDataToCsv */ "./src/admin/components/exportDataToCsv.js");
-/* harmony import */ var _ImportModal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ImportModal */ "./src/admin/components/ImportModal.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__);
-
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/hard-drive-download.js");
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/hard-drive-upload.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
+/* harmony import */ var _exportDataToCsv__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./exportDataToCsv */ "./src/admin/components/exportDataToCsv.ts");
+/* harmony import */ var _ImportModal__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ImportModal */ "./src/admin/components/ImportModal.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__);
 
 
 
@@ -29585,70 +29584,69 @@ __webpack_require__.r(__webpack_exports__);
 const ImportExport = ({
   refresh
 }) => {
-  const [isImportModalOpen, setIsImportModalOpen] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useState)(false);
+  const [isImportModalOpen, setIsImportModalOpen] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const {
     addToast
-  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_6__.useToast)();
+  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_5__.useToast)();
   const exportCampaigns = async () => {
     try {
-      const campaignsToExport = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+      const campaignsToExport = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default()({
         path: "/campaignbay/v1/campaigns/export",
         method: "GET"
       });
       if (campaignsToExport && campaignsToExport.length > 0) {
         const date = new Date().toISOString().slice(0, 19).replace("T", "-").replace("_", "-");
         const filename = `campaignbay-export-${date}.csv`;
-        (0,_exportDataToCsv__WEBPACK_IMPORTED_MODULE_7__.exportDataToCsv)(campaignsToExport, filename);
-        addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Campaigns exported successfully.", "campaignbay"), "success");
+        (0,_exportDataToCsv__WEBPACK_IMPORTED_MODULE_6__.exportDataToCsv)(campaignsToExport, filename);
+        addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Campaigns exported successfully.", "campaignbay"), "success");
       } else {
-        addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("There are no campaigns to export.", "campaignbay"), "warning");
+        addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("There are no campaigns to export.", "campaignbay"), "warning");
       }
     } catch (error) {
-      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Error exporting campaigns.", "campaignbay"), "error");
+      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Error exporting campaigns.", "campaignbay"), "error");
     }
   };
   const handleImport = async jsonData => {
     try {
-      console.log(jsonData);
-      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default()({
         path: "/campaignbay/v1/campaigns/import",
         method: "POST",
         data: {
           campaigns: jsonData
         }
       });
-      if (response && response.success) {
-        addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Campaigns imported successfully.", "campaignbay"), "success");
+      if (response && response?.success) {
+        addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Campaigns imported successfully.", "campaignbay"), "success");
         refresh();
         setIsImportModalOpen(false);
       } else {
-        addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Error importing campaigns.", "campaignbay"), "error");
+        addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Error importing campaigns.", "campaignbay"), "error");
       }
     } catch (error) {
-      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Error importing campaigns.", "campaignbay"), "error");
+      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Error importing campaigns.", "campaignbay"), "error");
     }
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.Fragment, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
       className: "campaignbay-flex campaignbay-gap-1",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("button", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("button", {
         className: "campaignbay-font-medium campaignbay-border campaignbay-border-gray-500 campaignbay-text-gray-600 hover:campaignbay-border-blue-600 hover:campaignbay-text-blue-600 campaignbay-p-6 campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-flex-nowrap",
         onClick: () => {
           setIsImportModalOpen(true);
         },
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(lucide_react__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(lucide_react__WEBPACK_IMPORTED_MODULE_4__["default"], {
           size: 16
-        }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Import", "campaignbay")]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("button", {
+        }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Import", "campaignbay")]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("button", {
         className: "campaignbay-font-medium campaignbay-border campaignbay-border-gray-500 campaignbay-text-gray-600 hover:campaignbay-border-blue-600 hover:campaignbay-text-blue-600 campaignbay-p-6 campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-flex-nowrap",
         onClick: () => {
           exportCampaigns();
         },
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(lucide_react__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(lucide_react__WEBPACK_IMPORTED_MODULE_3__["default"], {
           size: 16
-        }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("Export", "campaignbay")]
+        }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Export", "campaignbay")]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_ImportModal__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_ImportModal__WEBPACK_IMPORTED_MODULE_7__["default"], {
       isOpen: isImportModalOpen,
       onClose: () => setIsImportModalOpen(false),
       onImport: handleImport
@@ -29659,33 +29657,31 @@ const ImportExport = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/ImportModal.js":
-/*!*********************************************!*\
-  !*** ./src/admin/components/ImportModal.js ***!
-  \*********************************************/
+/***/ "./src/admin/components/ImportModal.tsx":
+/*!**********************************************!*\
+  !*** ./src/admin/components/ImportModal.tsx ***!
+  \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/upload.js");
-/* harmony import */ var _csvToJson__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./csvToJson */ "./src/admin/components/csvToJson.js");
-/* harmony import */ var _Modal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Modal */ "./src/admin/components/Modal.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/upload.js");
+/* harmony import */ var _csvToJson__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./csvToJson */ "./src/admin/components/csvToJson.ts");
+/* harmony import */ var _Modal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Modal */ "./src/admin/components/Modal.tsx");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
 
- // Assuming your csvToJson file is in utils
+
 
 /**
  * A modal for importing campaigns from a CSV file with drag-and-drop support.
@@ -29695,26 +29691,25 @@ __webpack_require__.r(__webpack_exports__);
  * @param {Function} props.onClose - Function to call when the modal should close.
  * @param {Function} props.onImport - Function to call with the parsed JSON data when the user confirms the import.
  */
-
 const ImportModal = ({
   isOpen,
   onClose,
   onImport
 }) => {
-  const [jsonData, setJsonData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
-  const [headers, setHeaders] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
-  const [fileName, setFileName] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)("");
-  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
-  const [isDraggingOver, setIsDraggingOver] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [jsonData, setJsonData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [headers, setHeaders] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [fileName, setFileName] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [isDraggingOver, setIsDraggingOver] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
 
   /**
    * A centralized function to process a single file object.
    * @param {File} file
    */
-  const processFile = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useCallback)(file => {
+  const processFile = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(file => {
     if (!file) return;
     if (file.type && !file.type.match("text/csv")) {
-      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Invalid file type. Please upload a .csv file.", "campaignbay"));
+      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Invalid file type. Please upload a .csv file.", "campaignbay"));
       return;
     }
     setError(null);
@@ -29724,19 +29719,19 @@ const ImportModal = ({
     reader.onload = e => {
       try {
         const requiredColumns = ["title", "status", "type", "discount_type", "discount_value", "target_type", "target_ids", "is_exclude", "tiers", "conditions", "settings", "exclude_sale_items", "schedule_enabled", "start_datetime", "end_datetime", "usage_limit", "usage_count"];
-        const parsedData = (0,_csvToJson__WEBPACK_IMPORTED_MODULE_5__.csvToJson)(e.target.result, requiredColumns);
+        const parsedData = (0,_csvToJson__WEBPACK_IMPORTED_MODULE_3__.csvToJson)(e?.target?.result, requiredColumns);
         if (parsedData.length > 0) {
           setHeaders(Object.keys(parsedData[0]));
           setJsonData(parsedData);
         } else {
-          setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("The CSV file is empty or does not contain data rows.", "campaignbay"));
+          setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("The CSV file is empty or does not contain data rows.", "campaignbay"));
         }
       } catch (err) {
-        setError(err.message);
+        setError(err?.message);
       }
     };
     reader.onerror = () => {
-      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Failed to read the file.", "campaignbay"));
+      setError((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Failed to read the file.", "campaignbay"));
     };
     reader.readAsText(file);
   }, []);
@@ -29745,13 +29740,15 @@ const ImportModal = ({
    * Handles file selection from the standard input field.
    */
   const handleFileChange = event => {
-    processFile(event.target.files[0]);
+    if (event.target.files) {
+      processFile(event.target.files[0]);
+    }
   };
 
   /**
    * Handles the drag over event to allow dropping.
    */
-  const handleDragOver = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
+  const handleDragOver = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
     event.preventDefault();
     event.stopPropagation();
     setIsDraggingOver(true);
@@ -29760,7 +29757,7 @@ const ImportModal = ({
   /**
    * Handles the drag leave event to reset visual state.
    */
-  const handleDragLeave = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
+  const handleDragLeave = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
     event.preventDefault();
     event.stopPropagation();
     setIsDraggingOver(false);
@@ -29769,7 +29766,7 @@ const ImportModal = ({
   /**
    * Handles the file drop event.
    */
-  const handleDrop = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
+  const handleDrop = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
     event.preventDefault();
     event.stopPropagation();
     setIsDraggingOver(false);
@@ -29780,14 +29777,23 @@ const ImportModal = ({
   }, [processFile]);
   const handleConfirmImport = () => {
     if (jsonData) {
-      onImport(jsonData.map(item => {
+      // Safely parse nested JSON strings within the data
+      const processedData = jsonData.map(item => {
+        const safeParse = jsonString => {
+          try {
+            return typeof jsonString === "string" ? JSON.parse(jsonString) : jsonString;
+          } catch {
+            return Array.isArray(jsonString) ? [] : {};
+          }
+        };
         return {
           ...item,
-          tiers: item.tiers ? JSON.parse(item.tiers) : [],
-          conditions: item.conditions ? JSON.parse(item.conditions) : {},
-          settings: item.settings ? JSON.parse(item.settings) : {}
+          tiers: safeParse(item.tiers),
+          conditions: safeParse(item.conditions),
+          settings: safeParse(item.settings)
         };
-      }));
+      });
+      onImport(processedData);
     }
   };
   const handleClose = () => {
@@ -29801,39 +29807,39 @@ const ImportModal = ({
     return null;
   }
   const dropzoneClass = isDraggingOver ? "campaignbay-border-blue-500 campaignbay-bg-blue-50" : "campaignbay-border-gray-300 campaignbay-bg-gray-50 hover:campaignbay-bg-gray-100";
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_Modal__WEBPACK_IMPORTED_MODULE_6__["default"], {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Modal__WEBPACK_IMPORTED_MODULE_4__["default"], {
     size: "large",
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Import Campaigns from CSV", "campaignbay"),
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Import Campaigns from CSV", "campaignbay"),
     onRequestClose: handleClose,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
       className: "campaignbay-p-2",
-      children: [jsonData ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+      children: [jsonData ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
           className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-4",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("h3", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("h3", {
             className: "campaignbay-text-lg campaignbay-font-semibold campaignbay-text-gray-800",
-            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Data Preview", "campaignbay")
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Data Preview", "campaignbay")
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("p", {
             className: "campaignbay-text-sm campaignbay-text-gray-500",
-            children: [fileName, " - ", jsonData.length, " ", (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("rows found", "campaignbay")]
+            children: [fileName, " - ", jsonData.length, " ", (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("rows found", "campaignbay")]
           })]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           className: "campaignbay-overflow-auto campaignbay-border campaignbay-rounded-lg campaignbay-max-h-[50vh] campaignbay-mt-[12px]",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("table", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("table", {
             className: "campaignbay-min-w-full campaignbay-text-sm campaignbay-text-left campaignbay-text-gray-600",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("thead", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("thead", {
               className: "campaignbay-bg-gray-50 campaignbay-text-xs campaignbay-text-gray-700 campaignbay-uppercase campaignbay-sticky campaignbay-top-0",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("tr", {
-                children: headers.map(header => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("th", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("tr", {
+                children: headers.map(header => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("th", {
                   className: "campaignbay-p-[10px]",
                   children: header
                 }, header))
               })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("tbody", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("tbody", {
               className: "campaignbay-bg-white",
-              children: jsonData.map((row, rowIndex) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("tr", {
+              children: jsonData.map((row, rowIndex) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("tr", {
                 className: "campaignbay-border-b hover:campaignbay-bg-gray-50",
-                children: headers.map(header => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("td", {
+                children: headers.map(header => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("td", {
                   className: "campaignbay-p-[16px] campaignbay-whitespace-nowrap campaignbay-capitalize",
                   children: String(row[header])
                 }, `${rowIndex}-${header}`))
@@ -29841,30 +29847,30 @@ const ImportModal = ({
             })]
           })
         })]
-      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
         className: "campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-w-full",
         onDragOver: handleDragOver,
         onDragLeave: handleDragLeave,
         onDrop: handleDrop,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("label", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("label", {
           htmlFor: "csv-importer",
           className: `campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-w-full campaignbay-h-64 campaignbay-border-2 campaignbay-border-dashed campaignbay-rounded-lg campaignbay-cursor-pointer campaignbay-transition-colors ${dropzoneClass}`,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
             className: "campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-pt-5 campaignbay-pb-6",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
-              icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"],
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["default"], {
+              icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_2__["default"],
               className: "campaignbay-w-10 campaignbay-h-10 campaignbay-mb-3 campaignbay-text-gray-400"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("p", {
               className: "campaignbay-mb-2 campaignbay-text-sm campaignbay-text-gray-500",
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
                 className: "campaignbay-font-semibold",
-                children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Click to upload", "campaignbay")
-              }), " ", (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("or drag and drop", "campaignbay")]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+                children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Click to upload", "campaignbay")
+              }), " ", (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("or drag and drop", "campaignbay")]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("p", {
               className: "campaignbay-text-xs campaignbay-text-gray-500",
-              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("CSV file (max. 2MB)", "campaignbay")
+              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("CSV file (max. 2MB)", "campaignbay")
             })]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
             id: "csv-importer",
             type: "file",
             className: "hidden",
@@ -29872,22 +29878,22 @@ const ImportModal = ({
             onChange: handleFileChange
           })]
         })
-      }), error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+      }), error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
         className: "campaignbay-mt-4 campaignbay-p-3 campaignbay-text-sm campaignbay-text-red-700 campaignbay-bg-red-100 campaignbay-border campaignbay-border-red-200 campaignbay-rounded-md",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Error:", "campaignbay")
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("strong", {
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Error:", "campaignbay")
         }), " ", error]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
         className: "campaignbay-flex campaignbay-justify-end campaignbay-gap-4 campaignbay-mt-[24px]",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
           className: "campaignbay-text-blue-600 hover:campaignbay-bg-blue-100 campaignbay-p-8 campaignbay-rounded-sm",
           onClick: handleClose,
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Cancel", "campaignbay")
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Cancel", "campaignbay")
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
           className: "campaignbay-bg-blue-600 hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-p-8 campaignbay-rounded-sm campaignbay-transition-colors disabled:campaignbay-text-blue-400 ",
           onClick: handleConfirmImport,
-          disabled: !jsonData || error,
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Import Campaigns", "campaignbay")
+          disabled: !jsonData || !!error,
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Import Campaigns", "campaignbay")
         })]
       })]
     })
@@ -29915,16 +29921,17 @@ __webpack_require__.r(__webpack_exports__);
 
 const Input = ({
   label,
-  type = 'text',
+  type = "text",
   help,
   value,
   onChange,
   className,
+  conClassName,
   ...props
 }) => {
   const inputId = (0,react__WEBPACK_IMPORTED_MODULE_0__.useId)();
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-    className: "wpab-input-con",
+    className: `wpab-input-con ${conClassName ? conClassName : ""}`,
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
       className: "wpab-input-label",
       htmlFor: inputId,
@@ -29932,9 +29939,9 @@ const Input = ({
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
       id: inputId,
       type: type,
-      value: value !== null && value !== void 0 ? value : '',
+      value: value !== null && value !== void 0 ? value : "",
       onChange: e => onChange(e.target.value),
-      className: `wpab-input${className ? ` ${className}` : ''}`,
+      className: `wpab-input${className ? ` ${className}` : ""}`,
       ...props
     }), help && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
       className: "wpab-input-help",
@@ -31109,11 +31116,12 @@ const Select = ({
   value,
   onChange,
   className,
+  conClassName,
   ...props
 }) => {
   const selectId = (0,react__WEBPACK_IMPORTED_MODULE_0__.useId)();
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-    className: "wpab-input-con",
+    className: `wpab-input-con ${conClassName ? conClassName : ""}`,
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
       className: "wpab-input-label",
       htmlFor: selectId,
@@ -31696,9 +31704,9 @@ const Tooltip = ({
 
 /***/ }),
 
-/***/ "./src/admin/components/csvToJson.js":
+/***/ "./src/admin/components/csvToJson.ts":
 /*!*******************************************!*\
-  !*** ./src/admin/components/csvToJson.js ***!
+  !*** ./src/admin/components/csvToJson.ts ***!
   \*******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -31747,7 +31755,6 @@ const parseCsvRow = rowString => {
     return val.trim();
   });
 };
-
 /**
  * Converts a CSV string into an array of JSON objects, optionally keeping only specified columns.
  *
@@ -31765,15 +31772,15 @@ const csvToJson = (csvString, columnsToKeep = []) => {
   if (lines.length < 2) {
     throw new Error("CSV must have a header row and at least one data row.");
   }
-  const allHeaders = lines.shift().trim().split(",");
-  let headersToProcess = allHeaders;
-  let headerIndices = allHeaders.map((_, index) => index);
+  const allHeaders = lines?.shift()?.trim().split(",");
+  let headersToProcess = allHeaders || [];
+  let headerIndices = allHeaders?.map((_, index) => index) || [];
   if (columnsToKeep && columnsToKeep.length > 0) {
     headersToProcess = [];
     headerIndices = [];
     columnsToKeep.forEach(columnName => {
-      const index = allHeaders.indexOf(columnName);
-      if (index > -1) {
+      const index = allHeaders?.indexOf(columnName);
+      if (index !== undefined && index > -1) {
         headersToProcess.push(columnName);
         headerIndices.push(index);
       } else {
@@ -31786,8 +31793,8 @@ const csvToJson = (csvString, columnsToKeep = []) => {
   }
   const jsonArray = lines.map((line, index) => {
     const values = parseCsvRow(line.trim());
-    if (values.length !== allHeaders.length) {
-      throw new Error(`Row ${index + 2}: Column count mismatch. Expected ${allHeaders.length}, but got ${values.length}.`);
+    if (values.length !== allHeaders?.length) {
+      throw new Error(`Row ${index + 2}: Column count mismatch. Expected ${allHeaders?.length}, but got ${values.length}.`);
     }
     return headersToProcess.reduce((obj, header, i) => {
       const originalIndex = headerIndices[i];
@@ -31801,9 +31808,9 @@ const csvToJson = (csvString, columnsToKeep = []) => {
 
 /***/ }),
 
-/***/ "./src/admin/components/exportDataToCsv.js":
+/***/ "./src/admin/components/exportDataToCsv.ts":
 /*!*************************************************!*\
-  !*** ./src/admin/components/exportDataToCsv.js ***!
+  !*** ./src/admin/components/exportDataToCsv.ts ***!
   \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -31811,16 +31818,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   exportDataToCsv: () => (/* binding */ exportDataToCsv)
 /* harmony export */ });
-/**
- * A helper function to properly escape a single value for a CSV cell.
- * It handles commas, quotes, and newlines.
- * @param {*} value The value to escape.
- * @returns {string} The CSV-safe string.
- */
 const escapeCsvCell = value => {
   // If the value is null or undefined, return an empty string.
   if (value == null) {
     return "";
+  }
+  if (typeof value === "object") {
+    try {
+      value = JSON.stringify(value);
+    } catch {
+      value = "[unserializable object]";
+    }
   }
   const stringValue = String(value);
 
@@ -31934,7 +31942,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ../store/cbStore */ "./src/admin/store/cbStore.tsx");
 /* harmony import */ var _components_Skeleton__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ../components/Skeleton */ "./src/admin/components/Skeleton.tsx");
 /* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ../components/Navbar */ "./src/admin/components/Navbar.tsx");
-/* harmony import */ var _components_ImportExport__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ../components/ImportExport */ "./src/admin/components/ImportExport.js");
+/* harmony import */ var _components_ImportExport__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ../components/ImportExport */ "./src/admin/components/ImportExport.tsx");
 /* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/arrow-down-wide-narrow.js");
 /* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/arrow-up-narrow-wide.js");
 /* harmony import */ var _utils_Dates__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ../utils/Dates */ "./src/admin/utils/Dates.ts");
@@ -34282,7 +34290,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_img_top_p_c_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../assets/img/top_p_c.svg */ "./assets/img/top_p_c.svg");
 /* harmony import */ var _assets_img_top_p_t_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../assets/img/top_p_t.svg */ "./assets/img/top_p_t.svg");
 /* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/Navbar */ "./src/admin/components/Navbar.tsx");
-/* harmony import */ var _components_ActivityLogModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/ActivityLogModal */ "./src/admin/components/ActivityLogModal.js");
+/* harmony import */ var _components_ActivityLogModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/ActivityLogModal */ "./src/admin/components/ActivityLogModal.tsx");
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/dist/development/chunk-NISHYRIK.mjs");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__);
@@ -35045,32 +35053,32 @@ const Placeholder = ({
 
 /***/ }),
 
-/***/ "./src/admin/pages/Settings.js":
-/*!*************************************!*\
-  !*** ./src/admin/pages/Settings.js ***!
-  \*************************************/
+/***/ "./src/admin/pages/Settings.tsx":
+/*!**************************************!*\
+  !*** ./src/admin/pages/Settings.tsx ***!
+  \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _components_GlobalSettings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/GlobalSettings */ "./src/admin/components/GlobalSettings.tsx");
-/* harmony import */ var _components_ProductSettings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../components/ProductSettings */ "./src/admin/components/ProductSettings.tsx");
-/* harmony import */ var _components_CartSettings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../components/CartSettings */ "./src/admin/components/CartSettings.tsx");
-/* harmony import */ var _components_AdvancedSettings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../components/AdvancedSettings */ "./src/admin/components/AdvancedSettings.tsx");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
-/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
+/* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/check.js");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
 /* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/Loader */ "./src/admin/components/Loader.tsx");
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../store/toast/use-toast */ "./src/admin/store/toast/use-toast.tsx");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/check.js");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../components/Navbar */ "./src/admin/components/Navbar.tsx");
-/* harmony import */ var _components_TabPanel__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../components/TabPanel */ "./src/admin/components/TabPanel.tsx");
+/* harmony import */ var _components_Navbar__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../components/Navbar */ "./src/admin/components/Navbar.tsx");
+/* harmony import */ var _components_TabPanel__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/TabPanel */ "./src/admin/components/TabPanel.tsx");
+/* harmony import */ var _components_GlobalSettings__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/GlobalSettings */ "./src/admin/components/GlobalSettings.tsx");
+/* harmony import */ var _components_ProductSettings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../components/ProductSettings */ "./src/admin/components/ProductSettings.tsx");
+/* harmony import */ var _components_CartSettings__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../components/CartSettings */ "./src/admin/components/CartSettings.tsx");
+/* harmony import */ var _components_AdvancedSettings__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../components/AdvancedSettings */ "./src/admin/components/AdvancedSettings.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__);
 
@@ -35087,25 +35095,25 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const Settings = () => {
-  const [settings, setSettings] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)({});
-  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(true);
-  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(null);
-  const [isSaving, setIsSaving] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false);
-  const [edited, setEdited] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)(false);
+  const [settings, setSettings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [isLoading, setIsLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [isSaving, setIsSaving] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [edited, setEdited] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const {
     addToast
-  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__.useToast)();
-  const [productSettings, setProductSettings] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)({});
-  const [globalSettings, setGlobalSettings] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)({});
-  const [cartSettings, setCartSettings] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)({});
-  const [advancedSettings, setAdvancedSettings] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)({});
-  const [activeTab, setActiveTab] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useState)("global");
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
+  } = (0,_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_5__.useToast)();
+  const [productSettings, setProductSettings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [globalSettings, setGlobalSettings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [cartSettings, setCartSettings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [advancedSettings, setAdvancedSettings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [activeTab, setActiveTab] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("global");
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     fetchSettings();
   }, []);
   const fetchSettings = async () => {
     try {
-      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default()({
         path: "/campaignbay/v1/settings?_timestamp=" + Date.now()
       });
       setSettings(response);
@@ -35114,10 +35122,10 @@ const Settings = () => {
       console.error("Error fetching settings:", error);
       setError("Failed to load settings");
       // setIsLoading(false);
-      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)("Something went wrong . Please refresh the page.", "campaignbay"), "error");
+      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Something went wrong . Please refresh the page.", "campaignbay"), "error");
     }
   };
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (!settings) {
       return;
     }
@@ -35127,7 +35135,8 @@ const Settings = () => {
       bogo_banner_message_format: settings.bogo_banner_message_format,
       show_discount_table: settings.show_discount_table,
       discount_table_options: settings.discount_table_options,
-      product_priorityMethod: settings.product_priorityMethod
+      product_priorityMethod: settings.product_priorityMethod,
+      product_enableQuantityTable: settings.product_enableQuantityTable
     });
     setGlobalSettings({
       global_enableAddon: settings.global_enableAddon,
@@ -35145,15 +35154,12 @@ const Settings = () => {
       cart_bogo_message_format: settings.cart_bogo_message_format
     });
     setAdvancedSettings({
-      advanced_deleteAllOnUninstall: settings.advanced_deleteAllOnUninstall,
-      advanced_customCss: settings.advanced_customCss,
-      advanced_customJs: settings.advanced_customJs
+      advanced_deleteAllOnUninstall: settings.advanced_deleteAllOnUninstall
     });
   }, [settings, activeTab]);
   const updateSettings = async () => {
     try {
       setIsSaving(true);
-      console.log(activeTab);
       let data = {};
       switch (activeTab) {
         case "global":
@@ -35184,7 +35190,7 @@ const Settings = () => {
           break;
       }
       // console.log(data);
-      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_5___default()({
+      const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_2___default()({
         path: "/campaignbay/v1/settings",
         method: "POST",
         data: {
@@ -35193,14 +35199,13 @@ const Settings = () => {
         }
       });
       setSettings(response);
-      setIsSaving();
-      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)("Settings updated successfully", "campaignbay"), "success");
+      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Settings updated successfully", "campaignbay"), "success");
       setEdited(false);
     } catch (error) {
       console.log(error);
       setError(error);
       setIsSaving(false);
-      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)("Something went wrong. Please try again.", "campaignbay"), "error");
+      addToast((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Something went wrong. Please try again.", "campaignbay"), "error");
     }
   };
   const changeActiveTab = tab => {
@@ -35215,29 +35220,26 @@ const Settings = () => {
   }
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
     className: "wpab-cb-page ",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Navbar__WEBPACK_IMPORTED_MODULE_11__["default"], {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Navbar__WEBPACK_IMPORTED_MODULE_7__["default"], {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
       className: "wpab-cb-page-header",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
         className: "cb-container",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("h1", {
           className: "wpab-cb-page-header-text",
-          children: [" ", (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)("Settings", "campaignbay")]
+          children: [" ", (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Settings", "campaignbay")]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("button", {
           className: "wpab-cb-btn wpab-cb-btn-primary",
           disabled: isSaving || !edited,
           onClick: updateSettings,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_8__["default"], {
-            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_9__["default"],
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
+            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"],
             fill: "currentColor"
-          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)("Save Settings", "campaignbay")]
+          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Save Settings", "campaignbay")]
         })]
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_TabPanel__WEBPACK_IMPORTED_MODULE_12__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_TabPanel__WEBPACK_IMPORTED_MODULE_8__["default"], {
       activeTab: activeTab,
       setActiveTab: changeActiveTab,
-      className: "wpab-cb-settings-tabs"
-      // activeClass='wpab-cb-settings-active-tab'
-      ,
       tabs: [{
         name: "global",
         title: "Global Settings"
@@ -35251,21 +35253,21 @@ const Settings = () => {
         name: "advanced",
         title: "Advanced Settings"
       }],
-      children: [activeTab === "global" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_GlobalSettings__WEBPACK_IMPORTED_MODULE_0__["default"], {
+      children: [activeTab === "global" && globalSettings && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_GlobalSettings__WEBPACK_IMPORTED_MODULE_9__["default"], {
         globalSettings: globalSettings,
         setGlobalSettings: setGlobalSettings,
         setEdited: setEdited
-      }), activeTab === "product" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_ProductSettings__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }), activeTab === "product" && productSettings && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_ProductSettings__WEBPACK_IMPORTED_MODULE_10__["default"], {
         productSettings: productSettings,
         setProductSettings: setProductSettings,
         isSaving: isSaving,
         updateSettings: updateSettings,
         setEdited: setEdited
-      }), activeTab === "cart" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_CartSettings__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      }), activeTab === "cart" && cartSettings && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_CartSettings__WEBPACK_IMPORTED_MODULE_11__["default"], {
         cartSettings: cartSettings,
         setCartSettings: setCartSettings,
         setEdited: setEdited
-      }), activeTab === "advanced" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_AdvancedSettings__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      }), activeTab === "advanced" && advancedSettings && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_AdvancedSettings__WEBPACK_IMPORTED_MODULE_12__["default"], {
         advancedSettings: advancedSettings,
         setAdvancedSettings: setAdvancedSettings,
         setEdited: setEdited
@@ -35278,10 +35280,10 @@ const Settings = () => {
           className: "wpab-cb-btn wpab-cb-btn-primary",
           disabled: isSaving || !edited,
           onClick: updateSettings,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_8__["default"], {
-            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_9__["default"],
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
+            icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"],
             fill: "currentColor"
-          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)("Save Changes", "campaignbay")]
+          }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Save Changes", "campaignbay")]
         })
       })
     })]

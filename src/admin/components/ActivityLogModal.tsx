@@ -1,4 +1,12 @@
-import { useState, useEffect, useCallback } from "@wordpress/element";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  FC,
+  Dispatch,
+  SetStateAction,
+  ReactNode,
+} from "react";
 import {
   Spinner,
   Button,
@@ -10,27 +18,74 @@ import apiFetch from "@wordpress/api-fetch";
 import { addQueryArgs } from "@wordpress/url";
 import { Icon, chevronUp, chevronDown } from "@wordpress/icons";
 import Modal from "./Modal";
+import Select from "./Select";
+import Input from "./Input";
 
-const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
-  const [activityLogs, setActivityLogs] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [perPage, setPerPage] = useState(10);
+interface ActivityLog {
+  id: number;
+  timestamp: string;
+  log_type: string;
+  campaign_id: number;
+  campaign_title?: string;
+  campaign_edit_link?: string;
+  order_id: number;
+  order_number?: string;
+  order_status?: string;
+  order_status_label?: string;
+  order_edit_link?: string;
+  user_id: number;
+  user_name?: string;
+  user_email?: string;
+  base_total: number;
+  total_discount: number;
+  order_total: number;
+}
 
-  // Sorting states
-  const [orderby, setOrderby] = useState("timestamp");
-  const [order, setOrder] = useState("desc");
+interface Filters {
+  log_type: string;
+  date_from: string;
+  date_to: string;
+}
+
+type OrderDirection = "asc" | "desc";
+
+interface TableHeadConfig {
+  label: string;
+  value: string;
+  isSortable?: boolean;
+}
+
+interface PerPage {
+  label: string;
+  value: number;
+}
+
+interface ActivityLogModalProps {
+  isActivityModalOpen: boolean;
+  setIsActivityModalOpen: Dispatch<SetStateAction<boolean>>;
+}
+const ActivityLogModal: FC<ActivityLogModalProps> = ({
+  isActivityModalOpen,
+  setIsActivityModalOpen,
+}) => {
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const [perPage, setPerPage] = useState<number>(10);
+
+  const [orderby, setOrderby] = useState<string>("timestamp");
+  const [order, setOrder] = useState<OrderDirection>("desc");
 
   // Filter states - removed campaign_id and order_status
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     log_type: "activity",
     date_from: "",
     date_to: "",
   });
 
-  const logTypeOptions = [
+  const logTypeOptions: TableHeadConfig[] = [
     { label: __("All Types", "campaignbay"), value: "" },
     { label: __("Activity", "campaignbay"), value: "activity" },
     { label: __("Sale", "campaignbay"), value: "sale" },
@@ -39,21 +94,19 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
     { label: __("Campaign Deleted", "campaignbay"), value: "campaign_deleted" },
   ];
 
-  const perPageOptions = [
+  const perPageOptions: PerPage[] = [
     { label: __("10 per page", "campaignbay"), value: 10 },
     { label: __("20 per page", "campaignbay"), value: 20 },
     { label: __("50 per page", "campaignbay"), value: 50 },
     { label: __("100 per page", "campaignbay"), value: 100 },
   ];
 
-  // Check if financial columns should be shown
-  const shouldShowFinancialColumns = () => {
+  const shouldShowFinancialColumns = (): boolean => {
     return filters.log_type === "sale" || filters.log_type === "";
   };
 
-  // Define sortable columns - conditionally include financial columns
-  const getTableHeads = () => {
-    const baseColumns = [
+  const getTableHeads = (): TableHeadConfig[] => {
+    const baseColumns: TableHeadConfig[] = [
       {
         label: __("Time", "campaignbay"),
         value: "timestamp",
@@ -104,7 +157,7 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
     async (page = 1, newFilters = filters) => {
       setIsLoading(true);
       try {
-        const params = {
+        const params: Record<string, any> = {
           page,
           per_page: perPage,
           orderby,
@@ -129,13 +182,15 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
         // Get pagination info from headers
         const totalItemsHeader =
           response.headers?.get("X-WP-Total") ||
-          response.headers?.get("x-wp-total");
+          response.headers?.get("x-wp-total") ||
+          "";
         const totalPagesHeader =
           response.headers?.get("X-WP-TotalPages") ||
-          response.headers?.get("x-wp-total-pages");
+          response.headers?.get("x-wp-total-pages") ||
+          "";
 
-        setTotalItems(parseInt(totalItemsHeader) || 0);
-        setTotalPages(parseInt(totalPagesHeader) || 1);
+        setTotalItems(parseInt(totalItemsHeader, 10));
+        setTotalPages(parseInt(totalPagesHeader, 10));
         setActivityLogs(await response.json());
       } catch (error) {
         console.error("Error fetching activity logs:", error);
@@ -152,26 +207,26 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
     }
   }, [isActivityModalOpen, fetchActivityLogs]);
 
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (key: keyof Filters, value: string) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     setCurrentPage(1);
     fetchActivityLogs(1, newFilters);
   };
 
-  const handlePerPageChange = (value) => {
-    setPerPage(parseInt(value));
+  const handlePerPageChange = (value: string | number) => {
+    setPerPage(Number(value));
     setCurrentPage(1);
     fetchActivityLogs(1);
   };
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       fetchActivityLogs(newPage);
     }
   };
 
-  const handleSort = (newSortBy) => {
+  const handleSort = (newSortBy: string) => {
     if (orderby === newSortBy) {
       setOrder(order === "asc" ? "desc" : "asc");
     } else {
@@ -185,14 +240,14 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
     setIsActivityModalOpen(false);
   };
 
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(value);
   };
 
-  const formatDateTime = (dateString) => {
+  const formatDateTime = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleString("en-US", {
       year: "numeric",
@@ -204,13 +259,13 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
     });
   };
 
-  const getLogTypeLabel = (logType) => {
+  const getLogTypeLabel = (logType: string): string => {
     const option = logTypeOptions.find((opt) => opt.value === logType);
     return option ? option.label : logType;
   };
 
-  const getOrderStatusLabel = (status) => {
-    const statusLabels = {
+  const getOrderStatusLabel = (status: string): string => {
+    const statusLabels: Record<string, string> = {
       pending: __("Pending", "campaignbay"),
       processing: __("Processing", "campaignbay"),
       "on-hold": __("On Hold", "campaignbay"),
@@ -222,8 +277,8 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
     return statusLabels[status] || status;
   };
 
-  const getLogTypeColor = (logType) => {
-    const colors = {
+  const getLogTypeColor = (logType: string): string => {
+    const colors: Record<string, string> = {
       activity: "#6f42c1", // Purple for activity
       sale: "#28a745", // Green for sales
       campaign_created: "#007cba", // Blue for created
@@ -234,7 +289,7 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
   };
 
   // Generate page numbers for pagination
-  const getPageNumbers = () => {
+  const getPageNumbers = (): (number | string)[] => {
     const pages = [];
     const maxVisiblePages = 5;
 
@@ -273,7 +328,12 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
     return pages;
   };
 
-  const TableHead = ({ label, isSortable, value, onClick }) => {
+  const TableHead: FC<{
+    label: ReactNode;
+    isSortable: boolean;
+    value: string;
+    onClick: () => void;
+  }> = ({ label, isSortable, value, onClick }) => {
     if (isSortable) {
       return (
         <th>
@@ -295,7 +355,7 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
     );
   };
 
-  const SortIndicator = ({ value }) => {
+  const SortIndicator: FC<{ value: string }> = ({ value }) => {
     if (orderby !== value) {
       return null; // Don't show an icon if it's not the active sort column
     }
@@ -328,32 +388,36 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
           {__("Filters", "campaignbay")}
         </h3>
         <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4 campaignbay-gap-4">
-          <SelectControl
+          <Select
             label={__("Log Type", "campaignbay")}
             value={filters.log_type}
             options={logTypeOptions}
             onChange={(value) => handleFilterChange("log_type", value)}
+            conClassName="!campaignbay-items-stretch !campaignbay-p-0"
           />
 
-          <TextControl
+          <Input
             label={__("Date From", "campaignbay")}
             value={filters.date_from}
             onChange={(value) => handleFilterChange("date_from", value)}
             type="date"
+            conClassName="!campaignbay-items-stretch !campaignbay-p-0"
           />
 
-          <TextControl
+          <Input
             label={__("Date To", "campaignbay")}
             value={filters.date_to}
             onChange={(value) => handleFilterChange("date_to", value)}
             type="date"
+            conClassName="!campaignbay-items-stretch !campaignbay-p-0"
           />
 
-          <SelectControl
+          <Select
             label={__("Items per page", "campaignbay")}
-            value={perPage}
+            value={String(perPage)}
             options={perPageOptions}
             onChange={handlePerPageChange}
+            conClassName="!campaignbay-items-stretch !campaignbay-p-0"
           />
         </div>
       </div>
@@ -391,7 +455,7 @@ const ActivityLogModal = ({ isActivityModalOpen, setIsActivityModalOpen }) => {
                   <TableHead
                     key={head.value}
                     label={head.label}
-                    isSortable={head.isSortable}
+                    isSortable={!!head.isSortable}
                     value={head.value}
                     onClick={() => handleSort(head.value)}
                   />

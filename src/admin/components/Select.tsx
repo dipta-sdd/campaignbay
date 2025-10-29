@@ -12,6 +12,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   options?: SelectOption[];
   value: string | number;
   onChange: (value: string) => void;
+  conClassName?: string;
 }
 
 const Select: FC<SelectProps> = ({
@@ -21,12 +22,13 @@ const Select: FC<SelectProps> = ({
   value,
   onChange,
   className,
+  conClassName,
   ...props
 }) => {
   const selectId = useId();
 
   return (
-    <div className="wpab-input-con">
+    <div className={`wpab-input-con ${conClassName ? conClassName : ""}`}>
       <label className="wpab-input-label" htmlFor={selectId}>
         {label}
       </label>

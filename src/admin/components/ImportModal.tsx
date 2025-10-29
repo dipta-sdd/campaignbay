@@ -1,9 +1,16 @@
-import { useState, useCallback } from "@wordpress/element";
-import { __ } from "@wordpress/i18n";
-import { Button } from "@wordpress/components";
+import { useState, useCallback, FC } from "react";
 import { Icon, upload } from "@wordpress/icons";
-import { csvToJson } from "./csvToJson"; // Assuming your csvToJson file is in utils
+import { csvToJson } from "./csvToJson";
 import Modal from "./Modal";
+import { __ } from "@wordpress/i18n";
+
+type JsonDataRow = Record<string, string | number | boolean>;
+interface ImportModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onImport: (data: JsonDataRow[]) => void;
+}
+
 /**
  * A modal for importing campaigns from a CSV file with drag-and-drop support.
  *
@@ -12,18 +19,18 @@ import Modal from "./Modal";
  * @param {Function} props.onClose - Function to call when the modal should close.
  * @param {Function} props.onImport - Function to call with the parsed JSON data when the user confirms the import.
  */
-const ImportModal = ({ isOpen, onClose, onImport }) => {
-  const [jsonData, setJsonData] = useState(null);
-  const [headers, setHeaders] = useState([]);
-  const [fileName, setFileName] = useState("");
-  const [error, setError] = useState(null);
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
+const ImportModal: FC<ImportModalProps> = ({ isOpen, onClose, onImport }) => {
+  const [jsonData, setJsonData] = useState<JsonDataRow[] | null>(null);
+  const [headers, setHeaders] = useState<string[]>([]);
+  const [fileName, setFileName] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
 
   /**
    * A centralized function to process a single file object.
    * @param {File} file
    */
-  const processFile = useCallback((file) => {
+  const processFile = useCallback((file: File) => {
     if (!file) return;
 
     if (file.type && !file.type.match("text/csv")) {
@@ -38,7 +45,7 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
     setFileName(file.name);
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = (e: ProgressEvent<FileReader>) => {
       try {
         const requiredColumns = [
           "title",
@@ -60,7 +67,10 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
           "usage_count",
         ];
 
-        const parsedData = csvToJson(e.target.result, requiredColumns);
+        const parsedData = csvToJson(
+          e?.target?.result as string,
+          requiredColumns
+        );
         if (parsedData.length > 0) {
           setHeaders(Object.keys(parsedData[0]));
           setJsonData(parsedData);
@@ -72,8 +82,8 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
             )
           );
         }
-      } catch (err) {
-        setError(err.message);
+      } catch (err: any) {
+        setError(err?.message);
       }
     };
     reader.onerror = () => {
@@ -85,33 +95,41 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
   /**
    * Handles file selection from the standard input field.
    */
-  const handleFileChange = (event) => {
-    processFile(event.target.files[0]);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      processFile(event.target.files[0]);
+    }
   };
 
   /**
    * Handles the drag over event to allow dropping.
    */
-  const handleDragOver = useCallback((event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDraggingOver(true);
-  }, []);
+  const handleDragOver = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setIsDraggingOver(true);
+    },
+    []
+  );
 
   /**
    * Handles the drag leave event to reset visual state.
    */
-  const handleDragLeave = useCallback((event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDraggingOver(false);
-  }, []);
+  const handleDragLeave = useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setIsDraggingOver(false);
+    },
+    []
+  );
 
   /**
    * Handles the file drop event.
    */
   const handleDrop = useCallback(
-    (event) => {
+    (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
       event.stopPropagation();
       setIsDraggingOver(false);
@@ -126,16 +144,25 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
 
   const handleConfirmImport = () => {
     if (jsonData) {
-      onImport(
-        jsonData.map((item) => {
-          return {
-            ...item,
-            tiers: item.tiers ? JSON.parse(item.tiers) : [],
-            conditions: item.conditions ? JSON.parse(item.conditions) : {},
-            settings: item.settings ? JSON.parse(item.settings) : {},
-          };
-        })
-      );
+      // Safely parse nested JSON strings within the data
+      const processedData = jsonData.map((item) => {
+        const safeParse = (jsonString: any) => {
+          try {
+            return typeof jsonString === "string"
+              ? JSON.parse(jsonString)
+              : jsonString;
+          } catch {
+            return Array.isArray(jsonString) ? [] : {};
+          }
+        };
+        return {
+          ...item,
+          tiers: safeParse(item.tiers),
+          conditions: safeParse(item.conditions),
+          settings: safeParse(item.settings),
+        };
+      });
+      onImport(processedData);
     }
   };
 
@@ -256,7 +283,7 @@ const ImportModal = ({ isOpen, onClose, onImport }) => {
           <button
             className="campaignbay-bg-blue-600 hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-p-8 campaignbay-rounded-sm campaignbay-transition-colors disabled:campaignbay-text-blue-400 "
             onClick={handleConfirmImport}
-            disabled={!jsonData || error}
+            disabled={!jsonData || !!error}
           >
             {__("Import Campaigns", "campaignbay")}
           </button>
