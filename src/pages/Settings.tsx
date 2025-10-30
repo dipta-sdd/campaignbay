@@ -171,16 +171,16 @@ const Settings: FC = () => {
   }
 
   return (
-    <div className="wpab-cb-page ">
+    <div className="campaignbay-block campaignbay-w-full campaignbay-p-0 campaignbay-m-0 campaignbay-h-auto">
       <Navbar />
       <div className="wpab-cb-page-header">
         <div className="cb-container">
-          <h1 className="wpab-cb-page-header-text">
+          <h1 className="campaignbay-text-[20px] campaignbay-font-medium campaignbay-leading-[24px] campaignbay-m-0 campaignbay-p-0 campaignbay-normal-case">
             {" "}
             {__("Settings", "campaignbay")}
           </h1>
           <button
-            className="wpab-cb-btn wpab-cb-btn-primary"
+            className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary"
             disabled={isSaving || !edited}
             onClick={updateSettings}
           >
@@ -246,7 +246,7 @@ const Settings: FC = () => {
       <div className="wpab-button-con-card">
         <div className="cb-container ">
           <button
-            className="wpab-cb-btn wpab-cb-btn-primary"
+            className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary"
             disabled={isSaving || !edited}
             onClick={updateSettings}
           >

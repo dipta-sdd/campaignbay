@@ -37,8 +37,8 @@
   $cb-spacing-unit: 4px;
   $cb-border-radius-base: 4px;
   $cb-border-width-base: 1px;
-  $cb-border-color-base: #949494;
-  $cb-border-color-base-light: #cdcdcd;
+  $cb-border-color-base: #bdc4d1; //gray-400
+  $cb-border-color-base-light: #d0d4db; //gray-300
   // Typography (using SCSS variables)
 
   $fs-sm: 12px;
@@ -188,13 +188,13 @@
     // border: #{$cb-border-width-base} solid #{$cb-border-color-base};
   }
 
-  & .wpab-cb-page {
-    display: block;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    height: auto;
-  }
+  // & .wpab-cb-page {
+  //   display: block;
+  //   width: 100%;
+  //   padding: 0;
+  //   margin: 0;
+  //   height: auto;
+  // }
 
   & .cb-container {
     width: 100%;
@@ -218,15 +218,13 @@
     padding: #{$cb-spacing-unit * 3};
   }
 
-  & .cb-bg-white {
-    background-color: #{$bg-white};
-  }
 
-  & .cb-flex-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+
+  // & .cb-flex-center {
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;
+  // }
   & .wpab-cb-page-header {
     display: flex;
     align-items: center;
@@ -251,21 +249,6 @@
     }
   }
 
-  & .wpab-cb-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: #{$cb-spacing-unit};
-    padding: #{$cb-spacing-unit * 2} #{$cb-spacing-unit * 3} #{$cb-spacing-unit *
-      2} #{$cb-spacing-unit * 2};
-    cursor: pointer;
-    border-radius: #{$cb-border-radius-base * 0.5};
-
-    font-size: #{$cb-fs-base};
-    line-height: #{$cb-lh-base};
-    font-weight: #{$cb-fw-normal};
-    border: none;
-  }
 
   & .wpab-cb-btn-primary {
     background-color: #{$cb-color-primary};
@@ -310,7 +293,7 @@
 
     &:disabled {
       background-color: #ffffff;
-      color: #949494;
+      color: #{$cb-border-color-base};
       border-color: #dddddd;
     }
   }
@@ -1269,7 +1252,7 @@
   .campaignbay-bg-white {
     background-color: #{$cb-color-white};
 
-    border: 1px solid #cdcdcd;
+    border: 1px solid #{$cb-border-color-base};
   }
 
   //check box start
@@ -1381,14 +1364,15 @@
       font-weight: #{$cb-fw-light};
       height: 40px;
     }
-    .wpab-cb-btn {
-      padding: 8px 16px;
-      border: none;
-      font-size: #{$cb-fs-lg};
-      line-height: #{$cb-lh-lg};
-      font-weight: #{$cb-fw-light};
-      height: 40px;
-    }
+    // .wpab-cb-btn {
+    //   padding: 8px 16px;
+    //   border: none;
+    //   font-size: #{$cb-fs-lg};
+    //   line-height: #{$cb-lh-lg};
+    //   font-weight: #{$cb-fw-light};
+    //   height: 40px;
+    // }
+    
 
     @media (max-width: 768px) {
       .campaignbay-filters {
@@ -2204,26 +2188,6 @@
   width: 80vw;
   max-width: 1200px;
 }
-
-.wpab-cb-log-content {
-  white-space: pre-wrap;
-  word-break: break-all;
-  background-color: #f6f7f7;
-  padding: 1em;
-  max-height: 50vh;
-  overflow-y: auto;
-  font-family: monospace;
-  font-size: 12px;
-}
-
-.wpab-cb-log-modal-footer {
-  padding-top: 16px;
-  margin-top: 16px;
-  border-top: 1px solid #ddd;
-  display: flex;
-  justify-content: flex-end;
-}
-
 
 .campaignbay-scrollbar {
   &::-webkit-scrollbar {

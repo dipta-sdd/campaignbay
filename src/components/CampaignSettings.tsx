@@ -96,7 +96,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     )}
                   </span>
                 }
-                position="right"
+                position="top"
               />
 
               {renderError(errors?.display_as_regular_price)}
@@ -177,7 +177,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     )}
                   </span>
                 }
-                position="right"
+                position="top"
               />
               {renderError(errors?.enable_quantity_table)}
             </div> */}
@@ -288,7 +288,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     )}
                   </span>
                 }
-                position="right"
+                position="top"
               />
               {renderError(errors?.auto_add_free_product)}
             </div>

@@ -20,7 +20,6 @@ const TabPanel: FC<TabPanelProps> = ({
 }) => {
   const style: React.CSSProperties = {
     width: "100%",
-    maxWidth: "min(100% - 20px, 1500px)",
   };
 
   return (

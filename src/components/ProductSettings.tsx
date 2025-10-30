@@ -91,7 +91,7 @@ const ProductSettings: FC<ProductSettingsProps> = ({
             />
             <div className="wpab-cb-btn-con-bottom !campaignbay-justify-start">
               <button
-                className="wpab-cb-btn wpab-cb-btn-outline-primary"
+                className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-outline-primary"
                 onClick={() => setIsModalOpen(true)}
               >
                 <Icon icon={pencil} fill="currentColor" />

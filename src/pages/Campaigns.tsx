@@ -548,7 +548,7 @@ const Campaigns: FC = () => {
                   <option value="earlybird">EarlyBird Discount</option>
                 </select>
                 <button
-                  className="wpab-cb-btn wpab-cb-btn-primary"
+                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 wpab-cb-btn-primary"
                   onClick={applyFilters}
                 >
                   Apply
@@ -1079,14 +1079,14 @@ const Campaigns: FC = () => {
               <span className="campaignbay-w-max">OF {totalPages}</span>
               <div className="campaignbay-pagination-arrows campaignbay-ml-[4px]">
                 <button
-                  className="wpab-cb-btn campaignbay-arrow-button"
+                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 campaignbay-arrow-button"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
                 >
                   <Icon icon={previous} fill="currentColor" />
                 </button>
                 <button
-                  className="wpab-cb-btn campaignbay-arrow-button"
+                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 campaignbay-arrow-button"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >

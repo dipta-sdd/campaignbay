@@ -39,22 +39,35 @@ export const Tooltip: FC<TooltipProps> = ({
 
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const showTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const showTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const handleMouseEnter = () => {
+    // If there's a timeout to hide the tooltip, cancel it
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
     }
-    timeoutRef.current = setTimeout(() => {
-      setIsVisible(true);
-    }, delay);
+
+    // Set a timeout to show the tooltip if it's not already visible
+    if (!showTimeoutRef.current && !isVisible) {
+      showTimeoutRef.current = setTimeout(() => {
+        setIsVisible(true);
+      }, delay);
+    }
   };
 
-  const hideTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const handleMouseLeave = () => {
+    // If there's a timeout to show the tooltip, cancel it
+    if (showTimeoutRef.current) {
+      clearTimeout(showTimeoutRef.current);
+      showTimeoutRef.current = null;
     }
-    setIsVisible(false);
+
+    // Set a short timeout to hide the tooltip, allowing the user to move their cursor to it
+    hideTimeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, 100); // A small delay before hiding
   };
 
   const calculatePosition = () => {
@@ -62,51 +75,43 @@ export const Tooltip: FC<TooltipProps> = ({
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const tooltipRect = tooltipRef.current.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft =
-      window.pageXOffset || document.documentElement.scrollLeft;
+    const gap = 8; // Space between trigger and tooltip
 
     let top, left;
+
+    // Corrected positioning for a `position: fixed` element
     switch (position) {
       case "top":
-        top = triggerRect.top + scrollTop - tooltipRect.height - 8;
-        left =
-          triggerRect.left +
-          scrollLeft +
-          (triggerRect.width - tooltipRect.width) / 2;
+        top = triggerRect.top - tooltipRect.height - gap;
+        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
         break;
       case "bottom":
-        top = triggerRect.bottom + scrollTop + 8;
-        left =
-          triggerRect.left +
-          scrollLeft +
-          (triggerRect.width - tooltipRect.width) / 2;
+        top = triggerRect.bottom + gap;
+        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
         break;
       case "left":
-        top =
-          triggerRect.top +
-          scrollTop +
-          (triggerRect.height - tooltipRect.height) / 2;
-        left = triggerRect.left + scrollLeft - tooltipRect.width - 8;
+        top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
+        left = triggerRect.left - tooltipRect.width - gap;
         break;
       case "right":
         top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
-        left = triggerRect.right + scrollLeft + 8;
+        left = triggerRect.right + gap;
         break;
       default:
-        top = triggerRect.top + scrollTop - tooltipRect.height - 8;
-        left =
-          triggerRect.left +
-          scrollLeft +
-          (triggerRect.width - tooltipRect.width) / 2;
+        top = triggerRect.top - tooltipRect.height - gap;
+        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
     }
 
+    // Boundary collision checks to keep the tooltip within the viewport
     const padding = 8;
     if (left < padding) left = padding;
     if (left + tooltipRect.width > window.innerWidth - padding) {
       left = window.innerWidth - tooltipRect.width - padding;
     }
     if (top < padding) top = padding;
+    if (top + tooltipRect.height > window.innerHeight - padding) {
+      top = window.innerHeight - tooltipRect.height - padding;
+    }
     setTooltipPosition({ top, left });
   };
 
@@ -114,38 +119,36 @@ export const Tooltip: FC<TooltipProps> = ({
     if (isVisible) {
       calculatePosition();
 
-      const handleResize = () => calculatePosition();
-      const handleScroll = () => calculatePosition();
-
-      window.addEventListener("resize", handleResize);
-      window.addEventListener("scroll", handleScroll);
+      const handleResizeOrScroll = () => calculatePosition();
+      window.addEventListener("resize", handleResizeOrScroll);
+      window.addEventListener("scroll", handleResizeOrScroll, true); // Use capture phase for scroll
 
       return () => {
-        window.removeEventListener("resize", handleResize);
-        window.removeEventListener("scroll", handleScroll);
+        window.removeEventListener("resize", handleResizeOrScroll);
+        window.removeEventListener("scroll", handleResizeOrScroll, true);
       };
     }
   }, [isVisible, position]);
 
+  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (showTimeoutRef.current) clearTimeout(showTimeoutRef.current);
+      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     };
   }, []);
 
   const getArrowClasses = () => {
     const baseArrow =
-      "campaignbay-absolute campaignbay-w-2 campaignbay-h-[0.5rem] campaignbay-bg-gray-200 campaignbay-transform campaignbay-rotate-45";
+      "campaignbay-absolute campaignbay-w-2 campaignbay-h-2 campaignbay-bg-gray-800 campaignbay-transform campaignbay-rotate-45";
 
     switch (position) {
       case "top":
-        return `${baseArrow} campaignbay--bottom-1 campaignbay-left-1/2 campaignbay-translate-x-1/2`;
+        return `${baseArrow} campaignbay--bottom-1 campaignbay-left-1/2 campaignbay--translate-x-1/2`;
       case "bottom":
         return `${baseArrow} campaignbay--top-1 campaignbay-left-1/2 campaignbay-translate-x-1/2`;
       case "left":
-        return `${baseArrow} campaignbay--right-1 campaignbay-top-1/2 campaignbay-translate-y-1/2`;
+        return `${baseArrow} campaignbay--right-1 campaignbay-top-1/2 campaignbay--translate-y-1/2`;
       case "right":
         return `${baseArrow} campaignbay--left-1 campaignbay-top-1/2 campaignbay--translate-y-1/2`;
       default:
@@ -158,10 +161,12 @@ export const Tooltip: FC<TooltipProps> = ({
       <div
         ref={triggerRef}
         className={`campaignbay-inline-block ${className}`}
-        onMouseEnter={showTooltip}
-        onMouseLeave={hideTooltip}
-        onFocus={showTooltip}
-        onBlur={hideTooltip}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onFocus={handleMouseEnter}
+        onBlur={handleMouseLeave}
+        // Added for accessibility
+        aria-describedby={isVisible ? "tooltip-content" : undefined}
       >
         {children}
       </div>
@@ -169,15 +174,22 @@ export const Tooltip: FC<TooltipProps> = ({
       {isVisible && (
         <div
           ref={tooltipRef}
-          className="campaignbay-fixed campaignbay-z-50 campaignbay-pointer-events-none"
+          // MODIFIED: Removed `pointer-events-none` and added event handlers
+          className="campaignbay-fixed campaignbay-z-50"
           style={{
             top: `${tooltipPosition.top}px`,
             left: `${tooltipPosition.left}px`,
+            maxWidth: "300px",
           }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <div
+            // Added for accessibility
+            id="tooltip-content"
+            role="tooltip"
             className={`
-              campaignbay-relative campaignbay-px-3 campaignbay-py-[2px] campaignbay-text-sm campaignbay-text-gray-800 campaignbay-bg-gray-200 campaignbay-rounded-lg campaignbay-shadow-lg
+              campaignbay-relative campaignbay-px-3 campaignbay-py-2 campaignbay-text-sm campaignbay-text-gray-200 campaignbay-bg-gray-800 campaignbay-rounded-lg campaignbay-shadow-lg
               campaignbay-animate-in campaignbay-fade-in-0 campaignbay-zoom-in-95 campaignbay-duration-200
               ${contentClassName}
             `}

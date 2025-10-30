@@ -366,7 +366,7 @@ const CampaignsEdit: FC = () => {
             </div>
             <div className="cb-page-header-actions">
               <button
-                className="wpab-cb-btn wpab-cb-btn-danger "
+                className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-danger "
                 disabled={isDeleting}
                 onClick={handleDeleteCampaign}
               >
@@ -374,7 +374,7 @@ const CampaignsEdit: FC = () => {
                 {__("Delete Campaign", "campaignbay")}
               </button>
               <button
-                className="wpab-cb-btn wpab-cb-btn-primary "
+                className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary "
                 disabled={isSaving}
                 onClick={handleSaveCampaign}
               >
@@ -550,9 +550,17 @@ const CampaignsEdit: FC = () => {
                             "When checked , selected items will be excluded from the discount",
                             "campaignbay"
                           )}
+                          <a
+                            className="campaignbay-ml-2 campaignbay-text-blue-600 hover:campaignbay-text-blue-700"
+                            href="https://docs.wpanchorbay.com/core-concepts/targeting-and-conditions.html#inverting-the-logic-the-exclude-items-checkbox"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Read More
+                          </a>
                         </span>
                       }
-                      position="right"
+                      position="top"
                     />
 
                     {renderError(errors?.isExclude)}
@@ -746,7 +754,7 @@ const CampaignsEdit: FC = () => {
                       )}
                     </span>
                   }
-                  position="right"
+                  position="top"
                 />
                 {renderError(errors?.exclude_sale_items, false)}
               </div>
@@ -770,7 +778,7 @@ const CampaignsEdit: FC = () => {
                       )}
                     </span>
                   }
-                  position="right"
+                  position="top"
                 />
               </div>
 
@@ -815,7 +823,7 @@ const CampaignsEdit: FC = () => {
                       )}
                     </span>
                   }
-                  position="right"
+                  position="top"
                 />
               </div>
 
@@ -884,7 +892,7 @@ const CampaignsEdit: FC = () => {
             {/* buttons */}
             <div className="wpab-btn-bottom-con">
               <button
-                className="wpab-cb-btn wpab-cb-btn-primary"
+                className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary"
                 onClick={handleSaveCampaign}
               >
                 <Icon icon={check} fill="currentColor" />

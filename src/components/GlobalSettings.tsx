@@ -182,7 +182,7 @@ const GlobalSettings: FC<GlobalSettingsProps> = ({
           )}
         />
         <div className="wpab-cb-btn-con-bottom">
-          <button className="wpab-cb-btn wpab-cb-btn-outline-danger">
+          <button className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-outline-danger">
             <Icon icon={trash} fill="currentColor" />
             {__("Clear Discount Cache", "campaignbay")}
           </button>
@@ -206,14 +206,14 @@ const GlobalSettings: FC<GlobalSettingsProps> = ({
         />
         <div className="wpab-cb-btn-con-bottom">
           <button
-            className="wpab-cb-btn wpab-cb-btn-outline-primary"
+            className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-outline-primary"
             onClick={openLogViewer}
           >
             <Icon icon={seen} fill="currentColor" />
             {__("View Logs", "campaignbay")}
           </button>
           <button
-            className="wpab-cb-btn wpab-cb-btn-outline-danger"
+            className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-outline-danger"
             onClick={handleClearLogs}
             disabled={isClearingLogs}
           >

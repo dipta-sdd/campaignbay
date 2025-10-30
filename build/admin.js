@@ -28382,7 +28382,7 @@ const CampaignSettings = ({
               className: "campaignbay-text-sm",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("When checked , the campaign price will be displayed as the regular price of the product.", "campaignbay")
             }),
-            position: "right"
+            position: "top"
           }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_4__.renderError)(errors?.display_as_regular_price)]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "cb-form-input-con !campaignbay-p-0",
@@ -28477,7 +28477,7 @@ const CampaignSettings = ({
               className: "campaignbay-text-sm",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("When checked, the free product will be automatically added to the cart.", "campaignbay")
             }),
-            position: "right"
+            position: "top"
           }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_4__.renderError)(errors?.auto_add_free_product)]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px]",
@@ -29499,7 +29499,7 @@ const GlobalSettings = ({
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
         className: "wpab-cb-btn-con-bottom",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("button", {
-          className: "wpab-cb-btn wpab-cb-btn-outline-danger",
+          className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-outline-danger",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
             icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"],
             fill: "currentColor"
@@ -29522,14 +29522,14 @@ const GlobalSettings = ({
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
         className: "wpab-cb-btn-con-bottom",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("button", {
-          className: "wpab-cb-btn wpab-cb-btn-outline-primary",
+          className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-outline-primary",
           onClick: openLogViewer,
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
             icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"],
             fill: "currentColor"
           }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("View Logs", "campaignbay")]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("button", {
-          className: "wpab-cb-btn wpab-cb-btn-outline-danger",
+          className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-outline-danger",
           onClick: handleClearLogs,
           disabled: isClearingLogs,
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -30702,7 +30702,7 @@ const ProductSettings = ({
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
             className: "wpab-cb-btn-con-bottom !campaignbay-justify-start",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("button", {
-              className: "wpab-cb-btn wpab-cb-btn-outline-primary",
+              className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-outline-primary",
               onClick: () => setIsModalOpen(true),
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_2__["default"], {
                 icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -30954,7 +30954,7 @@ const QuantityTableEditModal = ({
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
       className: "campaignbay-flex campaignbay-justify-end campaignbay-mt-[4px]",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("button", {
-        className: "wpab-cb-btn wpab-cb-btn-primary",
+        className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary",
         disabled: isSaving,
         onClick: updateSettings,
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -31230,8 +31230,7 @@ const TabPanel = ({
   children
 }) => {
   const style = {
-    width: "100%",
-    maxWidth: "min(100% - 20px, 1500px)"
+    width: "100%"
   };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("div", {
@@ -31582,55 +31581,75 @@ const Tooltip = ({
   });
   const triggerRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   const tooltipRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-  const timeoutRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-  const showTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const showTimeoutRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const hideTimeoutRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const handleMouseEnter = () => {
+    // If there's a timeout to hide the tooltip, cancel it
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
     }
-    timeoutRef.current = setTimeout(() => {
-      setIsVisible(true);
-    }, delay);
+
+    // Set a timeout to show the tooltip if it's not already visible
+    if (!showTimeoutRef.current && !isVisible) {
+      showTimeoutRef.current = setTimeout(() => {
+        setIsVisible(true);
+      }, delay);
+    }
   };
-  const hideTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const handleMouseLeave = () => {
+    // If there's a timeout to show the tooltip, cancel it
+    if (showTimeoutRef.current) {
+      clearTimeout(showTimeoutRef.current);
+      showTimeoutRef.current = null;
     }
-    setIsVisible(false);
+
+    // Set a short timeout to hide the tooltip, allowing the user to move their cursor to it
+    hideTimeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, 100); // A small delay before hiding
   };
   const calculatePosition = () => {
     if (!triggerRef.current || !tooltipRef.current) return;
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const tooltipRect = tooltipRef.current.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const gap = 8; // Space between trigger and tooltip
+
     let top, left;
+
+    // Corrected positioning for a `position: fixed` element
     switch (position) {
       case "top":
-        top = triggerRect.top + scrollTop - tooltipRect.height - 8;
-        left = triggerRect.left + scrollLeft + (triggerRect.width - tooltipRect.width) / 2;
+        top = triggerRect.top - tooltipRect.height - gap;
+        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
         break;
       case "bottom":
-        top = triggerRect.bottom + scrollTop + 8;
-        left = triggerRect.left + scrollLeft + (triggerRect.width - tooltipRect.width) / 2;
+        top = triggerRect.bottom + gap;
+        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
         break;
       case "left":
-        top = triggerRect.top + scrollTop + (triggerRect.height - tooltipRect.height) / 2;
-        left = triggerRect.left + scrollLeft - tooltipRect.width - 8;
+        top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
+        left = triggerRect.left - tooltipRect.width - gap;
         break;
       case "right":
         top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
-        left = triggerRect.right + scrollLeft + 8;
+        left = triggerRect.right + gap;
         break;
       default:
-        top = triggerRect.top + scrollTop - tooltipRect.height - 8;
-        left = triggerRect.left + scrollLeft + (triggerRect.width - tooltipRect.width) / 2;
+        top = triggerRect.top - tooltipRect.height - gap;
+        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
     }
+
+    // Boundary collision checks to keep the tooltip within the viewport
     const padding = 8;
     if (left < padding) left = padding;
     if (left + tooltipRect.width > window.innerWidth - padding) {
       left = window.innerWidth - tooltipRect.width - padding;
     }
     if (top < padding) top = padding;
+    if (top + tooltipRect.height > window.innerHeight - padding) {
+      top = window.innerHeight - tooltipRect.height - padding;
+    }
     setTooltipPosition({
       top,
       left
@@ -31639,32 +31658,33 @@ const Tooltip = ({
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (isVisible) {
       calculatePosition();
-      const handleResize = () => calculatePosition();
-      const handleScroll = () => calculatePosition();
-      window.addEventListener("resize", handleResize);
-      window.addEventListener("scroll", handleScroll);
+      const handleResizeOrScroll = () => calculatePosition();
+      window.addEventListener("resize", handleResizeOrScroll);
+      window.addEventListener("scroll", handleResizeOrScroll, true); // Use capture phase for scroll
+
       return () => {
-        window.removeEventListener("resize", handleResize);
-        window.removeEventListener("scroll", handleScroll);
+        window.removeEventListener("resize", handleResizeOrScroll);
+        window.removeEventListener("scroll", handleResizeOrScroll, true);
       };
     }
   }, [isVisible, position]);
+
+  // Cleanup timeouts on unmount
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (showTimeoutRef.current) clearTimeout(showTimeoutRef.current);
+      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     };
   }, []);
   const getArrowClasses = () => {
-    const baseArrow = "campaignbay-absolute campaignbay-w-2 campaignbay-h-[0.5rem] campaignbay-bg-gray-200 campaignbay-transform campaignbay-rotate-45";
+    const baseArrow = "campaignbay-absolute campaignbay-w-2 campaignbay-h-2 campaignbay-bg-gray-800 campaignbay-transform campaignbay-rotate-45";
     switch (position) {
       case "top":
-        return `${baseArrow} campaignbay--bottom-1 campaignbay-left-1/2 campaignbay-translate-x-1/2`;
+        return `${baseArrow} campaignbay--bottom-1 campaignbay-left-1/2 campaignbay--translate-x-1/2`;
       case "bottom":
         return `${baseArrow} campaignbay--top-1 campaignbay-left-1/2 campaignbay-translate-x-1/2`;
       case "left":
-        return `${baseArrow} campaignbay--right-1 campaignbay-top-1/2 campaignbay-translate-y-1/2`;
+        return `${baseArrow} campaignbay--right-1 campaignbay-top-1/2 campaignbay--translate-y-1/2`;
       case "right":
         return `${baseArrow} campaignbay--left-1 campaignbay-top-1/2 campaignbay--translate-y-1/2`;
       default:
@@ -31675,21 +31695,32 @@ const Tooltip = ({
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
       ref: triggerRef,
       className: `campaignbay-inline-block ${className}`,
-      onMouseEnter: showTooltip,
-      onMouseLeave: hideTooltip,
-      onFocus: showTooltip,
-      onBlur: hideTooltip,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+      onFocus: handleMouseEnter,
+      onBlur: handleMouseLeave
+      // Added for accessibility
+      ,
+      "aria-describedby": isVisible ? "tooltip-content" : undefined,
       children: children
     }), isVisible && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
-      ref: tooltipRef,
-      className: "campaignbay-fixed campaignbay-z-50 campaignbay-pointer-events-none",
+      ref: tooltipRef
+      // MODIFIED: Removed `pointer-events-none` and added event handlers
+      ,
+      className: "campaignbay-fixed campaignbay-z-50",
       style: {
         top: `${tooltipPosition.top}px`,
-        left: `${tooltipPosition.left}px`
+        left: `${tooltipPosition.left}px`,
+        maxWidth: "300px"
       },
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+        // Added for accessibility
+        id: "tooltip-content",
+        role: "tooltip",
         className: `
-              campaignbay-relative campaignbay-px-3 campaignbay-py-[2px] campaignbay-text-sm campaignbay-text-gray-800 campaignbay-bg-gray-200 campaignbay-rounded-lg campaignbay-shadow-lg
+              campaignbay-relative campaignbay-px-3 campaignbay-py-2 campaignbay-text-sm campaignbay-text-gray-200 campaignbay-bg-gray-800 campaignbay-rounded-lg campaignbay-shadow-lg
               campaignbay-animate-in campaignbay-fade-in-0 campaignbay-zoom-in-95 campaignbay-duration-200
               ${contentClassName}
             `,
@@ -32404,7 +32435,7 @@ const Campaigns = () => {
                   children: "EarlyBird Discount"
                 })]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)("button", {
-                className: "wpab-cb-btn wpab-cb-btn-primary",
+                className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 wpab-cb-btn-primary",
                 onClick: applyFilters,
                 children: "Apply"
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_23__.__experimentalToggleGroupControl, {
@@ -32876,7 +32907,7 @@ const Campaigns = () => {
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsxs)("div", {
               className: "campaignbay-pagination-arrows campaignbay-ml-[4px]",
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)("button", {
-                className: "wpab-cb-btn campaignbay-arrow-button",
+                className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 campaignbay-arrow-button",
                 disabled: currentPage === 1,
                 onClick: () => setCurrentPage(currentPage - 1),
                 children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_14__["default"], {
@@ -32884,7 +32915,7 @@ const Campaigns = () => {
                   fill: "currentColor"
                 })
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)("button", {
-                className: "wpab-cb-btn campaignbay-arrow-button",
+                className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 campaignbay-arrow-button",
                 disabled: currentPage === totalPages,
                 onClick: () => setCurrentPage(currentPage + 1),
                 children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_37__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_14__["default"], {
@@ -33153,7 +33184,7 @@ const CampaignsAdd = () => {
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)("div", {
         className: "cb-page-header-actions",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("button", {
-          className: "wpab-cb-btn wpab-cb-btn-primary ",
+          className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary ",
           onClick: handleSaveCampaign,
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"], {
             icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"],
@@ -33272,11 +33303,17 @@ const CampaignsAdd = () => {
               className: "!campaignbay-text-gray-700",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("Exclude Items", "campaignbay")
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_components_Tooltip__WEBPACK_IMPORTED_MODULE_18__["default"], {
-              content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)("span", {
+              content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("span", {
                 className: "campaignbay-text-sm",
-                children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("When checked , selected items will be excluded from the discount", "campaignbay")
+                children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("When checked , selected items will be excluded from the discount", "campaignbay"), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)("a", {
+                  className: "campaignbay-ml-2 campaignbay-text-blue-600 hover:campaignbay-text-blue-700",
+                  href: "https://docs.wpanchorbay.com/core-concepts/targeting-and-conditions.html#inverting-the-logic-the-exclude-items-checkbox",
+                  target: "_blank",
+                  rel: "noreferrer",
+                  children: "Read More"
+                })]
               }),
-              position: "right"
+              position: "top"
             }), (0,_CampaignsEdit__WEBPACK_IMPORTED_MODULE_20__.renderError)(errors?.isExclude)]
           })]
         }) : null]
@@ -33406,7 +33443,7 @@ const CampaignsAdd = () => {
               className: "campaignbay-text-sm",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("When checked , sale items will be excluded from the discount", "campaignbay")
             }),
-            position: "right"
+            position: "top"
           }), (0,_CampaignsEdit__WEBPACK_IMPORTED_MODULE_20__.renderError)(errors?.exclude_sale_items, false)]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("div", {
           className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
@@ -33423,7 +33460,7 @@ const CampaignsAdd = () => {
               className: "campaignbay-text-sm",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("When checked , usage limit will be enabled for the campaign. Campaign will be disabled when the limit is reached.", "campaignbay")
             }),
-            position: "right"
+            position: "top"
           })]
         }), enableUsageLimit && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("div", {
           className: "cb-form-input-con !campaignbay-p-0",
@@ -33454,7 +33491,7 @@ const CampaignsAdd = () => {
               className: "campaignbay-text-sm",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("When checked , the campaign will be scheduled to run between the start and end dates", "campaignbay")
             }),
-            position: "right"
+            position: "top"
           })]
         }), scheduleEnabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("div", {
           className: "wpab-grid-2 cb-date-time-fix",
@@ -33508,7 +33545,7 @@ const CampaignsAdd = () => {
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)("div", {
         className: "wpab-btn-bottom-con",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("button", {
-          className: "wpab-cb-btn wpab-cb-btn-primary",
+          className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary",
           onClick: handleSaveCampaign,
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"], {
             icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"],
@@ -33871,7 +33908,7 @@ const CampaignsEdit = () => {
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("div", {
           className: "cb-page-header-actions",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("button", {
-            className: "wpab-cb-btn wpab-cb-btn-danger ",
+            className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-danger ",
             disabled: isDeleting,
             onClick: handleDeleteCampaign,
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"], {
@@ -33879,7 +33916,7 @@ const CampaignsEdit = () => {
               fill: "currentColor"
             }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Delete Campaign", "campaignbay")]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("button", {
-            className: "wpab-cb-btn wpab-cb-btn-primary ",
+            className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary ",
             disabled: isSaving,
             onClick: handleSaveCampaign,
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"], {
@@ -33999,11 +34036,17 @@ const CampaignsEdit = () => {
                 className: "!campaignbay-text-gray-700",
                 children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("Exclude Items", "campaignbay")
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_components_Tooltip__WEBPACK_IMPORTED_MODULE_20__["default"], {
-                content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("span", {
+                content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("span", {
                   className: "campaignbay-text-sm",
-                  children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("When checked , selected items will be excluded from the discount", "campaignbay")
+                  children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("When checked , selected items will be excluded from the discount", "campaignbay"), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("a", {
+                    className: "campaignbay-ml-2 campaignbay-text-blue-600 hover:campaignbay-text-blue-700",
+                    href: "https://docs.wpanchorbay.com/core-concepts/targeting-and-conditions.html#inverting-the-logic-the-exclude-items-checkbox",
+                    target: "_blank",
+                    rel: "noreferrer",
+                    children: "Read More"
+                  })]
                 }),
-                position: "right"
+                position: "top"
               }), renderError(errors?.isExclude)]
             })]
           }) : null]
@@ -34133,7 +34176,7 @@ const CampaignsEdit = () => {
                 className: "campaignbay-text-sm",
                 children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("When checked , sale items will be excluded from the discount", "campaignbay")
               }),
-              position: "right"
+              position: "top"
             }), renderError(errors?.exclude_sale_items, false)]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("div", {
             className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
@@ -34150,7 +34193,7 @@ const CampaignsEdit = () => {
                 className: "campaignbay-text-sm",
                 children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("When checked , usage limit will be enabled for the campaign. Campaign will be disabled when the limit is reached.", "campaignbay")
               }),
-              position: "right"
+              position: "top"
             })]
           }), enableUsageLimit && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("div", {
             className: "cb-form-input-con !campaignbay-p-0",
@@ -34181,7 +34224,7 @@ const CampaignsEdit = () => {
                 className: "campaignbay-text-sm",
                 children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)("When checked , the campaign will be scheduled to run between the start and end dates", "campaignbay")
               }),
-              position: "right"
+              position: "top"
             })]
           }), scheduleEnabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("div", {
             className: "wpab-grid-2 cb-date-time-fix",
@@ -34235,7 +34278,7 @@ const CampaignsEdit = () => {
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)("div", {
           className: "wpab-btn-bottom-con",
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsxs)("button", {
-            className: "wpab-cb-btn wpab-cb-btn-primary",
+            className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary",
             onClick: handleSaveCampaign,
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_24__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_5__["default"], {
               icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_6__["default"],
@@ -35223,16 +35266,16 @@ const Settings = () => {
     return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Loader__WEBPACK_IMPORTED_MODULE_6__["default"], {});
   }
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
-    className: "wpab-cb-page ",
+    className: "campaignbay-block campaignbay-w-full campaignbay-p-0 campaignbay-m-0 campaignbay-h-auto",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Navbar__WEBPACK_IMPORTED_MODULE_7__["default"], {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
       className: "wpab-cb-page-header",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
         className: "cb-container",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("h1", {
-          className: "wpab-cb-page-header-text",
+          className: "campaignbay-text-[20px] campaignbay-font-medium campaignbay-leading-[24px] campaignbay-m-0 campaignbay-p-0 campaignbay-normal-case",
           children: [" ", (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Settings", "campaignbay")]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("button", {
-          className: "wpab-cb-btn wpab-cb-btn-primary",
+          className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary",
           disabled: isSaving || !edited,
           onClick: updateSettings,
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -35281,7 +35324,7 @@ const Settings = () => {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
         className: "cb-container ",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("button", {
-          className: "wpab-cb-btn wpab-cb-btn-primary",
+          className: "campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary",
           disabled: isSaving || !edited,
           onClick: updateSettings,
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"], {
