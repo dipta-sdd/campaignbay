@@ -72,8 +72,8 @@ const QuantityTableEditModal: FC<QuantityTableEditModalProps> = ({
     >
       <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2">
         {/* customization form */}
-        <div className="campaignbay-flex campaignbay-flex-col campaignbay-p-6 campaignbay-text-gray-700 !campaignbay-gap-4 ">
-          <div className="campaignbay-mb-4 campaignbay-flex campaignbay-items-center">
+        <div className="campaignbay-flex campaignbay-flex-col campaignbay-p-[6px] campaignbay-text-gray-700 !campaignbay-gap-4 ">
+          <div className="campaignbay-mb-[4px] campaignbay-flex campaignbay-items-center">
             <Checkbox
               checked={options.show_header}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -141,7 +141,7 @@ const QuantityTableEditModal: FC<QuantityTableEditModalProps> = ({
         </div>
 
         {/* Example table */}
-        <div className="campaignbay-p-6 campaignbay-text-gray-700">
+        <div className="campaignbay-p-[6px] campaignbay-text-gray-700">
           <div className="campaignbay-bg-gray-50 campaignbay-p-3.5 campaignbay-shadow-md ">
             <h3 className="campaignbay-text-lg campaignbay-font-semibold campaignbay-mb-1.5">
               {__("Preview Table", "campaignbay")}
@@ -248,7 +248,7 @@ const QuantityTableEditModal: FC<QuantityTableEditModalProps> = ({
           </div>
         </div>
       </div>
-      <div className="campaignbay-flex campaignbay-justify-end campaignbay-mt-4">
+      <div className="campaignbay-flex campaignbay-justify-end campaignbay-mt-[4px]">
         <button
           className="wpab-cb-btn wpab-cb-btn-primary"
           disabled={isSaving}

@@ -188,10 +188,10 @@ const ImportModal: FC<ImportModalProps> = ({ isOpen, onClose, onImport }) => {
       title={__("Import Campaigns from CSV", "campaignbay")}
       onRequestClose={handleClose}
     >
-      <div className="campaignbay-p-2">
+      <div className="campaignbay-p-[2px]">
         {jsonData ? (
           <div>
-            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-4">
+            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-[4px]">
               <h3 className="campaignbay-text-lg campaignbay-font-semibold campaignbay-text-gray-800">
                 {__("Data Preview", "campaignbay")}
               </h3>
@@ -241,12 +241,12 @@ const ImportModal: FC<ImportModalProps> = ({ isOpen, onClose, onImport }) => {
               htmlFor="csv-importer"
               className={`campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-w-full campaignbay-h-64 campaignbay-border-2 campaignbay-border-dashed campaignbay-rounded-lg campaignbay-cursor-pointer campaignbay-transition-colors ${dropzoneClass}`}
             >
-              <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-pt-5 campaignbay-pb-6">
+              <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-pt-5 campaignbay-pb-[6px]">
                 <Icon
                   icon={upload}
                   className="campaignbay-w-10 campaignbay-h-10 campaignbay-mb-3 campaignbay-text-gray-400"
                 />
-                <p className="campaignbay-mb-2 campaignbay-text-sm campaignbay-text-gray-500">
+                <p className="campaignbay-mb-[2px] campaignbay-text-sm campaignbay-text-gray-500">
                   <span className="campaignbay-font-semibold">
                     {__("Click to upload", "campaignbay")}
                   </span>{" "}
@@ -268,20 +268,20 @@ const ImportModal: FC<ImportModalProps> = ({ isOpen, onClose, onImport }) => {
         )}
 
         {error && (
-          <div className="campaignbay-mt-4 campaignbay-p-3 campaignbay-text-sm campaignbay-text-red-700 campaignbay-bg-red-100 campaignbay-border campaignbay-border-red-200 campaignbay-rounded-md">
+          <div className="campaignbay-mt-[4px] campaignbay-p-3 campaignbay-text-sm campaignbay-text-red-700 campaignbay-bg-red-100 campaignbay-border campaignbay-border-red-200 campaignbay-rounded-md">
             <strong>{__("Error:", "campaignbay")}</strong> {error}
           </div>
         )}
 
         <div className="campaignbay-flex campaignbay-justify-end campaignbay-gap-4 campaignbay-mt-[24px]">
           <button
-            className="campaignbay-text-blue-600 hover:campaignbay-bg-blue-100 campaignbay-p-8 campaignbay-rounded-sm"
+            className="campaignbay-text-blue-600 hover:campaignbay-bg-blue-100 campaignbay-p-[8px] campaignbay-rounded-sm"
             onClick={handleClose}
           >
             {__("Cancel", "campaignbay")}
           </button>
           <button
-            className="campaignbay-bg-blue-600 hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-p-8 campaignbay-rounded-sm campaignbay-transition-colors disabled:campaignbay-text-blue-400 "
+            className="campaignbay-bg-blue-600 hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-p-[8px] campaignbay-rounded-sm campaignbay-transition-colors disabled:campaignbay-text-blue-400 "
             onClick={handleConfirmImport}
             disabled={!jsonData || !!error}
           >

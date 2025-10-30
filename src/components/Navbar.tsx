@@ -1,6 +1,6 @@
 import { Icon, plus } from "@wordpress/icons";
 // @ts-ignore
-import logo_32px from "../../../assets/img/campaign_bay.svg";
+import logo_32px from "./../../assets/img/campaign_bay.svg";
 import { useState, useEffect, FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
@@ -47,7 +47,7 @@ const Navbar: FC = () => {
             <img
               src={logo_32px}
               alt="CampaignBay Logo"
-              className="campaignbay-h-32 campaignbay-w-auto"
+              className="campaignbay-h-[32px] campaignbay-w-auto"
             />
           </div>
           <div
@@ -76,7 +76,7 @@ const Navbar: FC = () => {
               ))}
             </nav>
             <button
-              className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-12 md:campaignbay-m-0"
+              className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-0"
               onClick={() => navigate("/campaigns/add")}
             >
               {__("Add Campaign", "campaignbay")}

@@ -338,7 +338,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
       return (
         <th>
           <span
-            className="campaignbay-table-header campaignbay-flex campaignbay-items-center campaignbay-p-4"
+            className="campaignbay-table-header campaignbay-flex campaignbay-items-center campaignbay-p-[4px]"
             onClick={onClick}
             style={{ cursor: "pointer" }}
           >
@@ -383,8 +383,8 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
       className="wpab-cb-activity-log-modal campaignbay-w-[95vw] md:campaignbay-w-[90vw] lg:campaignbay-w-[85vw] campaignbay-max-w-7xl campaignbay-rounded-none"
     >
       {/* Filters Section */}
-      <div className="campaignbay-mb-6 campaignbay-p-4 campaignbay-bg-gray-50 campaignbay-rounded campaignbay-border campaignbay-border-gray-200">
-        <h3 className="campaignbay-text-lg campaignbay-font-semibold campaignbay-mb-4">
+      <div className="campaignbay-mb-[6px] campaignbay-p-[4px] campaignbay-bg-gray-50 campaignbay-rounded campaignbay-border campaignbay-border-gray-200">
+        <h3 className="campaignbay-text-lg campaignbay-font-semibold campaignbay-mb-[4px]">
           {__("Filters", "campaignbay")}
         </h3>
         <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4 campaignbay-gap-4">
@@ -423,7 +423,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
       </div>
 
       {/* Results Summary */}
-      <div className="campaignbay-mb-4 campaignbay-flex campaignbay-justify-between campaignbay-items-center">
+      <div className="campaignbay-mb-[4px] campaignbay-flex campaignbay-justify-between campaignbay-items-center">
         <div className="campaignbay-text-sm campaignbay-text-gray-600">
           {sprintf(
             _n(
@@ -467,7 +467,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                 <tr>
                   <td
                     colSpan={colSpan}
-                    className="campaignbay-px-4 campaignbay-py-8 campaignbay-text-center"
+                    className="campaignbay-px-[4px] campaignbay-py-[8px] campaignbay-text-center"
                   >
                     <Spinner />
                   </td>
@@ -475,12 +475,12 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
               ) : activityLogs.length > 0 ? (
                 activityLogs.map((log) => (
                   <tr key={log.id} className="hover:campaignbay-bg-gray-50">
-                    <td className="campaignbay-px-4 campaignbay-py-3 campaignbay-text-gray-600">
+                    <td className="campaignbay-px-[4px] campaignbay-py-3 campaignbay-text-gray-600">
                       {formatDateTime(log.timestamp)}
                     </td>
-                    <td className="campaignbay-px-4 campaignbay-py-3">
+                    <td className="campaignbay-px-[4px] campaignbay-py-3">
                       <span
-                        className="campaignbay-inline-flex campaignbay-px-2 campaignbay-py-1 campaignbay-text-xs campaignbay-font-medium campaignbay-rounded-full"
+                        className="campaignbay-inline-flex campaignbay-px-[2px] campaignbay-py-[1px] campaignbay-text-xs campaignbay-font-medium campaignbay-rounded-full"
                         style={{
                           backgroundColor: getLogTypeColor(log.log_type) + "20",
                           color: getLogTypeColor(log.log_type),
@@ -489,7 +489,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                         {getLogTypeLabel(log.log_type)}
                       </span>
                     </td>
-                    <td className="campaignbay-px-4 campaignbay-py-3">
+                    <td className="campaignbay-px-[4px] campaignbay-py-3">
                       {log.campaign_id > 0 ? (
                         <a
                           href={log.campaign_edit_link}
@@ -503,7 +503,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                         <span className="campaignbay-text-gray-400">—</span>
                       )}
                     </td>
-                    <td className="campaignbay-px-4 campaignbay-py-3">
+                    <td className="campaignbay-px-[4px] campaignbay-py-3">
                       {log.order_id > 0 ? (
                         <div>
                           <a
@@ -524,7 +524,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                         <span className="campaignbay-text-gray-400">—</span>
                       )}
                     </td>
-                    <td className="campaignbay-px-4 campaignbay-py-3">
+                    <td className="campaignbay-px-[4px] campaignbay-py-3">
                       {log.user_name ? (
                         <div>
                           <div className="campaignbay-font-medium">
@@ -543,12 +543,12 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                     {/* Conditionally render financial columns */}
                     {shouldShowFinancialColumns() && (
                       <>
-                        <td className="campaignbay-px-4 campaignbay-py-3 campaignbay-text-right campaignbay-font-mono">
+                        <td className="campaignbay-px-[4px] campaignbay-py-3 campaignbay-text-right campaignbay-font-mono">
                           {log.base_total > 0
                             ? formatCurrency(log.base_total)
                             : "—"}
                         </td>
-                        <td className="campaignbay-px-4 campaignbay-py-3 campaignbay-text-right campaignbay-font-mono">
+                        <td className="campaignbay-px-[4px] campaignbay-py-3 campaignbay-text-right campaignbay-font-mono">
                           {log.total_discount > 0 ? (
                             <span className="campaignbay-text-green-600">
                               -{formatCurrency(log.total_discount)}
@@ -557,7 +557,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                             "—"
                           )}
                         </td>
-                        <td className="campaignbay-px-4 campaignbay-py-3 campaignbay-text-right campaignbay-font-mono campaignbay-font-medium">
+                        <td className="campaignbay-px-[4px] campaignbay-py-3 campaignbay-text-right campaignbay-font-mono campaignbay-font-medium">
                           {log.order_total > 0
                             ? formatCurrency(log.order_total)
                             : "—"}
@@ -570,7 +570,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                 <tr>
                   <td
                     colSpan={colSpan}
-                    className="campaignbay-px-4 campaignbay-py-8 campaignbay-text-center campaignbay-text-gray-500"
+                    className="campaignbay-px-[4px] campaignbay-py-[8px] campaignbay-text-center campaignbay-text-gray-500"
                   >
                     {__(
                       "No activity logs found for the selected filters.",
@@ -586,7 +586,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
 
       {/* Enhanced Pagination */}
       {totalPages > 1 && (
-        <div className="campaignbay-mt-6 campaignbay-flex campaignbay-justify-between campaignbay-items-center">
+        <div className="campaignbay-mt-[6px] campaignbay-flex campaignbay-justify-between campaignbay-items-center">
           <div className="campaignbay-text-sm campaignbay-text-gray-600">
             {sprintf(
               __("Page %d of %d", "campaignbay"),
@@ -600,7 +600,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
               variant="secondary"
               onClick={() => handlePageChange(1)}
               disabled={currentPage <= 1}
-              className="campaignbay-px-3 campaignbay-py-1"
+              className="campaignbay-px-3 campaignbay-py-[1px]"
             >
               {__("First", "campaignbay")}
             </Button>
@@ -610,7 +610,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
               variant="secondary"
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage <= 1}
-              className="campaignbay-px-3 campaignbay-py-1"
+              className="campaignbay-px-3 campaignbay-py-[1px]"
             >
               {__("Previous", "campaignbay")}
             </Button>
@@ -624,7 +624,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                   typeof page === "number" ? handlePageChange(page) : null
                 }
                 disabled={page === "..."}
-                className="campaignbay-px-3 campaignbay-py-1 campaignbay-min-w-[40px]"
+                className="campaignbay-px-3 campaignbay-py-[1px] campaignbay-min-w-[40px]"
               >
                 {page}
               </Button>
@@ -635,7 +635,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
               variant="secondary"
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}
-              className="campaignbay-px-3 campaignbay-py-1"
+              className="campaignbay-px-3 campaignbay-py-[1px]"
             >
               {__("Next", "campaignbay")}
             </Button>
@@ -645,7 +645,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
               variant="secondary"
               onClick={() => handlePageChange(totalPages)}
               disabled={currentPage >= totalPages}
-              className="campaignbay-px-3 campaignbay-py-1"
+              className="campaignbay-px-3 campaignbay-py-[1px]"
             >
               {__("Last", "campaignbay")}
             </Button>

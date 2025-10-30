@@ -75,7 +75,7 @@ const ImportExport: FC<ImportExportProps> = ({ refresh }) => {
     <>
       <div className="campaignbay-flex campaignbay-gap-1">
         <button
-          className="campaignbay-font-medium campaignbay-border campaignbay-border-gray-500 campaignbay-text-gray-600 hover:campaignbay-border-blue-600 hover:campaignbay-text-blue-600 campaignbay-p-6 campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-flex-nowrap"
+          className="campaignbay-font-medium campaignbay-border campaignbay-border-gray-500 campaignbay-text-gray-600 hover:campaignbay-border-blue-600 hover:campaignbay-text-blue-600 campaignbay-p-[6px] campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-flex-nowrap"
           onClick={() => {
             setIsImportModalOpen(true);
           }}
@@ -84,7 +84,7 @@ const ImportExport: FC<ImportExportProps> = ({ refresh }) => {
           {__("Import", "campaignbay")}
         </button>
         <button
-          className="campaignbay-font-medium campaignbay-border campaignbay-border-gray-500 campaignbay-text-gray-600 hover:campaignbay-border-blue-600 hover:campaignbay-text-blue-600 campaignbay-p-6 campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-flex-nowrap"
+          className="campaignbay-font-medium campaignbay-border campaignbay-border-gray-500 campaignbay-text-gray-600 hover:campaignbay-border-blue-600 hover:campaignbay-text-blue-600 campaignbay-p-[6px] campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-flex-nowrap"
           onClick={() => {
             exportCampaigns();
           }}

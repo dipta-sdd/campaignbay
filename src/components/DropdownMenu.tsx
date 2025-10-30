@@ -61,7 +61,7 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ controls }) => {
       <button
         ref={buttonRef}
         onClick={toggleDropdown}
-        className="campaignbay-p-2 hover:campaignbay-bg-gray-100 campaignbay-rounded-md campaignbay-transition-colors"
+        className="campaignbay-p-[2px] hover:campaignbay-bg-gray-100 campaignbay-rounded-md campaignbay-transition-colors"
         aria-haspopup="true"
         aria-expanded={isOpen}
         aria-label="More options"

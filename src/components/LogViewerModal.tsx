@@ -121,7 +121,7 @@ const LogViewerModal: FC<LogViewerModalProps> = ({
       onRequestClose={closeModal}
       className="wpab-cb-log-viewer-modal campaignbay-w-[90vw] md:campaignbay-w-[80vw] lg:campaignbay-w-[70vw] campaignbay-max-w-5xl campaignbay-rounded-none"
     >
-      <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-mb-4 campaignbay-pb-4 campaignbay-border-b campaignbay-border-gray-200 campaignbay-gap-4">
+      <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-mb-[4px] campaignbay-pb-[4px] campaignbay-border-b campaignbay-border-gray-200 campaignbay-gap-4">
         <div className="campaignbay-inline-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-4">
           <label
             htmlFor="log-date-selector"
@@ -135,7 +135,7 @@ const LogViewerModal: FC<LogViewerModalProps> = ({
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               setSelectedDate(e.target.value)
             }
-            className="campaignbay-mt-1 campaignbay-block campaignbay-w-full md:campaignbay-w-auto campaignbay-pl-3 campaignbay-pr-10 campaignbay-py-2 campaignbay-text-base campaignbay-border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:campaignbay-text-sm campaignbay-rounded-md"
+            className="campaignbay-mt-[1px] campaignbay-block campaignbay-w-full md:campaignbay-w-auto campaignbay-pl-3 campaignbay-pr-10 campaignbay-py-[2px] campaignbay-text-base campaignbay-border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:campaignbay-text-sm campaignbay-rounded-md"
           >
             <option value="today">Today</option>
             {availableDates.map((date) => (
@@ -171,7 +171,7 @@ const LogViewerModal: FC<LogViewerModalProps> = ({
           </button>
         </div>
       </div>
-      <pre className="campaignbay-p-4 campaignbay-bg-gray-50 campaignbay-border campaignbay-border-gray-200 campaignbay-overflow-auto campaignbay-text-xs campaignbay-h-[50vh] campaignbay-scrollbar">
+      <pre className="campaignbay-p-[4px] campaignbay-bg-gray-50 campaignbay-border campaignbay-border-gray-200 campaignbay-overflow-auto campaignbay-text-xs campaignbay-h-[50vh] campaignbay-scrollbar">
         {isLoading ? <Spinner /> : logContent}
       </pre>
     </Modal>

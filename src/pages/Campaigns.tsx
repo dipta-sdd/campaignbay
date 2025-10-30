@@ -246,7 +246,7 @@ const Campaigns: FC = () => {
     if (order === "asc") {
       return (
         <ArrowDownWideNarrow
-          className="campaignbay-table-header-icon campaignbay-ml-2"
+          className="campaignbay-table-header-icon campaignbay-ml-[2px]"
           size={16}
         />
       );
@@ -254,7 +254,7 @@ const Campaigns: FC = () => {
     if (order === "desc") {
       return (
         <ArrowUpNarrowWide
-          className="campaignbay-table-header-icon campaignbay-ml-2"
+          className="campaignbay-table-header-icon campaignbay-ml-[2px]"
           size={16}
         />
       );
@@ -663,7 +663,7 @@ const Campaigns: FC = () => {
                               <Skeleton
                                 width="24"
                                 height="24"
-                                className="campaignbay-m-6"
+                                className="campaignbay-m-[6px]"
                               />
                             </td>
                           </tr>
@@ -1077,7 +1077,7 @@ const Campaigns: FC = () => {
                 ))}
               </select>
               <span className="campaignbay-w-max">OF {totalPages}</span>
-              <div className="campaignbay-pagination-arrows campaignbay-ml-4">
+              <div className="campaignbay-pagination-arrows campaignbay-ml-[4px]">
                 <button
                   className="wpab-cb-btn campaignbay-arrow-button"
                   disabled={currentPage === 1}

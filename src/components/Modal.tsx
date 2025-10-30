@@ -88,7 +88,7 @@ const Modal: FC<ModalProps> = ({
   const overlayClasses: string = `
     campaignbay-fixed campaignbay-inset-0 campaignbay-z-[9999] campaignbay-flex 
     campaignbay-items-center campaignbay-justify-center campaignbay-bg-black 
-    campaignbay-bg-opacity-50 campaignbay-p-4 campaignbay-transition-opacity campaignbay-duration-300
+    campaignbay-bg-opacity-50 campaignbay-p-[4px] campaignbay-transition-opacity campaignbay-duration-300
     ${
       isOpen
         ? "campaignbay-opacity-100"
@@ -110,7 +110,7 @@ const Modal: FC<ModalProps> = ({
         className={modalClasses}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
-        <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between  campaignbay-p-4">
+        <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between  campaignbay-p-[4px]">
           <h3
             className={`campaignbay-text-lg campaignbay-font-semibold campaignbay-text-gray-800 campaignbay-pb-[8px] ${titleClassName}`}
           >
@@ -123,9 +123,11 @@ const Modal: FC<ModalProps> = ({
             <Icon icon={close} />
           </Button>
         </div>
-        <div className={`campaignbay-p-8 ${contentClassName}`}>{children}</div>
+        <div className={`campaignbay-p-[8px] ${contentClassName}`}>
+          {children}
+        </div>
         {footer && (
-          <div className="campaignbay-border-t campaignbay-border-gray-200 campaignbay-p-4">
+          <div className="campaignbay-border-t campaignbay-border-gray-200 campaignbay-p-[4px]">
             {footer}
           </div>
         )}

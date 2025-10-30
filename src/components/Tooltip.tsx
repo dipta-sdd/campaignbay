@@ -1,17 +1,11 @@
-import React, { 
-  useState, 
-  useRef, 
-  useEffect, 
-  FC, 
-  ReactNode 
-} from 'react';
-import { Icon, cautionFilled } from '@wordpress/icons';
+import React, { useState, useRef, useEffect, FC, ReactNode } from "react";
+import { Icon, cautionFilled } from "@wordpress/icons";
 
-type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
+type TooltipPosition = "top" | "bottom" | "left" | "right";
 
 interface TooltipProps {
-  children?: ReactNode; 
-  content: ReactNode; 
+  children?: ReactNode;
+  content: ReactNode;
   position?: TooltipPosition;
   delay?: number;
   className?: string;
@@ -25,21 +19,24 @@ interface PositionState {
 
 export const Tooltip: FC<TooltipProps> = ({
   children = (
-      <Icon
-        icon={cautionFilled}
-        className="campaignbay-text-gray-400"
-        fill="currentColor"
-      />
+    <Icon
+      icon={cautionFilled}
+      className="campaignbay-text-gray-400"
+      fill="currentColor"
+    />
   ),
   content,
-  position = 'top',
+  position = "top",
   delay = 200,
-  className = '',
-  contentClassName = '',
+  className = "",
+  contentClassName = "",
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [tooltipPosition, setTooltipPosition] = useState<PositionState>({ top: 0, left: 0 });
-  
+  const [tooltipPosition, setTooltipPosition] = useState<PositionState>({
+    top: 0,
+    left: 0,
+  });
+
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -93,9 +90,7 @@ export const Tooltip: FC<TooltipProps> = ({
         left = triggerRect.left + scrollLeft - tooltipRect.width - 8;
         break;
       case "right":
-        top =
-          triggerRect.top +
-          (triggerRect.height - tooltipRect.height) / 2;
+        top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
         left = triggerRect.right + scrollLeft + 8;
         break;
       default:
@@ -182,7 +177,7 @@ export const Tooltip: FC<TooltipProps> = ({
         >
           <div
             className={`
-              campaignbay-relative campaignbay-px-3 campaignbay-py-2 campaignbay-text-sm campaignbay-text-gray-800 campaignbay-bg-gray-200 campaignbay-rounded-lg campaignbay-shadow-lg
+              campaignbay-relative campaignbay-px-3 campaignbay-py-[2px] campaignbay-text-sm campaignbay-text-gray-800 campaignbay-bg-gray-200 campaignbay-rounded-lg campaignbay-shadow-lg
               campaignbay-animate-in campaignbay-fade-in-0 campaignbay-zoom-in-95 campaignbay-duration-200
               ${contentClassName}
             `}
@@ -194,7 +189,6 @@ export const Tooltip: FC<TooltipProps> = ({
       )}
     </>
   );
-}
-
+};
 
 export default Tooltip;

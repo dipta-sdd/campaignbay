@@ -924,7 +924,9 @@ export const renderError = (
     return null;
   }
 
-  const marginClass = negativeMargin ? "campaignbay--mt-2" : "campaignbay-mt-1";
+  const marginClass = negativeMargin
+    ? "campaignbay--mt-2"
+    : "campaignbay-mt-[1px]";
   const className = `campaignbay-text-red-600 ${marginClass} campaignbay-text-xs`;
 
   return <p className={className}>{error.message}</p>;

@@ -18,9 +18,9 @@ import {
 import { Line, Doughnut, Bar } from "react-chartjs-2";
 
 // @ts-ignore
-import chart_placeholder from "../../../assets/img/top_p_c.svg";
+import chart_placeholder from "./../../assets/img/top_p_c.svg";
 // @ts-ignore
-import table_placeholder from "../../../assets/img/top_p_t.svg";
+import table_placeholder from "./../../assets/img/top_p_t.svg";
 
 import Navbar from "../components/Navbar";
 import ActivityLogModal from "../components/ActivityLogModal";
@@ -910,7 +910,7 @@ const Dashboard: FC = () => {
                     </div>
                   ))
               ) : (
-                <p className="campaignbay-text-slate-700 campaignbay-mt-2">
+                <p className="campaignbay-text-slate-700 campaignbay-mt-[2px]">
                   {__("No Recent Activity", "campaignbay")}
                 </p>
               )}
@@ -979,7 +979,7 @@ const Placeholder: FC<PlaceholderProps> = ({
           {mainText}
         </h2>
 
-        <p className="campaignbay-text-slate-700 campaignbay-mt-2">
+        <p className="campaignbay-text-slate-700 campaignbay-mt-[2px]">
           {seconderyText || " "}
         </p>
       </div>
