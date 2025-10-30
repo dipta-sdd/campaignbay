@@ -33159,6 +33159,7 @@ const CampaignsAdd = () => {
       if (settings?.auto_add_free_product !== undefined) {
         tmpSettings["auto_add_free_product"] = settings.auto_add_free_product;
       }
+      // @ts-ignore
       if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
         tmpSettings["apply_as"] = settings.apply_as;
       }
@@ -33168,7 +33169,9 @@ const CampaignsAdd = () => {
       if (settings?.cart_bogo_message_format !== undefined && settings?.cart_bogo_message_format !== "") {
         tmpSettings["cart_bogo_message_format"] = settings.cart_bogo_message_format;
       }
-      if (settings?.bogo_cart_message_location !== undefined && settings?.bogo_cart_message_location !== "") {
+      if (settings?.bogo_cart_message_location !== undefined &&
+      // @ts-ignore
+      settings?.bogo_cart_message_location !== "") {
         tmpSettings["bogo_cart_message_location"] = settings.bogo_cart_message_location;
       }
     }
@@ -33834,7 +33837,7 @@ const CampaignsEdit = () => {
       }
       setSettings({
         ...response?.settings
-      } || {});
+      });
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching campaign:", error);
@@ -33865,6 +33868,8 @@ const CampaignsEdit = () => {
       if (settings?.auto_add_free_product !== undefined) {
         tmpSettings["auto_add_free_product"] = settings.auto_add_free_product;
       }
+
+      // @ts-ignore
       if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
         tmpSettings["apply_as"] = settings.apply_as;
       }
@@ -33874,7 +33879,9 @@ const CampaignsEdit = () => {
       if (settings?.cart_bogo_message_format !== undefined && settings?.cart_bogo_message_format !== "") {
         tmpSettings["cart_bogo_message_format"] = settings.cart_bogo_message_format;
       }
-      if (settings?.bogo_cart_message_location !== undefined && settings?.bogo_cart_message_location !== "") {
+      if (settings?.bogo_cart_message_location !== undefined &&
+      // @ts-ignore
+      settings?.bogo_cart_message_location !== "") {
         tmpSettings["bogo_cart_message_location"] = settings.bogo_cart_message_location;
       }
     }

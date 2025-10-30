@@ -13,11 +13,11 @@ interface DateTimePickerProps
     InputHTMLAttributes<HTMLInputElement>,
     "value" | "onChange" | "type"
   > {
-  dateTime: string | undefined | null;
+  dateTime: string | undefined | null | Date;
   onDateTimeChange: (dateTime: string) => void;
   disabled?: boolean;
   timezone: TimezoneConfig;
-  wpSettings: WpSettings;
+  wpSettings?: WpSettings;
 }
 
 const DateTimePicker: FC<DateTimePickerProps> = ({

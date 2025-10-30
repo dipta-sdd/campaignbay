@@ -126,7 +126,7 @@ export type CampaignStatusType =
   | "scheduled"
   | "expired";
 export type CampaignType = "bogo" | "scheduled" | "quantity" | "earlybird";
-export type DiscountType = "percentage" | "fixed";
+export type DiscountType = "percentage" | "fixed" | "currency";
 export type TargetType = "entire_store" | "category" | "product" | "tag";
 // add /edit campaigns
 export interface SelectOptionType {
@@ -183,7 +183,7 @@ export interface Campaign {
   status: CampaignStatusType;
   type: CampaignType;
 
-  discount_type: "percentage" | "fixed" | null;
+  discount_type: DiscountType;
   discount_value: number | null | "";
 
   tiers: Tier[];

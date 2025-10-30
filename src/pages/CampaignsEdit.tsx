@@ -25,6 +25,7 @@ import CampaignSettings from "../components/CampaignSettings";
 import getBool from "../utils/getBool";
 import {
   BogoTier,
+  Campaign,
   CampaignErrorsType,
   CampaignSettingsType,
   CampaignStatusType,
@@ -258,7 +259,7 @@ const CampaignsEdit: FC = () => {
       } else if (response?.type === "bogo") {
         setBogoTiers({ ...(response?.tiers[0] || {}) });
       }
-      setSettings({ ...response?.settings } || {});
+      setSettings({ ...(response?.settings as CampaignSettingsType) });
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching campaign:", error);
@@ -300,6 +301,8 @@ const CampaignsEdit: FC = () => {
       if (settings?.auto_add_free_product !== undefined) {
         tmpSettings["auto_add_free_product"] = settings.auto_add_free_product;
       }
+
+      // @ts-ignore
       if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
         tmpSettings["apply_as"] = settings.apply_as;
       }
@@ -319,6 +322,7 @@ const CampaignsEdit: FC = () => {
       }
       if (
         settings?.bogo_cart_message_location !== undefined &&
+        // @ts-ignore
         settings?.bogo_cart_message_location !== ""
       ) {
         tmpSettings["bogo_cart_message_location"] =

@@ -197,6 +197,7 @@ const CampaignsAdd: FC = () => {
 
   const getSettings = () => {
     let tmpSettings: CampaignSettingsType = {};
+
     if (campaignType === "earlybird" || campaignType === "scheduled") {
       if (settings?.display_as_regular_price !== undefined) {
         tmpSettings["display_as_regular_price"] =
@@ -226,6 +227,7 @@ const CampaignsAdd: FC = () => {
       if (settings?.auto_add_free_product !== undefined) {
         tmpSettings["auto_add_free_product"] = settings.auto_add_free_product;
       }
+      // @ts-ignore
       if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
         tmpSettings["apply_as"] = settings.apply_as;
       }
@@ -245,6 +247,7 @@ const CampaignsAdd: FC = () => {
       }
       if (
         settings?.bogo_cart_message_location !== undefined &&
+        // @ts-ignore
         settings?.bogo_cart_message_location !== ""
       ) {
         tmpSettings["bogo_cart_message_location"] =
