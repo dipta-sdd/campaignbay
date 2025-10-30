@@ -1,5 +1,5 @@
 import { __, _n, sprintf } from "@wordpress/i18n";
-import { useEffect, useState } from "@wordpress/element";
+import { useState, useEffect, useCallback, FC, ReactNode } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { addQueryArgs } from "@wordpress/url";
 import {
@@ -13,10 +13,76 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  ChartOptions,
 } from "chart.js";
 import { Line, Doughnut, Bar } from "react-chartjs-2";
 
-// Register Chart.js components
+// @ts-ignore
+import chart_placeholder from "../../../assets/img/top_p_c.svg";
+// @ts-ignore
+import table_placeholder from "../../../assets/img/top_p_t.svg";
+
+import Navbar from "../components/Navbar";
+import ActivityLogModal from "../components/ActivityLogModal";
+import { useNavigate } from "react-router-dom";
+
+interface KpiValue {
+  value: number;
+  change?: number;
+}
+interface Kpis {
+  active_campaigns: KpiValue;
+  total_discount_value: KpiValue;
+  discounted_orders: KpiValue;
+  sales_from_campaigns: KpiValue;
+}
+interface DiscountTrend {
+  date: string;
+  total_discount_value: string;
+  total_base: string;
+  total_sales: string;
+}
+interface TopCampaign {
+  campaign_id: number;
+  name: string;
+  value: string;
+}
+interface MostImpactfulType {
+  type: string;
+  total_sales: string;
+}
+interface Charts {
+  discount_trends: DiscountTrend[];
+  top_campaigns: TopCampaign[];
+  most_impactful_types: MostImpactfulType[];
+}
+interface LiveCampaign {
+  id: number;
+  title: string;
+  type: string;
+  end_date?: string;
+  start_date?: string;
+}
+interface RecentActivity {
+  timestamp: string;
+  campaign_id: number;
+  campaign_title: string;
+  action: string;
+  user: string;
+}
+interface DashboardData {
+  kpis: Kpis;
+  charts: Charts;
+  live_and_upcoming: {
+    active: LiveCampaign[];
+    scheduled: LiveCampaign[];
+  };
+  recent_activity: RecentActivity[];
+}
+
+type ChartPeriod = "7days" | "30days" | "1year";
+type ChartDisplayType = "bar" | "line";
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,19 +94,23 @@ ChartJS.register(
   Legend,
   ArcElement
 );
-import chart_placeholder from "../../../assets/img/top_p_c.svg";
-import table_placeholder from "../../../assets/img/top_p_t.svg";
 
-import Navbar from "../components/Navbar";
-import ActivityLogModal from "../components/ActivityLogModal";
-import { useNavigate } from "react-router-dom";
+interface PlaceholderProps {
+  image: string;
+  mainText: string;
+  seconderyText: ReactNode;
+  opacity?: number;
+}
 
-const Dashboard = () => {
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedPeriod, setSelectedPeriod] = useState("7days");
-  const [chartType, setChartType] = useState("bar");
-  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+const Dashboard: FC = () => {
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedPeriod, setSelectedPeriod] = useState<ChartPeriod>("7days");
+  const [chartType, setChartType] = useState<ChartDisplayType>("bar");
+  const [isActivityModalOpen, setIsActivityModalOpen] =
+    useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,7 +121,7 @@ const Dashboard = () => {
           period: selectedPeriod,
           _timestamp: Date.now(),
         };
-        const response = await apiFetch({
+        const response: DashboardData = await apiFetch({
           path: addQueryArgs("/campaignbay/v1/dashboard", params),
         });
         setDashboardData(response);
@@ -87,30 +157,31 @@ const Dashboard = () => {
     );
   }
 
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(value);
   };
 
-  const formatNumber = (value) => {
+  const formatNumber = (value: number): string => {
     return new Intl.NumberFormat("en-US").format(value);
   };
 
   const formatTimeDifference = (
-    dateString,
+    dateString: string,
     futureTense = "in",
     pastTense = "ago"
-  ) => {
+  ): string => {
     if (!dateString) {
       return "";
     }
 
-    const date = new Date(dateString);
-    const now = new Date();
+    const date: Date = new Date(dateString);
+    const now: Date = new Date();
 
     // Get the difference in seconds
+    // @ts-ignore
     const diffInSeconds = (date - now) / 1000;
     const absDiffInSeconds = Math.abs(diffInSeconds);
     const tense = diffInSeconds > 0 ? futureTense : pastTense;
@@ -288,7 +359,7 @@ const Dashboard = () => {
   };
 
   // Chart options
-  const lineChartOptions = {
+  const lineChartOptions: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -325,6 +396,7 @@ const Dashboard = () => {
       y: {
         grid: {
           color: "#e0e0e0",
+          // @ts-ignore
           borderDash: [5, 5],
         },
         ticks: {
@@ -333,7 +405,7 @@ const Dashboard = () => {
             size: 12,
           },
           callback: function (value) {
-            return formatCurrency(value);
+            return formatCurrency(value as number);
           },
         },
       },
@@ -345,7 +417,7 @@ const Dashboard = () => {
     },
   };
 
-  const barChartOptions = {
+  const barChartOptions: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -382,6 +454,7 @@ const Dashboard = () => {
       y: {
         grid: {
           color: "#e0e0e0",
+          // @ts-ignore
           borderDash: [5, 5],
         },
         ticks: {
@@ -390,14 +463,14 @@ const Dashboard = () => {
             size: 12,
           },
           callback: function (value) {
-            return formatCurrency(value);
+            return formatCurrency(value as number);
           },
         },
       },
     },
   };
 
-  const doughnutChartOptions = {
+  const doughnutChartOptions: ChartOptions<"doughnut"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -444,7 +517,9 @@ const Dashboard = () => {
           <select
             className="wpab-select"
             value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setSelectedPeriod(e.target.value as ChartPeriod)
+            }
           >
             <option value="7days">{__("Last 7 Days", "campaignbay")}</option>
             <option value="30days">{__("Last 30 Days", "campaignbay")}</option>
@@ -482,12 +557,14 @@ const Dashboard = () => {
             {dashboardData?.kpis?.total_discount_value?.change !== 0 && (
               <div
                 className={`cb-kpi-change ${
+                  dashboardData?.kpis?.total_discount_value?.change &&
                   dashboardData?.kpis?.total_discount_value?.change > 0
                     ? "positive"
                     : "negative"
                 }`}
               >
-                {dashboardData?.kpis?.total_discount_value?.change > 0
+                {dashboardData?.kpis?.total_discount_value?.change &&
+                dashboardData?.kpis?.total_discount_value?.change > 0
                   ? "+"
                   : ""}
                 {dashboardData?.kpis?.total_discount_value?.change}% vs. prev
@@ -506,12 +583,16 @@ const Dashboard = () => {
             {dashboardData?.kpis?.discounted_orders?.change !== 0 && (
               <div
                 className={`cb-kpi-change ${
+                  dashboardData?.kpis?.discounted_orders?.change &&
                   dashboardData?.kpis?.discounted_orders?.change > 0
                     ? "positive"
                     : "negative"
                 }`}
               >
-                {dashboardData?.kpis?.discounted_orders?.change > 0 ? "+" : ""}
+                {dashboardData?.kpis?.discounted_orders?.change &&
+                dashboardData?.kpis?.discounted_orders?.change > 0
+                  ? "+"
+                  : ""}
                 {dashboardData?.kpis?.discounted_orders?.change}% vs. prev
                 period
               </div>
@@ -530,12 +611,14 @@ const Dashboard = () => {
             {dashboardData?.kpis?.sales_from_campaigns?.change !== 0 && (
               <div
                 className={`cb-kpi-change ${
+                  dashboardData?.kpis?.sales_from_campaigns?.change &&
                   dashboardData?.kpis?.sales_from_campaigns?.change > 0
                     ? "positive"
                     : "negative"
                 }`}
               >
-                {dashboardData?.kpis?.sales_from_campaigns?.change > 0
+                {dashboardData?.kpis?.sales_from_campaigns?.change &&
+                dashboardData?.kpis?.sales_from_campaigns?.change > 0
                   ? "+"
                   : ""}
                 {dashboardData?.kpis?.sales_from_campaigns?.change}% vs. prev
@@ -573,7 +656,8 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="cb-chart-container">
-              {dashboardData?.charts?.discount_trends?.length > 0 ? (
+              {dashboardData?.charts?.discount_trends?.length &&
+              dashboardData?.charts?.discount_trends?.length > 0 ? (
                 chartType === "line" ? (
                   <Line
                     data={getDiscountTrendsData()}
@@ -605,7 +689,8 @@ const Dashboard = () => {
               <h3>{__("Top Performing Campaigns", "campaignbay")}</h3>
             </div>
             <div className="cb-chart-container">
-              {dashboardData?.charts?.top_campaigns?.length > 0 ? (
+              {dashboardData?.charts?.top_campaigns?.length &&
+              dashboardData?.charts?.top_campaigns?.length > 0 ? (
                 <Doughnut
                   data={getTopCampaignsData()}
                   options={doughnutChartOptions}
@@ -629,7 +714,8 @@ const Dashboard = () => {
               <h3>{__("Top Performing Types", "campaignbay")}</h3>
             </div>
             <div className="cb-chart-container">
-              {dashboardData?.charts?.most_impactful_types?.length > 0 ? (
+              {dashboardData?.charts?.most_impactful_types?.length &&
+              dashboardData?.charts?.most_impactful_types?.length > 0 ? (
                 <Doughnut
                   data={getTopCampaignTypesData()}
                   options={doughnutChartOptions}
@@ -665,7 +751,8 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {dashboardData?.live_and_upcoming?.active?.length > 0 ? (
+                    {dashboardData?.live_and_upcoming?.active?.length &&
+                    dashboardData?.live_and_upcoming?.active?.length > 0 ? (
                       dashboardData.live_and_upcoming.active.map((campaign) => (
                         <tr key={campaign.id}>
                           <td className="">
@@ -696,7 +783,7 @@ const Dashboard = () => {
                       ))
                     ) : (
                       <tr className="cb-campaign-row empty">
-                        <td colSpan="3" className="cb-no-campaigns">
+                        <td colSpan={3} className="cb-no-campaigns">
                           <Placeholder
                             image={table_placeholder}
                             mainText={__("No Live Campaigns", "campaignbay")}
@@ -731,7 +818,8 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {dashboardData?.live_and_upcoming?.scheduled?.length > 0 ? (
+                    {dashboardData?.live_and_upcoming?.scheduled?.length &&
+                    dashboardData?.live_and_upcoming?.scheduled?.length > 0 ? (
                       dashboardData.live_and_upcoming.scheduled.map(
                         (campaign) => (
                           <tr
@@ -767,7 +855,7 @@ const Dashboard = () => {
                       )
                     ) : (
                       <tr className="cb-campaign-row empty">
-                        <td colSpan="3" className="cb-no-campaigns">
+                        <td colSpan={3} className="cb-no-campaigns">
                           <Placeholder
                             image={table_placeholder}
                             mainText={__(
@@ -797,7 +885,8 @@ const Dashboard = () => {
           <div className="cb-insight-card">
             <h3>{__("Recent Activity", "campaignbay")}</h3>
             <div className="cb-activity-list">
-              {dashboardData?.recent_activity?.length > 0 ? (
+              {dashboardData?.recent_activity?.length &&
+              dashboardData?.recent_activity?.length > 0 ? (
                 dashboardData?.recent_activity
                   ?.slice(0, 5)
                   .map((activity, index) => (
@@ -837,7 +926,11 @@ const Dashboard = () => {
                   color: "inherit",
                   textDecoration: "underline",
                 }}
-                disabled={dashboardData?.recent_activity?.length < 5}
+                disabled={
+                  dashboardData?.recent_activity?.length
+                    ? dashboardData?.recent_activity?.length < 5
+                    : true
+                }
               >
                 {__("View Full Activity Log", "campaignbay")}
               </button>
@@ -867,7 +960,12 @@ const Dashboard = () => {
 
 export default Dashboard;
 
-const Placeholder = ({ image, mainText, seconderyText, opacity = 40 }) => {
+const Placeholder: FC<PlaceholderProps> = ({
+  image,
+  mainText,
+  seconderyText,
+  opacity = 40,
+}) => {
   return (
     <div className="campaignbay-relative campaignbay-h-full campaignbay-w-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-overflow-hidden">
       <img

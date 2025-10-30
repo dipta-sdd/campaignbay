@@ -1,10 +1,3 @@
-// =====================================================================
-//  SETTINGS TYPES (from previous request, included for completeness)
-// =====================================================================
-
-/**
- * Interface for the nested options within the discount pricing table.
- */
 export interface DiscountTableOptionsType {
   show_header: boolean;
   title: {
@@ -22,9 +15,6 @@ export interface DiscountTableOptionsType {
   };
 }
 
-/**
- * Represents the complete settings object for the CampaignBay plugin.
- */
 export interface CampaignBaySettingsType {
   global_enableAddon: boolean;
   global_calculate_discount_from: "regular_price" | "sale_price";
@@ -53,13 +43,6 @@ export interface CampaignBaySettingsType {
   _locale?: string;
 }
 
-// =====================================================================
-//  NEW TYPES FOR THE MAIN LOCALIZED OBJECT
-// =====================================================================
-
-/**
- * Represents the white-label branding settings.
- */
 export interface WhiteLabel {
   plugin_name: string;
   short_name: string;
@@ -73,18 +56,11 @@ export interface WhiteLabel {
   position: number;
 }
 
-/**
- * Represents general WordPress settings passed to the app.
- */
 export interface WpSettings {
   dateFormat: string;
   timeFormat: string;
 }
 
-/**
- * Represents the entire localized data object available to the frontend app.
- * This is the main type for `window.campaignbay_Localize`.
- */
 export interface CbStore {
   version: string;
   root_id: string;
