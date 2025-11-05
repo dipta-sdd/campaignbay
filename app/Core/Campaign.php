@@ -315,8 +315,6 @@ class Campaign
 		];
 
 		if (!$validator->validate($rules)) {
-			//phpcs:ignore
-			wpab_campaignbay_log('Validation errors: ' . print_r(value: $validator->get_errors(), return: true));
 			return new WP_Error('rest_validation_error', $validator->get_first_error(), array('status' => 400, 'details' => $validator->get_errors(), 'data' => $args));
 		}
 		$data = $validator->get_validated_data();
@@ -531,7 +529,6 @@ class Campaign
 				)
 			);
 		}
-
 
 		return $validator->get_validated_data();
 	}
@@ -988,43 +985,45 @@ class Campaign
 		global $wpdb;
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 
-		//phpcs:ignore
+		//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				//phpcs:ignore
-				"UPDATE {$campaigns_table} SET usage_count = usage_count + 1 WHERE id = %d",
+				"UPDATE {$campaigns_table}
+             SET 
+                usage_count = usage_count + 1,
+                status = CASE 
+                            WHEN usage_limit IS NOT NULL AND usage_limit > 0 AND (usage_count + 1) >= usage_limit 
+                            THEN 'expired' 
+                            ELSE status 
+                         END
+             WHERE id = %d",
 				$this->id
 			)
 		);
-		// update status 
-		if (isset($this->data['usage_count']) && $this->data['usage_count'] !== null && $this->data['usage_count'] !== 0) {
-			//phpcs:ignore
-			$result = $wpdb->query(
-				$wpdb->prepare(
-					//phpcs:ignore
-					"UPDATE {$campaigns_table} SET status = 'expired' WHERE id = %d AND usage_count >= usage_limit",
-					$this->id
-				)
-			);
-		}
-
 
 		if (is_wp_error($result) || false === $result) {
+			wpab_campaignbay_log('Failed to increment usage count for campaign: #' . $this->get_id(), 'ERROR');
 			return false;
 		}
 
-		// Reload data
-		// $this->load_data();
+		// --- Sync the local object with the new data ---
+		// Instead of a full reload, just update the properties we know have changed.
 		$this->data->usage_count = (int) $this->data->usage_count + 1;
+
+		// Check if the status should now be 'expired' on the object
+		if ($this->data->usage_limit !== null && $this->data->usage_limit > 0 && $this->data->usage_count >= $this->data->usage_limit) {
+			$this->data->status = 'expired';
+		}
+
 		wpab_campaignbay_log('Usage count incremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG');
 
 		/**
-		 * Fires after a campaign is updated and all its data is saved.
+		 * Fires after a campaign's usage count is updated.
 		 *
 		 * @param int      $campaign_id The ID of the updated campaign.
-		 * @param Campaign $campaign    The campaign object.
+		 * @param Campaign $campaign    The campaign object with the new usage count.
 		 */
-		do_action('campaignbay_campaign_save', $this->id, $this);
+		do_action('campaignbay_campaign_usage_incremented', $this->id, $this);
 
 		return true;
 	}

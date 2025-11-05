@@ -194,10 +194,9 @@ class Plugin
 	private function define_admin_hooks()
 	{
 		$plugin_admin = Admin::get_instance();
-		if (!is_admin()) {
-			wpab_campaignbay_log('return non admin');
-			return;
-		}
+		// if (!is_admin()) {
+		// 	return;
+		// }
 		$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
 		$this->loader->add_filter('admin_body_class', $plugin_admin, 'add_has_sticky_header');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_resources');

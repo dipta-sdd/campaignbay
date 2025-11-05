@@ -6,7 +6,6 @@ use WC_Product;
 use WP_Error;
 use WpabCampaignBay\Core\Base;
 use WpabCampaignBay\Core\Common;
-use WpabCampaignBay\Engine\CampaignManager;
 use WpabCampaignBay\Helper\Helper;
 use WpabCampaignBay\Helper\Woocommerce;
 

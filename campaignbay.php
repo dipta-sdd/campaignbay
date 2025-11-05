@@ -50,7 +50,8 @@ spl_autoload_register(function ($class) {
 
 require_once CAMPAIGNBAY_PATH . 'app/functions.php';
 
-
+register_activation_hook(__FILE__, 'wpab_campaignbay_activate');
+register_deactivation_hook(__FILE__, 'wpab_campaignbay_deactivate');
 /**
  * Begins execution of the plugin.
  *
@@ -68,10 +69,10 @@ wpab_campaignbay_run();
 function wpab_campaignbay_activate()
 {
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	\WpabCampaignBay\Core\Activator::get_instance()->activate();
+	\WpabCampaignBay\Core\Activator::activate();
 }
 
 function wpab_campaignbay_deactivate()
 {
-	\WpabCampaignBay\Core\Deactivator::get_instance()->deactivate();
+	\WpabCampaignBay\Core\Deactivator::deactivate();
 }

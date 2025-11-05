@@ -2,6 +2,8 @@
 
 namespace WpabCampaignBay\Core;
 
+use WpabCampaignBay\Engine\CampaignManager;
+
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
 	exit;
@@ -42,6 +44,7 @@ class Deactivator
 	public static function deactivate()
 	{
 		self::remove_custom_capabilities();
+		CampaignManager::get_instance()->clear_cache();
 	}
 
 	/**

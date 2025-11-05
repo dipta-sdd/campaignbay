@@ -133,6 +133,7 @@ class Activator
 			$admin_role->add_cap($custom_capability);
 		}
 
+		// woocommerce role
 		$manager_role = get_role('shop_manager');
 		if ($manager_role && !$manager_role->has_cap($custom_capability)) {
 			$manager_role->add_cap($custom_capability);

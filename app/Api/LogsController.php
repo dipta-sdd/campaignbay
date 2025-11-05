@@ -112,7 +112,11 @@ class LogsController extends ApiController
 			return; // Nothing to do if the directory doesn't exist.
 		}
 
-		$wp_filesystem = wpab_campaignbay_file_system();
+		global $wp_filesystem;
+		if (empty($wp_filesystem)) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
 
 		if (is_wp_error($wp_filesystem) || !$wp_filesystem) {
 			wpab_campaignbay_log('Failed to initialize WP_Filesystem in cleanup_old_log_files.', 'ERROR');
@@ -290,7 +294,11 @@ class LogsController extends ApiController
 	private function read_and_respond_with_log_content($log_file_path, $not_found_message)
 	{
 		if (file_exists($log_file_path)) {
-			$wp_filesystem = wpab_campaignbay_file_system();
+			global $wp_filesystem;
+			if (empty($wp_filesystem)) {
+				require_once ABSPATH . '/wp-admin/includes/file.php';
+				WP_Filesystem();
+			}
 			$contents = $wp_filesystem->get_contents($log_file_path);
 
 			if (false === $contents) {
@@ -326,7 +334,13 @@ class LogsController extends ApiController
 			return new WP_REST_Response(array('message' => __('Log directory does not exist. Nothing to clear.', 'campaignbay')), 200);
 		}
 
-		$wp_filesystem = wpab_campaignbay_file_system();
+		global $wp_filesystem;
+		if (empty($wp_filesystem)) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+
 		$files = $wp_filesystem->dirlist($log_dir);
 		$deleted_count = 0;
 

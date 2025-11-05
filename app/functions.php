@@ -147,32 +147,6 @@ if (!function_exists('wpab_campaignbay_update_options')):
 endif;
 
 
-if (!function_exists('wpab_campaignbay_file_system')) {
-	/**
-	 *
-	 * WordPress file system wrapper
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string|WP_Error directory path or WP_Error object if no permission
-	 *
-	 * @author     dipta-sdd <sankarsandipta@gmail.com>
-	 */
-	function wpab_campaignbay_file_system()
-	{
-		global $wp_filesystem;
-
-		// The require_once is removed. We now rely on this function being called
-		// in the correct context where the necessary files are already loaded by WordPress.
-		if (!$wp_filesystem) {
-			// Initialize the filesystem API.
-			WP_Filesystem();
-		}
-
-		return $wp_filesystem;
-	}
-}
-
 
 if (!function_exists('wpab_campaignbay_get_white_label')):
 	/**
