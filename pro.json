@@ -1,0 +1,146 @@
+[
+  {
+    "Task Title": "Architect Extensibility Hooks in Free Plugin",
+    "Story Points": 8,
+    "Status": "To Do",
+    "day": 3,
+    "description": "Modify the free version's PHP codebase to include strategic `actions` and `filters`. This includes a central `campaignbay_is_pro` filter, and hooks in the Campaign model, Targeting/Filter engine, and Pricing engine to allow the Pro version to inject its logic.",
+    "flag": "back-end, free, architecture"
+  },
+  {
+    "Task Title": "Create Pro Plugin Core & License Handler",
+    "Story Points": 5,
+    "Status": "To Do",
+    "day": 2,
+    "description": "Set up the basic structure of the separate Pro add-on plugin. Implement the logic to hook into `campaignbay_is_pro`. Create the foundational classes for a license key activation system, including a new 'License' tab in the settings UI and a placeholder for the API endpoint to validate keys.",
+    "flag": "back-end, pro, architecture"
+  },
+  {
+    "Task Title": "Implement Pro Feature Locking in UI (Free)",
+    "Story Points": 5,
+    "Status": "To Do",
+    "day": 3,
+    "description": "In the React/TypeScript app, read the `is_pro` flag from the localized data. Create a reusable component (e.g., `<ProFeatureLock>`) or hook (`useIsPro`) that can be used to conditionally render UI elements. If `is_pro` is false, the component should show a disabled state with a 'Pro' badge and a tooltip linking to the upgrade page.",
+    "flag": "front-end, free, ui"
+  },
+  {
+    "Task Title": "Build Dynamic Rule Builder UI (Free/Locked)",
+    "Story Points": 8,
+    "Status": "To Do",
+    "day": 4,
+    "description": "Overhaul the 'Discount Target' section in the React app. Create a dynamic UI where users can add multiple condition groups with AND/OR logic. This will be the shell for all advanced targeting rules. All Pro conditions will be locked by the `<ProFeatureLock>` component.",
+    "flag": "front-end, free, ui, pro-feature"
+  },
+  {
+    "Task Title": "Implement Advanced Targeting Engine (Pro)",
+    "Story Points": 8,
+    "Status": "To Do",
+    "day": 5,
+    "description": "In the Pro plugin, create a new 'RuleEngine' class that hooks into the Free version. Implement the backend logic to validate campaigns based on Product Attributes, User Roles, and basic Cart Conditions (subtotal, item count).",
+    "flag": "back-end, pro, engine"
+  },
+  {
+    "Task Title": "Implement Purchase History Targeting (Pro)",
+    "Story Points": 5,
+    "Status": "To Do",
+    "day": 4,
+    "description": "Extend the Pro 'RuleEngine' to include targeting based on customer purchase history. This will involve querying WooCommerce orders to check for past spend, number of orders, or products previously purchased.",
+    "flag": "back-end, pro, engine"
+  },
+  {
+    "Task Title": "Implement Advanced BOGO & Bundle Discounts (Pro)",
+    "Story Points": 8,
+    "Status": "To Do",
+    "day": 8,
+    "description": "Backend: Add new campaign types ('bogo_advanced', 'bundle'). Enhance the `CartDiscount` engine via hooks to handle 'Buy X, Get Y' and 'Buy A + B for $X off' logic. Frontend: Create the UI for defining these complex rules.",
+    "flag": "back-end, front-end, pro, feature"
+  },
+  {
+    "Task Title": "Develop Recurring Campaigns Engine (Pro)",
+    "Story Points": 8,
+    "Status": "To Do",
+    "day": 5,
+    "description": "Backend: Extend the `Scheduler` to handle recurrence rules (e.g., 'every Monday'). Frontend: Build the UI for setting these recurrence rules in the campaign editor.",
+    "flag": "back-end, front-end, pro, feature"
+  },
+  {
+    "Task Title": "Implement Free Shipping & Gift Offers (Pro)",
+    "Story Points": 5,
+    "Status": "To Do",
+    "day": 5,
+    "description": "Backend: Add new campaign types. Hook into the `CartDiscount` engine to programmatically apply free shipping or add a specified product to the cart when conditions are met. Frontend: Build UI to configure thresholds and select the gift product.",
+    "flag": "back-end, front-end, pro, feature"
+  },
+  {
+    "Task Title": "Enhance Quantity Tiers (Pro)",
+    "Story Points": 5,
+    "Status": "To Do",
+    "day": 3,
+    "description": "Unlock the ability to edit the 'start' value of a quantity tier and allow the final tier's 'end' value to be skipped for an 'unlimited' range. This involves changes to both the React UI and the backend validation.",
+    "flag": "back-end, front-end, pro-feature, enhancement"
+  },
+  {
+    "Task Title": "Enhance Performance Dashboard to Full (Pro)",
+    "Story Points": 5,
+    "Status": "To Do",
+    "day": 12,
+    "description": "Backend: In the `DashboardController`, add new, more complex SQL queries to calculate ROI and other advanced metrics. Frontend: In the React Dashboard, add new chart components and UI widgets to display this data, locked for Pro users.",
+    "flag": "back-end, front-end, pro, analytics"
+  },
+  {
+    "Task Title": "Create Dynamic Frontend Badges & Timers (Pro)",
+    "Story Points": 2,
+    "Status": "To Do",
+    "day": 12,
+    "description": "Create a new lightweight JavaScript asset to be loaded on the public-facing store. This script will receive data about active campaigns and inject countdown timers and dynamic 'Sale!' badges on product and shop pages.",
+    "flag": "front-end, pro, feature, ux"
+  },
+  {
+    "Task Title": "Develop Dynamic Coupon Generation (Pro)",
+    "Story Points": 5,
+    "Status": "To Do",
+    "day": 13,
+    "description": "Create a new module in the Pro plugin that can programmatically generate unique, single-use WooCommerce coupons based on triggers (e.g., a specific campaign condition being met).",
+    "flag": "back-end, pro, feature"
+  },
+  {
+    "Task Title": "Implement A/B Testing Framework (Pro)",
+    "Story Points": 8,
+    "Status": "To Do",
+    "day": 7,
+    "description": "A major feature. Backend: Create a system to link two campaigns in an A/B test, serve variations to users, and log performance per variation. Frontend: Build the UI to create, manage, and view A/B test results.",
+    "flag": "back-end, front-end, pro, feature, analytics"
+  },
+  {
+    "Task Title": "Implement 3rd-Party Integration Support (Pro)",
+    "Story Points": 8,
+    "Status": "To Do",
+    "day": 15,
+    "description": "Research and implement compatibility with major third-party plugins. This involves hooking into the pricing filters for WooCommerce Subscriptions and popular Multi-Currency plugins to ensure discounts are applied correctly.",
+    "flag": "back-end, pro, integration"
+  },
+  {
+    "Task Title": "Advanced Usage Limits (Pro)",
+    "Story Points": 3,
+    "Status": "To Do",
+    "day": 5,
+    "description": "Enhance the usage limit logic to support per-user limits in addition to the existing global store limit. This requires changes to the `OrderManager` and `Campaign` model.",
+    "flag": "back-end, front-end, pro, feature"
+  },
+  {
+    "Task Title": "Enhance Import/Export to Advanced (Pro)",
+    "Story Points": 3,
+    "Status": "To Do",
+    "day": 5,
+    "description": "Upgrade the existing Import/Export functionality. In the Pro version, add support for JSON file formats. Enhance the backend processor to handle more complex bulk data updates gracefully. The UI for this will be unlocked via the <ProFeatureLock>.",
+    "flag": "back-end, front-end, pro-feature"
+  },
+  {
+    "Task Title": "Implement Customizable Table Styling (Pro)",
+    "Story Points": 2,
+    "Status": "To Do",
+    "day": 5,
+    "description": "Backend: Add a new setting field in the Pro version for 'Custom Table CSS'. Frontend: Ensure this custom CSS is loaded on the product page. Refactor the table rendering logic to use more specific and stable CSS class names for easier targeting.",
+    "flag": "back-end, front-end, pro-feature, ux"
+  }
+]
