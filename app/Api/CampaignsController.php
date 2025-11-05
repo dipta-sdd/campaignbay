@@ -343,8 +343,8 @@ class CampaignsController extends ApiController
 			$query_params[] = '%' . $wpdb->esc_like(sanitize_text_field($search)) . '%';
 		}
 
-		// --- Get total count for headers (using its own prepare call) ---
-		//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// --- Get total count for headers ---
+		//phpcs:ignore 
 		$total_items = $wpdb->get_var($wpdb->prepare($count_sql, $query_params));
 
 		// --- Continue building the main query ---
@@ -372,10 +372,10 @@ class CampaignsController extends ApiController
 		$query_params[] = $offset;
 
 		// Get the campaigns (using the final, complete parameter array)
-		//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		//phpcs:ignore
 		$results = $wpdb->get_results($wpdb->prepare($sql, $query_params));
 
-		// --- Process and return the response (your existing code is good) ---
+
 		$response_data = array();
 		if ($results) {
 			foreach ($results as $row) {

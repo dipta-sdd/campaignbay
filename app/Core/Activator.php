@@ -3,6 +3,7 @@
 namespace WpabCampaignBay\Core;
 
 use WpabCampaignBay\Data\DbManager;
+use WpabCampaignBay\Engine\CampaignManager;
 
 /**
  * Fired during plugin activation
@@ -43,6 +44,8 @@ class Activator
 	 */
 	public static function activate()
 	{
+
+		CampaignManager::get_instance()->clear_cache();
 
 		// Set up the default options if they don't exist.
 		if (!get_option(CAMPAIGNBAY_OPTION_NAME)) {

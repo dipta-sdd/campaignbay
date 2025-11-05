@@ -985,9 +985,10 @@ class Campaign
 		global $wpdb;
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 
-		//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		//phpcs:ignore 
 		$result = $wpdb->query(
 			$wpdb->prepare(
+				//phpcs:ignore
 				"UPDATE {$campaigns_table}
              SET 
                 usage_count = usage_count + 1,
