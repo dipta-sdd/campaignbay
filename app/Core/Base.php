@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
 
 
 /**
@@ -67,7 +67,6 @@ abstract class Base
 	public static function get_instance()
 	{
 		// `static::class` gets the name of the class that called this method
-		// (e.g., 'WpabCb_Admin_Hooks'), not just 'Base'.
 		$class = static::class;
 		if (!isset(self::$instances[$class])) {
 			// `new static()` creates an instance of the calling class.

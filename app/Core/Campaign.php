@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
 
 /**
  * The file that defines the Campaign model class.
@@ -23,9 +23,9 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use WP_Error;
-use WpabCb\Core\Validator;
-use WpabCb\Helper\Filter;
-use WpabCb\Helper\Logger;
+use WpabCampaignBay\Core\Validator;
+use WpabCampaignBay\Helper\Filter;
+use WpabCampaignBay\Helper\Logger;
 
 /**
  * The Campaign model class.
@@ -273,7 +273,7 @@ class Campaign
 
 			return $campaign;
 		} catch (Exception $e) {
-			campaignbay_log('Error creating campaign: ' . $e->getMessage(), 'ERROR');
+			wpab_campaignbay_log('Error creating campaign: ' . $e->getMessage(), 'ERROR');
 			return new WP_Error('rest_cannot_create', __('Cannot create campaign.', 'campaignbay'), array('status' => 500, 'error' => $e->getMessage()));
 		}
 	}
@@ -316,7 +316,7 @@ class Campaign
 
 		if (!$validator->validate($rules)) {
 			//phpcs:ignore
-			campaignbay_log('Validation errors: ' . print_r(value: $validator->get_errors(), return: true));
+			wpab_campaignbay_log('Validation errors: ' . print_r(value: $validator->get_errors(), return: true));
 			return new WP_Error('rest_validation_error', $validator->get_first_error(), array('status' => 400, 'details' => $validator->get_errors(), 'data' => $args));
 		}
 		$data = $validator->get_validated_data();
@@ -442,7 +442,7 @@ class Campaign
 
 			return true;
 		} catch (Exception $e) {
-			campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
+			wpab_campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
 			return new WP_Error('rest_cannot_update', __('Cannot update campaign.', 'campaignbay'), array('status' => 500, 'error' => $e->getMessage()));
 		}
 	}
@@ -594,7 +594,7 @@ class Campaign
 		}
 		$allowed_statuses = array('active', 'inactive', 'scheduled', 'expired');
 		if (!in_array($status, $allowed_statuses, true)) {
-			campaignbay_log(
+			wpab_campaignbay_log(
 				// Translators: %s is the invalid status provided.
 				sprintf(__('Invalid status "%s" provided. Status must be one of: active, inactive, scheduled, expired.', 'campaignbay'), $status)
 			);
@@ -652,7 +652,7 @@ class Campaign
 
 			return true;
 		} catch (Exception $e) {
-			campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
+			wpab_campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
 			return new WP_Error('rest_cannot_update', __('Cannot update campaign.', 'campaignbay'), array('status' => 500, 'error' => $e->getMessage()));
 		}
 	}
@@ -866,7 +866,7 @@ class Campaign
 			$date->setTimezone(new DateTimeZone('UTC'));
 			return $date->format('Y-m-d H:i:s');
 		} catch (Exception $e) {
-			campaignbay_log('Invalid start_datetime format for campaign #' . $this->id, 'ERROR');
+			wpab_campaignbay_log('Invalid start_datetime format for campaign #' . $this->id, 'ERROR');
 			return null;
 		}
 	}
@@ -890,7 +890,7 @@ class Campaign
 			$date->setTimezone(new DateTimeZone('UTC'));
 			return $date->format('Y-m-d H:i:s');
 		} catch (Exception $e) {
-			campaignbay_log('Invalid end_datetime format for campaign #' . $this->id, 'ERROR');
+			wpab_campaignbay_log('Invalid end_datetime format for campaign #' . $this->id, 'ERROR');
 			return null;
 		}
 	}
@@ -1016,7 +1016,7 @@ class Campaign
 		// Reload data
 		// $this->load_data();
 		$this->data->usage_count = (int) $this->data->usage_count + 1;
-		campaignbay_log('Usage count incremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG');
+		wpab_campaignbay_log('Usage count incremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG');
 
 		/**
 		 * Fires after a campaign is updated and all its data is saved.

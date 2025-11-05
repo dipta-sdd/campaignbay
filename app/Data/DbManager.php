@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Data;
+namespace WpabCampaignBay\Data;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {

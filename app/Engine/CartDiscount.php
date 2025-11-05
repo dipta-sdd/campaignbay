@@ -1,13 +1,13 @@
 <?php
 
-namespace WpabCb\Engine;
+namespace WpabCampaignBay\Engine;
 
 use WC_Product;
 use WP_Error;
-use WpabCb\Core\Common;
-use WpabCb\Engine\CampaignManager;
-use WpabCb\Helper\Helper;
-use WpabCb\Helper\Woocommerce;
+use WpabCampaignBay\Core\Common;
+use WpabCampaignBay\Engine\CampaignManager;
+use WpabCampaignBay\Helper\Helper;
+use WpabCampaignBay\Helper\Woocommerce;
 
 /**
  * The file that defines the Pricing Engine class.
@@ -107,15 +107,15 @@ class CartDiscount
 						$meta['quantity']['price'] < $meta['simple']['price']
 					)
 				) {
-					campaignbay_log('have quantity discount');
+					wpab_campaignbay_log('have quantity discount');
 					// campaign stacking not allowed
 					if (!self::cart_allow_campaign_stacking()) {
 						// seting orginal price as base price
-						campaignbay_log('seting orginal price as base price : ' . $meta['quantity']['base_price']);
+						wpab_campaignbay_log('seting orginal price as base price : ' . $meta['quantity']['base_price']);
 						$cart->cart_contents[$key]['data']->set_regular_price($meta['quantity']['base_price']);
 						$simple_applied = false;
 					}
-					campaignbay_log('setting quantity discount price : ' . $meta['quantity']['price']);
+					wpab_campaignbay_log('setting quantity discount price : ' . $meta['quantity']['price']);
 					$cart->cart_contents[$key]['data']->set_price($meta['quantity']['base_price']);
 					$apply_as = $meta['quantity']['settings']['apply_as'] ?? 'line_total';
 					if ($apply_as === 'line_total') {
@@ -298,7 +298,6 @@ class CartDiscount
 					}
 				}
 				$cart->applied_coupons[] = $coupon_code;
-				do_action('woocommerce_applied_coupon', $coupon_code);
 				return true;
 			}
 

@@ -1,6 +1,6 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {

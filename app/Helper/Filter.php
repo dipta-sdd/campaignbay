@@ -1,8 +1,8 @@
 <?php
 
-namespace WpabCb\Helper;
+namespace WpabCampaignBay\Helper;
 
-use WpabCb\Core\Common;
+use WpabCampaignBay\Core\Common;
 
 if (!defined('ABSPATH'))
     exit; // Exit if accessed directly

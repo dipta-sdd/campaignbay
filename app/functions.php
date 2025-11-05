@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-if (!function_exists('campaignbay_default_options')):
+if (!function_exists('wpab_campaignbay_default_options')):
 	/**
 	 * Get the Plugin Default Options.
 	 *
@@ -23,7 +23,7 @@ if (!function_exists('campaignbay_default_options')):
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function campaignbay_default_options()
+	function wpab_campaignbay_default_options()
 	{
 		$default_options = array(
 			/*==================================================
@@ -88,7 +88,7 @@ if (!function_exists('campaignbay_default_options')):
 	}
 endif;
 
-if (!function_exists('campaignbay_get_options')):
+if (!function_exists('wpab_campaignbay_get_options')):
 
 	/**
 	 * Get the Plugin Saved Options.
@@ -101,11 +101,11 @@ if (!function_exists('campaignbay_get_options')):
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function campaignbay_get_options($key = '')
+	function wpab_campaignbay_get_options($key = '')
 	{
 		$options = get_option(CAMPAIGNBAY_OPTION_NAME);
 
-		$default_options = campaignbay_default_options();
+		$default_options = wpab_campaignbay_default_options();
 		if (!empty($key)) {
 			if (isset($options[$key])) {
 				return $options[$key];
@@ -121,7 +121,7 @@ if (!function_exists('campaignbay_get_options')):
 	}
 endif;
 
-if (!function_exists('campaignbay_update_options')):
+if (!function_exists('wpab_campaignbay_update_options')):
 	/**
 	 * Update the Plugin Options.
 	 *
@@ -134,10 +134,10 @@ if (!function_exists('campaignbay_update_options')):
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function campaignbay_update_options($key_or_data, $val = '')
+	function wpab_campaignbay_update_options($key_or_data, $val = '')
 	{
 		if (is_string($key_or_data)) {
-			$options = campaignbay_get_options();
+			$options = wpab_campaignbay_get_options();
 			$options[$key_or_data] = $val;
 		} else {
 			$options = $key_or_data;
@@ -147,7 +147,7 @@ if (!function_exists('campaignbay_update_options')):
 endif;
 
 
-if (!function_exists('campaignbay_file_system')) {
+if (!function_exists('wpab_campaignbay_file_system')) {
 	/**
 	 *
 	 * WordPress file system wrapper
@@ -158,7 +158,7 @@ if (!function_exists('campaignbay_file_system')) {
 	 *
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function campaignbay_file_system()
+	function wpab_campaignbay_file_system()
 	{
 		global $wp_filesystem;
 
@@ -174,7 +174,7 @@ if (!function_exists('campaignbay_file_system')) {
 }
 
 
-if (!function_exists('campaignbay_get_white_label')):
+if (!function_exists('wpab_campaignbay_get_white_label')):
 	/**
 	 * Get white label options for this plugin.
 	 *
@@ -183,7 +183,7 @@ if (!function_exists('campaignbay_get_white_label')):
 	 * @return mixed All Options Array Or Options Value
 	 * @author     dipta-sdd <sankarsandipta@gmail.com>
 	 */
-	function campaignbay_get_white_label($key = '')
+	function wpab_campaignbay_get_white_label($key = '')
 	{
 		$plugin_name = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_white_label_plugin_name',
@@ -216,7 +216,7 @@ endif;
 
 
 
-if (!function_exists('campaignbay_log')) {
+if (!function_exists('wpab_campaignbay_log')) {
 
 	/**
 	 * Log messages to the debug log.
@@ -225,9 +225,9 @@ if (!function_exists('campaignbay_log')) {
 	 * @param string $level The log level (e.g.,'DEBUG', 'INFO', 'ERROR', 'NOTICE', 'WARNING', 'CRITICAL', 'ALERT', 'EMERGENCY' ).
 	 * @param bool $dev_mode Whether to log messages in development mode.
 	 */
-	function campaignbay_log($message, $level = 'INFO', $dev_mode = true)
+	function wpab_campaignbay_log($message, $level = 'INFO', $dev_mode = true)
 	{
-		$enable_logging = campaignbay_get_options('debug_enableMode');
+		$enable_logging = wpab_campaignbay_get_options('debug_enableMode');
 		// if (!$enable_logging && !defined('WP_DEBUG') && !WP_DEBUG && $level !== 'error') {
 		if (!$enable_logging && ($level !== 'ERROR' || $level !== 'error')) {
 			return;
@@ -258,7 +258,3 @@ if (!function_exists('campaignbay_log')) {
 		file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
 	}
 }
-
-
-
-

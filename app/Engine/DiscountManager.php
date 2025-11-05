@@ -1,9 +1,9 @@
 <?php
 
-namespace WpabCb\Engine;
+namespace WpabCampaignBay\Engine;
 
-use WpabCb\Core\Base;
-use WpabCb\Core\Common;
+use WpabCampaignBay\Core\Base;
+use WpabCampaignBay\Core\Common;
 
 /**
  * The file that defines the DiscountManager class.

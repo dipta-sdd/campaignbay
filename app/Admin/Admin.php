@@ -1,9 +1,9 @@
 <?php
 
-namespace WpabCb\Admin;
+namespace WpabCampaignBay\Admin;
 
-use WpabCb\Core\Common;
-use WpabCb\Helper\Woocommerce;
+use WpabCampaignBay\Core\Common;
+use WpabCampaignBay\Helper\Woocommerce;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -222,7 +222,7 @@ class Admin
 					'dateFormat' => get_option('date_format'),
 					'timeFormat' => get_option('time_format'),
 				),
-				'campaignbay_settings' => get_option(CAMPAIGNBAY_OPTION_NAME, campaignbay_default_options())
+				'campaignbay_settings' => get_option(CAMPAIGNBAY_OPTION_NAME, wpab_campaignbay_default_options())
 			)
 		);
 
@@ -443,7 +443,7 @@ class Admin
 	 */
 	public function register_settings()
 	{
-		$defaults = campaignbay_default_options();
+		$defaults = wpab_campaignbay_default_options();
 
 		register_setting(
 			CAMPAIGNBAY_OPTION_NAME . '_settings_group',
@@ -474,7 +474,7 @@ class Admin
 	{
 		$schema = $this->get_settings_schema();
 		$properties = $schema['properties'] ?? array();
-		$default_options = campaignbay_default_options();
+		$default_options = wpab_campaignbay_default_options();
 
 
 		$sanitized_output = get_option(CAMPAIGNBAY_OPTION_NAME, $default_options);

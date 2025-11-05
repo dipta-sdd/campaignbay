@@ -1,6 +1,6 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
 
-namespace WpabCb\Api;
+namespace WpabCampaignBay\Api;
 
 if (!defined('ABSPATH')) {
 	exit;
@@ -12,9 +12,9 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use WpabCb\Core\Campaign;
-use WpabCb\Engine\CampaignManager;
-use WpabCb\Helper\Logger;
+use WpabCampaignBay\Core\Campaign;
+use WpabCampaignBay\Engine\CampaignManager;
+use WpabCampaignBay\Helper\Logger;
 
 /**
  * The REST API Controller for Campaigns.
@@ -533,7 +533,7 @@ class CampaignsController extends ApiController
 				$result = $campaign->update(array('status' => $status), true);
 
 				if ($result === true && !is_wp_error($result)) {
-					campaignbay_log('title : ' . $campaign->get_title() . ' ' . $status, 'error');
+					wpab_campaignbay_log('title : ' . $campaign->get_title() . ' ' . $status, 'error');
 					$updated_count++;
 					// Log the activity.
 					Logger::get_instance()->log(
@@ -549,7 +549,7 @@ class CampaignsController extends ApiController
 				}
 				if (is_wp_error($result)) {
 					//phpcs:ignore
-					campaignbay_log(print_r($result, true), 'error');
+					wpab_campaignbay_log(print_r($result, true), 'error');
 				}
 			}
 		}

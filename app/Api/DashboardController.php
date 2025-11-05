@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Api;
+namespace WpabCampaignBay\Api;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -15,7 +15,7 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use WpabCb\Core\Campaign;
+use WpabCampaignBay\Core\Campaign;
 
 /**
  * The REST API Controller for the Dashboard.
@@ -194,8 +194,8 @@ class DashboardController extends ApiController
 
 		//phpcs:ignore
 		$active_count = $wpdb->get_var($sql);
-		campaignbay_log($sql);
-		campaignbay_log($active_count);
+		wpab_campaignbay_log($sql);
+		wpab_campaignbay_log($active_count);
 
 		return array(
 			'active_campaigns' => array(

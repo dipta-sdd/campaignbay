@@ -36,7 +36,7 @@ define('CAMPAIGNBAY_DEV_MODE', true);
 
 spl_autoload_register(function ($class) {
 	// Only handle our plugin's classes
-	if (strpos($class, 'WpabCb\\') !== 0) {
+	if (strpos($class, 'WpabCampaignBay\\') !== 0) {
 		return;
 	}
 	// Convert namespace to file path
@@ -59,7 +59,7 @@ require_once CAMPAIGNBAY_PATH . 'app/functions.php';
 if (!function_exists('campaignbay_run')) {
 	function campaignbay_run()
 	{
-		$plugin = \WpabCb\Core\Plugin::get_instance();
+		$plugin = \WpabCampaignBay\Core\Plugin::get_instance();
 		$plugin->run();
 	}
 }
@@ -68,10 +68,10 @@ campaignbay_run();
 function wpab_campaignbay_activate()
 {
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	\WpabCb\Core\Activator::get_instance()->activate();
+	\WpabCampaignBay\Core\Activator::get_instance()->activate();
 }
 
 function wpab_campaignbay_deactivate()
 {
-	\WpabCb\Core\Deactivator::get_instance()->deactivate();
+	\WpabCampaignBay\Core\Deactivator::get_instance()->deactivate();
 }

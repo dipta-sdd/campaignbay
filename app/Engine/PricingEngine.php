@@ -1,14 +1,14 @@
 <?php
 
-namespace WpabCb\Engine;
+namespace WpabCampaignBay\Engine;
 
 use WC_Product;
 use WP_Error;
-use WpabCb\Core\Base;
-use WpabCb\Core\Common;
-use WpabCb\Engine\CampaignManager;
-use WpabCb\Helper\Helper;
-use WpabCb\Helper\Woocommerce;
+use WpabCampaignBay\Core\Base;
+use WpabCampaignBay\Core\Common;
+use WpabCampaignBay\Engine\CampaignManager;
+use WpabCampaignBay\Helper\Helper;
+use WpabCampaignBay\Helper\Woocommerce;
 
 /**
  * The file that defines the Pricing Engine class.
@@ -161,7 +161,7 @@ class PricingEngine extends Base
 
 		// Save the entire breakdown array to a single meta key on the order.
 		$order->update_meta_data('_campaignbay_discount_breakdown', $discount_breakdown);
-		campaignbay_log(sprintf('Saved discount breakdown to order #%d .', $order->get_id()), 'INFO');
+		wpab_campaignbay_log(sprintf('Saved discount breakdown to order #%d .', $order->get_id()), 'INFO');
 	}
 
 	public function get_price_html($price_html, $product)
@@ -225,7 +225,7 @@ class PricingEngine extends Base
 
 	public function cart_item_price($price_html, $cart_item, $cart_item_key)
 	{
-		// campaignbay_log('cart item price ' . $cart_item['data']->get_name());
+		// wpab_campaignbay_log('cart item price ' . $cart_item['data']->get_name());
 		$meta = isset($cart_item['campaignbay']) ? $cart_item['campaignbay'] : null;
 		if ($meta === null || !isset($meta['on_discount']) || !$meta['on_discount'])
 			return $price_html;
@@ -407,7 +407,7 @@ class PricingEngine extends Base
 		if (!did_action('woocommerce_before_calculate_totals')) {
 
 			// add to cart message for prduct page goes here
-			// campaignbay_log(' after_cart_item_quantity_update');
+			// wpab_campaignbay_log(' after_cart_item_quantity_update');
 		}
 	}
 
