@@ -161,84 +161,18 @@ if (!function_exists('campaignbay_file_system')) {
 	function campaignbay_file_system()
 	{
 		global $wp_filesystem;
+
+		// The require_once is removed. We now rely on this function being called
+		// in the correct context where the necessary files are already loaded by WordPress.
 		if (!$wp_filesystem) {
-			require_once ABSPATH . 'wp-admin' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'file.php';
+			// Initialize the filesystem API.
+			WP_Filesystem();
 		}
 
-		WP_Filesystem();
 		return $wp_filesystem;
 	}
 }
 
-if (!function_exists('campaignbay_parse_changelog')) {
-
-	/**
-	 * Parse the changelog.txt file and convert it to HTML for the update modal.
-	 *
-	 * @since 1.0.0
-	 * @return string The formatted HTML changelog.
-	 */
-	function campaignbay_parse_changelog()
-	{
-		$wp_filesystem = campaignbay_file_system();
-		$changelog_file = apply_filters(CAMPAIGNBAY_OPTION_NAME . '_changelog_file', CAMPAIGNBAY_PATH . 'changelog.txt');
-
-		if (!$changelog_file || !$wp_filesystem->is_readable($changelog_file)) {
-			return '';
-		}
-
-		$content = $wp_filesystem->get_contents($changelog_file);
-
-		if (!$content) {
-			return '';
-		}
-
-		// Find the content specifically under the "== Changelog ==" heading.
-		$matches = null;
-		if (!preg_match('~==\s*Changelog\s*==(.*)($)~Uis', $content, $matches)) {
-			return '';
-		}
-
-		$raw_changelog = trim($matches[1]);
-		$lines = explode("\n", $raw_changelog);
-		$changelog_html = '';
-		$in_list = false;
-
-		// --- NEW: A more robust line-by-line parser ---
-		foreach ($lines as $line) {
-			$line = trim($line);
-
-			// Check for a version heading (e.g., "= 1.1.0 =")
-			if (strpos($line, '= ') === 0) {
-				if ($in_list) {
-					$changelog_html .= "</ul>\n";
-					$in_list = false;
-				}
-				// Extract the version number and wrap it in an <h4> tag.
-				$version = trim(str_replace('=', '', $line));
-				$changelog_html .= "<h4>" . esc_html("Version " . $version) . "</h4>\n";
-			}
-			// Check for a list item (e.g., "* New feature")
-			elseif (strpos($line, '* ') === 0) {
-				if (!$in_list) {
-					$changelog_html .= "<ul>\n";
-					$in_list = true;
-				}
-				// Extract the list item text and wrap it in an <li> tag.
-				$item = trim(substr($line, 1));
-				$changelog_html .= "<li>" . esc_html($item) . "</li>\n";
-			}
-		}
-
-		// Close the final list if it was open.
-		if ($in_list) {
-			$changelog_html .= "</ul>\n";
-		}
-
-		// Sanitize the final HTML to allow only safe tags like <h4>, <ul>, <li>.
-		return wp_kses_post($changelog_html);
-	}
-}
 
 if (!function_exists('campaignbay_get_white_label')):
 	/**

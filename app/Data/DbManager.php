@@ -58,7 +58,8 @@ class DbManager
      */
     public function create_tables()
     {
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        // moved to activation funtion
+        // require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $this->create_campaigns_table();
         $this->create_logs_table();
     }

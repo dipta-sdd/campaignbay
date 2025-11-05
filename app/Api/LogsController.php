@@ -59,7 +59,7 @@ class LogsController extends ApiController
 	{
 		$this->rest_base = 'logs';
 		add_action('rest_api_init', array($this, 'register_routes'));
-
+		// TODO - will move this to cron jobs . 
 		add_action('admin_init', array($this, 'run_log_cleanup_check'));
 	}
 
@@ -99,6 +99,10 @@ class LogsController extends ApiController
 	 */
 	public function cleanup_old_log_files()
 	{
+		if (!is_admin() && !wp_doing_cron()) {
+			return;
+		}
+
 		campaignbay_log('Running daily log file cleanup task.', 'INFO');
 
 		$upload_dir = wp_upload_dir();
@@ -109,6 +113,12 @@ class LogsController extends ApiController
 		}
 
 		$wp_filesystem = campaignbay_file_system();
+
+		if (is_wp_error($wp_filesystem) || !$wp_filesystem) {
+			campaignbay_log('Failed to initialize WP_Filesystem in cleanup_old_log_files.', 'ERROR');
+			return;
+		}
+
 		$files = $wp_filesystem->dirlist($log_dir);
 		$deleted_count = 0;
 

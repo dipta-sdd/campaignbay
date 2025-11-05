@@ -14,7 +14,7 @@ class Helper
     {
         return Common::get_instance()->get_settings($name);
     }
-    public static function get_clean_html($html)
+    public static function get_clean_html($html, $echo = false)
     {
         try {
             $html = html_entity_decode($html);
@@ -32,8 +32,11 @@ class Helper
                 'th' => array('class' => array(), 'style' => array()),
                 'thead' => array('class' => array(), 'style' => array()),
             );
-            // Since v2.5.5
             $allowed_html = apply_filters('advanced_woo_discount_rules_allowed_html_elements_and_attributes', $allowed_html);
+            if ($echo) {
+                echo wp_kses($html, $allowed_html);
+                return;
+            }
             return wp_kses($html, $allowed_html);
         } catch (\Exception $e) {
             return '';
@@ -348,7 +351,8 @@ class Helper
             $table .= '</tr>';
         }
         $table .= '</tbody></table>';
-        return self::get_clean_html($table);
+        self::get_clean_html($table, true);
+        return;
     }
 
     public static function earlybird_current_tier($campaign)

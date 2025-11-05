@@ -2,6 +2,7 @@
 /**
  * Plugin Name:       CampaignBay
  * Plugin URI:        https://wpanchorbay.com/campaignbay
+ * Source URI:        https://github.com/dipta-sdd/campaignbay
  * Description:       Automated Discount Campaigns & Flash Sales for WooCommerce.
  * Requires at least: 5.8
  * Requires PHP:      7.0
@@ -50,9 +51,6 @@ spl_autoload_register(function ($class) {
 require_once CAMPAIGNBAY_PATH . 'app/functions.php';
 
 
-register_activation_hook(__FILE__, [\WpabCb\Core\Activator::class, 'activate']);
-register_deactivation_hook(__FILE__, [\WpabCb\Core\Deactivator::class, 'deactivate']);
-
 /**
  * Begins execution of the plugin.
  *
@@ -66,3 +64,14 @@ if (!function_exists('campaignbay_run')) {
 	}
 }
 campaignbay_run();
+
+function wpab_campaignbay_activate()
+{
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+	\WpabCb\Core\Activator::get_instance()->activate();
+}
+
+function wpab_campaignbay_deactivate()
+{
+	\WpabCb\Core\Deactivator::get_instance()->deactivate();
+}

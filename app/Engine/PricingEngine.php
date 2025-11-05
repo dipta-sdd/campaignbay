@@ -395,9 +395,8 @@ class PricingEngine extends Base
 		if (empty($tiers))
 			return;
 
-		//  alrady escaped  and cleared
-		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo Helper::generate_quantity_table($tiers);
+		//  escaping just before echo
+		Helper::generate_quantity_table($tiers);
 
 		return;
 	}
