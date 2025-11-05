@@ -160,7 +160,7 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
           />
         </div>
       </SettingCard>
-      <SettingCard title={__("Performence & Caching", "campaignbay")}>
+      {/*<SettingCard title={__("Performence & Caching", "campaignbay")}>
         <Checkbox
           checked={globalSettings.perf_enableCaching}
           onChange={() => {
@@ -183,7 +183,7 @@ const GlobalSettings = ({ globalSettings, setGlobalSettings, setEdited }) => {
             {__("Clear Discount Cache", "campaignbay")}
           </button>
         </div>
-      </SettingCard>
+      </SettingCard>*/}
       <SettingCard title={__("Debugging & Logging", "campaignbay")}>
         <Checkbox
           checked={globalSettings.debug_enableMode}

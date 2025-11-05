@@ -40,7 +40,7 @@ spl_autoload_register(function ($class) {
 		return;
 	}
 	// Convert namespace to file path
-	$file = CAMPAIGNBAY_PATH . 'app/' . str_replace('\\', '/', substr($class, 7)) . '.php';
+	$file = CAMPAIGNBAY_PATH . 'app/' . str_replace('\\', '/', substr($class, 16)) . '.php';
 
 	// Load the file if it exists
 	if (file_exists($file)) {
@@ -56,14 +56,14 @@ require_once CAMPAIGNBAY_PATH . 'app/functions.php';
  *
  * @since    1.0.0
  */
-if (!function_exists('campaignbay_run')) {
-	function campaignbay_run()
+if (!function_exists('wpab_campaignbay_run')) {
+	function wpab_campaignbay_run()
 	{
 		$plugin = \WpabCampaignBay\Core\Plugin::get_instance();
 		$plugin->run();
 	}
 }
-campaignbay_run();
+wpab_campaignbay_run();
 
 function wpab_campaignbay_activate()
 {

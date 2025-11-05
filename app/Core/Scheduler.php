@@ -79,7 +79,6 @@ class Scheduler extends Base
 		$this->add_action('campaignbay_campaign_delete', 'clear_campaign_schedules_on_delete', 10, 1);
 
 		// Hook to check for scheduled campaigns.
-		// dont change this priority, it must be 2 to run after the post type is registered.
 		$this->add_action('init', 'run_scheduled_campaigns_cron', 2, 0);
 	}
 
