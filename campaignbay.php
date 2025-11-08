@@ -2,6 +2,7 @@
 /**
  * Plugin Name:       CampaignBay
  * Plugin URI:        https://wpanchorbay.com/campaignbay
+ * Source URI:        https://github.com/dipta-sdd/campaignbay
  * Description:       Automated Discount Campaigns & Flash Sales for WooCommerce.
  * Requires at least: 5.8
  * Requires PHP:      7.0
@@ -35,11 +36,11 @@ define('CAMPAIGNBAY_DEV_MODE', true);
 
 spl_autoload_register(function ($class) {
 	// Only handle our plugin's classes
-	if (strpos($class, 'WpabCb\\') !== 0) {
+	if (strpos($class, 'WpabCampaignBay\\') !== 0) {
 		return;
 	}
 	// Convert namespace to file path
-	$file = CAMPAIGNBAY_PATH . 'app/' . str_replace('\\', '/', substr($class, 7)) . '.php';
+	$file = CAMPAIGNBAY_PATH . 'app/' . str_replace('\\', '/', substr($class, 16)) . '.php';
 
 	// Load the file if it exists
 	if (file_exists($file)) {
@@ -49,20 +50,29 @@ spl_autoload_register(function ($class) {
 
 require_once CAMPAIGNBAY_PATH . 'app/functions.php';
 
-
-register_activation_hook(__FILE__, [\WpabCb\Core\Activator::class, 'activate']);
-register_deactivation_hook(__FILE__, [\WpabCb\Core\Deactivator::class, 'deactivate']);
-
+register_activation_hook(__FILE__, 'wpab_campaignbay_activate');
+register_deactivation_hook(__FILE__, 'wpab_campaignbay_deactivate');
 /**
  * Begins execution of the plugin.
  *
  * @since    1.0.0
  */
-if (!function_exists('campaignbay_run')) {
-	function campaignbay_run()
+if (!function_exists('wpab_campaignbay_run')) {
+	function wpab_campaignbay_run()
 	{
-		$plugin = \WpabCb\Core\Plugin::get_instance();
+		$plugin = \WpabCampaignBay\Core\Plugin::get_instance();
 		$plugin->run();
 	}
 }
-campaignbay_run();
+wpab_campaignbay_run();
+
+function wpab_campaignbay_activate()
+{
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+	\WpabCampaignBay\Core\Activator::activate();
+}
+
+function wpab_campaignbay_deactivate()
+{
+	\WpabCampaignBay\Core\Deactivator::deactivate();
+}

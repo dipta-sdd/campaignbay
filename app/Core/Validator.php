@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
 
 use DateTime;
 use Exception;
@@ -54,7 +54,7 @@ class Validator
 					$value = self::validate_datetime($value);
 					$this->data[$field] = $value;
 				}
-				// campaignbay_log('field : ' . $field);
+				// wpab_campaignbay_log('field : ' . $field);
 				$this->apply_rule($field, $value, $rule);
 			}
 
@@ -96,19 +96,19 @@ class Validator
 				$other_field = array_shift($rule_params);
 				$required_values = $rule_params;
 				$other_value = $this->data[$other_field] ?? null;
-				campaignbay_log("Checking required_if for field: {$field}, other_field: {$other_field}, other_value: {$other_value}, required_values: " . implode(', ', $required_values) . ", current_value: " . (is_array($value) ? 'Array' : (string) $value));
+				wpab_campaignbay_log("Checking required_if for field: {$field}, other_field: {$other_field}, other_value: {$other_value}, required_values: " . implode(', ', $required_values) . ", current_value: " . (is_array($value) ? 'Array' : (string) $value));
 
 
 				if ($other_field && in_array($other_value, $required_values, false)) {
-					campaignbay_log('=======1');
+					wpab_campaignbay_log('=======1');
 					if (is_array($value)) {
-						campaignbay_log('=======2');
+						wpab_campaignbay_log('=======2');
 						if (empty($value)) {
-							campaignbay_log('=======3');
+							wpab_campaignbay_log('=======3');
 							$this->add_error($field, __('This field cannot be empty.', 'campaignbay'));
 						}
 					} elseif ((is_null($value) || trim((string) $value) === '' || $value == 0)) {
-						campaignbay_log('=======4');
+						wpab_campaignbay_log('=======4');
 						$this->add_error($field, __('This field is required.', 'campaignbay'));
 					}
 				}
@@ -121,7 +121,7 @@ class Validator
 				// 	$this->add_error( $field, sprintf( __( 'This field is required when %s is %s.', 'campaignbay' ), $other_field, implode( ', ', $required_values ) ) );
 				// }
 
-				// campaignbay_log( "other_field: $other_field, other_value: $other_value, required_values: " . implode( ', ', (array) $required_values ) . ", value: $value" );
+				// wpab_campaignbay_log( "other_field: $other_field, other_value: $other_value, required_values: " . implode( ', ', (array) $required_values ) . ", value: $value" );
 				break;
 
 			case 'in':

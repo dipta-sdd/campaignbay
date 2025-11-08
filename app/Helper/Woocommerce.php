@@ -1,13 +1,13 @@
 <?php
 
-namespace WpabCb\Helper;
+namespace WpabCampaignBay\Helper;
 
 use WC_Order;
 use WC_Order_Refund;
 use WC_Product;
 use WP_Post;
-use WpabCb\Core\Common;
-use WpabCb\Helper\Helper;
+use WpabCampaignBay\Core\Common;
+use WpabCampaignBay\Helper\Helper;
 
 if (!defined('ABSPATH'))
     exit; // Exit if accessed directly

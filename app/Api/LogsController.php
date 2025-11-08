@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Api;
+namespace WpabCampaignBay\Api;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -59,7 +59,7 @@ class LogsController extends ApiController
 	{
 		$this->rest_base = 'logs';
 		add_action('rest_api_init', array($this, 'register_routes'));
-
+		// TODO - will move this to cron jobs . 
 		add_action('admin_init', array($this, 'run_log_cleanup_check'));
 	}
 
@@ -99,7 +99,11 @@ class LogsController extends ApiController
 	 */
 	public function cleanup_old_log_files()
 	{
-		campaignbay_log('Running daily log file cleanup task.', 'INFO');
+		if (!is_admin() && !wp_doing_cron()) {
+			return;
+		}
+
+		wpab_campaignbay_log('Running daily log file cleanup task.', 'INFO');
 
 		$upload_dir = wp_upload_dir();
 		$log_dir = $upload_dir['basedir'] . '/' . CAMPAIGNBAY_TEXT_DOMAIN . '-logs/';
@@ -108,7 +112,17 @@ class LogsController extends ApiController
 			return; // Nothing to do if the directory doesn't exist.
 		}
 
-		$wp_filesystem = campaignbay_file_system();
+		global $wp_filesystem;
+		if (empty($wp_filesystem)) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		if (is_wp_error($wp_filesystem) || !$wp_filesystem) {
+			wpab_campaignbay_log('Failed to initialize WP_Filesystem in cleanup_old_log_files.', 'ERROR');
+			return;
+		}
+
 		$files = $wp_filesystem->dirlist($log_dir);
 		$deleted_count = 0;
 
@@ -130,15 +144,15 @@ class LogsController extends ApiController
 				if ($wp_filesystem->mtime($file_path) < $cutoff_timestamp) {
 					if ($wp_filesystem->delete($file_path)) {
 						$deleted_count++;
-						campaignbay_log(sprintf('Deleted old log file: %s', $file['name']), 'DEBUG');
+						wpab_campaignbay_log(sprintf('Deleted old log file: %s', $file['name']), 'DEBUG');
 					} else {
-						campaignbay_log(sprintf('Failed to delete old log file: %s', $file['name']), 'ERROR');
+						wpab_campaignbay_log(sprintf('Failed to delete old log file: %s', $file['name']), 'ERROR');
 					}
 				}
 			}
 		}
 
-		campaignbay_log(sprintf('Log cleanup complete. Deleted %d file(s).', $deleted_count), 'INFO');
+		wpab_campaignbay_log(sprintf('Log cleanup complete. Deleted %d file(s).', $deleted_count), 'INFO');
 	}
 
 	/**
@@ -280,7 +294,11 @@ class LogsController extends ApiController
 	private function read_and_respond_with_log_content($log_file_path, $not_found_message)
 	{
 		if (file_exists($log_file_path)) {
-			$wp_filesystem = campaignbay_file_system();
+			global $wp_filesystem;
+			if (empty($wp_filesystem)) {
+				require_once ABSPATH . '/wp-admin/includes/file.php';
+				WP_Filesystem();
+			}
 			$contents = $wp_filesystem->get_contents($log_file_path);
 
 			if (false === $contents) {
@@ -316,7 +334,13 @@ class LogsController extends ApiController
 			return new WP_REST_Response(array('message' => __('Log directory does not exist. Nothing to clear.', 'campaignbay')), 200);
 		}
 
-		$wp_filesystem = campaignbay_file_system();
+		global $wp_filesystem;
+		if (empty($wp_filesystem)) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+
 		$files = $wp_filesystem->dirlist($log_dir);
 		$deleted_count = 0;
 

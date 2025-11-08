@@ -1,13 +1,13 @@
 <?php
 
-namespace WpabCb\Engine;
+namespace WpabCampaignBay\Engine;
 
 use WC_Product;
 use WP_Error;
-use WpabCb\Core\Common;
-use WpabCb\Engine\CampaignManager;
-use WpabCb\Helper\Helper;
-use WpabCb\Helper\Woocommerce;
+use WpabCampaignBay\Core\Common;
+use WpabCampaignBay\Engine\CampaignManager;
+use WpabCampaignBay\Helper\Helper;
+use WpabCampaignBay\Helper\Woocommerce;
 
 /**
  * The file that defines the Pricing Engine class.

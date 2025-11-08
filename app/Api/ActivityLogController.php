@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Api;
+namespace WpabCampaignBay\Api;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use WpabCb\Core\Campaign;
+use WpabCampaignBay\Core\Campaign;
 
 /**
  * The REST API Controller for Activity Logs.
@@ -107,6 +107,26 @@ class ActivityLogController extends ApiController
 
 	/**
 	 * Get a collection of activity log entries.
+	 * 
+	 * @query SELECT 
+	 *		    l.log_id,
+	 *	      	l.campaign_id,
+	 *	      	l.order_id,
+	 *	      	l.user_id,
+	 *	      	l.log_type,
+	 *	      	l.base_total,
+	 *	      	l.total_discount,
+	 *	      	l.order_total,
+	 *	      	l.order_status,
+	 *	      	l.extra_data,
+	 *	      	l.timestamp,
+	 *	      	c.title as campaign_title,
+	 *	      	c.type
+	 *	      FROM wp_campaignbay_logs l
+	 *	      LEFT JOIN wp_campaignbay_campaigns c ON l.campaign_id = c.id 
+	 *	      WHERE 1=1 AND 
+	 *	      l.log_type IN ( "campaign_created", "campaign_updated", "campaign_deleted" ) 
+	 *	      ORDER BY l.timestamp DESC LIMIT 10 OFFSET 0
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -148,83 +168,7 @@ class ActivityLogController extends ApiController
 		$date_to = $request->get_param('date_to');
 
 		// Build WHERE clause
-		$where_clauses = array();
-		$query_params = array();
-
-		if (!empty($log_type)) {
-			if ($log_type === 'activity') {
-				$where_clauses[] = 'l.log_type IN ( "campaign_created", "campaign_updated", "campaign_deleted" )';
-			} else {
-				$where_clauses[] = 'l.log_type = %s';
-				$query_params[] = $log_type;
-			}
-		}
-
-		if (!empty($campaign_id)) {
-			$where_clauses[] = 'l.campaign_id = %d';
-			$query_params[] = (int) $campaign_id;
-		}
-
-		if (!empty($order_status)) {
-			$where_clauses[] = 'l.order_status = %s';
-			$query_params[] = $order_status;
-		}
-
-		if (!empty($date_from)) {
-			$where_clauses[] = 'l.timestamp >= %s';
-			$query_params[] = $date_from . ' 00:00:00';
-		}
-
-		if (!empty($date_to)) {
-			$where_clauses[] = 'l.timestamp <= %s';
-			$query_params[] = $date_to . ' 23:59:59';
-		}
-
-		$where_sql = !empty($where_clauses) ? 'WHERE ' . implode(' AND ', $where_clauses) : '';
-
-		// Build ORDER BY clause
-		$orderby_sql = '';
-		switch ($orderby) {
-			case 'campaign_title':
-				$orderby_sql = 'ORDER BY c.title ' . $order;
-				break;
-			case 'user_name':
-				// For user_name, we'll need to join with users table or use a subquery
-				$orderby_sql = 'ORDER BY l.user_id ' . $order;
-				break;
-			case 'order_id':
-				$orderby_sql = 'ORDER BY l.order_id ' . $order;
-				break;
-			case 'base_total':
-				$orderby_sql = 'ORDER BY l.base_total ' . $order;
-				break;
-			case 'total_discount':
-				$orderby_sql = 'ORDER BY l.total_discount ' . $order;
-				break;
-			case 'order_total':
-				$orderby_sql = 'ORDER BY l.order_total ' . $order;
-				break;
-			case 'log_type':
-				$orderby_sql = 'ORDER BY l.log_type ' . $order;
-				break;
-			case 'timestamp':
-			default:
-				$orderby_sql = 'ORDER BY l.timestamp ' . $order;
-				break;
-		}
-
-		// Get total count for pagination
-		$count_sql = "SELECT COUNT(*) FROM {$logs_table} l {$where_sql}";
-		if (!empty($query_params)) {
-			//phpcs:ignore
-			$count_sql = $wpdb->prepare($count_sql, $query_params);
-		}
-
-		//phpcs:ignore
-		$total_items = $wpdb->get_var($count_sql);
-
-		// Get the actual data with pagination and sorting
-		$data_sql = "SELECT 
+		$sql = "SELECT 
 			l.log_id,
 			l.campaign_id,
 			l.order_id,
@@ -239,14 +183,91 @@ class ActivityLogController extends ApiController
 			c.title as campaign_title,
 			c.type
 		FROM {$logs_table} l
-		LEFT JOIN {$campaigns_table} c ON l.campaign_id = c.id
-		{$where_sql}
-		{$orderby_sql}
-		LIMIT %d OFFSET %d";
+		LEFT JOIN {$campaigns_table} c ON l.campaign_id = c.id WHERE 1=1";
+		$count_sql = "SELECT COUNT(*) FROM {$logs_table} l WHERE 1=1";
+		$query_params = array();
 
-		$final_params = array_merge($query_params, array($per_page, $offset));
+		if (!empty($log_type)) {
+			if ($log_type === 'activity') {
+				$sql .= ' AND l.log_type IN ( "campaign_created", "campaign_updated", "campaign_deleted" )';
+				$count_sql .= ' AND l.log_type IN ( "campaign_created", "campaign_updated", "campaign_deleted" )';
+			} else {
+				$sql .= ' AND l.log_type = %s';
+				$count_sql .= ' AND l.log_type = %s';
+				$query_params[] = $log_type;
+			}
+		}
+
+		if (!empty($campaign_id)) {
+			$sql .= ' AND l.campaign_id = %d';
+			$count_sql .= ' AND l.campaign_id = %d';
+			$query_params[] = (int) $campaign_id;
+		}
+
+		if (!empty($order_status)) {
+			$sql .= ' AND l.order_status = %s';
+			$count_sql .= ' AND l.order_status = %s';
+			$query_params[] = $order_status;
+		}
+
+		if (!empty($date_from)) {
+			$sql .= ' AND l.timestamp >= %s';
+			$count_sql .= ' AND l.timestamp >= %s';
+			$query_params[] = $date_from . ' 00:00:00';
+		}
+
+		if (!empty($date_to)) {
+			$sql .= ' AND l.timestamp <= %s';
+			$count_sql .= ' AND l.timestamp <= %s';
+			$query_params[] = $date_to . ' 23:59:59';
+		}
+
 		//phpcs:ignore
-		$data_sql = $wpdb->prepare($data_sql, $final_params);
+		$count_sql = $wpdb->prepare($count_sql, $query_params);
+
+
+		// Build ORDER BY clause
+		switch ($orderby) {
+			case 'campaign_title':
+				$sql .= ' ORDER BY c.title ';
+				break;
+			case 'user_name':
+				$sql .= ' ORDER BY l.user_id ';
+				break;
+			case 'order_id':
+				$sql .= ' ORDER BY l.order_id ';
+				break;
+			case 'base_total':
+				$sql .= ' ORDER BY l.base_total ';
+				break;
+			case 'total_discount':
+				$sql .= ' ORDER BY l.total_discount ';
+				break;
+			case 'order_total':
+				$sql .= ' ORDER BY l.order_total ';
+				break;
+			case 'log_type':
+				$sql .= ' ORDER BY l.log_type ';
+				break;
+			case 'timestamp':
+			default:
+				$sql .= ' ORDER BY l.timestamp ';
+				break;
+		}
+
+		$sql .= $order === 'ASC' ? 'ASC' : 'DESC';
+
+
+		//phpcs:ignore
+		$total_items = $wpdb->get_var($count_sql);
+
+
+		$sql .= " LIMIT %d OFFSET %d";
+		$query_params[] = $per_page;
+		$query_params[] = $offset;
+
+		//phpcs:ignore
+		$data_sql = $wpdb->prepare($sql, $query_params);
 
 		//phpcs:ignore
 		$results = $wpdb->get_results($data_sql, ARRAY_A);
@@ -266,6 +287,8 @@ class ActivityLogController extends ApiController
 
 		return $response;
 	}
+
+
 
 	/**
 	 * Get a single activity log entry.

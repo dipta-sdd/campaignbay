@@ -1,9 +1,9 @@
 <?php
 
-namespace WpabCb\Admin;
+namespace WpabCampaignBay\Admin;
 
-use WpabCb\Core\Common;
-use WpabCb\Helper\Woocommerce;
+use WpabCampaignBay\Core\Common;
+use WpabCampaignBay\Helper\Woocommerce;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -222,7 +222,7 @@ class Admin
 					'dateFormat' => get_option('date_format'),
 					'timeFormat' => get_option('time_format'),
 				),
-				'campaignbay_settings' => get_option(CAMPAIGNBAY_OPTION_NAME, campaignbay_default_options())
+				'campaignbay_settings' => get_option(CAMPAIGNBAY_OPTION_NAME, wpab_campaignbay_default_options())
 			)
 		);
 
@@ -443,7 +443,7 @@ class Admin
 	 */
 	public function register_settings()
 	{
-		$defaults = campaignbay_default_options();
+		$defaults = wpab_campaignbay_default_options();
 
 		register_setting(
 			CAMPAIGNBAY_OPTION_NAME . '_settings_group',
@@ -454,8 +454,130 @@ class Admin
 				'show_in_rest' => array(
 					'schema' => $this->get_settings_schema(),
 				),
+				'sanitize_callback' => array($this, 'sanitize_settings_object'),
 			)
 		);
+	}
+
+	/**
+	 * Custom sanitization callback for the main settings object.
+	 *
+	 * This function receives the entire settings object and is responsible for
+	 * sanitizing each individual property according to its expected type.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @param array $input The raw array of settings data submitted for saving.
+	 * @return array The sanitized array of settings data.
+	 */
+	public function sanitize_settings_object($input)
+	{
+		$schema = $this->get_settings_schema();
+		$properties = $schema['properties'] ?? array();
+		$default_options = wpab_campaignbay_default_options();
+
+
+		$sanitized_output = get_option(CAMPAIGNBAY_OPTION_NAME, $default_options);
+
+		// Loop through every property defined in our schema.
+		foreach ($properties as $key => $details) {
+			if (!isset($input[$key])) {
+				continue;
+			}
+
+			$value = $input[$key];
+			$type = $details['type'] ?? 'string';
+
+			switch ($type) {
+				case 'boolean':
+					$sanitized_output[$key] = (bool) $value;
+					break;
+
+				case 'integer':
+					$sanitized_output[$key] = absint($value);
+					break;
+
+				case 'string':
+					$sanitized_output[$key] = sanitize_text_field($value);
+					break;
+
+				case 'object':
+					if (is_array($value)) {
+						$sanitized_output[$key] = $this->sanitize_nested_object($value, $details['properties']);
+					}
+					break;
+
+				case 'array':
+					if (is_array($value)) {
+						$sanitized_output[$key] = array_map('sanitize_text_field', $value);
+					} else {
+						$sanitized_output[$key] = array();
+					}
+					break;
+
+				default:
+					$sanitized_output[$key] = sanitize_text_field($value);
+					break;
+			}
+		}
+
+		return $sanitized_output;
+	}
+
+
+	/**
+	 * Helper function to recursively sanitize nested objects.
+	 * This is a pure function that takes input and a schema and returns clean output.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @param array $input The input object (as an array).
+	 * @param array $properties The schema properties for this object.
+	 * @return array The sanitized object.
+	 */
+	private function sanitize_nested_object($input, $properties)
+	{
+		$output = array();
+
+		// Loop through the schema's properties to ensure we only process expected keys.
+		foreach ($properties as $key => $details) {
+			// Only process if the key exists in the submitted input.
+			if (!isset($input[$key])) {
+				continue;
+			}
+
+			$value = $input[$key];
+			$type = $details['type'] ?? 'string';
+
+			switch ($type) {
+				case 'boolean':
+					$output[$key] = (bool) $value;
+					break;
+
+				case 'string':
+					// Also respect the specific sanitize_callback here.
+					$callback = $details['sanitize_callback'] ?? 'sanitize_text_field';
+					if (function_exists($callback)) {
+						$output[$key] = call_user_func($callback, $value);
+					} else {
+						$output[$key] = sanitize_text_field($value);
+					}
+					break;
+
+				case 'object':
+					if (is_array($value)) {
+						$output[$key] = $this->sanitize_nested_object($value, $details['properties']);
+					}
+					break;
+
+				// Add other types as needed (integer, array, etc.)
+				default:
+					$output[$key] = sanitize_text_field($value);
+					break;
+			}
+		}
+
+		return $output;
 	}
 
 	/**

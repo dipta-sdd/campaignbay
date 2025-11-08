@@ -1,6 +1,8 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
+
+use WpabCampaignBay\Engine\CampaignManager;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -42,6 +44,7 @@ class Deactivator
 	public static function deactivate()
 	{
 		self::remove_custom_capabilities();
+		CampaignManager::get_instance()->clear_cache();
 	}
 
 	/**

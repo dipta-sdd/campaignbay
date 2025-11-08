@@ -165,7 +165,7 @@ const GlobalSettings: FC<GlobalSettingsProps> = ({
           />
         </div>
       </SettingCard>
-      <SettingCard title={__("Performance & Caching", "campaignbay")}>
+      {/*<SettingCard title={__("Performence & Caching", "campaignbay")}>
         <Checkbox
           checked={globalSettings.perf_enableCaching}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,7 +187,7 @@ const GlobalSettings: FC<GlobalSettingsProps> = ({
             {__("Clear Discount Cache", "campaignbay")}
           </button>
         </div>
-      </SettingCard>
+      </SettingCard>*/}
       <SettingCard title={__("Debugging & Logging", "campaignbay")}>
         <Checkbox
           checked={globalSettings.debug_enableMode}

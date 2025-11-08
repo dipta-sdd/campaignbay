@@ -1,10 +1,10 @@
 <?php
 
-namespace WpabCb\Engine;
+namespace WpabCampaignBay\Engine;
 
 use WC_Order;
-use WpabCb\Core\Base;
-use WpabCb\Core\Campaign;
+use WpabCampaignBay\Core\Base;
+use WpabCampaignBay\Core\Campaign;
 
 /**
  * Handles actions related to WooCommerce order status changes.
@@ -48,28 +48,28 @@ class OrderManager extends Base
 	public function handle_order_status_change($order_id, $old_status, $new_status, $order)
 	{
 		if ($old_status === 'processing' || $old_status === 'completed') {
-			campaignbay_log(sprintf('Order #%d status changed canceled for old status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+			wpab_campaignbay_log(sprintf('Order #%d status changed canceled for old status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
 			return;
 		}
 		if ($new_status !== 'processing' && $new_status !== 'completed') {
-			campaignbay_log(sprintf('Order #%d status changed canceled for new status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+			wpab_campaignbay_log(sprintf('Order #%d status changed canceled for new status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
 			return;
 		}
-		campaignbay_log(sprintf('Order #%d status changed from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+		wpab_campaignbay_log(sprintf('Order #%d status changed from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
 
 		$discount_breakdown = $order->get_meta('_campaignbay_discount_breakdown', true);
 
 		if (empty($discount_breakdown) || !is_array($discount_breakdown)) {
-			campaignbay_log(sprintf('No campaign data found on order #%d. Aborting log.', $order_id), 'DEBUG');
+			wpab_campaignbay_log(sprintf('No campaign data found on order #%d. Aborting log.', $order_id), 'DEBUG');
 			return; // This order was not processed by our plugin.
 		}
 		do_action('campaignbay_create_order');
 
 		foreach ($discount_breakdown as $campaign_id => $data) {
-			campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG');
+			wpab_campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG');
 			$campaign = new Campaign($campaign_id);
 			$campaign->increment_usage_count();
-			campaignbay_log('incrementing usage count' . $campaign_id);
+			wpab_campaignbay_log('incrementing usage count' . $campaign_id);
 			$this->log_sale_event($campaign_id, $order, $data, $new_status);
 		}
 	}
@@ -129,19 +129,19 @@ class OrderManager extends Base
 
 		if ($existing_log_id) {
 			// If it exists, UPDATE it with the new status and timestamp.
-			campaignbay_log(sprintf('Updating existing log entry #%d for order #%d, campaign #%d. New status: %s', $existing_log_id, $order_id, $campaign_id, $new_status), 'DEBUG');
+			wpab_campaignbay_log(sprintf('Updating existing log entry #%d for order #%d, campaign #%d. New status: %s', $existing_log_id, $order_id, $campaign_id, $new_status), 'DEBUG');
 			// phpcs:ignore 
 			$wpdb->update($table_name, $log_data, array('log_id' => $existing_log_id));// phpcs:ignore 
 		} else {
 			// If it doesn't exist, INSERT a new record.
-			campaignbay_log(sprintf('Creating new log entry for order #%d, campaign #%d. Status: %s', $order_id, $campaign_id, $new_status), 'DEBUG');
+			wpab_campaignbay_log(sprintf('Creating new log entry for order #%d, campaign #%d. Status: %s', $order_id, $campaign_id, $new_status), 'DEBUG');
 			// phpcs:ignore 
 			$wpdb->insert($table_name, $log_data);
 
 			// Increment the usage count for the campaign
 			$campaign = new Campaign($campaign_id);
 			// $campaign->increment_usage_count();
-			// campaignbay_log('usage_count: ' . $campaign->get_usage_count(), 'DEBUG');
+			// wpab_campaignbay_log('usage_count: ' . $campaign->get_usage_count(), 'DEBUG');
 			CampaignManager::get_instance()->clear_cache('order_manager');
 		}
 

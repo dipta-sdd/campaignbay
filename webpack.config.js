@@ -3,6 +3,7 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const isLegacy = process.env.BUILD_TARGET === "legacy";
 
+
 module.exports = isLegacy
   ? {
       // --- LEGACY CONFIGURATION ---

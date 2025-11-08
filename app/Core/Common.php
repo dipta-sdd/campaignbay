@@ -1,9 +1,9 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
@@ -30,7 +30,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @subpackage WPAB_CampaignBayincludes
  * @author     dipta-sdd <sankarsandipta@gmail.com>
  */
-class Common {
+class Common
+{
 	/**
 	 * The single instance of the class.
 	 *
@@ -48,10 +49,11 @@ class Common {
 	 * @return Common
 	 * @since 1.0.0
 	 */
-	public static function get_instance() {
+	public static function get_instance()
+	{
 		// Store the instance locally to avoid private static replication.
 		static $instance = null;
-		if ( null === self::$instance ) {
+		if (null === self::$instance) {
 			self::$instance = new self();
 		}
 		return self::$instance;
@@ -64,13 +66,14 @@ class Common {
 	 * @param string $key optional meta key.
 	 * @return array|null
 	 */
-	public function get_settings( $key = '' ) {
+	public function get_settings($key = '')
+	{
 		static $cache = null;
-		if ( ! $cache ) {
-			$cache = campaignbay_get_options();
+		if (!$cache) {
+			$cache = wpab_campaignbay_get_options();
 		}
-		if ( ! empty( $key ) ) {
-			return isset( $cache[ $key ] ) ? $cache[ $key ] : false;
+		if (!empty($key)) {
+			return isset($cache[$key]) ? $cache[$key] : false;
 		}
 
 		return $cache;
@@ -83,10 +86,11 @@ class Common {
 	 * @access public
 	 * @return array|null
 	 */
-	public function get_white_label() {
+	public function get_white_label()
+	{
 		static $cache = null;
-		if ( ! $cache ) {
-			$cache = campaignbay_get_white_label();
+		if (!$cache) {
+			$cache = wpab_campaignbay_get_white_label();
 		}
 
 		return $cache;
@@ -99,7 +103,8 @@ class Common {
 	 * @access   public
 	 * @return void
 	 */
-	public function register_scripts_and_styles() {
-		
+	public function register_scripts_and_styles()
+	{
+
 	}
 }

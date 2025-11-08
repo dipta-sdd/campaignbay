@@ -1,6 +1,6 @@
 <?php
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
 
 /**
  * The file that defines the Campaign model class.
@@ -23,9 +23,9 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use WP_Error;
-use WpabCb\Core\Validator;
-use WpabCb\Helper\Filter;
-use WpabCb\Helper\Logger;
+use WpabCampaignBay\Core\Validator;
+use WpabCampaignBay\Helper\Filter;
+use WpabCampaignBay\Helper\Logger;
 
 /**
  * The Campaign model class.
@@ -273,7 +273,7 @@ class Campaign
 
 			return $campaign;
 		} catch (Exception $e) {
-			campaignbay_log('Error creating campaign: ' . $e->getMessage(), 'ERROR');
+			wpab_campaignbay_log('Error creating campaign: ' . $e->getMessage(), 'ERROR');
 			return new WP_Error('rest_cannot_create', __('Cannot create campaign.', 'campaignbay'), array('status' => 500, 'error' => $e->getMessage()));
 		}
 	}
@@ -441,7 +441,7 @@ class Campaign
 
 			return true;
 		} catch (Exception $e) {
-			campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
+			wpab_campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
 			return new WP_Error('rest_cannot_update', __('Cannot update campaign.', 'campaignbay'), array('status' => 500, 'error' => $e->getMessage()));
 		}
 	}
@@ -531,7 +531,6 @@ class Campaign
 			);
 		}
 
-
 		return $validator->get_validated_data();
 	}
 
@@ -593,7 +592,7 @@ class Campaign
 		}
 		$allowed_statuses = array('active', 'inactive', 'scheduled', 'expired');
 		if (!in_array($status, $allowed_statuses, true)) {
-			campaignbay_log(
+			wpab_campaignbay_log(
 				// Translators: %s is the invalid status provided.
 				sprintf(__('Invalid status "%s" provided. Status must be one of: active, inactive, scheduled, expired.', 'campaignbay'), $status)
 			);
@@ -651,7 +650,7 @@ class Campaign
 
 			return true;
 		} catch (Exception $e) {
-			campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
+			wpab_campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
 			return new WP_Error('rest_cannot_update', __('Cannot update campaign.', 'campaignbay'), array('status' => 500, 'error' => $e->getMessage()));
 		}
 	}
@@ -865,7 +864,7 @@ class Campaign
 			$date->setTimezone(new DateTimeZone('UTC'));
 			return $date->format('Y-m-d H:i:s');
 		} catch (Exception $e) {
-			campaignbay_log('Invalid start_datetime format for campaign #' . $this->id, 'ERROR');
+			wpab_campaignbay_log('Invalid start_datetime format for campaign #' . $this->id, 'ERROR');
 			return null;
 		}
 	}
@@ -889,7 +888,7 @@ class Campaign
 			$date->setTimezone(new DateTimeZone('UTC'));
 			return $date->format('Y-m-d H:i:s');
 		} catch (Exception $e) {
-			campaignbay_log('Invalid end_datetime format for campaign #' . $this->id, 'ERROR');
+			wpab_campaignbay_log('Invalid end_datetime format for campaign #' . $this->id, 'ERROR');
 			return null;
 		}
 	}
@@ -987,43 +986,46 @@ class Campaign
 		global $wpdb;
 		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
 
-		//phpcs:ignore
+		//phpcs:ignore 
 		$result = $wpdb->query(
 			$wpdb->prepare(
 				//phpcs:ignore
-				"UPDATE {$campaigns_table} SET usage_count = usage_count + 1 WHERE id = %d",
+				"UPDATE {$campaigns_table}
+             SET 
+                usage_count = usage_count + 1,
+                status = CASE 
+                            WHEN usage_limit IS NOT NULL AND usage_limit > 0 AND (usage_count + 1) >= usage_limit 
+                            THEN 'expired' 
+                            ELSE status 
+                         END
+             WHERE id = %d",
 				$this->id
 			)
 		);
-		// update status 
-		if (isset($this->data['usage_count']) && $this->data['usage_count'] !== null && $this->data['usage_count'] !== 0) {
-			//phpcs:ignore
-			$result = $wpdb->query(
-				$wpdb->prepare(
-					//phpcs:ignore
-					"UPDATE {$campaigns_table} SET status = 'expired' WHERE id = %d AND usage_count >= usage_limit",
-					$this->id
-				)
-			);
-		}
-
 
 		if (is_wp_error($result) || false === $result) {
+			wpab_campaignbay_log('Failed to increment usage count for campaign: #' . $this->get_id(), 'ERROR');
 			return false;
 		}
 
-		// Reload data
-		// $this->load_data();
+		// --- Sync the local object with the new data ---
+		// Instead of a full reload, just update the properties we know have changed.
 		$this->data->usage_count = (int) $this->data->usage_count + 1;
-		campaignbay_log('Usage count incremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG');
+
+		// Check if the status should now be 'expired' on the object
+		if ($this->data->usage_limit !== null && $this->data->usage_limit > 0 && $this->data->usage_count >= $this->data->usage_limit) {
+			$this->data->status = 'expired';
+		}
+
+		wpab_campaignbay_log('Usage count incremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG');
 
 		/**
-		 * Fires after a campaign is updated and all its data is saved.
+		 * Fires after a campaign's usage count is updated.
 		 *
 		 * @param int      $campaign_id The ID of the updated campaign.
-		 * @param Campaign $campaign    The campaign object.
+		 * @param Campaign $campaign    The campaign object with the new usage count.
 		 */
-		do_action('campaignbay_campaign_save', $this->id, $this);
+		do_action('campaignbay_campaign_usage_incremented', $this->id, $this);
 
 		return true;
 	}

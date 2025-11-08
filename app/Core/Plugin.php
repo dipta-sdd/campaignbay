@@ -1,6 +1,6 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -9,18 +9,18 @@ if (!defined('ABSPATH')) {
 
 // Use statements to import the classes we need
 
-use WpabCb\Admin\Admin;
-use WpabCb\Api\ActivityLogController;
-use WpabCb\Api\CampaignsController;
-use WpabCb\Api\DashboardController;
-use WpabCb\Api\LogsController;
-use WpabCb\Api\SettingsController;
-use WpabCb\Core\Scheduler;
-use WpabCb\Engine\CampaignManager;
-use WpabCb\Engine\DiscountManager;
-use WpabCb\Engine\OrderManager;
-use WpabCb\Engine\PricingEngine;
-use WpabCb\Helper\Loader;
+use WpabCampaignBay\Admin\Admin;
+use WpabCampaignBay\Api\ActivityLogController;
+use WpabCampaignBay\Api\CampaignsController;
+use WpabCampaignBay\Api\DashboardController;
+use WpabCampaignBay\Api\LogsController;
+use WpabCampaignBay\Api\SettingsController;
+use WpabCampaignBay\Core\Scheduler;
+use WpabCampaignBay\Engine\CampaignManager;
+use WpabCampaignBay\Engine\DiscountManager;
+use WpabCampaignBay\Engine\OrderManager;
+use WpabCampaignBay\Engine\PricingEngine;
+use WpabCampaignBay\Helper\Loader;
 
 /**
  * The core plugin class.
@@ -180,7 +180,7 @@ class Plugin
 	 */
 	public function enqueue_public_styles()
 	{
-		wp_enqueue_style('wpab-cb-public', CAMPAIGNBAY_URL . 'assets/css/public.css', array(), CAMPAIGNBAY_VERSION);
+		wp_enqueue_style(CAMPAIGNBAY_OPTION_NAME . 'public', CAMPAIGNBAY_URL . 'assets/css/public.css', array(), CAMPAIGNBAY_VERSION);
 	}
 
 	/**
@@ -194,10 +194,9 @@ class Plugin
 	private function define_admin_hooks()
 	{
 		$plugin_admin = Admin::get_instance();
-		if (!is_admin()) {
-			campaignbay_log('return non admin');
-			return;
-		}
+		// if (!is_admin()) {
+		// 	return;
+		// }
 		$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
 		$this->loader->add_filter('admin_body_class', $plugin_admin, 'add_has_sticky_header');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_resources');

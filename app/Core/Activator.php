@@ -1,8 +1,9 @@
 <?php
 
-namespace WpabCb\Core;
+namespace WpabCampaignBay\Core;
 
-use WpabCb\Data\DbManager;
+use WpabCampaignBay\Data\DbManager;
+use WpabCampaignBay\Engine\CampaignManager;
 
 /**
  * Fired during plugin activation
@@ -44,9 +45,11 @@ class Activator
 	public static function activate()
 	{
 
+		CampaignManager::get_instance()->clear_cache();
+
 		// Set up the default options if they don't exist.
 		if (!get_option(CAMPAIGNBAY_OPTION_NAME)) {
-			campaignbay_update_options(campaignbay_default_options());
+			wpab_campaignbay_update_options(wpab_campaignbay_default_options());
 		}
 
 		// Create custom database tables.
@@ -133,6 +136,7 @@ class Activator
 			$admin_role->add_cap($custom_capability);
 		}
 
+		// woocommerce role
 		$manager_role = get_role('shop_manager');
 		if ($manager_role && !$manager_role->has_cap($custom_capability)) {
 			$manager_role->add_cap($custom_capability);

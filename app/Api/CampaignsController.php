@@ -1,6 +1,6 @@
 <?php // phpcs:ignore Class file names should be based on the class name with "class-" prepended.
 
-namespace WpabCb\Api;
+namespace WpabCampaignBay\Api;
 
 if (!defined('ABSPATH')) {
 	exit;
@@ -12,9 +12,9 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use WpabCb\Core\Campaign;
-use WpabCb\Engine\CampaignManager;
-use WpabCb\Helper\Logger;
+use WpabCampaignBay\Core\Campaign;
+use WpabCampaignBay\Engine\CampaignManager;
+use WpabCampaignBay\Helper\Logger;
 
 /**
  * The REST API Controller for Campaigns.
@@ -312,38 +312,44 @@ class CampaignsController extends ApiController
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
-		// Build the query
-		$where_clauses = array();
+		// Build the query and parameters together
 		$query_params = array();
+
+		$sql = "SELECT * FROM {$table_name} WHERE 1=1 ";
+		$count_sql = "SELECT COUNT(*) FROM {$table_name} WHERE 1=1 ";
 
 		// Handle Status Filtering
 		$status = $request->get_param('status');
 		if (!empty($status) && 'all' !== $status) {
-			$where_clauses[] = 'status = %s';
+			// CORRECTED: Add a leading space for valid SQL.
+			$sql .= " AND status = %s";
+			$count_sql .= " AND status = %s";
 			$query_params[] = sanitize_key($status);
 		}
 
 		// Handle campaign type filtering
 		$type_filter = $request->get_param('type');
 		if (!empty($type_filter)) {
-			$where_clauses[] = 'type = %s';
+			$sql .= " AND type = %s";
+			$count_sql .= " AND type = %s";
 			$query_params[] = sanitize_key($type_filter);
 		}
 
 		// Handle search
 		$search = $request->get_param('search');
 		if (!empty($search)) {
-			$where_clauses[] = 'title LIKE %s';
+			$sql .= " AND title LIKE %s";
+			$count_sql .= " AND title LIKE %s";
 			$query_params[] = '%' . $wpdb->esc_like(sanitize_text_field($search)) . '%';
 		}
 
-		// Build WHERE clause
-		$where_sql = '';
-		if (!empty($where_clauses)) {
-			$where_sql = 'WHERE ' . implode(' AND ', $where_clauses);
-		}
+		// --- Get total count for headers ---
+		//phpcs:ignore 
+		$total_items = $wpdb->get_var($wpdb->prepare($count_sql, $query_params));
 
-		// Handle ordering
+		// --- Continue building the main query ---
+
+		// Handle ordering (whitelisting is correct)
 		$orderby = $request->get_param('orderby') ?: 'date_modified';
 		$order = $request->get_param('order') ?: 'DESC';
 
@@ -351,31 +357,24 @@ class CampaignsController extends ApiController
 		if (!in_array($orderby, $allowed_orderby, true)) {
 			$orderby = 'date_modified';
 		}
-
 		$order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
 
 		// Handle pagination
-		$per_page = $request->get_param('per_page') ?: 10;
-		$page = $request->get_param('page') ?: 1;
+		$per_page = (int) ($request->get_param('per_page') ?: 10);
+		$page = (int) ($request->get_param('page') ?: 1);
 		$offset = ($page - 1) * $per_page;
 
-		// Get total count for headers
-		$count_sql = "SELECT COUNT(*) FROM {$table_name} {$where_sql}";
-		if (!empty($query_params)) {
-			//phpcs:ignore
-			$total_items = $wpdb->get_var($wpdb->prepare($count_sql, $query_params));
-		} else {
-			//phpcs:ignore
-			$total_items = $wpdb->get_var($count_sql);
-		}
+		// Append the final clauses to the main SQL query
+		$sql .= " ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d";
 
-		// Get the campaigns
-		$sql = "SELECT * FROM {$table_name} {$where_sql} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d";
+		// Add the final parameters for pagination
 		$query_params[] = $per_page;
 		$query_params[] = $offset;
 
+		// Get the campaigns (using the final, complete parameter array)
 		//phpcs:ignore
 		$results = $wpdb->get_results($wpdb->prepare($sql, $query_params));
+
 
 		$response_data = array();
 		if ($results) {
@@ -534,7 +533,7 @@ class CampaignsController extends ApiController
 				$result = $campaign->update(array('status' => $status), true);
 
 				if ($result === true && !is_wp_error($result)) {
-					campaignbay_log('title : ' . $campaign->get_title() . ' ' . $status, 'error');
+					wpab_campaignbay_log('title : ' . $campaign->get_title() . ' ' . $status, 'error');
 					$updated_count++;
 					// Log the activity.
 					Logger::get_instance()->log(
@@ -550,7 +549,7 @@ class CampaignsController extends ApiController
 				}
 				if (is_wp_error($result)) {
 					//phpcs:ignore
-					campaignbay_log(print_r($result, true), 'error');
+					wpab_campaignbay_log(print_r($result, true), 'error');
 				}
 			}
 		}
