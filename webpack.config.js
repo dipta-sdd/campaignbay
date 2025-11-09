@@ -6,8 +6,9 @@ const isLegacy = process.env.BUILD_TARGET === "legacy";
 
 module.exports = isLegacy
   ? {
+      // --- LEGACY CONFIGURATION ---
       entry: {
-        admin: "./src/admin/index.js",
+        admin: "./src/index.tsx",
       },
       output: {
         path: path.resolve(__dirname, "build"),
@@ -15,12 +16,24 @@ module.exports = isLegacy
         clean: false,
       },
       devtool: false,
+      resolve: {
+        ...defaults.resolve,
+        extensions: [".tsx", ".ts", ".js", ".jsx"],
+      },
       module: {
         rules: [
           {
-            test: /\.js$/,
+            // --- THIS IS THE FIX ---
+            test: /\.(js|jsx|ts|tsx)$/,
             exclude: /node_modules/,
-            use: "babel-loader",
+            // Explicitly use babel-loader with the correct WordPress preset.
+            // This is the most stable way to ensure TS/JSX are handled correctly.
+            use: {
+              loader: "babel-loader",
+              options: {
+                presets: [require.resolve("@wordpress/babel-preset-default")],
+              },
+            },
           },
           {
             test: /\.scss$/,
@@ -33,9 +46,8 @@ module.exports = isLegacy
           },
           {
             test: /\.svg$/,
-            type: "asset/resource", // Use Webpack 5's built-in asset handler.
+            type: "asset/resource",
             generator: {
-              // This ensures the output file has a readable name and is placed in an 'images' folder.
               filename: "images/[name][ext]",
             },
           },
@@ -48,13 +60,14 @@ module.exports = isLegacy
       ],
     }
   : {
+      // --- MODERN (!isLegacy) CONFIGURATION (Working) ---
       ...defaults,
       externals: {
         react: "React",
         "react-dom": "ReactDOM",
       },
       entry: {
-        admin: "./src/admin/index.js",
+        admin: "./src/index.tsx",
       },
       output: {
         ...defaults.output,
