@@ -197,6 +197,7 @@ class Plugin
 		// if (!is_admin()) {
 		// 	return;
 		// }
+
 		$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
 		$this->loader->add_filter('admin_body_class', $plugin_admin, 'add_has_sticky_header');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_resources');
@@ -208,6 +209,8 @@ class Plugin
 		$this->loader->add_filter('plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_plugin_action_links', 10, 4);
 		$this->loader->add_filter('plugin_row_meta', $plugin_admin, 'add_plugin_row_meta', 10, 2);
 	}
+
+
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

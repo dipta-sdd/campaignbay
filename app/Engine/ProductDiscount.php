@@ -97,6 +97,7 @@ class ProductDiscount
 	 */
 	public function apply_discounts()
 	{
+
 		// if variable product just apply on variations
 		if (Woocommerce::product_type_is($this->product, 'variable')) {
 			return $this->apply_discounts_on_variations();
@@ -114,8 +115,31 @@ class ProductDiscount
 		);
 
 		foreach ($this->campaigns as $campaign) {
-			if ($campaign->get_type() !== 'scheduled' && $campaign->get_type() !== 'earlybird')
+			if ($campaign->get_type() !== 'scheduled' && $campaign->get_type() !== 'earlybird') {
+				/**
+				 * Fires when a product-level campaign type not native to the free version is being processed.
+				 *
+				 * This hook is the primary entry point for Pro add-ons to integrate their own
+				 * campaign logic into the pricing engine. A function hooked here should
+				 * perform its calculations and can modify the `$product_discount_processor`
+				 * object directly if needed (since it's passed by reference).
+				 *
+				 * @since 1.0.0
+				 * @hook campaignbay_product_discount_calculation_pro
+				 *
+				 * @param \WC_Product $product The product object currently being processed.
+				 * @param \WpabCampaignBay\Engine\ProductDiscount $product_discount_processor The instance of the current pricing processor object.
+				 * @param object $campaign The campaign object that needs to be processed.
+				 * @param float $original_price The product's original regular price.
+				 * @param float $base_price The price being used as the starting point for calculations (could be sale price).
+				 * @param float|null $best_price The best discounted price found so far in the loop.
+				 * @param object|null $applied_campaign The campaign object corresponding to the current best price.
+				 * @param array|null $applied_tier The tier data (if any) corresponding to the current best price.
+				 */
+				do_action('campaignbay_product_discount_calculation_pro', $this->product, $this, $campaign, $original_price, $base_price, $best_price, $applied_campaign, $applied_tier);
+
 				continue;
+			}
 			if (!$campaign->is_applicable_to_product($this->product)) {
 				continue;
 			}
@@ -132,6 +156,29 @@ class ProductDiscount
 			}
 		}
 		if ($applied_campaign !== null) {
+
+			/**
+			 * Fires within the campaign loop, just before the current campaign's price is compared to the best price.
+			 *
+			 * This action hook is a powerful entry point for Pro add-ons to run their own logic for custom
+			 * campaign types. A Pro add-on could hook here, check if `$campaign` is a "Pro" type,
+			 * run its own price calculation, and then use the 'campaignbay_product_best_price' filter
+			 * to inject its calculated price into the competition.
+			 *
+			 * @since 1.0.0
+			 * @hook campaignbay_product_discount_before_appling
+			 *
+			 * @param WC_Product $product          The WooCommerce product object currently being processed.
+			 * @param object     $product_discount The instance of the ProductDiscount class.
+			 * @param object     $campaign         The specific campaign object being evaluated in this loop iteration.
+			 * @param float      $original_price   The product's original regular price.
+			 * @param float      $base_price       The price being used as the base for calculations (could be regular or sale price).
+			 * @param float|null $best_price       The best discounted price found so far from previous campaigns in the loop.
+			 * @param object|null $applied_campaign The campaign object that corresponds to the current best price.
+			 * @param object|null $applied_tier     The specific tier (if any) of the applied campaign.
+			 */
+			do_action('campaignbay_product_discount_before_appling', $this->product, $this, $campaign, $original_price, $base_price, $best_price, $applied_campaign, $applied_tier);
+
 			$this->data['on_discount'] = true;
 			$this->data['is_simple'] = true;
 			$data = array(
@@ -162,9 +209,47 @@ class ProductDiscount
 				$this->data['is_on_sale'] = false;
 				$this->product->set_regular_price($this->data['simple']['price']);
 			}
+
+			/**
+			 * Fires within the campaign loop, just before the current campaign's price is compared to the best price.
+			 *
+			 * This action hook is a powerful entry point for Pro add-ons to run their own logic for custom
+			 * campaign types. A Pro add-on could hook here, check if `$campaign` is a "Pro" type,
+			 * run its own price calculation, and then use the 'campaignbay_product_best_price' filter
+			 * to inject its calculated price into the competition.
+			 *
+			 * @since 1.0.0
+			 * @hook campaignbay_product_discount_before_appling
+			 *
+			 * @param WC_Product $product          The WooCommerce product object currently being processed.
+			 * @param object     $product_discount The instance of the ProductDiscount class.
+			 * @param object     $campaign         The specific campaign object being evaluated in this loop iteration.
+			 * @param float      $original_price   The product's original regular price.
+			 * @param float      $base_price       The price being used as the base for calculations (could be regular or sale price).
+			 * @param float|null $best_price       The best discounted price found so far from previous campaigns in the loop.
+			 * @param object|null $applied_campaign The campaign object that corresponds to the current best price.
+			 * @param object|null $applied_tier     The specific tier (if any) of the applied campaign.
+			 */
+			do_action('campaignbay_product_discount_after_appling', $this->product, $this, $campaign, $original_price, $base_price, $best_price, $applied_campaign, $applied_tier);
+
 		}
 
-		$this->product->add_meta_data('campaignbay', $this->data, true);
+		/**
+		 * Filters the final array of calculated discount metadata before it is attached to the product object.
+		 *
+		 * This is the primary filter for extending or modifying the data that gets stored with the product.
+		 * A Pro add-on could use this to add its own flags or data (e.g., 'free_shipping_applied' => true)
+		 * to the metadata, which can then be used by other parts of the plugin, like the cart.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_product_discount_meta
+		 *
+		 * @param array      $data    The array of calculated discount data for the product.
+		 * @param WC_Product $product The WooCommerce product object this data will be attached to.
+		 *
+		 * @return array The modified data array.
+		 */
+		$this->product->add_meta_data('campaignbay', apply_filters('campaignbay_product_discount_meta', $this->data, $this->product), true);
 		return $this;
 	}
 

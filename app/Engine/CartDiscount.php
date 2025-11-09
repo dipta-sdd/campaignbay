@@ -9,18 +9,6 @@ use WpabCampaignBay\Engine\CampaignManager;
 use WpabCampaignBay\Helper\Helper;
 use WpabCampaignBay\Helper\Woocommerce;
 
-/**
- * The file that defines the Pricing Engine class.
- *
- * A class definition that handles all pricing interactions with WooCommerce.
- *
- * @link       https://wpanchorbay.com
- * @since      1.0.0
- *
- * @package    WPAB_CampaignBay
- * @subpackage WPAB_CampaignBay/includes
- */
-
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
 	exit;
@@ -39,6 +27,12 @@ if (!defined('ABSPATH')) {
 class CartDiscount
 {
 
+	/**
+	 * checking cart_allow_campaign_stacking
+	 * 
+	 * @since 1.0.0
+	 * @return bool
+	 */
 	public static function cart_allow_campaign_stacking()
 	{
 		$settings = Common::get_instance()->get_settings();
@@ -47,13 +41,38 @@ class CartDiscount
 		return $settings['cart_allowCampaignStacking'];
 	}
 
+	/**
+	 * Summary of calculate_cart_discount
+	 * 
+	 * @since 1.0.0
+	 * @param Cart $cart
+	 * @return array
+	 */
 	public static function calculate_cart_discount($cart)
 	{
 		return self::calculate_discounts($cart);
 	}
 
+	/**
+	 * Summary of calculate_discounts
+	 * 
+	 * @since 1.0.0
+	 * @param Cart $cart
+	 * @return array
+	 */
 	public static function calculate_discounts($cart = null)
 	{
+		/**
+		 * Fires before any of CampaignBay's cart discount calculations begin.
+		 *
+		 * This is the primary entry point for a Pro version or third-party add-on to
+		 * run its own complete set of cart discount rules. An add-on can use this hook
+		 * to calculate its own discounts and add them to a custom property on the $cart object
+		 * before the Free version's logic starts.
+		 *
+		 * @param \WC_Cart $cart The main WooCommerce cart object.
+		 */
+		do_action('campaignbay_before_cart_discount_calculation', $cart);
 
 		$cart->campaignbay = array(
 			'coupon' => array(),
@@ -64,10 +83,26 @@ class CartDiscount
 			foreach ($cart->cart_contents as $key => $cart_item) {
 				$meta = self::get_cart_discount($cart_item);
 				$simple_applied = false;
+				$cart_quantity = $cart_item['quantity'];
+
+				/**
+				 * Fires just before the discount logic is processed for a single cart item.
+				 *
+				 * This allows an add-on to perform specific actions or modify the item's
+				 * metadata (`$meta`) before the standard Quantity or BOGO rules are checked.
+				 * For example, a Pro version could use this to apply a "Free Gift" flag
+				 * to this specific cart item.
+				 *
+				 * @param array    $cart_item        The cart item being processed.
+				 * @param int      $cart_quantity    The quantity of the item in the cart.
+				 * @param array    $meta             The pre-calculated CampaignBay metadata for this item.
+				 * @param \WC_Cart $cart             The main WooCommerce cart object.
+				 * @param string   $key              The unique key for the cart item.
+				 */
+				do_action('campaignbay_before_cart_single_discount_calculation', $cart_item, $cart_quantity, $meta, $simple_applied, $discount_breakdown, $cart, $key);
 
 				if ($meta === null)
 					continue;
-				$cart_quantity = $cart_item['quantity'];
 
 				if (isset($meta['bogo']) && isset($meta['bogo']['need_to_add']) && $meta['bogo']['settings']['auto_add_free_product'] === true) {
 					// auto adding free product
@@ -171,11 +206,42 @@ class CartDiscount
 					$discount_breakdown[$campaign_id]['discount'] = $discount_breakdown[$campaign_id]['discount'] + ($cart_quantity * $meta['simple']['discount']);
 				}
 
+				/**
+				 * Fires just after the discount logic is processed for a single cart item.
+				 *
+				 * This allows an add-on to perform specific actions or modify the item's
+				 * metadata (`$meta`) after the standard Quantity or BOGO rules are checked.
+				 * For example, a Pro version could use this to apply a "Free Gift" flag
+				 * to this specific cart item.
+				 *
+				 * @param array    $cart_item        The cart item being processed.
+				 * @param int      $cart_quantity    The quantity of the item in the cart.
+				 * @param array    $meta             The pre-calculated CampaignBay metadata for this item.
+				 * @param \WC_Cart $cart             The main WooCommerce cart object.
+				 * @param string   $key              The unique key for the cart item.
+				 */
+				do_action('campaignbay_before_cart_single_discount_calculation', $cart_item, $cart_quantity, $meta, $simple_applied, $discount_breakdown, $cart, $key);
+
 			}
 		}
 
-
-		$cart->campaignbay_discount_breakdown = $discount_breakdown ?? array();
+		/**
+		 * Filters the discount breakdown array for a single cart item after it
+		 * has been calculated.
+		 *
+		 * This allows an add-on to modify the discount details for a specific item
+		 * before the final cart-wide breakdown is assembled. For example, a Pro
+		 * version could add a "Free Gift" entry to the breakdown for this item.
+		 *
+		 * @param array    $discount_breakdown The current discount breakdown for the entire cart.
+		 * @param array    $cart_item          The cart item being processed.
+		 * @param array    $meta               The CampaignBay metadata for this item.
+		 * @param \WC_Cart $cart               The main WooCommerce cart object.
+		 * @param string   $key                The unique key for the cart item.
+		 *
+		 * @return array The modified discount breakdown.
+		 */
+		$cart->campaignbay_discount_breakdown = apply_filters('campaignbay_discount_breakdown', $discount_breakdown ?? array(), $cart);
 
 		foreach ($cart->campaignbay['coupon'] as $key => $coupon) {
 			self::apply_fake_coupons($key, $cart);
@@ -184,13 +250,38 @@ class CartDiscount
 		foreach ($cart->campaignbay['fee'] as $key => $fee) {
 			$cart->add_fee($fee['title'], $fee['discount'] * -1);
 		}
-
+		/**
+		 * Fires after all CampaignBay discount calculations are complete and have been
+		 * applied to the cart as either coupons or fees.
+		 *
+		 * This is the final hook in the calculation sequence. It's useful for add-ons
+		 * that need to perform a final action based on the fully discounted cart, such
+		 * as updating a session variable or triggering a third-party analytics event.
+		 *
+		 * @param \WC_Cart $cart The fully processed WooCommerce cart object.
+		 */
+		do_action('campaignbay_after_cart_discount_calculation', $cart, );
 
 		return $cart->campaignbay['coupon'];
 	}
 
+
 	public static function get_cart_discount($cart_item)
 	{
+		/**
+		 * Fires after the free version has calculated all its discount metadata for a single cart item.
+		 *
+		 * This action hook allows a Pro version or other extensions to inspect the discount data
+		 * calculated by the free version for a specific item in the cart. It can be used to
+		 * log data or to trigger other actions based on the discounts found.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param array $cart_item The complete cart item array from WooCommerce.
+		 * @param array $meta      The discount metadata array calculated by CampaignBay, including
+		 *                         'simple', 'quantity', 'bogo', etc.
+		 */
+		do_action('campaignbay_before_cart_discount_data', $cart_item);
 		$product = $cart_item['data'];
 		$tiers = Helper::get_quantity_tiers_with_campaign($product);
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
@@ -250,8 +341,37 @@ class CartDiscount
 				$meta['bogo'] = $bogo_meta['bogo'];
 		}
 
+		/**
+		 * Fires after the free version has calculated all its discount metadata for a single cart item.
+		 *
+		 * This action hook allows a Pro version or other extensions to inspect the discount data
+		 * calculated by the free version for a specific item in the cart. It can be used to
+		 * log data or to trigger other actions based on the discounts found.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param array $cart_item The complete cart item array from WooCommerce.
+		 * @param array $meta      The discount metadata array calculated by CampaignBay, including
+		 *                         'simple', 'quantity', 'bogo', etc.
+		 */
+		do_action('campaignbay_after_cart_discount_data', $cart_item, $meta);
 
-		return $meta;
+		/**
+		 * Filters the final discount metadata array for a single cart item before it is returned.
+		 *
+		 * This is the primary hook for a Pro version to add its own discount data or
+		 * modify the data calculated by the free version. For example, a Pro feature
+		 * like "Free Gift" could add its own data to the `$meta` array here, which
+		 * would then be processed by the main cart calculation engine.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param array $meta      The discount metadata array calculated by CampaignBay.
+		 * @param array $cart_item The complete cart item array from WooCommerce.
+		 *
+		 * @return array The potentially modified metadata array.
+		 */
+		return apply_filters('campaignbay_get_cart_discount', $meta, $cart_item);
 	}
 
 
