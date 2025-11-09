@@ -4,6 +4,8 @@ routing.json
 wp-cli.phar
 /.ignores
 /.dist
+/build
+
 package-lock.json
 all_php_code.txt
 todo.txt
