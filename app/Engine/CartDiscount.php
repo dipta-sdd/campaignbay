@@ -42,11 +42,11 @@ class CartDiscount
 	}
 
 	/**
-	 * Summary of calculate_cart_discount
-	 * 
+	 * Public entry point to begin the cart discount calculation process.
+	 *
 	 * @since 1.0.0
-	 * @param Cart $cart
-	 * @return array
+	 * @param \WC_Cart $cart The main WooCommerce cart object.
+	 * @return array An array of virtual coupon codes that were applied.
 	 */
 	public static function calculate_cart_discount($cart)
 	{
@@ -54,11 +54,15 @@ class CartDiscount
 	}
 
 	/**
-	 * Summary of calculate_discounts
-	 * 
+	 * The main worker method that calculates and applies all discounts to the cart.
+	 *
+	 * Iterates through each item in the cart, determines the applicable simple, quantity,
+	 * and BOGO discounts, and then applies them as either a direct price change,
+	 * a virtual coupon, or a negative fee.
+	 *
 	 * @since 1.0.0
-	 * @param Cart $cart
-	 * @return array
+	 * @param \WC_Cart|null $cart The main WooCommerce cart object.
+	 * @return array An array of virtual coupon codes that were applied.
 	 */
 	public static function calculate_discounts($cart = null)
 	{
@@ -69,6 +73,9 @@ class CartDiscount
 		 * run its own complete set of cart discount rules. An add-on can use this hook
 		 * to calculate its own discounts and add them to a custom property on the $cart object
 		 * before the Free version's logic starts.
+		 * 
+		 * @since 1.0.0
+		 * @hook campaignbay_before_cart_discount_calculation
 		 *
 		 * @param \WC_Cart $cart The main WooCommerce cart object.
 		 */
@@ -92,6 +99,9 @@ class CartDiscount
 				 * metadata (`$meta`) before the standard Quantity or BOGO rules are checked.
 				 * For example, a Pro version could use this to apply a "Free Gift" flag
 				 * to this specific cart item.
+				 * 
+				 * @since 1.0.0
+				 * @hook campaignbay_before_cart_single_discount_calculation
 				 *
 				 * @param array    $cart_item        The cart item being processed.
 				 * @param int      $cart_quantity    The quantity of the item in the cart.
@@ -213,6 +223,9 @@ class CartDiscount
 				 * metadata (`$meta`) after the standard Quantity or BOGO rules are checked.
 				 * For example, a Pro version could use this to apply a "Free Gift" flag
 				 * to this specific cart item.
+				 * 
+				 * @since 1.0.0
+				 * @hook campaignbay_after_cart_single_discount_calculation
 				 *
 				 * @param array    $cart_item        The cart item being processed.
 				 * @param int      $cart_quantity    The quantity of the item in the cart.
@@ -232,6 +245,9 @@ class CartDiscount
 		 * This allows an add-on to modify the discount details for a specific item
 		 * before the final cart-wide breakdown is assembled. For example, a Pro
 		 * version could add a "Free Gift" entry to the breakdown for this item.
+		 * 
+		 * @since 1.0.0
+		 * @hook campaignbay_discount_breakdown
 		 *
 		 * @param array    $discount_breakdown The current discount breakdown for the entire cart.
 		 * @param array    $cart_item          The cart item being processed.
@@ -258,6 +274,9 @@ class CartDiscount
 		 * that need to perform a final action based on the fully discounted cart, such
 		 * as updating a session variable or triggering a third-party analytics event.
 		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_after_cart_discount_calculation
+		 * 
 		 * @param \WC_Cart $cart The fully processed WooCommerce cart object.
 		 */
 		do_action('campaignbay_after_cart_discount_calculation', $cart, );
@@ -265,7 +284,17 @@ class CartDiscount
 		return $cart->campaignbay['coupon'];
 	}
 
-
+	/**
+	 * Gathers all CampaignBay discount metadata for a single cart item.
+	 *
+	 * This function is a dispatcher that checks for all applicable campaign types
+	 * (simple, quantity, BOGO, etc.) for a given product and compiles the results
+	 * into a single metadata array.
+	 *
+	 * @since 1.0.0
+	 * @param array $cart_item The cart item to be analyzed.
+	 * @return array The compiled CampaignBay metadata for the item.
+	 */
 	public static function get_cart_discount($cart_item)
 	{
 		/**
@@ -276,6 +305,7 @@ class CartDiscount
 		 * log data or to trigger other actions based on the discounts found.
 		 *
 		 * @since 1.1.0
+		 * @hook campaignbay_before_cart_discount_data
 		 *
 		 * @param array $cart_item The complete cart item array from WooCommerce.
 		 * @param array $meta      The discount metadata array calculated by CampaignBay, including
@@ -349,6 +379,7 @@ class CartDiscount
 		 * log data or to trigger other actions based on the discounts found.
 		 *
 		 * @since 1.1.0
+		 * @hook campaignbay_after_cart_discount_data
 		 *
 		 * @param array $cart_item The complete cart item array from WooCommerce.
 		 * @param array $meta      The discount metadata array calculated by CampaignBay, including
@@ -365,6 +396,7 @@ class CartDiscount
 		 * would then be processed by the main cart calculation engine.
 		 *
 		 * @since 1.1.0
+		 * @hook campaignbay_get_cart_discount
 		 *
 		 * @param array $meta      The discount metadata array calculated by CampaignBay.
 		 * @param array $cart_item The complete cart item array from WooCommerce.
@@ -374,7 +406,16 @@ class CartDiscount
 		return apply_filters('campaignbay_get_cart_discount', $meta, $cart_item);
 	}
 
-
+	/**
+	 * Prepares and adds discount data to the cart object to be applied as a virtual coupon.
+	 *
+	 * This helper function organizes discount data into a structured format within the
+	 * `$cart->campaignbay['coupon']` array, grouping discounts by type and campaign.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Cart $cart The main WooCommerce cart object.
+	 * @param array    $data The discount data to add.
+	 */
 	public static function add_data($cart, $data = array())
 	{
 		if ($data['type'] === 'percent') {
@@ -404,9 +445,19 @@ class CartDiscount
 		}
 	}
 
+	/**
+	 * Programmatically applies a coupon code to the cart.
+	 *
+	 * This function adds a coupon code to the cart's list of applied coupons,
+	 * triggering WooCommerce's discount calculation for that coupon.
+	 *
+	 * @since 1.0.0
+	 * @param string   $coupon_code The coupon code to apply.
+	 * @param \WC_Cart $cart        The main WooCommerce cart object.
+	 * @return bool|void False if the coupon cannot be applied.
+	 */
 	public static function apply_fake_coupons($coupon_code, $cart)
 	{
-		// $coupon_code = apply_filters('woocommerce_coupon_code', $coupon_code);
 		if (is_object($cart) && method_exists($cart, 'has_discount')) {
 			if (!$cart->has_discount($coupon_code)) {
 				if ($cart->applied_coupons) {
@@ -424,6 +475,15 @@ class CartDiscount
 		}
 	}
 
+	/**
+	 * Prepares and adds discount data to the cart object to be applied as a negative fee.
+	 *
+	 * This helper function aggregates discount amounts into the `$cart->campaignbay['fee']` array.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Cart $cart The main WooCommerce cart object.
+	 * @param array    $data The discount data to add.
+	 */
 	public static function add_fee($cart, $data)
 	{
 		$code = 'campaignbay_' . $data['id'];

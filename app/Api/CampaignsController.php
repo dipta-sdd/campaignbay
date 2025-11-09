@@ -819,6 +819,22 @@ class CampaignsController extends ApiController
 	public function get_item_schema()
 	{
 		if (isset($this->schema)) {
+			/**
+			 * Filters the REST API schema for a single campaign item.
+			 *
+			 * This filter allows other developers to extend the campaign's REST API endpoint
+			 * by adding, modifying, or removing properties from its JSON schema. This is useful
+			 * for add-ons that need to save their own custom data alongside a campaign.
+			 *
+			 * The `add_additional_fields_schema` function is called after this filter, ensuring that
+			 * any fields registered via `register_rest_field` are also included.
+			 *
+			 * @since 1.0.0
+			 * @hook  campaignbay_campaign_schema
+			 *
+			 * @param array $schema The campaign item schema array.
+			 * @return array The filtered campaign item schema array.
+			 */
 			return $this->add_additional_fields_schema(apply_filters('campaignbay_campaign_schema', $this->schema));
 		}
 
@@ -953,6 +969,22 @@ class CampaignsController extends ApiController
 
 		$this->schema = $schema;
 
+		/**
+		 * Filters the REST API schema for a single campaign item.
+		 *
+		 * This filter allows other developers to extend the campaign's REST API endpoint
+		 * by adding, modifying, or removing properties from its JSON schema. This is useful
+		 * for add-ons that need to save their own custom data alongside a campaign.
+		 *
+		 * The `add_additional_fields_schema` function is called after this filter, ensuring that
+		 * any fields registered via `register_rest_field` are also included.
+		 *
+		 * @since 1.0.0
+		 * @hook  campaignbay_campaign_schema
+		 *
+		 * @param array $schema The campaign item schema array.
+		 * @return array The filtered campaign item schema array.
+		 */
 		return $this->add_additional_fields_schema(apply_filters('campaignbay_campaign_schema', $this->schema));
 	}
 

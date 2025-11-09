@@ -126,7 +126,20 @@ class LogsController extends ApiController
 		$files = $wp_filesystem->dirlist($log_dir);
 		$deleted_count = 0;
 
-		// Define the retention period.
+		/**
+		 * Filters the number of days to retain log entries before they are automatically purged.
+		 *
+		 * This filter controls the duration for which campaign and activity logs are kept in the
+		 * custom database table. Developers can use this to increase or decrease the log retention
+		 * period to suit specific store needs (e.g., longer retention for auditing, or shorter
+		 * retention to conserve database space on high-volume stores).
+		 *
+		 * @since 1.0.0
+		 * @hook  campaignbay_log_retention_days
+		 *
+		 * @param int $days_to_keep The default number of days to keep logs (default: 7).
+		 * @return int The filtered number of days.
+		 */
 		$days_to_keep = apply_filters(CAMPAIGNBAY_TEXT_DOMAIN . '_log_retention_days', 7);
 		// Calculate the cutoff timestamp. Any file older than this will be deleted.
 		$cutoff_timestamp = time() - ($days_to_keep * DAY_IN_SECONDS);

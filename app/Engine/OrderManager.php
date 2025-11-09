@@ -63,7 +63,6 @@ class OrderManager extends Base
 			wpab_campaignbay_log(sprintf('No campaign data found on order #%d. Aborting log.', $order_id), 'DEBUG');
 			return; // This order was not processed by our plugin.
 		}
-		do_action('campaignbay_create_order');
 
 		foreach ($discount_breakdown as $campaign_id => $data) {
 			wpab_campaignbay_log('campaign_id: ' . $campaign_id, 'DEBUG');

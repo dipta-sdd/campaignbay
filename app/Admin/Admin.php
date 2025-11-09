@@ -208,6 +208,33 @@ class Admin
 		wp_style_add_data(CAMPAIGNBAY_PLUGIN_NAME, 'rtl', 'replace');
 
 		$woocommerce_currency_symbol = Woocommerce::get_currency_symbol();
+
+		/**
+		 * Filters the data passed from PHP to the main admin JavaScript application.
+		 *
+		 * This array is made available in the frontend as a global JavaScript object
+		 * (e.g., `window.wpab_cb_Localize`). It serves as the primary "bootstrap" data,
+		 * providing the React application with all the necessary server-side information
+		 * it needs to initialize and function correctly. This includes API details,
+		 * security nonces, global settings, and localization data.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_admin_localize
+		 *
+		 * @param array $localize An associative array of data to be passed to the JavaScript application.
+		 *    @type string $version                 The current version of the plugin, useful for cache-busting or debugging.
+		 *    @type string $root_id                 The ID of the HTML element where the React application will be mounted.
+		 *    @type string $nonce                   The security nonce required for making authenticated WordPress REST API requests.
+		 *    @type string $store                   A unique identifier for the plugin, often used for JavaScript state management stores (e.g., Redux).
+		 *    @type string $rest_url                The root URL of the WordPress REST API (e.g., 'https://example.com/wp-json/'). Essential for making API calls robustly.
+		 *    @type array  $white_label             An array of white-label settings (plugin name, author, support links, etc.) for display in the UI.
+		 *    @type string $woocommerce_currency_symbol The active currency symbol for the WooCommerce store (e.g., '$').
+		 *    @type array  $wpSettings              An array of core WordPress settings needed by the frontend.
+		 *        @type string $dateFormat          The site's configured date format (e.g., 'F j, Y').
+		 *        @type string $timeFormat          The site's configured time format (e.g., 'g:i a').
+		 *    @type array  $campaignbay_settings    An array containing all the saved global settings for the CampaignBay plugin.
+		 * @return array The filtered localization data array.
+		 */
 		$localize = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_admin_localize',
 			array(
@@ -264,6 +291,34 @@ class Admin
 	 */
 	public function get_settings_schema()
 	{
+		/**
+		 * Filters the entire settings schema for the plugin.
+		 *
+		 * This schema is used with the WordPress `register_setting` function to define the
+		 * structure, data types, default values, and sanitization callbacks for all of the
+		 * plugin's global options. It powers the REST API endpoint that the React-based
+		 * settings page uses to read and write data.
+		 *
+		 * The structure is a flat associative array where each key represents a single setting.
+		 * A `[tab_name]_[setting_name]` naming convention is used to organize the settings
+		 * logically, even though they are stored in a single database option.
+		 *
+		 * Developers can use this filter to add, modify, or remove settings from the CampaignBay
+		 * settings page, allowing for powerful extensibility.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_options_properties
+		 *
+		 * @param array $setting_properties The associative array of setting properties.
+		 *    @type string $key The unique key for the setting (e.g., 'global_enableAddon').
+		 *    @type array  $value An array defining the schema for the setting.
+		 *        @type string   $type              The data type ('string', 'boolean', 'integer', 'object', 'array').
+		 *        @type mixed    $default           The default value for the setting.
+		 *        @type callable $sanitize_callback The function to use for sanitizing the setting's value upon saving.
+		 *        @type array    $properties        For 'object' types, a nested associative array defining the properties of the object.
+		 *
+		 * @return array The filtered array of setting properties.
+		 */
 		$setting_properties = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_options_properties',
 			array(

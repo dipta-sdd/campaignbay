@@ -84,6 +84,19 @@ if (!function_exists('wpab_campaignbay_default_options')):
 			==================================================*/
 			'advanced_deleteAllOnUninstall' => false,
 		);
+		/**
+		 * Filters the default options for the plugin.
+		 *
+		 * This allows other developers or add-ons to modify the plugin's default settings
+		 * before they are returned or saved for the first time. It provides a clean way
+		 * to extend or change the core default behavior without altering the plugin's code.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_default_options
+		 *
+		 * @param array $default_options The array of default plugin options.
+		 * @return array The filtered array of default options.
+		 */
 		return apply_filters(CAMPAIGNBAY_OPTION_NAME . '_default_options', $default_options);
 	}
 endif;
@@ -159,11 +172,47 @@ if (!function_exists('wpab_campaignbay_get_white_label')):
 	 */
 	function wpab_campaignbay_get_white_label($key = '')
 	{
+		/**
+		 * Filters the generic white-label plugin name.
+		 *
+		 * This filter provides a simple hook to change the plugin's name for white-labeling
+		 * purposes. It's a general-purpose filter, often superseded by the more detailed
+		 * array provided in the `_white_label` filter below.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_white_label_plugin_name
+		 *
+		 * @param string The default plugin name string.
+		 * @return string The filtered plugin name.
+		 */
 		$plugin_name = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_white_label_plugin_name',
 			esc_html('WP React Plugin Boilerplate')
 		);
 
+		/**
+		 * Filters the entire array of white-label settings for the plugin.
+		 *
+		 * This is the main filter for re-branding the plugin. It allows developers to
+		 * change all branding-related text and URLs that are used to build the admin menu,
+		 * localize scripts for the React UI, and provide support links.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_white_label
+		 *
+		 * @param array $options An associative array of white-label settings.
+		 *    @type string $plugin_name The full, formal name of the plugin.
+		 *    @type string $short_name The shorter name used in UI elements.
+		 *    @type string $menu_label The text for the main admin menu item.
+		 *    @type string $custom_icon The URL to the icon used in custom UI components.
+		 *    @type string $menu_icon The URL to the icon for the admin menu, or a Dashicon slug.
+		 *    @type string $author_name The name of the plugin author.
+		 *    @type string $author_uri The URL for the plugin author's website.
+		 *    @type string $support_uri The URL for the plugin's support forum or page.
+		 *    @type string $docs_uri The URL for the plugin's documentation.
+		 *    @type int $position The position of the menu item in the WordPress admin sidebar.
+		 * @return array The filtered array of white-label settings.
+		 */
 		$options = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_white_label',
 			array(

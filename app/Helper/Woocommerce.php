@@ -94,6 +94,24 @@ class Woocommerce
     static function format_sale_price($price1, $price2)
     {
         if (function_exists('wc_format_sale_price')) {
+
+            /**
+             * Filters the HTML output for a sale price display (strikethrough price).
+             *
+             * This hook allows developers to completely override the final HTML string for a
+             * product's sale price as formatted by the plugin. It passes the original regular
+             * and sale prices, allowing for custom formatting, different separators, or the
+             * addition of extra HTML elements.
+             *
+             * @since 1.0.0
+             * @hook  campaignbay_format_sale_price
+             *
+             * @param string      $html_price    The default sale price HTML (e.g., '<del>...</del><ins>...</ins>').
+             * @param string|float $regular_price The product's regular price.
+             * @param string|float $sale_price    The product's sale price.
+             *
+             * @return string The modified sale price HTML.
+             */
             return apply_filters('campaignbay_format_sale_price', wc_format_sale_price($price1, $price2), $price1, $price2);
         }
         return NULL;
@@ -153,6 +171,22 @@ class Woocommerce
             if (is_object($product) && method_exists($product, 'get_parent_id')) {
                 $parent_id = $product->get_parent_id();
             }
+        /**
+         * Filters the parent ID of a given product.
+         *
+         * This hook is used primarily to identify the main variable product ID from a
+         * variation object. Developers can use this filter to provide a custom parent ID,
+         * which is useful for complex product types like bundles or composites that may
+         * have their own unique parent/child relationships.
+         *
+         * @since 1.0.0
+         * @hook  campaignbay_get_product_parent_id
+         *
+         * @param int        $parent_id The determined parent ID (0 if not a variation).
+         * @param WC_Product $product   The product object being checked.
+         *
+         * @return int The filtered parent ID.
+         */
         return apply_filters('campaignbay_get_product_parent_id', $parent_id, $product);
     }
 
@@ -236,6 +270,23 @@ class Woocommerce
         if (isset(self::$products[$product_id])) {
             return self::$products[$product_id];
         } else if (function_exists('wc_get_product')) {
+            /**
+             * Filters the WooCommerce product object retrieved by the plugin.
+             *
+             * This hook is applied after the plugin fetches a product object using `wc_get_product()`.
+             * It allows developers to intercept and modify the product object before it is used
+             * in any of the plugin's internal calculations or caching mechanisms. This can be used
+             * for advanced scenarios, such as substituting a different product object for testing
+             * or complex bundling logic.
+             *
+             * @since 1.0.0
+             * @hook  campaignbay_get_product
+             *
+             * @param WC_Product|false $product_object The retrieved product object, or false if not found.
+             * @param int              $product_id     The ID of the product that was requested.
+             *
+             * @return WC_Product|false The filtered product object.
+             */
             self::$products[$product_id] = apply_filters('campaignbay_get_product', wc_get_product($product_id), $product_id);
 
             return self::$products[$product_id];

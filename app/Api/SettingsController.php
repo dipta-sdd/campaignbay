@@ -212,9 +212,18 @@ class SettingsController extends ApiController
 		);
 
 		/**
-		 * Filters the item's schema.
+		 * Filters the REST API schema for the global settings object.
 		 *
-		 * @param array $schema Item schema data.
+		 * This filter allows other developers to extend the plugin's main settings page
+		 * by adding their own setting fields to the REST API endpoint. Any properties
+		 * added here should also have their default values added via the
+		 * `campaignbay_default_options` filter to ensure proper functionality.
+		 *
+		 * @since 1.0.0
+		 * @hook  campaignbay_rest_settings_item_schema
+		 *
+		 * @param array $schema The associative array defining the entire settings schema.
+		 * @return array The filtered settings schema array.
 		 */
 		$schema = apply_filters("campaignbay_rest_settings_item_schema", $schema);
 

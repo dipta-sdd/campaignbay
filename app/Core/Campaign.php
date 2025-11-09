@@ -254,6 +254,9 @@ class Campaign
 			/**
 			 * Fires after a new campaign is created and all its data is saved.
 			 *
+			 * @since 1.0.0
+			 * @hook campaignbay_campaign_save
+			 * 
 			 * @param int      $campaign_id The ID of the new campaign.
 			 * @param Campaign $campaign    The campaign object.
 			 */
@@ -422,6 +425,9 @@ class Campaign
 			/**
 			 * Fires after a campaign is updated and all its data is saved.
 			 *
+			 * @since 1.0.0
+			 * @hook campaignbay_campaign_save
+			 * 
 			 * @param int      $campaign_id The ID of the updated campaign.
 			 * @param Campaign $campaign    The campaign object.
 			 */
@@ -461,7 +467,14 @@ class Campaign
 
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-
+		/**
+		 * Fires before a campaign is deleted.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_before_campaign_delete
+		 * 
+		 * @param int $campaign_id The ID of the deleted campaign.
+		 */
 		do_action('campaignbay_before_campaign_delete', $campaign_id);
 
 		//phpcs:ignore
@@ -473,6 +486,9 @@ class Campaign
 
 		/**
 		 * Fires after a campaign is deleted.
+		 * 
+		 * @since 1.0.0
+		 * @hook campaignbay_campaign_delete
 		 *
 		 * @param int $campaign_id The ID of the deleted campaign.
 		 */
@@ -630,6 +646,9 @@ class Campaign
 
 			/**
 			 * Fires after a campaign is updated and all its data is saved.
+			 * 
+			 * @since 1.0.0
+			 * @hook campaignbay_campaign_save
 			 *
 			 * @param int      $campaign_id The ID of the updated campaign.
 			 * @param Campaign $campaign    The campaign object.
@@ -1021,6 +1040,9 @@ class Campaign
 
 		/**
 		 * Fires after a campaign's usage count is updated.
+		 * 
+		 * @since 1.0.0
+		 * @hook campaignbay_campaign_usage_incremented
 		 *
 		 * @param int      $campaign_id The ID of the updated campaign.
 		 * @param Campaign $campaign    The campaign object with the new usage count.
