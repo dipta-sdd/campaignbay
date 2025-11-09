@@ -4,7 +4,7 @@
  * Plugin URI:        https://wpanchorbay.com/campaignbay
  * Source URI:        https://github.com/dipta-sdd/campaignbay
  * Description:       Automated Discount Campaigns & Flash Sales for WooCommerce.
- * Requires at least: 5.8
+ * Requires at least: 5.6
  * Requires PHP:      7.0
  * Requires Plugins:  woocommerce
  * WC requires at least: 6.1
@@ -49,6 +49,9 @@ spl_autoload_register(function ($class) {
 });
 
 require_once CAMPAIGNBAY_PATH . 'app/functions.php';
+if (!function_exists('is_plugin_active')) {
+	include_once ABSPATH . 'wp-admin/includes/plugin.php';
+}
 
 register_activation_hook(__FILE__, 'wpab_campaignbay_activate');
 register_deactivation_hook(__FILE__, 'wpab_campaignbay_deactivate');
@@ -60,8 +63,13 @@ register_deactivation_hook(__FILE__, 'wpab_campaignbay_deactivate');
 if (!function_exists('wpab_campaignbay_run')) {
 	function wpab_campaignbay_run()
 	{
-		$plugin = \WpabCampaignBay\Core\Plugin::get_instance();
-		$plugin->run();
+		if (is_plugin_active('woocommerce/woocommerce.php')) {
+			$plugin = \WpabCampaignBay\Core\Plugin::get_instance();
+			$plugin->run();
+		} else {
+			add_action('admin_notices', 'wpab_campaignbay_woocommerce_not_active_notice');
+		}
+
 	}
 }
 wpab_campaignbay_run();
@@ -75,4 +83,25 @@ function wpab_campaignbay_activate()
 function wpab_campaignbay_deactivate()
 {
 	\WpabCampaignBay\Core\Deactivator::deactivate();
+}
+
+
+
+
+function wpab_campaignbay_woocommerce_not_active_notice()
+{
+	?>
+	<div class="notice notice-error">
+		<p>
+			<?php
+			printf(
+				/* translators: 1: The name of our plugin (CampaignBay). 2: The name of the required plugin (e.g., WooCommerce). */
+				esc_html__('%1$s requires the %2$s plugin to be installed and activated. Please activate %2$s to continue.', 'campaignbay'),
+				'<strong>CampaignBay</strong>',
+				'<strong>WooCommerce</strong>'
+			);
+			?>
+		</p>
+	</div>
+	<?php
 }

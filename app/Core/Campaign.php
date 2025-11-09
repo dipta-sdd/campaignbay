@@ -315,6 +315,7 @@ class Campaign
 		];
 
 		if (!$validator->validate($rules)) {
+			//phpcs:ignore
 			return new WP_Error('rest_validation_error', $validator->get_first_error(), array('status' => 400, 'details' => $validator->get_errors(), 'data' => $args));
 		}
 		$data = $validator->get_validated_data();

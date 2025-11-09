@@ -72,7 +72,6 @@ class DiscountManager extends Base
 		foreach ($hooks as $hook) {
 			$this->add_hook(...$hook);
 		}
-		// $this->add_hook('filter' , 'campaignbay_get_product','add_discount_data', 20, 2 );
 	}
 
 	public function add_discount_data($product, $product_id)
