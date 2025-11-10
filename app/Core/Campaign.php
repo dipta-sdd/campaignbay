@@ -121,28 +121,7 @@ class Campaign
 	{
 		// validating main data
 		$validator = new Validator($args);
-		$rules = [
-			'title' => 'required|max:255',
-			'type' => 'required|in:earlybird,scheduled,quantity,bogo',
-			'status' => 'required|in:active,inactive,scheduled,expired',
-
-			'discount_type' => 'nullable|in:percentage,fixed',
-			'discount_value' => 'required_if:type,scheduled|numeric',
-			'tiers' => 'nullable|array',
-
-			'target_type' => 'nullable|in:entire_store,category,product,tag',
-			'target_ids' => 'required_if:target_type,category,product,tag|array_of_integers',
-			'exclude_sale_items' => 'required|boolean',
-			'is_exclude' => 'nullable|boolean',
-
-			'schedule_enabled' => 'boolean||required_if:status,scheduled',
-			'start_datetime' => 'datetime|required_if:status,scheduled',
-			'end_datetime' => 'datetime|nullable',
-
-			'conditions' => 'nullable|array',
-			'settings' => 'nullable|array',
-			'usage_limit' => 'nullable|integer'
-		];
+		$rules = self::get_validation_rules();
 		// checking validation
 		if (!$validator->validate($rules)) {
 			return new WP_Error('rest_validation_error', $validator->get_first_error(), array('status' => 400, 'details' => $validator->get_errors(), 'data' => $args));
@@ -155,29 +134,7 @@ class Campaign
 		if ($data['type'] === 'quantity' || $data['type'] === 'earlybird' || $data['type'] === 'bogo') {
 			foreach ($data['tiers'] as $tier) {
 				$tier_validator = new Validator($tier);
-				$tier_rules = array();
-				if ($data['type'] === 'quantity') {
-					$tier_rules = [
-						'id' => 'nullable|integer',
-						'min' => 'required|integer|min:1|gte:previous_tier_max',
-						'max' => 'required|integer|min:1|gte:min',
-						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
-						'type' => 'required|in:percentage,currency',
-					];
-				} elseif ($data['type'] === 'earlybird') {
-					$tier_rules = [
-						'id' => 'nullable|integer',
-						'quantity' => 'required|integer|min:1',
-						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
-						'type' => 'required|in:percentage,currency',
-						'total' => 'required|integer|min:0'
-					];
-				} elseif ($data['type'] === 'bogo') {
-					$tier_rules = [
-						'buy_quantity' => 'required|integer|min:1',
-						'get_quantity' => 'required|integer|min:1',
-					];
-				}
+				$tier_rules = self::get_tiers_validation_rules($data['type']);
 				if (!$tier_validator->validate($tier_rules)) {
 					return new WP_Error(
 						'rest_validation_error',
@@ -281,6 +238,8 @@ class Campaign
 		}
 	}
 
+
+
 	/**
 	 * Updates the campaign with new data.
 	 *
@@ -294,28 +253,7 @@ class Campaign
 			$args = array_merge((array) $this->data, $args);
 		}
 		$validator = new Validator($args);
-		$rules = [
-			'title' => 'required|max:255',
-			'type' => 'required|in:earlybird,scheduled,quantity,bogo',
-			'status' => 'required|in:active,inactive,scheduled,expired',
-
-			'discount_type' => 'nullable|in:percentage,fixed',
-			'discount_value' => 'required_if:type,scheduled|numeric',
-			'tiers' => 'nullable|array',
-
-			'target_type' => 'nullable|in:entire_store,category,product,tag',
-			'target_ids' => 'required_if:target_type,category,product,tag|array_of_integers',
-			'exclude_sale_items' => 'required|boolean',
-			'is_exclude' => 'nullable|boolean',
-
-			'schedule_enabled' => 'boolean||required_if:status,scheduled',
-			'start_datetime' => 'datetime|required_if:status,scheduled',
-			'end_datetime' => 'datetime|nullable',
-
-			'conditions' => 'nullable',
-			'settings' => 'nullable',
-			'usage_limit' => 'nullable|integer'
-		];
+		$rules = self::get_validation_rules();
 
 		if (!$validator->validate($rules)) {
 			//phpcs:ignore
@@ -327,29 +265,7 @@ class Campaign
 		if ($data['type'] === 'quantity' || $data['type'] === 'earlybird' || $data['type'] === 'bogo') {
 			foreach ($data['tiers'] as $tier) {
 				$tier_validator = new Validator($tier);
-				$tier_rules = array();
-				if ($data['type'] === 'quantity') {
-					$tier_rules = [
-						'id' => 'nullable|integer',
-						'min' => 'required|integer|min:1|gte:previous_tier_max',
-						'max' => 'required|integer|min:1|gte:min',
-						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
-						'type' => 'required|in:percentage,currency',
-					];
-				} elseif ($data['type'] === 'earlybird') {
-					$tier_rules = [
-						'id' => 'nullable|integer',
-						'quantity' => 'required|integer|min:1',
-						'value' => 'required|numeric|min:0|max_if:type,percentage,100',
-						'type' => 'required|in:percentage,currency',
-						'total' => 'required|integer|min:0'
-					];
-				} elseif ($data['type'] === 'bogo') {
-					$tier_rules = [
-						'buy_quantity' => 'required|integer|min:1',
-						'get_quantity' => 'required|integer|min:1',
-					];
-				}
+				$tier_rules = self::get_tiers_validation_rules($data['type']);
 				if (!$tier_validator->validate($tier_rules)) {
 					return new WP_Error(
 						'rest_validation_error',
@@ -450,6 +366,102 @@ class Campaign
 			wpab_campaignbay_log('Error updating campaign: ' . $e->getMessage(), 'ERROR');
 			return new WP_Error('rest_cannot_update', __('Cannot update campaign.', 'campaignbay'), array('status' => 500, 'error' => $e->getMessage()));
 		}
+	}
+
+	/**
+	 * Defines the primary validation rules for a campaign's data.
+	 *
+	 * This static method returns an associative array where each key represents a
+	 * campaign property and the value is a string of validation rules. These rules
+	 * are used to ensure data integrity before creating or updating a campaign.
+	 * The rules are filterable to allow for extensibility.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @return array The array of validation rules for a campaign.
+	 */
+	private static function get_validation_rules()
+	{
+		$rules = [
+			'title' => 'required|max:255',
+			'type' => 'required|in:earlybird,scheduled,quantity,bogo',
+			'status' => 'required|in:active,inactive,scheduled,expired',
+
+			'discount_type' => 'nullable|in:percentage,fixed',
+			'discount_value' => 'required_if:type,scheduled|numeric',
+			'tiers' => 'nullable|array',
+
+			'target_type' => 'nullable|in:entire_store,category,product,tag',
+			'target_ids' => 'required_if:target_type,category,product,tag|array_of_integers',
+			'exclude_sale_items' => 'required|boolean',
+			'is_exclude' => 'nullable|boolean',
+
+			'schedule_enabled' => 'boolean||required_if:status,scheduled',
+			'start_datetime' => 'datetime|required_if:status,scheduled',
+			'end_datetime' => 'datetime|nullable',
+
+			'conditions' => 'nullable|array',
+			'settings' => 'nullable|array',
+			'usage_limit' => 'nullable|integer'
+		];
+		/**
+		 * Filters the main validation rules for a campaign.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_get_campaign_validation_rules
+		 *
+		 * @param array $rules The array of validation rules.
+		 */
+		return apply_filters('campaignbay_get_campaign_validation_rules', $rules);
+	}
+
+	/**
+	 * Defines the validation rules for the 'tiers' array, based on the campaign type.
+	 *
+	 * This static method returns a specific set of validation rules for the items
+	 * within the 'tiers' array. The rules differ depending on whether the campaign
+	 * is a 'quantity', 'earlybird', or 'bogo' type.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @param string $type The type of the campaign (e.g., 'quantity', 'earlybird', 'bogo').
+	 * @return array The array of validation rules for a single tier.
+	 */
+	private static function get_tiers_validation_rules($type)
+	{
+		if ($type === 'quantity') {
+			$rules = [
+				'id' => 'nullable|integer',
+				'min' => 'required|integer|min:1|gte:previous_tier_max',
+				'max' => 'required|integer|min:1|gte:min',
+				'value' => 'required|numeric|min:0|max_if:type,percentage,100',
+				'type' => 'required|in:percentage,currency',
+			];
+		} elseif ($type === 'earlybird') {
+			$rules = [
+				'id' => 'nullable|integer',
+				'quantity' => 'required|integer|min:1',
+				'value' => 'required|numeric|min:0|max_if:type,percentage,100',
+				'type' => 'required|in:percentage,currency',
+				'total' => 'required|integer|min:0'
+			];
+		} elseif ($type === 'bogo') {
+			$rules = [
+				'buy_quantity' => 'required|integer|min:1',
+				'get_quantity' => 'required|integer|min:1',
+			];
+		}
+
+		/**
+		 * Filters the tier-specific validation rules for a campaign.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_get_tiers_validation_rules
+		 *
+		 * @param array  $rules The array of validation rules for a tier.
+		 * @param string $type  The type of the campaign being validated.
+		 */
+		return apply_filters('campaignbay_get_tiers_validation_rules', $rules, $type);
 	}
 
 	/**

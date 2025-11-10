@@ -558,3 +558,71 @@
     */
     self::$products[$product_id] = apply_filters('campaignbay_get_product', wc_get_product($product_id), $product_id);
 ```
+
+```
+    /**
+        * Filters the main validation rules for a campaign.
+        *
+        * @since 1.0.0
+        * @hook campaignbay_get_campaign_validation_rules
+        *
+        * @param array $rules The array of validation rules.
+        */
+    return apply_filters('campaignbay_get_campaign_validation_rules', $rules);
+```
+
+```
+    /**
+        * Filters the tier-specific validation rules for a campaign.
+        *
+        * @since 1.0.0
+        * @hook campaignbay_get_tiers_validation_rules
+        *
+        * @param array  $rules The array of validation rules for a tier.
+        * @param string $type  The type of the campaign being validated.
+        */
+    return apply_filters('campaignbay_get_tiers_validation_rules', $rules, $type);
+```
+
+```
+    /**
+        * Filters the URL of the main admin JavaScript file.
+        *
+        * This allows developers or other plugins to override the default script path,
+        * which can be useful for integrations or custom build setups.
+        *
+        * @hook campaignbay_admin_script
+        * @since 1.0.0
+        *
+        * @param {string} $script_url The URL to the admin.js file.
+        */
+    $admin_script = apply_filters('campaignbay_admin_script', CAMPAIGNBAY_URL . 'build/admin.js');
+```
+
+```
+    /**
+        * Filters the URL of the self-contained "legacy" admin JavaScript file.
+        *
+        * This allows developers or other plugins to override the default script path for
+        * the legacy build, which is used on older WordPress versions.
+        *
+        * @hook campaignbay_admin_legacy_script
+        * @since 1.0.0
+        *
+        * @param {string} $script_url The URL to the admin-legacy.js file.
+        */
+```
+
+```
+   /**
+       * Filters the URL of the main admin CSS file.
+       *
+       * This allows developers to override the default stylesheet path for custom
+       * styling or integrations.
+       *
+       * @hook campaignbay_admin_css
+       * @since 1.0.0
+       *
+       * @param {string} $style_url The URL to the admin.css file.
+       */
+```

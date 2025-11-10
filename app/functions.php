@@ -187,7 +187,7 @@ if (!function_exists('wpab_campaignbay_get_white_label')):
 		 */
 		$plugin_name = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_white_label_plugin_name',
-			esc_html('WP React Plugin Boilerplate')
+			esc_html('CampaignBay')
 		);
 
 		/**
