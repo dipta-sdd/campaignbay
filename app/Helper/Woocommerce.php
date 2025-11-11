@@ -1,4 +1,17 @@
 <?php
+/**
+ * The WooCommerce helper class.
+ *
+ * This file is responsible for defining the Woocommerce class, which acts as a
+ * centralized wrapper for interacting with WooCommerce functions and data. It provides
+ * a consistent and simplified API for the rest of the plugin to use.
+ *
+ * @link       https://campaignbay.github.io
+ * @since      1.0.0
+ *
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/Helper
+ */
 
 namespace WpabCampaignBay\Helper;
 
@@ -12,6 +25,19 @@ use WpabCampaignBay\Helper\Helper;
 if (!defined('ABSPATH'))
     exit; // Exit if accessed directly
 
+/**
+ * Woocommerce Class.
+ *
+ * This helper class provides a set of static methods to abstract and simplify
+ * common interactions with the WooCommerce plugin. It serves as a central utility
+ * for retrieving product data, getting order information, formatting prices, and
+ * handling other WooCommerce-specific tasks in a consistent manner throughout the plugin.
+ *
+ * @since      1.0.0
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/Helper
+ * @author     WP Anchor Bay <wpanchorbay@gmail.com>
+ */
 class Woocommerce
 {
     /**

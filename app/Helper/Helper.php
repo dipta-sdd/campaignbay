@@ -1,4 +1,17 @@
 <?php
+/**
+ * The main Helper class.
+ *
+ * This file defines the Helper class, a collection of static utility methods used
+ * throughout the CampaignBay plugin. It handles tasks like data filtering, price
+ * calculation, HTML sanitization, and message generation.
+ *
+ * @link       https://campaignbay.github.io
+ * @since      1.0.0
+ *
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/Helper
+ */
 
 namespace WpabCampaignBay\Helper;
 
@@ -8,6 +21,19 @@ use WpabCampaignBay\Engine\CampaignManager;
 if (!defined('ABSPATH'))
     exit; // Exit if accessed directly
 
+/**
+ * Helper Class.
+ *
+ * This class provides a collection of static utility methods accessible globally
+ * within the plugin. It is designed as a central place for reusable logic,
+ * including fetching and filtering campaigns by type, calculating discount prices,
+ * generating promotional messages, and creating frontend HTML elements.
+ *
+ * @since      1.0.0
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/Helper
+ * @author     WP Anchor Bay <wpanchorbay@gmail.com>
+ */
 class Helper
 {
     public static function get_settings($name)
