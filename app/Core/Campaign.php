@@ -121,7 +121,7 @@ class Campaign
 	{
 		// validating main data
 		$validator = new Validator($args);
-		$rules = self::get_validation_rules();
+		$rules = self::get_validation_rules($args);
 		// checking validation
 		if (!$validator->validate($rules)) {
 			return new WP_Error('rest_validation_error', $validator->get_first_error(), array('status' => 400, 'details' => $validator->get_errors(), 'data' => $args));
@@ -253,7 +253,7 @@ class Campaign
 			$args = array_merge((array) $this->data, $args);
 		}
 		$validator = new Validator($args);
-		$rules = self::get_validation_rules();
+		$rules = self::get_validation_rules($args);
 
 		if (!$validator->validate($rules)) {
 			//phpcs:ignore
@@ -380,7 +380,7 @@ class Campaign
 	 * @access private
 	 * @return array The array of validation rules for a campaign.
 	 */
-	private static function get_validation_rules()
+	private static function get_validation_rules($args = null)
 	{
 		$rules = [
 			'title' => 'required|max:255',
@@ -396,7 +396,7 @@ class Campaign
 			'exclude_sale_items' => 'required|boolean',
 			'is_exclude' => 'nullable|boolean',
 
-			'schedule_enabled' => 'boolean||required_if:status,scheduled',
+			'schedule_enabled' => 'boolean|required_if:status,scheduled',
 			'start_datetime' => 'datetime|required_if:status,scheduled',
 			'end_datetime' => 'datetime|nullable',
 
@@ -404,6 +404,9 @@ class Campaign
 			'settings' => 'nullable|array',
 			'usage_limit' => 'nullable|integer'
 		];
+		if ($args['schedule_enabled'] && ($args['start_datetime'] == null || $args['start_datetime'] === '')) {
+			$rules['end_datetime'] = 'boolean|required';
+		}
 		/**
 		 * Filters the main validation rules for a campaign.
 		 *
