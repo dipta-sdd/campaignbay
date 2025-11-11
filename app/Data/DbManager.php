@@ -1,5 +1,17 @@
 <?php
-
+/**
+ * The Database Manager class.
+ *
+ * This file is responsible for defining the DbManager class, which handles the
+ * creation and management of the plugin's custom database tables. This is
+ * a core infrastructural component that runs on plugin activation.
+ *
+ * @link       https://campaignbay.github.io
+ * @since      1.0.0
+ *
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/Data
+ */
 namespace WpabCampaignBay\Data;
 
 // Exit if accessed directly.
@@ -7,6 +19,21 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Database Manager Class.
+ *
+ * This class is responsible for creating and maintaining the custom database tables
+ * required by the CampaignBay plugin. It uses the `dbDelta` function to ensure
+ * that tables are created and updated correctly upon plugin activation.
+ *
+ * It is designed as a singleton to ensure a single instance is used throughout
+ * the activation process.
+ *
+ * @since      1.0.0
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/Data
+ * @author     WP Anchor Bay <wpanchorbay@gmail.com>
+ */
 class DbManager
 {
     /**

@@ -1,0 +1,11 @@
+{
+    "config": {
+        "allow-plugins": {
+            "symfony/flex": true,
+            "phpdocumentor/shim": true
+        }
+    },
+    "require": {
+        "phpdocumentor/shim": "^3.8"
+    }
+}

@@ -1,5 +1,17 @@
 <?php
-
+/**
+ * The Filter helper class.
+ *
+ * This file is responsible for defining the Filter class, which contains all the logic
+ * for matching a product against a campaign's targeting rules and conditions.
+ * It is a core component of the discount engine.
+ *
+ * @link       https://campaignbay.github.io
+ * @since      1.0.0
+ *
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/Helper
+ */
 namespace WpabCampaignBay\Helper;
 
 use WpabCampaignBay\Core\Common;
@@ -7,6 +19,21 @@ use WpabCampaignBay\Core\Common;
 if (!defined('ABSPATH'))
     exit; // Exit if accessed directly
 
+
+/**
+ * Filter Class.
+ *
+ * This helper class provides methods to evaluate whether a given WooCommerce product
+ * matches the targeting conditions of a CampaignBay campaign. It handles logic
+ * for product, category, and sale status matching, including exclusion rules.
+ *
+ * It is designed as a singleton to ensure a single, consistent instance throughout a request.
+ *
+ * @since      1.0.0
+ * @package    WPAB_CampaignBay
+ * @subpackage WPAB_CampaignBay/Helper
+ * @author     WP Anchor Bay <wpanchorbay@gmail.com>
+ */
 class Filter
 {
     /**

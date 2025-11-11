@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor
+        configVersion="3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://www.phpdoc.org"
+>
+    <title>CampaignBay</title>
+    <paths>
+        <output>dev/docs/</output>
+    </paths>
+    <settings>
+    <setting name="template.color" value="pink"/>
+    </settings>
+    <version number="1.0.0">
+        <api default-package-name="CampaignBay">
+            <source dsn=".">
+                <path>app/</path>
+            </source>
+        </api>
+    </version>
+</phpdocumentor>
