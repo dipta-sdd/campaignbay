@@ -243,7 +243,7 @@ class Admin
 		 */
 		$admin_css = apply_filters('campaignbay_admin_css', CAMPAIGNBAY_URL . 'build/admin.css');
 
-		wp_enqueue_style(CAMPAIGNBAY_PLUGIN_NAME, CAMPAIGNBAY_URL . 'build/admin.css', array(), $version);
+		wp_enqueue_style(CAMPAIGNBAY_PLUGIN_NAME, $admin_css, array(), $version);
 
 		wp_style_add_data(CAMPAIGNBAY_PLUGIN_NAME, 'rtl', 'replace');
 
