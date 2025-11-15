@@ -84,8 +84,9 @@ class Plugin
 	 */
 	public function __construct()
 	{
-		// Initialize the loader first
+		// Initialize the loader first.
 		$this->loader = Loader::get_instance();
+		// Define the hooks.
 		$this->define_core_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
@@ -105,14 +106,14 @@ class Plugin
 	{
 
 
-		// Initialize API controllers
+		// Initialize API controllers.
 		SettingsController::get_instance()->run();
 		CampaignsController::get_instance()->run();
 		LogsController::get_instance()->run();
 		ActivityLogController::get_instance()->run();
 		DashboardController::get_instance()->run();
 		Scheduler::get_instance()->run();
-		// Get instances of components that have hooks
+		// Get instances of components that have hooks.
 		$discount_manager = DiscountManager::get_instance();
 		$campaign_manager = CampaignManager::get_instance();
 		$pricing_engine = PricingEngine::get_instance();
@@ -126,6 +127,7 @@ class Plugin
 			$scheduler,
 		);
 
+		// Register the hooks for each component.
 		foreach ($components_with_hooks as $component) {
 			$hooks = $component->get_hooks();
 			foreach ($hooks as $hook) {
@@ -160,6 +162,7 @@ class Plugin
 	 */
 	private function define_public_hooks()
 	{
+		// If we are in the admin area, return.
 		if (is_admin()) {
 			return;
 		}
@@ -193,19 +196,25 @@ class Plugin
 	 */
 	private function define_admin_hooks()
 	{
+		// Get the admin instance.
 		$plugin_admin = Admin::get_instance();
 		// if (!is_admin()) {
 		// 	return;
 		// }
+		// Add the admin menu.
 		$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
+		// Add the sticky header class to the body.
 		$this->loader->add_filter('admin_body_class', $plugin_admin, 'add_has_sticky_header');
+		// Enqueue the admin resources.
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_resources');
 
-		/*Register Settings*/
+		// Register the settings.
 		$this->loader->add_action('rest_api_init', $plugin_admin, 'register_settings');
 		$this->loader->add_action('admin_init', $plugin_admin, 'register_settings');
+		// Add the plugin action links.
 		$plugin_basename = plugin_basename(CAMPAIGNBAY_PATH . 'campaignbay.php');
 		$this->loader->add_filter('plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_plugin_action_links', 10, 4);
+		// Add the plugin row meta.
 		$this->loader->add_filter('plugin_row_meta', $plugin_admin, 'add_plugin_row_meta', 10, 2);
 	}
 

@@ -25,6 +25,7 @@ if (!function_exists('wpab_campaignbay_default_options')):
 	 */
 	function wpab_campaignbay_default_options()
 	{
+		// The default options.
 		$default_options = array(
 			/*==================================================
 			* Global Settings Tab
@@ -84,6 +85,7 @@ if (!function_exists('wpab_campaignbay_default_options')):
 			==================================================*/
 			'advanced_deleteAllOnUninstall' => false,
 		);
+		// Return the filtered default options.
 		return apply_filters(CAMPAIGNBAY_OPTION_NAME . '_default_options', $default_options);
 	}
 endif;
@@ -103,19 +105,24 @@ if (!function_exists('wpab_campaignbay_get_options')):
 	 */
 	function wpab_campaignbay_get_options($key = '')
 	{
+		// Get the options from the database.
 		$options = get_option(CAMPAIGNBAY_OPTION_NAME);
 
+		// Get the default options.
 		$default_options = wpab_campaignbay_default_options();
+		// If a key is provided, return the option value.
 		if (!empty($key)) {
 			if (isset($options[$key])) {
 				return $options[$key];
 			}
 			return isset($default_options[$key]) ? $default_options[$key] : false;
 		} else {
+			// If no key is provided, return all options.
 			if (!is_array($options)) {
 				$options = array();
 			}
 
+			// Merge the default options with the saved options.
 			return array_merge($default_options, $options);
 		}
 	}
@@ -136,12 +143,15 @@ if (!function_exists('wpab_campaignbay_update_options')):
 	 */
 	function wpab_campaignbay_update_options($key_or_data, $val = '')
 	{
+		// If a key is provided, update the option value.
 		if (is_string($key_or_data)) {
 			$options = wpab_campaignbay_get_options();
 			$options[$key_or_data] = $val;
 		} else {
+			// If no key is provided, update all options.
 			$options = $key_or_data;
 		}
+		// Update the options in the database.
 		update_option(CAMPAIGNBAY_OPTION_NAME, $options);
 	}
 endif;
@@ -159,11 +169,13 @@ if (!function_exists('wpab_campaignbay_get_white_label')):
 	 */
 	function wpab_campaignbay_get_white_label($key = '')
 	{
+		// The plugin name.
 		$plugin_name = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_white_label_plugin_name',
 			esc_html('WP React Plugin Boilerplate')
 		);
 
+		// The white label options.
 		$options = apply_filters(
 			CAMPAIGNBAY_OPTION_NAME . '_white_label',
 			array(
@@ -180,9 +192,11 @@ if (!function_exists('wpab_campaignbay_get_white_label')):
 				'position' => 57,
 			)
 		);
+		// If a key is provided, return the option value.
 		if (!empty($key)) {
 			return $options[$key];
 		} else {
+			// If no key is provided, return all options.
 			return $options;
 		}
 	}
