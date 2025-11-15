@@ -432,6 +432,7 @@ class Campaign
 	 */
 	private static function get_tiers_validation_rules($type)
 	{
+		$rules = [];
 		if ($type === 'quantity') {
 			$rules = [
 				'id' => 'nullable|integer',
@@ -577,6 +578,16 @@ class Campaign
 				'bogo_cart_message_location' => 'nullable|string|in:line_item_name,notice,dont_show',
 			];
 		}
+		/**
+		 * Filters the settings validation rules for a campaign.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_get_settings_validation_rules
+		 * 
+		 * @param array $rules The array of validation rules.
+		 * @param string $type The type of the campaign being validated.
+		 */
+		$rules = apply_filters('campaignbay_get_settings_validation_rules', $rules, $type);
 		if (!$validator->validate($rules)) {
 			return new WP_Error(
 				'rest_validation_error',

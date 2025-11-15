@@ -125,7 +125,7 @@ class ProductDiscount
 				 * object directly if needed (since it's passed by reference).
 				 *
 				 * @since 1.0.0
-				 * @hook campaignbay_product_discount_calculation_pro
+				 * @hook campaignbay_product_campaign_discount_calculation
 				 *
 				 * @param \WC_Product $product The product object currently being processed.
 				 * @param \WpabCampaignBay\Engine\ProductDiscount $product_discount_processor The instance of the current pricing processor object.
@@ -136,7 +136,7 @@ class ProductDiscount
 				 * @param object|null $applied_campaign The campaign object corresponding to the current best price.
 				 * @param array|null $applied_tier The tier data (if any) corresponding to the current best price.
 				 */
-				do_action('campaignbay_product_discount_calculation_pro', $this->product, $this, $campaign, $original_price, $base_price, $best_price, $applied_campaign, $applied_tier);
+				do_action('campaignbay_product_campaign_discount_calculation', $this->product, $this, $campaign, $original_price, $base_price, $best_price, $applied_campaign, $applied_tier);
 
 				continue;
 			}
