@@ -114,7 +114,6 @@ const Settings: FC = () => {
           };
           break;
         case "product":
-          console.log(productSettings);
           data = {
             ...productSettings,
           };
@@ -136,7 +135,6 @@ const Settings: FC = () => {
           };
           break;
       }
-      // console.log(data);
       const response: CampaignBaySettingsType = await apiFetch({
         path: "/campaignbay/v1/settings",
         method: "POST",
@@ -149,7 +147,6 @@ const Settings: FC = () => {
       addToast(__("Settings updated successfully", "campaignbay"), "success");
       setEdited(false);
     } catch (error: any) {
-      console.log(error);
       setError(error);
       setIsSaving(false);
       addToast(

@@ -61,8 +61,6 @@ const QuantityTableEditModal: FC<QuantityTableEditModalProps> = ({
 
   const columnOptions: KeyType[] = ["title", "range", "discount"];
 
-  console.log("options : ", options);
-
   return (
     <Modal
       title="Customize Discount Table"

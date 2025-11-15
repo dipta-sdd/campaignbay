@@ -8,8 +8,8 @@
  * @param {string} rowString The string for a single CSV row.
  * @returns {string[]} An array of cell values.
  */
-const parseCsvRow = (rowString: string): string[] =>{
-  const result : string[] = [];
+const parseCsvRow = (rowString: string): string[] => {
+  const result: string[] = [];
   let currentVal = "";
   let inQuotes = false;
 
@@ -53,7 +53,10 @@ type JsonDataObject = Record<string, any>;
  * @returns {Array<object>} An array of objects representing the rows.
  * @throws {Error} If the CSV is malformed.
  */
-export const csvToJson = (csvString: string, columnsToKeep: string[] = []): JsonDataObject[] => {
+export const csvToJson = (
+  csvString: string,
+  columnsToKeep: string[] = []
+): JsonDataObject[] => {
   if (!csvString) {
     throw new Error("CSV string is empty or invalid.");
   }
@@ -69,7 +72,7 @@ export const csvToJson = (csvString: string, columnsToKeep: string[] = []): Json
   const allHeaders = lines?.shift()?.trim().split(",");
 
   let headersToProcess: string[] = allHeaders || [];
-  let headerIndices : number[] = allHeaders?.map((_, index) => index) || [];
+  let headerIndices: number[] = allHeaders?.map((_, index) => index) || [];
 
   if (columnsToKeep && columnsToKeep.length > 0) {
     headersToProcess = [];
@@ -92,23 +95,24 @@ export const csvToJson = (csvString: string, columnsToKeep: string[] = []): Json
     }
   }
 
-  const jsonArray : JsonDataObject[] = lines.map((line, index) => {
+  const jsonArray: JsonDataObject[] = lines.map((line, index) => {
     const values = parseCsvRow(line.trim());
 
     if (values.length !== allHeaders?.length) {
       throw new Error(
-        `Row ${index + 2}: Column count mismatch. Expected ${
-          allHeaders?.length
-        }, but got ${values.length}.`
+        `Row ${
+          index + 2
+        }: Column count mismatch. Expected ${allHeaders?.length}, but got ${
+          values.length
+        }.`
       );
     }
 
-    return headersToProcess.reduce((obj:JsonDataObject, header, i) => {
+    return headersToProcess.reduce((obj: JsonDataObject, header, i) => {
       const originalIndex = headerIndices[i];
       obj[header] = values[originalIndex];
       return obj;
     }, {});
   });
-  console.log("Parsed JSON Array:", jsonArray);
   return jsonArray;
 };

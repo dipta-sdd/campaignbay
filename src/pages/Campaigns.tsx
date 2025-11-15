@@ -210,7 +210,6 @@ const Campaigns: FC = () => {
       setOrderby(newSortBy);
       setOrder("asc");
     }
-    console.log(orderby, order);
   };
 
   const TableHead: React.FC<TableHeadProps> = ({
@@ -369,7 +368,6 @@ const Campaigns: FC = () => {
         ),
         "error"
       );
-      console.log(error);
     }
   };
 
@@ -399,7 +397,6 @@ const Campaigns: FC = () => {
       setSelectedCampaigns([]);
       setCampaigns((prev) =>
         prev.map((c) => {
-          console.log(c);
           if (campaignsToUpdateInt.includes(c.id)) {
             return {
               ...c,
