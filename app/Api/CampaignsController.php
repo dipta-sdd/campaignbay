@@ -263,9 +263,9 @@ class CampaignsController extends ApiController
 		foreach ($product_posts as $post) {
 			// We only need the ID and title for the selector component.
 			if ($post->post_parent > 0) {
-				if (isset($products[$post->post_parent]))
-					$products[$post->post_parent]['varients'][] = array();
-				$products[$post->post_parent]['varients'][] = array(
+				if (!isset($products[$post->post_parent]))
+					$products[$post->post_parent]['variants'] = array();
+				$products[$post->post_parent]['variants'][] = array(
 					'id' => $post->ID,
 					'name' => $post->post_title,
 				);
