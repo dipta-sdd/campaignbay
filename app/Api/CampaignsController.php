@@ -251,7 +251,7 @@ class CampaignsController extends ApiController
 		// --- 1. Fetch All Published Products ---
 		$product_posts = get_posts(
 			array(
-				'post_type' => 'product',
+				'post_type' => array('product', 'product_variation', 'variable_product'),
 				'post_status' => 'publish',
 				'numberposts' => -1,          // Get all products
 				'orderby' => 'title',
@@ -262,11 +262,22 @@ class CampaignsController extends ApiController
 		$products = array();
 		foreach ($product_posts as $post) {
 			// We only need the ID and title for the selector component.
-			$products[] = array(
-				'id' => $post->ID,
-				'name' => $post->post_title,
-			);
+			if ($post->post_parent > 0) {
+				if (isset($products[$post->post_parent]))
+					$products[$post->post_parent]['varients'][] = array();
+				$products[$post->post_parent]['varients'][] = array(
+					'id' => $post->ID,
+					'name' => $post->post_title,
+				);
+			} else
+				$products[$post->ID] = array(
+					'id' => $post->ID,
+					'name' => $post->post_title,
+				);
 		}
+
+		$products = array_values($products);
+
 
 		// --- 2. Fetch All Product Categories ---
 		$category_terms = get_terms(
