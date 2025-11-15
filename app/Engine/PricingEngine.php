@@ -347,15 +347,41 @@ class PricingEngine extends Base
 			return true;
 		return $is_on_sale;
 	}
-
-
+	/**
+	 * Displays a promotional discount message on the single product page.
+	 *
+	 * This function retrieves pre-calculated discount metadata that was attached to the
+	 * global product object by the main pricing engine. It then generates and renders
+	 * a user-facing notice (e.g., "You save 20%!") based on that data.
+	 *
+	 * This function is intended to be used with a WooCommerce action hook like
+	 * `woocommerce_before_add_to_cart_form`.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
 	public function display_product_discount_message()
 	{
 		global $product;
 		if (!$product)
 			return;
-		Helper::render_product_bogo_message($product);
+
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
+
+		/**
+		 * Action hook that fires before any discount message is rendered for a product.
+		 *
+		 * This allows other functions or third-party add-ons to add custom content
+		 * before the main CampaignBay message is displayed.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_before_product_display_product_discount_message
+		 * 
+		 * @param WC_Product $product The current product object.
+		 * @param array      $meta    The pre-calculated discount metadata for the product.
+		 */
+		do_action('campaignbay_before_product_display_product_discount_message', $product, $meta);
+		Helper::render_product_bogo_message($product);
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
 			return;
 
@@ -367,12 +393,40 @@ class PricingEngine extends Base
 			$meta['simple']['type'],
 			$format = $meta['simple']['message_format']
 		);
-		if ($message == '')
-			return;
-		Woocommerce::print_notice(
-			$message,
-			'success'
-		);
+
+		/**
+		 * Filter hook to allow modification of the final discount message string.
+		 *
+		 * This is useful for developers who want to change the wording or add extra
+		 * details to the promotional banner on the product page.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_product_display_product_discount_message
+		 * 
+		 * @param string     $message The generated message HTML.
+		 * @param WC_Product $product The current product object.
+		 * @param array      $meta    The pre-calculated discount metadata.
+		 */
+		$message = apply_filters('campaignbay_product_display_product_discount_message', $message, $product, $meta);
+		if ($message !== '')
+			Woocommerce::print_notice(
+				$message,
+				'success'
+			);
+
+		/**
+		 * Action hook that fires after any discount message is rendered for a product.
+		 *
+		 * This allows other functions or third-party add-ons to add custom content
+		 * after the main CampaignBay message is displayed.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_after_product_display_product_discount_message
+		 * 
+		 * @param WC_Product $product The current product object.
+		 * @param array      $meta    The pre-calculated discount metadata for the product.
+		 */
+		do_action('campaignbay_after_product_display_product_discount_message', $product, $meta);
 	}
 
 
