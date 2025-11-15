@@ -131,7 +131,7 @@ class Campaign
 
 		// validating tiers 
 		$tmp_tiers = array();
-		if ($data['type'] === 'quantity' || $data['type'] === 'earlybird' || $data['type'] === 'bogo') {
+		if (self::need_tier_validation($data['type'])) {
 			foreach ($data['tiers'] as $tier) {
 				$tier_validator = new Validator($tier);
 				$tier_rules = self::get_tiers_validation_rules($data['type']);
@@ -262,7 +262,7 @@ class Campaign
 		$data = $validator->get_validated_data();
 		// validating tiers
 		$tmp_tiers = array();
-		if ($data['type'] === 'quantity' || $data['type'] === 'earlybird' || $data['type'] === 'bogo') {
+		if (self::need_tier_validation($data['type'])) {
 			foreach ($data['tiers'] as $tier) {
 				$tier_validator = new Validator($tier);
 				$tier_rules = self::get_tiers_validation_rules($data['type']);
@@ -466,6 +466,32 @@ class Campaign
 		 */
 		return apply_filters('campaignbay_get_tiers_validation_rules', $rules, $type);
 	}
+
+	/**
+	 * checking if campaign type need tiers validation
+	 * 
+	 * @since 1.0.0
+	 * @param string $type The type of the campaign.
+	 * @return bool True if the campaign type requires tier validation, false otherwise.
+	 */
+	private static function need_tier_validation($type)
+	{
+		$result = false;
+		if ($type === 'quantity' || $type === 'earlybird' || $type === 'bogo') {
+			$result = true;
+		}
+		/**
+		 * Filters the need-tier-validation check for a campaign.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_need_tier_validation
+		 *
+		 * @param bool   $result The result of the need-tier-validation check.
+		 * @param string  $type   The type of the campaign being validated.
+		 */
+		return apply_filters('campaignbay_need_tier_validation', $result, $type);
+	}
+
 
 	/**
 	 * Deletes a campaign.
