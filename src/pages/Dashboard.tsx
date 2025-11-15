@@ -376,7 +376,7 @@ const Dashboard: FC = () => {
         displayColors: false,
         callbacks: {
           label: function (context) {
-            return `Value: ${formatCurrency(context.parsed.y)}`;
+            return `Value: ${formatCurrency(Number(context.parsed.y))}`;
           },
         },
       },
@@ -434,7 +434,7 @@ const Dashboard: FC = () => {
         displayColors: false,
         callbacks: {
           label: function (context) {
-            return `Value: ${formatCurrency(context.parsed.y)}`;
+            return `Value: ${formatCurrency(Number(context.parsed.y))}`;
           },
         },
       },
