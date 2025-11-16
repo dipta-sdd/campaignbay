@@ -387,11 +387,11 @@ class PricingEngine extends Base
 
 		if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
 			return;
-
+		$format = $meta['simple']['message_format'];
 		$message = Woocommerce::generate_product_banner(
 			$meta['simple']['value'],
 			$meta['simple']['type'],
-			$format = $meta['simple']['message_format']
+			$format
 		);
 
 		/**
@@ -406,8 +406,9 @@ class PricingEngine extends Base
 		 * @param string     $message The generated message HTML.
 		 * @param WC_Product $product The current product object.
 		 * @param array      $meta    The pre-calculated discount metadata.
+		 * @param string     $format  The message format string.
 		 */
-		$message = apply_filters('campaignbay_product_display_product_discount_message', $message, $product, $meta);
+		$message = apply_filters('campaignbay_product_display_product_discount_message', $message, $product, $meta, $format);
 		if ($message !== '')
 			Woocommerce::print_notice(
 				$message,
@@ -426,7 +427,7 @@ class PricingEngine extends Base
 		 * @param WC_Product $product The current product object.
 		 * @param array      $meta    The pre-calculated discount metadata for the product.
 		 */
-		do_action('campaignbay_after_product_display_product_discount_message', $product, $meta);
+		do_action('campaignbay_after_product_display_product_discount_message', $product, $meta, $format);
 	}
 
 

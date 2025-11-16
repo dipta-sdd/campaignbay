@@ -97,7 +97,7 @@ if (!function_exists('wpab_campaignbay_default_options')):
 		 * @param array $default_options The array of default plugin options.
 		 * @return array The filtered array of default options.
 		 */
-		return apply_filters(CAMPAIGNBAY_OPTION_NAME . '_default_options', $default_options);
+		return apply_filters('campaignbay_default_options', $default_options);
 	}
 endif;
 
@@ -186,7 +186,7 @@ if (!function_exists('wpab_campaignbay_get_white_label')):
 		 * @return string The filtered plugin name.
 		 */
 		$plugin_name = apply_filters(
-			CAMPAIGNBAY_OPTION_NAME . '_white_label_plugin_name',
+			'campaignbay_white_label_plugin_name',
 			esc_html('CampaignBay')
 		);
 
@@ -214,7 +214,7 @@ if (!function_exists('wpab_campaignbay_get_white_label')):
 		 * @return array The filtered array of white-label settings.
 		 */
 		$options = apply_filters(
-			CAMPAIGNBAY_OPTION_NAME . '_white_label',
+			'campaignbay_white_label',
 			array(
 				'plugin_name' => esc_html('CampaignBay - WooCommerce Smart Campaigns'),
 				'short_name' => esc_html('CampaignBay'),

@@ -78,8 +78,12 @@ class Helper
 
     public static function get_clean_message($message)
     {
+        /**
+         * we will implement it later. It is for failsafe if anyone forgot to clean before printing.
+         *
+         * Currently cleaned before printing
+         */
         return $message;
-        // will implement later
     }
 
     public static function get_quantity_campaigns($product)
@@ -202,15 +206,32 @@ class Helper
         usort($tiers, function ($a, $b) {
             return $a['buy_quantity'] - $b['buy_quantity'];
         });
-        if (empty($tiers))
-            return;
-        $tier = $tiers[0];
-        $format = $tier['settings']['bogo_banner_message_format'] ?? Common::get_instance()->get_settings('bogo_banner_message_format');
-        $message = self::generate_message($format, array(
-            '{buy_quantity}' => $tier['buy_quantity'],
-            '{get_quantity}' => $tier['get_quantity'],
-        ));
+        $message = "";
+        $format = "";
 
+        if (!empty($tiers)) {
+            $tier = $tiers[0];
+            $format = $tier['settings']['bogo_banner_message_format'] ?? Common::get_instance()->get_settings('bogo_banner_message_format');
+            $message = self::generate_message($format, array(
+                '{buy_quantity}' => $tier['buy_quantity'],
+                '{get_quantity}' => $tier['get_quantity'],
+            ));
+        }
+
+        /**
+         * Filter hook to allow modification of the final discount bogo message string.
+         *
+         * This is useful for developers who want to change the wording or add extra
+         * details to the promotional bogo banner on the product page.
+         *
+         * @since 1.0.0
+         * @hook campaignbay_product_display_product_discount_message
+         * 
+         * @param string     $message The generated message HTML.
+         * @param WC_Product $product The current product object.
+         * @param string     $format  The original message format.
+         */
+        $message = apply_filters('campaignbay_product_display_product_bogo_message', $message, $product, $format);
         if ($message === '' || $message === null)
             return;
 

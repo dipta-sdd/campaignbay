@@ -331,7 +331,7 @@
     * @param array $default_options The array of default plugin options.
     * @return array The filtered array of default options.
     */
-    return apply_filters(CAMPAIGNBAY_OPTION_NAME . '_default_options', $default_options);
+    return apply_filters('campaignbay_default_options', $default_options);
 ```
 
 ```
