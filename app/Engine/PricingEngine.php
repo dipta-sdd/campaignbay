@@ -163,6 +163,14 @@ class PricingEngine extends Base
 		wpab_campaignbay_log(sprintf('Saved discount breakdown to order #%d .', $order->get_id()), 'INFO');
 	}
 
+	/**
+	 * Modifies the price HTML for simple products.
+	 *
+	 * @since 1.0.0
+	 * @param string $price_html The original price HTML.
+	 * @param WC_Product $product The product object.
+	 * @return string The modified price HTML.
+	 */
 	public function get_price_html($price_html, $product)
 	{
 		if (Woocommerce::product_type_is($product, 'variable')) {
@@ -188,6 +196,14 @@ class PricingEngine extends Base
 		return $price_html;
 	}
 
+	/**
+	 * Modifies the price HTML for variable products.
+	 *
+	 * @since 1.0.0
+	 * @param string $price_html The original price HTML.
+	 * @param WC_Product $product The product object.
+	 * @return string The modified price HTML.
+	 */
 	public function get_variable_price_html($price_html, $product)
 	{
 		if (!Woocommerce::product_type_is($product, 'variable')) {
@@ -222,6 +238,15 @@ class PricingEngine extends Base
 		return $price_html;
 	}
 
+	/**
+	 * Modifies the price of a cart item.
+	 *
+	 * @since 1.0.0
+	 * @param string $price_html The original price HTML.
+	 * @param array $cart_item The cart item.
+	 * @param string $cart_item_key The cart item key.
+	 * @return string The modified price HTML.
+	 */
 	public function cart_item_price($price_html, $cart_item, $cart_item_key)
 	{
 		// wpab_campaignbay_log('cart item price ' . $cart_item['data']->get_name());
@@ -255,6 +280,15 @@ class PricingEngine extends Base
 		);
 		return $price_html;
 	}
+	/**
+	 * Modifies the subtotal of a cart item.
+	 *
+	 * @since 1.0.0
+	 * @param string $price_html The original price HTML.
+	 * @param array $cart_item The cart item.
+	 * @param string $cart_item_key The cart item key.
+	 * @return string The modified price HTML.
+	 */
 	public function cart_item_subtotal($price_html, $cart_item, $cart_item_key)
 	{
 
@@ -307,6 +341,15 @@ class PricingEngine extends Base
 		return $price_html;
 	}
 
+	/**
+	 * Modifies the name of a cart item.
+	 *
+	 * @since 1.0.0
+	 * @param string $name The original name.
+	 * @param array $cart_item The cart item.
+	 * @param string $cart_item_key The cart item key.
+	 * @return string The modified name.
+	 */
 	public function cart_item_name($name, $cart_item, $cart_item_key)
 	{
 		$meta = $cart_item['campaignbay'];
@@ -333,6 +376,14 @@ class PricingEngine extends Base
 	}
 
 
+	/**
+	 * Checks if a product is on sale.
+	 *
+	 * @since 1.0.0
+	 * @param bool $is_on_sale Whether the product is on sale.
+	 * @param WC_Product $product The product object.
+	 * @return bool Whether the product is on sale.
+	 */
 	public function is_on_sale($is_on_sale, $product)
 	{
 		if ($is_on_sale)
@@ -431,6 +482,11 @@ class PricingEngine extends Base
 
 
 
+	/**
+	 * Displays the product quantity discount table.
+	 *
+	 * @since 1.0.0
+	 */
 	public function display_product_quantity_table()
 	{
 		if (!Common::get_instance()->get_settings('show_discount_table'))
@@ -455,6 +511,15 @@ class PricingEngine extends Base
 	}
 
 
+	/**
+	 * Fires after the cart item quantity is updated.
+	 *
+	 * @since 1.0.0
+	 * @param string $cart_item_key The cart item key.
+	 * @param int $quantity The new quantity.
+	 * @param int $old_quantity The old quantity.
+	 * @param WC_Cart $cart The cart object.
+	 */
 	public function after_cart_item_quantity_update($cart_item_key, $quantity, $old_quantity, $cart)
 	{
 		if (!did_action('woocommerce_before_calculate_totals')) {
@@ -464,6 +529,12 @@ class PricingEngine extends Base
 		}
 	}
 
+	/**
+	 * Fires before the cart totals are calculated.
+	 *
+	 * @since 1.0.0
+	 * @param WC_Cart $cart The cart object.
+	 */
 	public function before_calculate_totals($cart)
 	{
 		$this->coupons = CartDiscount::calculate_cart_discount($cart);
@@ -473,6 +544,12 @@ class PricingEngine extends Base
 			$this->discount_applied = true;
 	}
 
+	/**
+	 * Fires after the cart totals are calculated.
+	 *
+	 * @since 1.0.0
+	 * @param WC_Cart $cart The cart object.
+	 */
 	public function after_calculate_totals($cart)
 	{
 
@@ -509,6 +586,14 @@ class PricingEngine extends Base
 
 
 
+	/**
+	 * Validates the fake coupon data.
+	 *
+	 * @since 1.0.0
+	 * @param array $data The coupon data.
+	 * @param string $coupon_code The coupon code.
+	 * @return array The coupon data.
+	 */
 	public function validate_fake_coupon_data($data, $coupon_code)
 	{
 
@@ -563,6 +648,14 @@ class PricingEngine extends Base
 		}
 		return $data;
 	}
+	/**
+	 * Changes the virtual coupon label.
+	 *
+	 * @since 1.0.0
+	 * @param string $label The coupon label.
+	 * @param WC_Coupon $coupon_code The coupon object.
+	 * @return string The modified coupon label.
+	 */
 	public function change_virtual_coupon_label($label, $coupon_code)
 	{
 		$code = $coupon_code->get_code();
@@ -572,6 +665,15 @@ class PricingEngine extends Base
 		return $label;
 	}
 
+	/**
+	 * Validates the fake coupon.
+	 *
+	 * @since 1.0.0
+	 * @param bool $value Whether the coupon is valid.
+	 * @param WC_Coupon $coupon The coupon object.
+	 * @param WC_Discounts $discount The discount object.
+	 * @return bool Whether the coupon is valid.
+	 */
 	public function validate_fake_coupon($value, $coupon, $discount)
 	{
 		if (isset($this->coupons[$coupon->get_code()])) {
@@ -583,6 +685,11 @@ class PricingEngine extends Base
 		return $value;
 	}
 
+	/**
+	 * Ensures the cart totals are calculated.
+	 *
+	 * @since 1.0.0
+	 */
 	public function ensure_cart_calculate_totals()
 	{
 		if (!did_action('woocommerce_before_calculate_totals')) {
