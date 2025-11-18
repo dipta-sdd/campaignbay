@@ -54,14 +54,6 @@ CampaignBay is designed to help you achieve specific business goals. Here are ju
 
 *   **Targeted Promotions:** Apply a discount to a specific product category to promote a new line or run a brand-specific sale.
 
-== Installation ==
-
-1.  From your WordPress dashboard, navigate to **Plugins → Add New**.
-2.  In the search field, type **"CampaignBay"** and press Enter.
-3.  Find the CampaignBay plugin in the search results and click **"Install Now"**.
-4.  After installation, click the **"Activate"** button.
-5.  Look for the new **"CampaignBay"** menu in your admin sidebar to get started!
-
 == Frequently Asked Questions ==
 
 = Does CampaignBay require WooCommerce? =
@@ -71,7 +63,7 @@ Yes, CampaignBay is an add-on for WooCommerce and cannot function without it.
 You need WordPress 5.8+, PHP 7.0+, and an active WooCommerce installation.
 
 = Where can I get support or report a bug? =
-We're happy to help! Please visit our official support forum at [wpanchorbay.com/support/](https://wpanchorbay.com/support/) to ask questions, report issues, or suggest new features.
+We're happy to help! Please visit our official support forum at [wpanchorbay.com/support](https://wpanchorbay.com/support/) to ask questions, report issues, or suggest new features.
 
 = Can I track the performance of my campaigns? =
 Absolutely. CampaignBay includes a dedicated analytics dashboard with real-time metrics and interactive charts to monitor the effectiveness of your promotions.
@@ -87,15 +79,27 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 
 == Screenshots ==
 
-1.  **See Your Performance at a Glance.** The main Dashboard, showing KPIs and interactive performance charts.
-2.  **Manage All Your Campaigns.** The "All Campaigns" page, with both Table and Grid view options for filtering, sorting, and bulk actions.
-3.  **Create a Classic Sale.** The "Add Campaign" screen for creating a Scheduled Discount.
-4.  **Reward Bulk Purchases.** The "Add Campaign" screen for creating a Quantity Based Discount with tiered pricing.
-5.  **Drive Urgency.** The "Add Campaign" screen for creating an Early Bird Discount.
-6.  **Offer BOGO Deals.** The "Add Campaign" screen for creating a BOGO (Buy X Get X) offer.
-7.  **Take Full Control.** the global Settings page, showing the tabbed interface.
+1.  **See Your Performance at a Glance.** The main Dashboard, showing key metrics (KPIs) and interactive performance charts.
+2.  **Manage All Your Campaigns.** The "All Campaigns" table view, with powerful options for filtering, sorting, and bulk actions.
+3.  **Visual Campaign Management.** The alternative Grid View for the "All Campaigns" page, offering a card-based overview of each promotion.
+4.  **Take Full Control.** The global Settings page, showing the tabbed interface for configuring all plugin options.
+5.  **Customize Product Page Display.** The Product Settings tab, for customizing discount message formats and quantity table visibility.
+6.  **Customize the Quantity Discount Table.** The modal editor for changing the appearance, columns, and labels of the pricing table.
+7.  **Configure Cart Logic.** The Cart Settings tab, with powerful options for coupon and campaign stacking.
+8.  **Advanced Plugin Control.** The Advanced Settings tab for plugin data management.
+9.  **Frontend Product View.** A single product page showing a scheduled discount, a promotional message, and the quantity discount pricing table.
+10. **Frontend Cart View.** Discounts are applied directly to products in the cart, showing strikethrough pricing and the total savings for each item.
+
+== Installation ==
+
+1.  From your WordPress dashboard, navigate to **Plugins → Add New**.
+2.  In the search field, type **"CampaignBay"** and press Enter.
+3.  Find the CampaignBay plugin in the search results and click **"Install Now"**.
+4.  After installation, click the **"Activate"** button.
+5.  Look for the new **"CampaignBay"** menu in your admin sidebar to get started!
 
 == Changelog ==
+= Changelog =
 
 = 1.0.0 =
 *   Initial release of CampaignBay.
@@ -103,4 +107,4 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 == Upgrade Notice ==
 
 = 1.0.0 =
-Initial release. Thank you for installing CampaignBay!
+*   Initial release. Thank you for installing CampaignBay!

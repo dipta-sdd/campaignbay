@@ -76,7 +76,7 @@ const ImportExport = ({ refresh }) => {
             setIsImportModalOpen(true);
           }}
         >
-          <HardDriveUpload size={16} />
+          <HardDriveDownload size={16} />
           {__("Import", "campaignbay")}
         </button>
         <button
@@ -85,7 +85,8 @@ const ImportExport = ({ refresh }) => {
             exportCampaigns();
           }}
         >
-          <HardDriveDownload size={16} />
+
+          <HardDriveUpload size={16} />
           {__("Export", "campaignbay")}
         </button>
       </div>
