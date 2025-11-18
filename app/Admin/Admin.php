@@ -276,7 +276,7 @@ class Admin
 		 * @return array The filtered localization data array.
 		 */
 		$localize = apply_filters(
-			CAMPAIGNBAY_OPTION_NAME . '_admin_localize',
+			'campaignbay_admin_localize',
 			array(
 				'version' => $version,
 				'root_id' => CAMPAIGNBAY_PLUGIN_NAME,
@@ -360,7 +360,7 @@ class Admin
 		 * @return array The filtered array of setting properties.
 		 */
 		$setting_properties = apply_filters(
-			CAMPAIGNBAY_OPTION_NAME . '_options_properties',
+			'campaignbay_options_properties',
 			array(
 				/*==================================================
 				* Global Settings Tab
@@ -543,7 +543,7 @@ class Admin
 		$defaults = wpab_campaignbay_default_options();
 
 		register_setting(
-			CAMPAIGNBAY_OPTION_NAME . '_settings_group',
+			'campaignbay_settings_group',
 			CAMPAIGNBAY_OPTION_NAME,
 			array(
 				'type' => 'object',
