@@ -200,13 +200,6 @@ class Filter
 
     }
 
-    /**
-     * Check product in list
-     * @param $product_id
-     * @param $is_exclude
-     * @param $target_ids
-     * @return bool
-     */
 	/**
 	 * Check product in list
 	 *
