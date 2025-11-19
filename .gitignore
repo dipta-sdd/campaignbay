@@ -14,3 +14,6 @@ campaignbay.zip
 package-lock.json
 /.phpdoc
 /dev
+./build/admin.asset.php
+build/admin.asset.php
+build/admin.js

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       CampaignBay
+ * Plugin Name:       CampaignBay - Automated Discount Campaigns & Flash Sales for WooCommerce
  * Plugin URI:        https://wpanchorbay.com/campaignbay
  * Source URI:        https://github.com/dipta-sdd/campaignbay
  * Description:       Automated Discount Campaigns & Flash Sales for WooCommerce.
@@ -8,9 +8,9 @@
  * Requires PHP:      7.0
  * Requires Plugins:  woocommerce
  * WC requires at least: 6.1
- * Version:           1.0.0
- * Stable tag:        1.0.0
- * Author:            WP Anchor Bay
+ * Version:           1.0.1
+ * Stable tag:        1.0.1
+ * Author:            WPAnchorBay
  * Author URI:        https://wpanchorbay.com
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
