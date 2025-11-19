@@ -197,6 +197,7 @@ class Plugin
 		// if (!is_admin()) {
 		// 	return;
 		// }
+		$this->loader->add_filter('all_plugins', $this, 'change_plugin_display_name');
 
 		$this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
 		$this->loader->add_filter('admin_body_class', $plugin_admin, 'add_has_sticky_header');
@@ -210,7 +211,23 @@ class Plugin
 		$this->loader->add_filter('plugin_row_meta', $plugin_admin, 'add_plugin_row_meta', 10, 2);
 	}
 
+	/**
+	 * Changes the plugin's display name on the plugins page.
+	 *
+	 * @since 1.0.1
+	 * @param array $plugins The array of all plugin data.
+	 * @return array The modified array of plugin data.
+	 */
+	public function change_plugin_display_name($plugins)
+	{
+		$plugin_basename = plugin_basename(CAMPAIGNBAY_PATH . 'campaignbay.php');
 
+		if (isset($plugins[$plugin_basename])) {
+			$plugins[$plugin_basename]['Name'] = 'CampaignBay';
+		}
+
+		return $plugins;
+	}
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
