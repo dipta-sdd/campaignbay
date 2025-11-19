@@ -4,6 +4,7 @@ import logo_32px from "./../../assets/img/campaign_bay.svg";
 import { useState, useEffect, FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
+import { useGuide, useGuideStep } from "../store/GuideContext";
 
 interface MenuLink {
   label: string;
@@ -13,6 +14,9 @@ interface MenuLink {
 const Navbar: FC = () => {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
+  const addCampaignBtnRef = useGuideStep<HTMLButtonElement>(1);
+  const { setTourStep } = useGuide();
 
   const menus: MenuLink[] = [
     {
@@ -76,8 +80,12 @@ const Navbar: FC = () => {
               ))}
             </nav>
             <button
+              ref={addCampaignBtnRef}
               className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-0"
-              onClick={() => navigate("/campaigns/add")}
+              onClick={() => {
+                navigate("/campaigns/add");
+                setTourStep(2);
+              }}
             >
               {__("Add Campaign", "campaignbay")}
               <Icon

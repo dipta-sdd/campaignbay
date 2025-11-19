@@ -28004,11 +28004,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pages_Dashboard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pages/Dashboard */ "./src/pages/Dashboard.tsx");
 /* harmony import */ var _pages_Settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pages/Settings */ "./src/pages/Settings.tsx");
 /* harmony import */ var _pages_Campaigns__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pages/Campaigns */ "./src/pages/Campaigns.tsx");
-/* harmony import */ var _pages_CampaignsAdd__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pages/CampaignsAdd */ "./src/pages/CampaignsAdd.tsx");
-/* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/CampaignsEdit */ "./src/pages/CampaignsEdit.tsx");
-/* harmony import */ var _components_ToastContainer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/ToastContainer */ "./src/components/ToastContainer.tsx");
-/* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./store/cbStore */ "./src/store/cbStore.tsx");
-/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./store/toast/use-toast */ "./src/store/toast/use-toast.tsx");
+/* harmony import */ var _components_ToastContainer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/ToastContainer */ "./src/components/ToastContainer.tsx");
+/* harmony import */ var _store_cbStore__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./store/cbStore */ "./src/store/cbStore.tsx");
+/* harmony import */ var _store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./store/toast/use-toast */ "./src/store/toast/use-toast.tsx");
+/* harmony import */ var _pages_CampaignsAdd__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pages/CampaignsAdd */ "./src/pages/CampaignsAdd.tsx");
+/* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pages/CampaignsEdit */ "./src/pages/CampaignsEdit.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__);
 
@@ -28023,35 +28023,39 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const App = () => {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_store_cbStore__WEBPACK_IMPORTED_MODULE_8__.CbStoreProvider, {
-    value: window.campaignbay_Localize,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_9__.ToastProvider, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_ToastContainer__WEBPACK_IMPORTED_MODULE_7__.ToastContainer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.HashRouter, {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Routes, {
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
-            path: "/",
-            element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_AppLayout__WEBPACK_IMPORTED_MODULE_1__["default"], {}),
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
-              index: true,
-              element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_Dashboard__WEBPACK_IMPORTED_MODULE_2__["default"], {})
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
-              path: "settings",
-              element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_Settings__WEBPACK_IMPORTED_MODULE_3__["default"], {})
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
-              path: "campaigns",
-              element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_Campaigns__WEBPACK_IMPORTED_MODULE_4__["default"], {})
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
-              path: "campaigns/add",
-              element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_CampaignsAdd__WEBPACK_IMPORTED_MODULE_5__["default"], {})
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
-              path: "campaigns/:id",
-              element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_6__["default"], {})
-            })]
+  return (
+    /*#__PURE__*/
+    // @ts-ignore
+    (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_store_cbStore__WEBPACK_IMPORTED_MODULE_6__.CbStoreProvider, {
+      value: window.campaignbay_Localize,
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_store_toast_use_toast__WEBPACK_IMPORTED_MODULE_7__.ToastProvider, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_ToastContainer__WEBPACK_IMPORTED_MODULE_5__.ToastContainer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.HashRouter, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Routes, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
+              path: "/",
+              element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_AppLayout__WEBPACK_IMPORTED_MODULE_1__["default"], {}),
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
+                index: true,
+                element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_Dashboard__WEBPACK_IMPORTED_MODULE_2__["default"], {})
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
+                path: "settings",
+                element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_Settings__WEBPACK_IMPORTED_MODULE_3__["default"], {})
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
+                path: "campaigns",
+                element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_Campaigns__WEBPACK_IMPORTED_MODULE_4__["default"], {})
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
+                path: "campaigns/add",
+                element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_CampaignsAdd__WEBPACK_IMPORTED_MODULE_8__["default"], {})
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Route, {
+                path: "campaigns/:id",
+                element: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_9__["default"], {})
+              })]
+            })
           })
-        })
-      })]
+        })]
+      })
     })
-  });
+  );
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (App);
 
@@ -28651,14 +28655,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/dist/development/chunk-UIGDSWPH.mjs");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _store_GuideContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../store/GuideContext */ "./src/store/GuideContext.tsx");
+/* harmony import */ var _Guide__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Guide */ "./src/components/Guide.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__);
+
+
 
 
 const AppLayout = () => {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
     className: "wpab-cb-container radius-large",
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Outlet, {})
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_store_GuideContext__WEBPACK_IMPORTED_MODULE_1__.GuideProvider, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_0__.Outlet, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_Guide__WEBPACK_IMPORTED_MODULE_2__["default"], {})]
+    })
   });
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AppLayout);
@@ -28694,8 +28704,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _CampaignTiers__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./CampaignTiers */ "./src/components/CampaignTiers.tsx");
 /* harmony import */ var _pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../pages/CampaignsEdit */ "./src/pages/CampaignsEdit.tsx");
 /* harmony import */ var _CampaignSettings__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./CampaignSettings */ "./src/components/CampaignSettings.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var _store_GuideContext__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../store/GuideContext */ "./src/store/GuideContext.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__);
+
 
 
 
@@ -28716,7 +28728,6 @@ const Campaign = ({
   setCampaign,
   errors
 }) => {
-  console.log(campaign.schedule_enabled);
   const {
     wpSettings
   } = (0,_store_cbStore__WEBPACK_IMPORTED_MODULE_6__.useCbStore)();
@@ -28731,6 +28742,8 @@ const Campaign = ({
   const [enableUsageLimit, setEnableUsageLimit] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [categories, setCategories] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [products, setProducts] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const campaignTitleInputRef = (0,_store_GuideContext__WEBPACK_IMPORTED_MODULE_14__.useGuideStep)(2);
+  const saveCampaignBtnRef = (0,_store_GuideContext__WEBPACK_IMPORTED_MODULE_14__.useGuideStep)(3);
   (0,react__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
     fetchDependency();
     setSettings(campaign.settings);
@@ -28814,18 +28827,19 @@ const Campaign = ({
     }
     return tmpSettings;
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.Fragment, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("div", {
       className: "cb-form-input-con ",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
         className: "campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4 campaignbay-gap-[10px]",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
           className: "cb-form-input-con campaignbay-col-span-2 !campaignbay-p-0",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("label", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("label", {
             htmlFor: "campaign-title",
             className: "!campaignbay-capitalize",
-            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Campaign Title", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {})]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("input", {
+            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Campaign Title", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {})]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("input", {
+            ref: campaignTitleInputRef,
             type: "text",
             id: "campaign-title",
             className: `wpab-input w-100 ${errors?.title ? "wpab-input-error" : ""}`,
@@ -28835,13 +28849,13 @@ const Campaign = ({
               title: e.target.value
             }))
           }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_12__.renderError)(errors?.title)]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
           className: "cb-form-input-con campaignbay-col-span-2 md:campaignbay-col-span-1 !campaignbay-p-0",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("label", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("label", {
             htmlFor: "campaign-type",
             className: "!campaignbay-capitalize",
-            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Select Discount Type", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {})]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("select", {
+            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Select Discount Type", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {})]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("select", {
             id: "campaign-type",
             className: `wpab-input w-100 ${errors?.type ? "wpab-input-error" : ""}`,
             value: campaign.type,
@@ -28849,27 +28863,27 @@ const Campaign = ({
               ...prev,
               type: e.target.value
             })),
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("option", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("option", {
               value: "bogo",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Buy X Get X", "campaignbay")
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("option", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("option", {
               value: "scheduled",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Scheduled Discount", "campaignbay")
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("option", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("option", {
               value: "quantity",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Quantity Based Discount", "campaignbay")
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("option", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("option", {
               value: "earlybird",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("EarlyBird Discount", "campaignbay")
             })]
           }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_12__.renderError)(errors?.type)]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
           className: "cb-form-input-con campaignbay-col-span-2  md:campaignbay-col-span-1 !campaignbay-p-0",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("label", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("label", {
             htmlFor: "campaign-status",
             className: "!campaignbay-capitalize",
-            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Select Status", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {})]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("select", {
+            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Select Status", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {})]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("select", {
             id: "campaign-status",
             className: `wpab-input w-100 ${errors?.status ? "wpab-input-error" : ""}`,
             value: campaign.status,
@@ -28877,73 +28891,73 @@ const Campaign = ({
               ...prev,
               status: e.target.value
             })),
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("option", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("option", {
               value: "active",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Active", "campaignbay")
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("option", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("option", {
               value: "inactive",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Inactive", "campaignbay")
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("option", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("option", {
               value: "scheduled",
               children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Scheduled", "campaignbay")
             })]
           }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_12__.renderError)(errors?.status)]
         })]
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_CampaignTiers__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_CampaignTiers__WEBPACK_IMPORTED_MODULE_11__["default"], {
       campaign: campaign,
       setCampaign: setCampaign,
       errors: errors,
       products: products
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
       className: "cb-form-input-con",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("label", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("label", {
         htmlFor: "start-time",
-        children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("OTHER CONFIGURATIONS", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {}), " "]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+        children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("OTHER CONFIGURATIONS", "campaignbay"), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {}), " "]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
         className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_9__["default"], {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_9__["default"], {
           id: "exclude-sale-items",
           checked: !!campaign.exclude_sale_items,
           onChange: e => setCampaign(prev => ({
             ...prev,
             exclude_sale_items: e.target.checked
           }))
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("label", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("label", {
           htmlFor: "exclude-sale-items",
           className: "",
           children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Exclude Sale Items", "campaignbay")
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Tooltip__WEBPACK_IMPORTED_MODULE_10__["default"], {
-          content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("span", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Tooltip__WEBPACK_IMPORTED_MODULE_10__["default"], {
+          content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("span", {
             className: "campaignbay-text-sm",
             children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("When checked , sale items will be excluded from the discount", "campaignbay")
           }),
           position: "top"
         }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_12__.renderError)(errors?.exclude_sale_items, false)]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
         className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_9__["default"], {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_9__["default"], {
           id: "enable-usage-limit",
           checked: enableUsageLimit,
           onChange: e => setEnableUsageLimit(e.target.checked)
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("label", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("label", {
           htmlFor: "enable-usage-limit",
           className: "",
           children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Enable Usage Limit", "campaignbay")
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Tooltip__WEBPACK_IMPORTED_MODULE_10__["default"], {
-          content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("span", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Tooltip__WEBPACK_IMPORTED_MODULE_10__["default"], {
+          content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("span", {
             className: "campaignbay-text-sm",
             children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("When checked , usage limit will be enabled for the campaign. Campaign will be disabled when the limit is reached.", "campaignbay")
           }),
           position: "top"
         })]
-      }), enableUsageLimit && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+      }), enableUsageLimit && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
         className: "cb-form-input-con !campaignbay-p-0",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("label", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("label", {
           htmlFor: "usage-limit",
           className: "campaignbay-whitespace-nowrap",
           children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Usage Limit", "campaignbay")
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("input", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("input", {
           type: "text",
           id: "usage-limit",
           className: `wpab-input w-100  ${errors?.usage_limit ? "wpab-input-error" : ""}`,
@@ -28953,9 +28967,9 @@ const Campaign = ({
             usage_limit: parseInt(e.target.value) || null
           }))
         }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_12__.renderError)(errors?.usage_limit)]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
         className: "campaignbay-flex campaignbay-items-center campaignbay-gap-2",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_9__["default"], {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_CbCheckbox__WEBPACK_IMPORTED_MODULE_9__["default"], {
           id: "schedule",
           checked: campaign.schedule_enabled,
           onChange: e => setCampaign(prev => ({
@@ -28963,32 +28977,32 @@ const Campaign = ({
             schedule_enabled: e.target.checked
           })),
           disabled: campaign.status === "scheduled"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("label", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("label", {
           htmlFor: "schedule",
           className: "",
           children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Schedule", "campaignbay")
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Tooltip__WEBPACK_IMPORTED_MODULE_10__["default"], {
-          content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("span", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Tooltip__WEBPACK_IMPORTED_MODULE_10__["default"], {
+          content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("span", {
             className: "campaignbay-text-sm",
             children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("When checked , the campaign will be scheduled to run between the start and end dates", "campaignbay")
           }),
           position: "top"
         })]
-      }), campaign.schedule_enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+      }), campaign.schedule_enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
         className: "wpab-grid-2 cb-date-time-fix",
         style: {
           gap: "16px"
         },
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
           className: `${errors?.start_datetime ? "wpab-input-error" : ""}`,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("span", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("span", {
             className: "wpab-input-label",
             style: {
               display: "block",
               marginBottom: "10px"
             },
-            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Start Time", "campaignbay"), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {})]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_DateTimePicker__WEBPACK_IMPORTED_MODULE_8__["default"], {
+            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("Start Time", "campaignbay"), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Required__WEBPACK_IMPORTED_MODULE_5__["default"], {})]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_DateTimePicker__WEBPACK_IMPORTED_MODULE_8__["default"], {
             timezone: timezone,
             wpSettings: wpSettings,
             id: "start-time",
@@ -29001,16 +29015,16 @@ const Campaign = ({
             },
             disabled: !campaign.schedule_enabled
           }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_12__.renderError)(errors?.start_datetime, false)]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
           className: `${errors?.end_datetime ? "wpab-input-error" : ""}`,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("span", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("span", {
             className: "wpab-input-label",
             style: {
               display: "block",
               marginBottom: "10px"
             },
             children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)("End Time", "campaignbay")
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_DateTimePicker__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_DateTimePicker__WEBPACK_IMPORTED_MODULE_8__["default"], {
             timezone: timezone,
             id: "end-time",
             dateTime: campaign.end_datetime,
@@ -29024,7 +29038,7 @@ const Campaign = ({
           }), (0,_pages_CampaignsEdit__WEBPACK_IMPORTED_MODULE_12__.renderError)(errors?.end_datetime, false)]
         })]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_CampaignSettings__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_CampaignSettings__WEBPACK_IMPORTED_MODULE_13__["default"], {
       settings: settings,
       setSettings: setSettings,
       errors: errors?.settings,
@@ -30470,6 +30484,307 @@ const GlobalSettings = ({
 
 /***/ }),
 
+/***/ "./src/components/Guide.tsx":
+/*!**********************************!*\
+  !*** ./src/components/Guide.tsx ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _store_GuideContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../store/GuideContext */ "./src/store/GuideContext.tsx");
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/x.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/dist/development/chunk-UIGDSWPH.mjs");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
+
+
+
+
+
+const initialStyles = {
+  tooltip: {
+    visibility: "hidden",
+    opacity: 0
+  },
+  highlight: {
+    display: "none"
+  }
+};
+const Guide = () => {
+  const {
+    getRef,
+    tourStep,
+    setTourStep,
+    config
+  } = (0,_store_GuideContext__WEBPACK_IMPORTED_MODULE_1__.useGuide)();
+  const [styles, setStyles] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(initialStyles);
+  const [targetRect, setTargetRect] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [targetElement, setTargetElement] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const tooltipRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const navigate = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_3__.useNavigate)();
+
+  // Derived visibility based on whether current state exists in config
+  const isVisible = tourStep !== 0 && !!config[tourStep];
+
+  // Effect to find the target element for the current tour step.
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (!isVisible) {
+      setTargetElement(null);
+      return;
+    }
+    setTargetElement(null);
+    setStyles(initialStyles); // Hide guide while finding new target
+    setTargetRect(null);
+    let attempts = 0;
+    const maxAttempts = 50; // Try for 5 seconds.
+    const interval = setInterval(() => {
+      const element = getRef(tourStep)?.current;
+      if (element && element.getBoundingClientRect().width > 0) {
+        clearInterval(interval);
+        setTargetElement(element);
+      } else if (++attempts > maxAttempts) {
+        clearInterval(interval);
+        console.error(`Guide target for step ${tourStep} not found.`);
+        setTourStep(0); // End tour if target not found
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [tourStep, getRef, setTourStep, isVisible]);
+
+  // Effect to auto-focus the target element if configured
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (targetElement && config[tourStep]?.autoFocus) {
+      targetElement.focus();
+    }
+  }, [targetElement, tourStep, config]);
+
+  // Effect to calculate and apply styles once the target element is found.
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useLayoutEffect)(() => {
+    const tooltipEl = tooltipRef.current;
+    if (!targetElement || !tooltipEl || !isVisible) {
+      setStyles(initialStyles);
+      setTargetRect(null);
+      return;
+    }
+    let animationFrameId;
+    const calculatePosition = () => {
+      if (!document.body.contains(targetElement) || !tooltipRef.current) {
+        setStyles(initialStyles);
+        setTargetRect(null);
+        return;
+      }
+      const tooltipRect = tooltipEl.getBoundingClientRect();
+
+      // If tooltip width is 0, browser hasn't calculated layout yet.
+      if (tooltipRect.width === 0) {
+        animationFrameId = requestAnimationFrame(calculatePosition);
+        return;
+      }
+      const tooltipWidth = tooltipRect.width > 300 ? 300 : tooltipRect.width;
+      const stepConfig = config[tourStep];
+      const tRect = targetElement.getBoundingClientRect();
+
+      // Update raw rect for the blocking overlay logic
+      const overlayTop = tRect.top - 4;
+      const overlayLeft = tRect.left - 4;
+      const overlayWidth = tRect.width + 8;
+      const overlayHeight = tRect.height + 8;
+      setTargetRect({
+        top: overlayTop,
+        left: overlayLeft,
+        width: overlayWidth,
+        height: overlayHeight
+      });
+      const newHighlightStyle = {
+        position: "fixed",
+        top: `${overlayTop}px`,
+        left: `${overlayLeft}px`,
+        width: `${overlayWidth}px`,
+        height: `${overlayHeight}px`,
+        boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.6)",
+        borderRadius: "6px",
+        zIndex: 10000,
+        pointerEvents: "none",
+        transition: "opacity 0.3s ease-in-out",
+        display: "block"
+      };
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const offset = 12;
+      const margin = 8;
+      let top = 0;
+      let left = 0;
+      let transform = "none";
+      switch (stepConfig.position) {
+        case "bottom-left":
+          top = tRect.bottom + offset;
+          left = tRect.left;
+          break;
+        case "bottom":
+          top = tRect.bottom + offset;
+          left = tRect.left + tRect.width / 2;
+          transform = "translateX(-50%)";
+          break;
+        default:
+          top = tRect.bottom + offset;
+          left = tRect.left;
+      }
+      if (top + tooltipRect.height > viewportHeight - margin) {
+        top = tRect.top - tooltipRect.height - offset;
+      }
+      if (top < margin) {
+        top = margin;
+      }
+      let effectiveLeft = left;
+      if (transform === "translateX(-50%)") {
+        effectiveLeft -= tooltipWidth / 2;
+      }
+      if (effectiveLeft + tooltipWidth > viewportWidth - margin) {
+        left = viewportWidth - tooltipWidth - margin;
+        transform = "none";
+      }
+      if (effectiveLeft < margin) {
+        left = margin;
+        transform = "none";
+      }
+      const newTooltipStyle = {
+        position: "fixed",
+        top: `${top}px`,
+        left: `${left}px`,
+        transform,
+        zIndex: 10001,
+        transition: "opacity 0.3s ease-in-out",
+        visibility: "visible",
+        opacity: 1
+      };
+      setStyles({
+        tooltip: newTooltipStyle,
+        highlight: newHighlightStyle
+      });
+    };
+    calculatePosition();
+    window.addEventListener("resize", calculatePosition);
+    window.addEventListener("scroll", calculatePosition, true);
+
+    // ResizeObserver to handle scrollbar changes or other layout shifts
+    const resizeObserver = new ResizeObserver(() => {
+      calculatePosition();
+    });
+    resizeObserver.observe(document.body);
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", calculatePosition);
+      window.removeEventListener("scroll", calculatePosition, true);
+      resizeObserver.disconnect();
+    };
+  }, [targetElement, tourStep, config, isVisible]);
+
+  // Helper to block interactions
+  const preventInteraction = e => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  if (!isVisible) return null;
+  const stepConfig = config[tourStep];
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
+    children: [targetRect && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+        style: {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: targetRect.top,
+          zIndex: 9999,
+          cursor: "default"
+        }
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+        style: {
+          position: "fixed",
+          top: targetRect.top + targetRect.height,
+          left: 0,
+          width: "100%",
+          bottom: 0,
+          zIndex: 9999,
+          cursor: "default"
+        }
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+        style: {
+          position: "fixed",
+          top: targetRect.top,
+          left: 0,
+          width: targetRect.left,
+          height: targetRect.height,
+          zIndex: 9999,
+          cursor: "default"
+        }
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+        style: {
+          position: "fixed",
+          top: targetRect.top,
+          left: targetRect.left + targetRect.width,
+          right: 0,
+          height: targetRect.height,
+          zIndex: 9999,
+          cursor: "default"
+        }
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+      style: styles.highlight
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+      ref: tooltipRef,
+      style: styles.tooltip,
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        className: "campaignbay-bg-white campaignbay-rounded-lg campaignbay-shadow-2xl campaignbay-p-4 campaignbay-animate-fade-in-up",
+        style: {
+          maxWidth: "300px"
+        },
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+          className: "campaignbay-flex campaignbay-justify-between campaignbay-items-start",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+            className: "campaignbay-text-sm campaignbay-text-gray-700 campaignbay-pr-4",
+            children: stepConfig.text
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+            onClick: () => setTourStep(0),
+            className: "campaignbay-p-1 campaignbay-rounded-full hover:campaignbay-bg-gray-200",
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(lucide_react__WEBPACK_IMPORTED_MODULE_2__["default"], {
+              className: "campaignbay-w-4 campaignbay-h-4 campaignbay-text-gray-500"
+            })
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+          className: "campaignbay-mt-4 campaignbay-flex campaignbay-justify-between campaignbay-items-center",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("span", {
+            className: "campaignbay-text-xs campaignbay-font-bold campaignbay-text-gray-500",
+            children: [tourStep, " / ", Object.keys(config).length]
+          }), stepConfig.showNext && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+            onClick: () => {
+              if (stepConfig.onNext) {
+                stepConfig.onNext({
+                  next: () => setTourStep(tourStep + 1),
+                  setStep: setTourStep,
+                  navigate: navigate
+                });
+              } else {
+                setTourStep(tourStep + 1);
+              }
+            },
+            className: "campaignbay-px-3 campaignbay-py-1 campaignbay-bg-blue-600 campaignbay-text-white text-sm campaignbay-font-medium campaignbay-rounded-md hover:campaignbay-bg-blue-700",
+            children: "Next"
+          })]
+        })]
+      })
+    })]
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Guide);
+
+/***/ }),
+
 /***/ "./src/components/ImportExport.tsx":
 /*!*****************************************!*\
   !*** ./src/components/ImportExport.tsx ***!
@@ -31208,10 +31523,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/dist/development/chunk-UIGDSWPH.mjs");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _store_GuideContext__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../store/GuideContext */ "./src/store/GuideContext.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__);
 
 // @ts-ignore
+
 
 
 
@@ -31220,6 +31537,10 @@ __webpack_require__.r(__webpack_exports__);
 const Navbar = () => {
   const [activeTab, setActiveTab] = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(false);
+  const addCampaignBtnRef = (0,_store_GuideContext__WEBPACK_IMPORTED_MODULE_6__.useGuideStep)(1);
+  const {
+    setTourStep
+  } = (0,_store_GuideContext__WEBPACK_IMPORTED_MODULE_6__.useGuide)();
   const menus = [{
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Dashboard", "campaignbay"),
     path: "/"
@@ -31238,23 +31559,23 @@ const Navbar = () => {
     // setActiveTab(currentPath);
     setActiveTab(basePath);
   }, [currentPath]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
       className: "campaignbay-bg-white campaignbay-p-0 !campaignbay-border-0 !campaignbay-border-b !campaignbay-border-gray-300 campaignbay-z-50 campaignbay-relative",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
         className: "campaignbay-flex campaignbay-px-[12px] campaignbay-justify-between campaignbay-items-center campaignbay-flex-wrap md:campaignbay-flex-nowrap campaignbay-gap-[4px] campaignbay-relative",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
           className: "campaignbay-flex campaignbay-items-center campaignbay-gap-[4px] campaignbay-py-[12px]",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("img", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("img", {
             src: _assets_img_campaign_bay_svg__WEBPACK_IMPORTED_MODULE_2__["default"],
             alt: "CampaignBay Logo",
             className: "campaignbay-h-[32px] campaignbay-w-auto"
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: `campaignbay-flex-1 md:campaignbay-flex-none campaignbay-flex-col md:campaignbay-flex-row campaignbay-justify-stretch md:campaignbay-items-center campaignbay-absolute md:campaignbay-relative campaignbay-top-[102%] md:campaignbay-top-auto campaignbay-left-0 campaignbay-w-full md:campaignbay-w-auto campaignbay-gap-0 md:campaignbay-gap-[6px] campaignbay-bg-white !campaignbay-border-0 ${isMobileMenuOpen ? "campaignbay-flex" : "campaignbay-hidden md:campaignbay-flex"}`,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("nav", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("nav", {
             className: "campaignbay-items-stretch md:campaignbay-items-center campaignbay-gap-0 campaignbay-flex campaignbay-flex-col md:campaignbay-flex-row campaignbay-w-full",
-            children: menus.map(menu => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+            children: menus.map(menu => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
               className: `campaignbay-text-base campaignbay-font-medium campaignbay-cursor-pointer campaignbay-p-[12px] campaignbay-py-[8px] campaignbay-pl-[8px] campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${activeTab === menu.path ? "campaignbay-text-blue-800" : "campaignbay-text-gray-800 hover:campaignbay-text-blue-800"}`,
               onClick: () => {
                 navigate(menu.path);
@@ -31262,10 +31583,14 @@ const Navbar = () => {
               },
               children: menu.label
             }, menu.path))
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("button", {
+            ref: addCampaignBtnRef,
             className: "campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-0",
-            onClick: () => navigate("/campaigns/add"),
-            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Add Campaign", "campaignbay"), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_0__["default"], {
+            onClick: () => {
+              navigate("/campaigns/add");
+              setTourStep(2);
+            },
+            children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)("Add Campaign", "campaignbay"), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_0__["default"], {
               icon: _wordpress_icons__WEBPACK_IMPORTED_MODULE_1__["default"],
               fill: "currentColor",
               size: 20,
@@ -31274,12 +31599,12 @@ const Navbar = () => {
               }
             })]
           })]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
           className: "campaignbay-flex md:campaignbay-hidden campaignbay-items-center campaignbay-gap-[2px] campaignbay-text-gray-800 hover:campaignbay-text-blue-800",
           onClick: () => setIsMobileMenuOpen(!isMobileMenuOpen),
           "aria-label": isMobileMenuOpen ? "Close menu" : "Open menu",
           "aria-expanded": isMobileMenuOpen,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("svg", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("svg", {
             width: "24",
             height: "24",
             viewBox: "0 0 24 24",
@@ -31287,34 +31612,34 @@ const Navbar = () => {
             xmlns: "http://www.w3.org/2000/svg",
             className: "campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out",
             "aria-hidden": "true",
-            children: isMobileMenuOpen ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("path", {
+            children: isMobileMenuOpen ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("path", {
                 d: "M6 6L18 18",
                 stroke: "currentColor",
                 strokeWidth: "2",
                 strokeLinecap: "round",
                 strokeLinejoin: "round"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("path", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("path", {
                 d: "M6 18L18 6",
                 stroke: "currentColor",
                 strokeWidth: "2",
                 strokeLinecap: "round",
                 strokeLinejoin: "round"
               })]
-            }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("path", {
+            }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("path", {
                 d: "M3 12H21",
                 stroke: "currentColor",
                 strokeWidth: "2",
                 strokeLinecap: "round",
                 strokeLinejoin: "round"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("path", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("path", {
                 d: "M3 6H21",
                 stroke: "currentColor",
                 strokeWidth: "2",
                 strokeLinecap: "round",
                 strokeLinejoin: "round"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("path", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("path", {
                 d: "M3 18H21",
                 stroke: "currentColor",
                 strokeWidth: "2",
@@ -31325,7 +31650,7 @@ const Navbar = () => {
           })
         })]
       })
-    }), isMobileMenuOpen && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+    }), isMobileMenuOpen && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
       className: "campaignbay-fixed campaignbay-top-0 campaignbay-left-0 campaignbay-w-full campaignbay-h-full campaignbay-bg-black campaignbay-opacity-60 campaignbay-z-40 md:campaignbay-hidden",
       onClick: () => setIsMobileMenuOpen(false)
     })]
@@ -35113,6 +35438,72 @@ const Settings = () => {
 
 /***/ }),
 
+/***/ "./src/store/GuideContext.tsx":
+/*!************************************!*\
+  !*** ./src/store/GuideContext.tsx ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   GuideProvider: () => (/* binding */ GuideProvider),
+/* harmony export */   useGuide: () => (/* binding */ useGuide),
+/* harmony export */   useGuideStep: () => (/* binding */ useGuideStep)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_tourConfig__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/tourConfig */ "./src/utils/tourConfig.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+const GuideContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)(undefined);
+const GuideProvider = ({
+  children
+}) => {
+  const [tourStep, setTourStep] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
+  const [config, setConfig] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(_utils_tourConfig__WEBPACK_IMPORTED_MODULE_1__.mainTourConfig);
+  const refs = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)({});
+  const registerRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((step, ref) => {
+    refs.current[step] = ref;
+  }, []);
+  const getRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(step => {
+    return refs.current[step];
+  }, []);
+  const value = {
+    tourStep,
+    setTourStep,
+    registerRef,
+    getRef,
+    config,
+    setConfig
+  };
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(GuideContext.Provider, {
+    value: value,
+    children: children
+  });
+};
+const useGuide = () => {
+  const context = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(GuideContext);
+  if (context === undefined) {
+    throw new Error("useGuide must be used within a GuideProvider");
+  }
+  return context;
+};
+const useGuideStep = step => {
+  const ref = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const {
+    registerRef
+  } = useGuide();
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    registerRef(step, ref);
+  }, [registerRef, step]);
+  return ref;
+};
+
+/***/ }),
+
 /***/ "./src/store/cbStore.tsx":
 /*!*******************************!*\
   !*** ./src/store/cbStore.tsx ***!
@@ -35320,6 +35711,46 @@ function getBool(value) {
   if (value === 1 || value === true || value === "true" || value === "1") return true;
   return false;
 }
+
+/***/ }),
+
+/***/ "./src/utils/tourConfig.ts":
+/*!*********************************!*\
+  !*** ./src/utils/tourConfig.ts ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   mainTourConfig: () => (/* binding */ mainTourConfig)
+/* harmony export */ });
+const mainTourConfig = {
+  1: {
+    text: "Click here to start creating a new marketing campaign.",
+    position: "bottom-left",
+    showNext: true,
+    onNext: ({
+      next,
+      setStep,
+      navigate
+    }) => {
+      console.log("Next button clicked on step 2");
+      navigate("/campaigns/add");
+      next();
+    }
+  },
+  2: {
+    text: "Give your campaign a title. For example, 'Summer Sale'.",
+    position: "bottom",
+    showNext: true,
+    autoFocus: true
+  },
+  3: {
+    text: "Once you're done, click here to save your campaign.",
+    position: "bottom-left",
+    showNext: false
+  }
+};
 
 /***/ }),
 

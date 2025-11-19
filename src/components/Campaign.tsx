@@ -24,6 +24,7 @@ import {
 import CampaignTiers from "./CampaignTiers";
 import { renderError } from "../pages/CampaignsEdit";
 import CampaignSettings from "./CampaignSettings";
+import { useGuideStep } from "../store/GuideContext";
 
 interface CampaignProps {
   campaign: CampaignInerface;
@@ -32,7 +33,6 @@ interface CampaignProps {
 }
 
 const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
-  console.log(campaign.schedule_enabled);
   const { wpSettings } = useCbStore();
   const { addToast } = useToast();
   const { timezone } = getDateSettings();
@@ -42,6 +42,9 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   const [enableUsageLimit, setEnableUsageLimit] = useState<boolean>(false);
   const [categories, setCategories] = useState<SelectOptionType[]>([]);
   const [products, setProducts] = useState<SelectOptionType[]>([]);
+
+  const campaignTitleInputRef = useGuideStep<HTMLInputElement>(2);
+  const saveCampaignBtnRef = useGuideStep<HTMLButtonElement>(3);
 
   useEffect(() => {
     fetchDependency();
@@ -144,6 +147,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               {__("Campaign Title", "campaignbay")} <Required />
             </label>
             <input
+              ref={campaignTitleInputRef}
               type="text"
               id="campaign-title"
               className={`wpab-input w-100 ${
@@ -218,8 +222,6 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
           </div>
         </div>
       </div>
-
-
 
       <CampaignTiers
         campaign={campaign}
