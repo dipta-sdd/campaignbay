@@ -27,6 +27,9 @@ class OrderManager extends Base
 
 	/**
 	 * Defines all hooks this class needs to run.
+	 *
+	 * @since 1.0.0
+	 * @access private
 	 */
 	private function define_hooks()
 	{

@@ -120,7 +120,7 @@ abstract class Base
 	 * A private helper method to add hooks to the hooks array.
 	 *
 	 * @since 1.0.0
-	 * @access private
+	 * @access protected
 	 * @param string $type 'action' or 'filter'.
 	 * @param string $hook The hook name.
 	 * @param string $callback The callback method on this object.
@@ -156,6 +156,7 @@ abstract class Base
 	 * Prevents the instance from being cloned.
 	 *
 	 * @since 1.0.0
+	 * @access private
 	 */
 	private function __clone()
 	{

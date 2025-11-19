@@ -653,6 +653,13 @@ class Campaign
 		return $this->data->status;
 	}
 
+	/**
+	 * Sets the campaign status.
+	 *
+	 * @since 1.0.0
+	 * @param string $status The new status.
+	 * @return bool True on success, false on failure.
+	 */
 	public function set_status($status)
 	{
 		if (empty($status)) {
@@ -894,6 +901,13 @@ class Campaign
 		return $this->data->end_datetime;
 	}
 
+	/**
+	 * Converts a date string to UTC.
+	 *
+	 * @since 1.0.0
+	 * @param string $date_string The date string to convert.
+	 * @return string|null The date string in UTC, or null on failure.
+	 */
 	public function get_utc_time($date_string)
 	{
 
@@ -910,6 +924,13 @@ class Campaign
 		}
 	}
 
+	/**
+	 * Converts a date string to a Unix timestamp.
+	 *
+	 * @since 1.0.0
+	 * @param string $date_string The date string to convert.
+	 * @return int|null The Unix timestamp, or null on failure.
+	 */
 	public function get_time_stamp($date_string)
 	{
 		$utc_datetime = $this->get_utc_time($date_string);

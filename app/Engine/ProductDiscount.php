@@ -325,6 +325,14 @@ class ProductDiscount
 		return $calculated_price;
 	}
 
+	/**
+	 * Calculates the price for an early bird discount.
+	 *
+	 * @since 1.0.0
+	 * @param array $tier The tier data.
+	 * @param float $base_price The base price.
+	 * @return float The calculated price.
+	 */
 	public function calculate_earlybird_price($tier, $base_price)
 	{
 		$discount_type = $tier['type'];
@@ -365,6 +373,14 @@ class ProductDiscount
 		return max(0, $base_price - $discount_amount);
 	}
 
+	/**
+	 * Checks if a new price is better than the current best price.
+	 *
+	 * @since 1.0.0
+	 * @param float $new_price The new price.
+	 * @param float $current_best_price The current best price.
+	 * @return bool Whether the new price is better.
+	 */
 	public function is_better_price($new_price, $current_best_price)
 	{
 		if ($new_price === null)

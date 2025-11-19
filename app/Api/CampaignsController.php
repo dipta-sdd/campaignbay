@@ -613,6 +613,14 @@ class CampaignsController extends ApiController
 		);
 	}
 
+	/**
+	 * Duplicate a single campaign.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
 	public function duplicate_item($request)
 	{
 		try {

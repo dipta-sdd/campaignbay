@@ -207,6 +207,15 @@ class Filter
      * @param $target_ids
      * @return bool
      */
+	/**
+	 * Check product in list
+	 *
+	 * @since 1.0.0
+	 * @param int $product_id The product ID.
+	 * @param bool $is_exclude Whether to exclude the product.
+	 * @param array $target_ids The target IDs.
+	 * @return bool
+	 */
     function checkInList($product_id, $is_exclude, $target_ids)
     {
         $result = false;

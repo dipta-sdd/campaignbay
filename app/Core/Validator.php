@@ -264,21 +264,45 @@ class Validator
 		$this->errors[$field] = array("message" => $message);
 	}
 
+	/**
+	 * Checks if validation fails.
+	 *
+	 * @since 1.0.0
+	 * @return bool True if validation fails, false otherwise.
+	 */
 	public function fails()
 	{
 		return !empty($this->errors);
 	}
 
+	/**
+	 * Gets the first error message.
+	 *
+	 * @since 1.0.0
+	 * @return string The first error message.
+	 */
 	public function get_first_error()
 	{
 		return !empty($this->errors) ? reset($this->errors) : '';
 	}
 
+	/**
+	 * Gets all error messages.
+	 *
+	 * @since 1.0.0
+	 * @return array The error messages.
+	 */
 	public function get_errors()
 	{
 		return $this->errors;
 	}
 
+	/**
+	 * Gets the validated data.
+	 *
+	 * @since 1.0.0
+	 * @return array The validated data.
+	 */
 	public function get_validated_data()
 	{
 		return $this->validated_data;

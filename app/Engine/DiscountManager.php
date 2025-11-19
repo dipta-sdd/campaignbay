@@ -74,6 +74,14 @@ class DiscountManager extends Base
 		}
 	}
 
+	/**
+	 * Adds discount data to a product.
+	 *
+	 * @since 1.0.0
+	 * @param WC_Product $product The product object.
+	 * @param int $product_id The product ID.
+	 * @return WC_Product The modified product object.
+	 */
 	public function add_discount_data($product, $product_id)
 	{
 		$product = ProductDiscount::create($product)->apply_discounts()->get_product();
