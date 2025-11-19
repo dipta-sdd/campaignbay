@@ -99,6 +99,16 @@ class ApiController extends WP_REST_Controller
 	}
 
 	/**
+	 * Register the routes for the objects of the controller.
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
+	 */
+	public function register_routes()
+	{
+	}
+
+	/**
 	 * Gets an instance of this object.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.
 	 *

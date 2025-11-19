@@ -127,7 +127,7 @@ class SettingsController extends ApiController
 	 * Prepares a value for output based off a schema array.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access protected
 	 * @param mixed $value  Value to prepare.
 	 * @param array $schema Schema to match.
 	 * @return mixed The prepared value.
@@ -173,7 +173,7 @@ class SettingsController extends ApiController
 	 * Retrieves all of the registered options for the Settings API.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access protected
 	 * @return array Array of registered options.
 	 */
 	protected function get_registered_schema()
