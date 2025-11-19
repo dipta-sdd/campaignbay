@@ -10,7 +10,6 @@ import {
   CampaignSettingsType,
   CampaignType,
 } from "../types";
-import { handle } from "@wordpress/icons";
 
 interface CampaignSettingsProps {
   settings: CampaignSettingsType;
@@ -26,7 +25,10 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
   type,
 }) => {
   useEffect(() => {
-    if (type === "bogo" && settings?.apply_as === "coupon") {
+    if (
+      (type === "bogo" ) &&
+      settings?.apply_as === "coupon"
+    ) {
       setSettings((prev) => ({
         ...prev,
         apply_as: "line_total",
@@ -58,7 +60,6 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
       bogo_cart_message_location: value,
     }));
   };
-
   return (
     <>
       <div className="cb-form-input-con">
@@ -254,7 +255,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
           </>
         ) : null}
 
-        {type === "bogo" ? (
+        {type === "bogo"  ? (
           <>
             {/* auto add to cart */}
             <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
@@ -322,6 +323,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
               </div> */}
 
               {/* prduct page message format */}
+
               <div className="cb-form-input-con !campaignbay-p-0">
                 <label
                   htmlFor="message-format"
@@ -329,37 +331,48 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 >
                   {__("Product Page Discount Message Format", "campaignbay")}
                 </label>
-                <input
-                  type="text"
-                  placeholder={__(
-                    "Leave it blank for default message.",
-                    "campaignbay"
-                  )}
-                  id="message-format"
-                  aria-label={__(
-                    "Product Page Discount Message Format",
-                    "campaignbay"
-                  )}
-                  className={`wpab-input w-100  ${
-                    errors?.bogo_banner_message_format ? "wpab-input-error" : ""
-                  }`}
-                  value={settings?.bogo_banner_message_format}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSettings((prev: CampaignSettingsType) => ({
-                      ...prev,
-                      bogo_banner_message_format: e.target.value,
-                    }))
-                  }
-                />
+               
+                    <input
+                      type="text"
+                      placeholder={__(
+                        "Leave it blank for default message.",
+                        "campaignbay"
+                      )}
+                      id="message-format"
+                      aria-label={__(
+                        "Product Page Discount Message Format",
+                        "campaignbay"
+                      )}
+                      className={`wpab-input w-100  ${
+                        errors?.bogo_banner_message_format
+                          ? "wpab-input-error"
+                          : ""
+                      }`}
+                      value={settings?.bogo_banner_message_format}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setSettings((prev: CampaignSettingsType) => ({
+                          ...prev,
+                          bogo_banner_message_format: e.target.value,
+                        }))
+                      }
+                    />
+               
+
                 <span className="wpab-input-help">
                   {__(
                     "This message will be displayed on the product page. Leave blank for the default message.",
                     "campaignbay"
                   )}
-                  <Placeholders options={["buy_quantity", "get_quantity"]} />
+                      
+                      <Placeholders
+                        options={["buy_quantity", "get_quantity"]}
+                      />
+                 
                 </span>
-                {renderError(errors?.bogo_banner_message_format)}
+                {renderError(errors?.bogo_banner_message_format
+                )}
               </div>
+
               {/* cart page message format when a bogo applyed then only show */}
               <div className="cb-form-input-con !campaignbay-p-0">
                 <label

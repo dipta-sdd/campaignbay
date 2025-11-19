@@ -197,18 +197,18 @@ export interface Campaign {
   start_datetime: string | Date | null;
   end_datetime: string | Date | null;
 
-  usage_count: number;
+  usage_count?: number;
   usage_limit: number | null;
 
-  date_created: string | Date | Number;
-  date_modified: string | Date | Number;
-  created_by: number;
-  updated_by: number;
+  date_created?: string | Date | Number;
+  date_modified?: string | Date | Number;
+  created_by?: number;
+  updated_by?: number;
 
-  start_datetime_unix: number | null;
-  end_datetime_unix: number | null;
-  date_modified_unix: number | null;
-  date_created_unix: number | null;
+  start_datetime_unix?: number | null;
+  end_datetime_unix?: number | null;
+  date_modified_unix?: number | null;
+  date_created_unix?: number | null;
 
   conditions: any[];
 
