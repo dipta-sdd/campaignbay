@@ -1,6 +1,5 @@
 import { useState } from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
-import MultiSelect from "../components/Multiselect";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
 import { FC, useEffect } from "react";
@@ -24,7 +23,9 @@ import {
 import CampaignTiers from "./CampaignTiers";
 import { renderError } from "../pages/CampaignsEdit";
 import CampaignSettings from "./CampaignSettings";
-import { useGuideStep } from "../store/GuideContext";
+import { useGuide, useGuideStep } from "../store/GuideContext";
+import { TOUR_STEPS } from "../utils/tourSteps";
+import MultiSelect from "./Multiselect";
 
 interface CampaignProps {
   campaign: CampaignInerface;
@@ -43,8 +44,38 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   const [categories, setCategories] = useState<SelectOptionType[]>([]);
   const [products, setProducts] = useState<SelectOptionType[]>([]);
 
-  const campaignTitleInputRef = useGuideStep<HTMLInputElement>(2);
-  const saveCampaignBtnRef = useGuideStep<HTMLButtonElement>(3);
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
+  const { tourStep, setConfig } = useGuide();
+  const campaignTitleInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.TITLE);
+  const campaignTypeInputRef = useGuideStep<HTMLSelectElement>(TOUR_STEPS.TYPE);
+  const campaignStatusInputRef = useGuideStep<HTMLSelectElement>(TOUR_STEPS.STATUS);
+  const targetTypeInputRef = useGuideStep<HTMLSelectElement>(TOUR_STEPS.TARGET_TYPE);
+  const targetIdsInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TARGET_IDS);
+  const usageToggleRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.USAGE_TOGGLE);
+  const usageInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.USAGE_INPUT);
+  const scheduleToggleRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.SCHED_TOGGLE);
+  const startTimeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.START_TIME);
+  const endTimeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.END_TIME);
+
+  useEffect(() => {
+    if (!tourStep) return;
+    setConfig((prevConfig) => ({
+      ...prevConfig,
+      [TOUR_STEPS.USAGE_TOGGLE]: {
+        ...prevConfig[TOUR_STEPS.USAGE_TOGGLE],
+        onNext: ({ setStep }) => {
+          setStep(enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.SCHED_TOGGLE);
+        },
+      }
+    }));
+
+  }, [enableUsageLimit, setConfig]);
+
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
 
   useEffect(() => {
     fetchDependency();
@@ -93,8 +124,8 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
       );
     }
   };
-  const handleSelectionTypeChange = (value: TargetType) => {
-    setCampaign((prev) => ({ ...prev, target_type: value, target_ids: [] }));
+  const handleSelectionTypeChange = (value: CampaignType) => {
+    setCampaign((prev) => ({ ...prev, type: value }));
   };
 
   const getSettings = () => {
@@ -150,9 +181,8 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               ref={campaignTitleInputRef}
               type="text"
               id="campaign-title"
-              className={`wpab-input w-100 ${
-                errors?.title ? "wpab-input-error" : ""
-              }`}
+              className={`wpab-input w-100 ${errors?.title ? "wpab-input-error" : ""
+                }`}
               value={campaign.title}
               onChange={(e) =>
                 setCampaign((prev) => ({ ...prev, title: e.target.value }))
@@ -167,15 +197,12 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
             </label>
             <select
               id="campaign-type"
-              className={`wpab-input w-100 ${
-                errors?.type ? "wpab-input-error" : ""
-              }`}
+              ref={campaignTypeInputRef}
+              className={`wpab-input w-100 ${errors?.type ? "wpab-input-error" : ""
+                }`}
               value={campaign.type}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                setCampaign((prev) => ({
-                  ...prev,
-                  type: e.target.value as CampaignType,
-                }))
+                handleSelectionTypeChange(e.target.value as CampaignType)
               }
             >
               <option value="bogo">{__("Buy X Get X", "campaignbay")}</option>
@@ -201,9 +228,9 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
             </label>
             <select
               id="campaign-status"
-              className={`wpab-input w-100 ${
-                errors?.status ? "wpab-input-error" : ""
-              }`}
+              ref={campaignStatusInputRef}
+              className={`wpab-input w-100 ${errors?.status ? "wpab-input-error" : ""
+                }`}
               value={campaign.status}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setCampaign((prev) => ({
@@ -222,6 +249,111 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
           </div>
         </div>
       </div>
+
+
+      <div className="cb-form-input-con">
+        <label htmlFor="selection-type">
+          {__("DISCOUNT TARGET", "campaignbay")} <Required />
+        </label>
+        <select
+          ref={targetTypeInputRef}
+          id="selection-type"
+          className={`wpab-input w-100 ${errors?.target_type ? "wpab-input-error" : ""
+            }`}
+          value={campaign.target_type}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+            setCampaign((prev) => ({
+              ...prev,
+              target_type: e.target.value as TargetType,
+            }))
+          }
+        >
+          <option value="entire_store">
+            {__("Entire Store", "campaignbay")}
+          </option>
+          <option value="category">
+            {__("By Product Category", "campaignbay")}
+          </option>
+          <option value="product">{__("By Product", "campaignbay")}</option>
+          {/* <option value="tag">{__("By Tags", "campaignbay")}</option> */}
+        </select>
+        {renderError(errors?.target_type)}
+
+        {campaign.target_type !== "entire_store" ? (
+          <>
+            <div
+              style={{ background: "#ffffff" }}
+              className={`${errors?.target_ids ? "wpab-input-error" : ""}`}
+            >
+              <MultiSelect
+                con_ref={targetIdsInputRef}
+                label={
+                  campaign.target_type === "product"
+                    ? __("Select Products *", "campaignbay")
+                    : campaign.target_type === "category"
+                      ? __("Select Categories *", "campaignbay")
+                      : ""
+                }
+                options={
+                  campaign.target_type === "product"
+                    ? products
+                    : campaign.target_type === "category"
+                      ? categories
+                      : []
+                }
+                value={campaign.target_ids}
+                onChange={(value: number[]) =>
+                  setCampaign((prev) => ({
+                    ...prev,
+                    target_ids: [...value],
+                  }))
+                }
+              />
+              {renderError(errors?.target_ids, false)}
+            </div>
+            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+              <CbCheckbox
+                id="exclude-items"
+                checked={!!campaign.is_exclude}
+                onChange={(e) =>
+                  setCampaign((prev) => ({
+                    ...prev,
+                    is_exclude: e.target.checked,
+                  }))
+                }
+              />
+              <label
+                htmlFor="exclude-items"
+                className="!campaignbay-text-gray-700"
+              >
+                {__("Exclude Items", "campaignbay")}
+              </label>
+              <Tooltip
+                content={
+                  <span className="campaignbay-text-sm">
+                    {__(
+                      "When checked , selected items will be excluded from the discount",
+                      "campaignbay"
+                    )}
+                    <a
+                      className="campaignbay-ml-2 campaignbay-text-blue-600 hover:campaignbay-text-blue-700"
+                      href="https://docs.wpanchorbay.com/core-concepts/targeting-and-conditions.html#inverting-the-logic-the-exclude-items-checkbox"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Read More
+                    </a>
+                  </span>
+                }
+                position="top"
+              />
+
+              {renderError(errors?.isExclude)}
+            </div>
+          </>
+        ) : null}
+      </div>
+
 
       <CampaignTiers
         campaign={campaign}
@@ -266,7 +398,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         </div>
 
         {/* usage limit */}
-        <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+        <div ref={usageToggleRef} className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
           <CbCheckbox
             id="enable-usage-limit"
             checked={enableUsageLimit}
@@ -297,11 +429,11 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               {__("Usage Limit", "campaignbay")}
             </label>
             <input
-              type="text"
+              ref={usageInputRef}
+              type="number"
               id="usage-limit"
-              className={`wpab-input w-100  ${
-                errors?.usage_limit ? "wpab-input-error" : ""
-              }`}
+              className={`wpab-input w-100  ${errors?.usage_limit ? "wpab-input-error" : ""
+                }`}
               value={campaign.usage_limit ? campaign.usage_limit : ""}
               onChange={(e) =>
                 setCampaign((prev) => ({
@@ -315,7 +447,8 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         )}
 
         {/* Schedule */}
-        <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+        <div
+          ref={scheduleToggleRef} className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
           <CbCheckbox
             id="schedule"
             checked={campaign.schedule_enabled}
@@ -356,6 +489,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
                 {<Required />}
               </span>
               <DateTimePicker
+                inputRef={startTimeInputRef}
                 timezone={timezone}
                 wpSettings={wpSettings}
                 id="start-time"
@@ -380,6 +514,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
                 {__("End Time", "campaignbay")}
               </span>
               <DateTimePicker
+                inputRef={endTimeInputRef}
                 timezone={timezone}
                 id="end-time"
                 dateTime={campaign.end_datetime}

@@ -1,41 +1,28 @@
 import { useState } from "@wordpress/element";
-import apiFetch from "@wordpress/api-fetch";
-import MultiSelect from "./Multiselect";
 import {
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useToast } from "../store/toast/use-toast";
 import { FC, useEffect } from "react";
 import Required from "./Required";
 import QuantityTiers from "./QuantityTiers";
 import EBTiers from "./EBTiers";
 import { useCbStore } from "../store/cbStore";
-import { getSettings as getDateSettings } from "@wordpress/date";
-import { useNavigate } from "react-router-dom";
-import DateTimePicker from "./DateTimePicker";
-import CbCheckbox from "./CbCheckbox";
-import Tooltip from "./Tooltip";
 import {
   BogoTier,
   Campaign as CampaignInerface,
   CampaignErrorsType,
-  CampaignSettingsType,
-  CampaignStatusType,
-  CampaignType,
-  DependentResponseType,
-  DependentType,
   DiscountType,
   EBTier,
   EBTierError,
   QuantityTier,
   QuantityTierError,
   SelectOptionType,
-  TargetOptionType,
-  TargetType,
 } from "../types";
 import { renderError } from "../pages/CampaignsEdit";
+import { useGuideStep } from "../store/GuideContext";
+import { TOUR_STEPS } from "../utils/tourSteps";
 
 interface CampaignTiersProps {
   campaign: CampaignInerface;
@@ -75,6 +62,16 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
     get_quantity: 1,
   });
 
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
+  const bogoBuyInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.BOGO_BUY);
+  const bogoGetInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.BOGO_GET);
+  const schedValueInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.SCHED_VALUE);
+  const schedTypeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.SCHED_TYPE);
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
 
   useEffect(() => {
     if (campaign.type === "quantity" && campaign?.tiers?.length > 0)
@@ -125,9 +122,9 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
           </label>
           {/* @ts-ignore */}
           <ToggleGroupControl
-            className={`cb-toggle-group-control ${
-              errors?.discount_type ? "wpab-input-error" : ""
-            }`}
+            ref={schedTypeInputRef}
+            className={`cb-toggle-group-control ${errors?.discount_type ? "wpab-input-error" : ""
+              }`}
             __next40pxDefaultSize
             __nextHasNoMarginBottom
             isBlock
@@ -161,14 +158,14 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
 
           <div className="cb-input-with-suffix">
             <input
+              ref={schedValueInputRef}
               value={campaign.discount_value ? campaign.discount_value : ""}
               type="text"
               name="discount-value"
               inputMode="numeric"
               pattern="[0-9]*"
-              className={`wpab-input w-100 ${
-                errors?.discount_value ? "wpab-input-error" : ""
-              }`}
+              className={`wpab-input w-100 ${errors?.discount_value ? "wpab-input-error" : ""
+                }`}
               placeholder="Enter Value"
               onChange={(e) =>
                 setCampaign((prev) => ({
@@ -205,12 +202,13 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
                 </label>
                 <span>
                   <input
-                    type="text"
+                    ref={bogoBuyInputRef}
+                    type="number"
                     id="bogo-buy-amount"
                     className={`wpab-input  ${
                       // @ts-ignore
                       errors?.tiers?.[0]?.buy_quantity ? "wpab-input-error" : ""
-                    }`}
+                      }`}
                     value={bogoTiers.buy_quantity ? bogoTiers.buy_quantity : ""}
                     onChange={(e) =>
                       setBogoTiers((prev) => ({
@@ -233,12 +231,13 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
                 </label>
                 <span>
                   <input
-                    type="text"
+                    type="number"
+                    ref={bogoGetInputRef}
                     id="bogo-get-quantity"
                     className={`wpab-input  ${
                       // @ts-ignore
                       errors?.tiers?.[0]?.get_quantity ? "wpab-input-error" : ""
-                    }`}
+                      }`}
                     value={bogoTiers.get_quantity ? bogoTiers.get_quantity : ""}
                     onChange={(e) =>
                       setBogoTiers((prev) => ({

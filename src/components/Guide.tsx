@@ -2,41 +2,7 @@ import React, { useState, useLayoutEffect, FC, useRef, useEffect } from "react";
 import { useGuide } from "../store/GuideContext";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-export interface GuideActions {
-  next: () => void;
-  setStep: (step: number) => void;
-  navigate: (to: string) => void;
-}
-
-interface TourStepConfig {
-  text: string;
-  position: string;
-  showNext: boolean;
-  autoFocus?: boolean;
-  onNext?: (actions: GuideActions) => void;
-}
-
-export interface GuideActions {
-  next: () => void;
-  setStep: (step: number) => void;
-}
-
-interface TourStepConfig {
-  text: string;
-  position: string;
-  showNext: boolean;
-  autoFocus?: boolean;
-  onNext?: (actions: GuideActions) => void;
-}
-
-export interface TourConfig {
-  [key: number]: TourStepConfig;
-}
-
-interface GuideProps {
-  config: TourConfig;
-}
+import { TourConfig } from "../types";
 
 const initialStyles: {
   tooltip: React.CSSProperties;
@@ -46,7 +12,7 @@ const initialStyles: {
   highlight: { display: "none" },
 };
 
-const Guide: FC<GuideProps> = () => {
+const Guide: FC = () => {
   const { getRef, tourStep, setTourStep, config } = useGuide();
   const [styles, setStyles] = useState(initialStyles);
   const [targetRect, setTargetRect] = useState<{
@@ -238,16 +204,20 @@ const Guide: FC<GuideProps> = () => {
     };
   }, [targetElement, tourStep, config, isVisible]);
 
-  // Helper to block interactions
-  const preventInteraction = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const stepConfig = config[tourStep];
+
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
+  const handleClose = () => {
+    if (dontShowAgain) {
+      // Save preference to localStorage (or make an API call here)
+      localStorage.setItem("campaignbay_tour_dismissed", "true");
+      console.log("Tour dismissed permanently.");
+    }
+    setTourStep(0);
   };
 
   if (!isVisible) return null;
-
-  const stepConfig = config[tourStep];
-
   return (
     <>
       {/* Transparent blocking overlays to prevent clicking outside the target */}
@@ -303,7 +273,9 @@ const Guide: FC<GuideProps> = () => {
           />
         </>
       )}
+
       <div style={styles.highlight} />
+
       <div ref={tooltipRef} style={styles.tooltip}>
         <div
           className="campaignbay-bg-white campaignbay-rounded-lg campaignbay-shadow-2xl campaignbay-p-4 campaignbay-animate-fade-in-up"
@@ -314,34 +286,54 @@ const Guide: FC<GuideProps> = () => {
               {stepConfig.text}
             </p>
             <button
-              onClick={() => setTourStep(0)}
+              onClick={handleClose}
               className="campaignbay-p-1 campaignbay-rounded-full hover:campaignbay-bg-gray-200"
+              aria-label="Close tour"
             >
               <X className="campaignbay-w-4 campaignbay-h-4 campaignbay-text-gray-500" />
             </button>
           </div>
-          <div className="campaignbay-mt-4 campaignbay-flex campaignbay-justify-between campaignbay-items-center">
-            <span className="campaignbay-text-xs campaignbay-font-bold campaignbay-text-gray-500">
-              {tourStep} / {Object.keys(config).length}
-            </span>
-            {stepConfig.showNext && (
-              <button
-                onClick={() => {
-                  if (stepConfig.onNext) {
-                    stepConfig.onNext({
-                      next: () => setTourStep(tourStep + 1),
-                      setStep: setTourStep,
-                      navigate: navigate,
-                    });
-                  } else {
-                    setTourStep(tourStep + 1);
-                  }
-                }}
-                className="campaignbay-px-3 campaignbay-py-1 campaignbay-bg-blue-600 campaignbay-text-white text-sm campaignbay-font-medium campaignbay-rounded-md hover:campaignbay-bg-blue-700"
-              >
-                Next
-              </button>
-            )}
+
+          {/* Footer Actions */}
+          <div className="campaignbay-mt-4">
+
+
+            <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center">
+              {/* Don't show again checkbox */}
+              <div className="campaignbay-flex campaignbay-items-center">
+                <input
+                  id="cb-guide-dont-show"
+                  type="checkbox"
+                  checked={dontShowAgain}
+                  onChange={(e) => setDontShowAgain(e.target.checked)}
+                  className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-blue-600 campaignbay-border-gray-300 campaignbay-rounded focus:campaignbay-ring-blue-500"
+                />
+                <label
+                  htmlFor="cb-guide-dont-show"
+                  className="campaignbay-ml-2 campaignbay-text-xs campaignbay-text-gray-500 campaignbay-cursor-pointer select-none"
+                >
+                  Don't show this again
+                </label>
+              </div>
+              {stepConfig.showNext && (
+                <button
+                  onClick={() => {
+                    if (stepConfig.onNext) {
+                      stepConfig.onNext({
+                        next: () => setTourStep(tourStep + 1),
+                        setStep: setTourStep,
+                        navigate: navigate,
+                      });
+                    } else {
+                      setTourStep(tourStep + 1);
+                    }
+                  }}
+                  className="campaignbay-px-3 campaignbay-py-1 campaignbay-bg-blue-600 campaignbay-text-white text-sm campaignbay-font-medium campaignbay-rounded-md hover:campaignbay-bg-blue-700"
+                >
+                  Next
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

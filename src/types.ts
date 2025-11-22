@@ -1,3 +1,5 @@
+import { Dispatch, RefObject, SetStateAction } from "react";
+
 export interface DiscountTableOptionsType {
   show_header: boolean;
   title: {
@@ -243,4 +245,45 @@ export interface ProductSettingsType {
   product_priorityMethod: "apply_highest" | "apply_lowest" | "apply_first";
   product_enableQuantityTable: boolean;
   discount_table_options: DiscountTableOptionsType;
+}
+
+export interface GuideActions {
+  next: () => void;
+  setStep: (step: number) => void;
+  navigate: (to: string) => void;
+}
+
+interface TourStepConfig {
+  text: string;
+  position: string;
+  showNext: boolean;
+  autoFocus?: boolean;
+  onNext?: (actions: GuideActions) => void;
+}
+
+export interface GuideActions {
+  next: () => void;
+  setStep: (step: number) => void;
+  navigate: (to: string) => void;
+}
+
+interface TourStepConfig {
+  text: string;
+  position: string;
+  showNext: boolean;
+  autoFocus?: boolean;
+  onNext?: (actions: GuideActions) => void;
+}
+
+export interface TourConfig {
+  [key: number]: TourStepConfig;
+}
+
+export interface GuideContextType {
+  tourStep: number;
+  setTourStep: (step: number) => void;
+  registerRef: (step: number, ref: RefObject<HTMLElement>) => void;
+  getRef: (step: number) => RefObject<HTMLElement> | undefined;
+  config: TourConfig;
+  setConfig: Dispatch<SetStateAction<TourConfig>>;
 }

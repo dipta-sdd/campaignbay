@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, FC, ReactNode } from "react";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { useNavigate } from "react-router-dom";
+// @ts-ignore
+import no_data from "./../../assets/img/no_data.svg";
 import {
   Calendar,
   Clock,
@@ -11,15 +13,14 @@ import {
   Zap,
   Gift,
   Layers,
-  Table,
   Table2,
   LayoutGrid,
+  Plus,
 } from "lucide-react";
 
 import {
   Icon,
   plus,
-  search,
   chevronUp,
   chevronDown,
   trash,
@@ -27,6 +28,7 @@ import {
   next,
   edit,
   copySmall,
+  search,
 } from "@wordpress/icons";
 
 import {
@@ -52,6 +54,8 @@ import {
   QuantityTier,
   TargetType,
 } from "../types";
+import { useGuide } from "../store/GuideContext";
+import { TOUR_STEPS } from "../utils/tourSteps";
 
 type SortableHeadValue =
   | "post_name"
@@ -668,8 +672,8 @@ const Campaigns: FC = () => {
                       )
                     ) : campaigns.length === 0 ? (
                       <tr>
-                        <td colSpan={11} style={{ textAlign: "center" }}>
-                          No campaigns found.
+                        <td colSpan={11} className="campaignbay-p-8">
+                          <EmptyStateCampaigns />
                         </td>
                       </tr>
                     ) : (
@@ -868,9 +872,7 @@ const Campaigns: FC = () => {
                     )}
                   </div>
                 ) : campaigns.length === 0 ? (
-                  <div className="campaignbay-text-center campaignbay-text-secondary campaignbay-bg-body campaignbay-py-3.5">
-                    No campaigns found.
-                  </div>
+                  <EmptyStateCampaigns />
                 ) : (
                   <div className="campaignbay-grid campaign-grid campaignbay-gap-3  campaignbay-bg-body campaignbay-py-3.5">
                     {campaigns.map((campaign) => (
@@ -1126,3 +1128,50 @@ const Campaigns: FC = () => {
 };
 
 export default Campaigns;
+
+export const EmptyStateCampaigns = () => {
+  const { setTourStep } = useGuide();
+
+  return (
+    <div className="campaignbay-w-full campaignbay-p-8 md:campaignbay-p-16">
+      <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-text-center campaignbay-bg-gray-50 campaignbay-border-2 campaignbay-border-dashed campaignbay-border-gray-200 campaignbay-rounded-lg campaignbay-p-10">
+        {/* Image Section - Reduced size and added margin */}
+        <div className="campaignbay-mb-6 campaignbay-relative">
+          {/* Using a max-width to keep the illustration from dominating the screen */}
+          <img
+            src={no_data}
+            alt="No Campaigns"
+            className="campaignbay-h-48 campaignbay-w-auto campaignbay-mx-auto campaignbay-opacity-90"
+          />
+        </div>
+
+        {/* Text Content Section */}
+        <div className="campaignbay-max-w-md campaignbay-mx-auto">
+          <h3 className="campaignbay-text-lg campaignbay-font-semibold campaignbay-text-gray-900 campaignbay-mb-2">
+            {__("No campaigns found", "campaignbay")}
+          </h3>
+
+          <p className="campaignbay-text-gray-500 campaignbay-mb-6 campaignbay-text-sm">
+            {__(
+              "You haven't created any discount campaigns yet. Get started now to boost your sales!",
+              "campaignbay"
+            )}
+          </p>
+
+          {/* Call to Action Button */}
+          <button
+            type="button"
+            onClick={() => setTourStep(TOUR_STEPS.START)}
+            className="campaignbay-inline-flex campaignbay-items-center campaignbay-justify-center campaignbay-px-5 campaignbay-py-2.5 campaignbay-text-sm campaignbay-font-medium campaignbay-text-white campaignbay-bg-blue-600 campaignbay-rounded-md hover:campaignbay-bg-blue-700 focus:campaignbay-outline-none focus:campaignbay-ring-2 focus:campaignbay-ring-offset-2 focus:campaignbay-ring-blue-500 campaignbay-transition-colors campaignbay-shadow-sm"
+          >
+            <Plus size={16} className="campaignbay-mr-2" />
+            {__(
+              "Take a quick tour to create your first campaign",
+              "campaignbay"
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

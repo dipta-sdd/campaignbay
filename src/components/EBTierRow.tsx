@@ -7,6 +7,8 @@ import {
 import { __ } from "@wordpress/i18n";
 import { useCbStore } from "../store/cbStore";
 import { EBTier, EBTierError } from "../types";
+import { useGuideStep } from "../store/GuideContext";
+import { TOUR_STEPS } from "../utils/tourSteps";
 
 interface EBTierRowProps {
   tierData: EBTier;
@@ -43,6 +45,18 @@ const EBTierRow: FC<EBTierRowProps> = ({
     onUpdate({ ...tierData, type: newType });
   };
 
+
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
+  const ebQuantityInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.EB_QUANTITY);
+  const ebValueInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.EB_VALUE);
+  const ebToggleInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.EB_TOGGLE);
+  const ebAddBtnInputRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.EB_ADD_BTN);
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
+
   return (
     <div className={`cb-quantity-tier-row ${error ? "has-error" : ""}`}>
       <div className="tier-inputs">
@@ -54,12 +68,12 @@ const EBTierRow: FC<EBTierRowProps> = ({
                 : __("For Next", "campaignbay")}
             </span>
             <input
+              ref={isFirst ? ebQuantityInputRef : null}
               type="number"
               name="quantity"
               value={tierData.quantity}
-              className={`min-input wpab-input ${
-                errors?.quantity ? "wpab-input-error" : ""
-              }`}
+              className={`min-input wpab-input ${errors?.quantity ? "wpab-input-error" : ""
+                }`}
               onChange={handleChange}
               min="1"
               placeholder="e.g., 10"
@@ -79,18 +93,20 @@ const EBTierRow: FC<EBTierRowProps> = ({
               {__("give ", "campaignbay")}
             </span>
             <input
+              ref={isFirst ? ebValueInputRef : null}
               type="number"
               name="value"
               value={tierData.value}
               onChange={handleChange}
               placeholder="e.g., 10"
-              className={`value-input wpab-input ${
-                errors?.value ? "wpab-input-error" : ""
-              }`}
+              className={`value-input wpab-input ${errors?.value ? "wpab-input-error" : ""
+                }`}
               min="0"
             />
             <div className="type-toggle">
+              {/* @ts-ignore */}
               <ToggleGroupControl
+                ref={isFirst ? ebToggleInputRef : null}
                 className="cb-toggle-group-control"
                 __next40pxDefaultSize
                 __nextHasNoMarginBottom
@@ -115,6 +131,7 @@ const EBTierRow: FC<EBTierRowProps> = ({
             <button
               type="button"
               className="remove-tier"
+              // @ts-ignore
               onClick={() => onRemove(tierData.id)}
             >
               – Remove this tier
@@ -122,6 +139,7 @@ const EBTierRow: FC<EBTierRowProps> = ({
           )}
           {isLast && (
             <button
+              ref={isFirst ? ebAddBtnInputRef : null}
               type="button"
               className="add-tier"
               onClick={() => {

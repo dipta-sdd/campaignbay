@@ -13,6 +13,7 @@ interface DateTimePickerProps
     InputHTMLAttributes<HTMLInputElement>,
     "value" | "onChange" | "type"
   > {
+  inputRef?: React.Ref<HTMLInputElement>;
   dateTime: string | undefined | null | Date;
   onDateTimeChange: (dateTime: string) => void;
   disabled?: boolean;
@@ -21,6 +22,7 @@ interface DateTimePickerProps
 }
 
 const DateTimePicker: FC<DateTimePickerProps> = ({
+  inputRef,
   dateTime,
   onDateTimeChange,
   disabled = false,
@@ -46,9 +48,10 @@ const DateTimePicker: FC<DateTimePickerProps> = ({
   return (
     <>
       <input
+        ref={inputRef}
         className="wpab-input w-100 "
         type="datetime-local"
-        value={dateTime ? dateTime : ""}
+        value={dateTime ? dateTime as string : ""}
         onChange={(e) =>
           onDateTimeChange(e.target.value.replace("T", " ").slice(0, 16))
         }

@@ -1,0 +1,37 @@
+// src/utils/tourConstants.ts
+export const TOUR_STEPS = {
+  START: 1,
+  TITLE: 2,
+  TYPE: 3,
+  STATUS: 4,
+
+  TARGET_TYPE: 5,
+  TARGET_IDS: 6,
+  EXCLUDE_CHECK: 7,
+ 
+  SCHED_TYPE: 10,
+  SCHED_VALUE: 11,
+
+  QTY_RANGE: 20,
+  QTY_VALUE: 21,
+  QTY_ADD_BTN: 22,
+
+  EB_QUANTITY: 30,
+  EB_VALUE: 31,
+  EB_TOGGLE: 32,
+  EB_ADD_BTN: 33,
+
+  BOGO_BUY: 40,
+  BOGO_GET: 41,
+
+  EXCLUDE_SALE: 60,
+  USAGE_TOGGLE: 61,
+  USAGE_INPUT: 62,
+  SCHED_TOGGLE: 63,
+  START_TIME: 64,
+  END_TIME: 65,
+
+  DISPLAY_SECTION: 70,
+
+  SAVE_BTN: 80,
+};

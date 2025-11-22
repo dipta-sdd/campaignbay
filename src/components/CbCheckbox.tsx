@@ -1,7 +1,9 @@
 import { useId, FC, InputHTMLAttributes } from "react";
 import { check, Icon } from "@wordpress/icons";
 
-interface CbCheckboxProps extends InputHTMLAttributes<HTMLInputElement> {}
+interface CbCheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
+  checked?: boolean;
+}
 
 const CbCheckbox: FC<CbCheckboxProps> = ({
   checked,
@@ -10,9 +12,8 @@ const CbCheckbox: FC<CbCheckboxProps> = ({
   ...props
 }) => {
   const inputId = useId();
-  const fullClassName = `campaignbay-checkbox-single-checkbox${
-    className ? ` ${className}` : ""
-  }`;
+  const fullClassName = `campaignbay-checkbox-single-checkbox${className ? ` ${className}` : ""
+    }`;
 
   return (
     <div className="campaignbay-checkbox-single-checkbox-con">

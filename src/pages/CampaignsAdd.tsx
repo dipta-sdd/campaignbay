@@ -3,11 +3,13 @@ import apiFetch from "@wordpress/api-fetch";
 import { check, Icon } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { Campaign as CampaignInterface, CampaignErrorsType } from "../types";
 import Campaign from "../components/Campaign";
+import { useGuide, useGuideStep } from "../store/GuideContext";
+import { TOUR_STEPS } from "../utils/tourSteps";
 
 const CampaignsAdd: FC = () => {
   const [campaign, setCampaign] = useState<CampaignInterface>({
@@ -68,6 +70,70 @@ const CampaignsAdd: FC = () => {
     }
   };
 
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
+  const saveBtnRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.SAVE_BTN);
+  const { tourStep, setConfig } = useGuide();
+  const TYPE_TO_STEP_MAP: Record<string, number> = {
+    bogo: TOUR_STEPS.BOGO_BUY,
+    quantity: TOUR_STEPS.QTY_RANGE,
+    scheduled: TOUR_STEPS.SCHED_TYPE,
+    earlybird: TOUR_STEPS.EB_QUANTITY,
+  };
+
+  useEffect(() => {
+    if (!tourStep) return;
+    const nextStepId = TYPE_TO_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
+
+    if (campaign.target_type === "entire_store") {
+      setConfig((prevConfig) => ({
+        ...prevConfig,
+        [TOUR_STEPS.TARGET_TYPE]: {
+          ...prevConfig[TOUR_STEPS.TARGET_TYPE],
+          onNext: ({ setStep }) => {
+            setStep(nextStepId);
+          },
+        }
+      }));
+    } else {
+      setConfig((prevConfig) => ({
+        ...prevConfig,
+        [TOUR_STEPS.TARGET_TYPE]: {
+          ...prevConfig[TOUR_STEPS.TARGET_TYPE],
+          onNext: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_IDS);
+          },
+        },
+        [TOUR_STEPS.TARGET_IDS]: {
+          ...prevConfig[TOUR_STEPS.TARGET_IDS],
+          onNext: ({ setStep }) => {
+            setStep(nextStepId);
+          },
+        },
+      }));
+    }
+  }, [campaign.target_type, campaign.type, setConfig]);
+
+  useEffect(() => {
+    if (!tourStep) return;
+    setConfig((prevConfig) => ({
+      ...prevConfig,
+      [TOUR_STEPS.SCHED_TOGGLE]: {
+        ...prevConfig[TOUR_STEPS.SCHED_TOGGLE],
+        onNext: ({ setStep }) => {
+          setStep(campaign.schedule_enabled ? TOUR_STEPS.START_TIME : TOUR_STEPS.SAVE_BTN);
+        },
+      }
+    }));
+
+  }, [campaign.schedule_enabled, setConfig]);
+
+
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
+
   return (
     <div className="cb-page">
       <Navbar />
@@ -94,6 +160,7 @@ const CampaignsAdd: FC = () => {
         {/* buttons */}
         <div className="wpab-btn-bottom-con">
           <button
+            ref={saveBtnRef}
             className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary"
             onClick={handleSaveCampaign}
           >

@@ -1,16 +1,16 @@
 import { Outlet } from "react-router-dom";
 import { FC } from "react";
 import { GuideProvider } from "../store/GuideContext";
-import Guide, { TourConfig } from "./Guide";
-import { mainTourConfig } from "../utils/tourConfig";
+import Guide from "./Guide";
+import TourGuard from "./TourGuard";
 
 const AppLayout: FC = () => {
   return (
     <div className="wpab-cb-container radius-large">
       <GuideProvider>
         <Outlet />
-
-        <Guide/>
+        <TourGuard />
+        <Guide />
       </GuideProvider>
     </div>
   );
