@@ -6,7 +6,7 @@ export const campaignTourConfig: TourConfig = {
   // BASE STEPS
   // ===========================================================================
   [TOUR_STEPS.START]: {
-    text: "Click 'Add Campaign' to create a new promotion.",
+    text: <span className="">Click <b>Add Campaign</b> to create a new promotion.</span>,
     position: "bottom-left",
     showNext: true,
     onNext: ({ next, setStep, navigate }) => {
@@ -190,7 +190,7 @@ export const campaignTourConfig: TourConfig = {
   // ===========================================================================
   [TOUR_STEPS.SAVE_BTN]: {
     text: "You're done! Click here to save and activate your campaign.",
-    position: "left",
+    position: "bottom-left",
     showNext: false,
   },
 };

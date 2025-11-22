@@ -2,7 +2,7 @@ import React, { useState, useLayoutEffect, FC, useRef, useEffect } from "react";
 import { useGuide } from "../store/GuideContext";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { TourConfig } from "../types";
+import CbCheckbox from "./CbCheckbox";
 
 const initialStyles: {
   tooltip: React.CSSProperties;
@@ -131,23 +131,42 @@ const Guide: FC = () => {
       let top = 0;
       let left = 0;
       let transform = "none";
-
+      let tooltipHeight = tooltipRect.height;
       switch (stepConfig.position) {
-        case "bottom-left":
-          top = tRect.bottom + offset;
-          left = tRect.left;
-          break;
         case "bottom":
           top = tRect.bottom + offset;
           left = tRect.left + tRect.width / 2;
           transform = "translateX(-50%)";
+          break;
+        case "top":
+          top = tRect.top - tooltipRect.height - offset;
+          left = tRect.left + tRect.width / 2;
+          transform = "translateX(-50%)";
+          break;
+        case "left":
+          top = tRect.top + tRect.height / 2;
+          left = tRect.left - tooltipRect.width - offset;
+          transform = "translateY(-50%)";
+          tooltipHeight = tooltipRect.height / 2;
+          break;
+        case "right":
+          top = tRect.top + tRect.height / 2;
+          left = tRect.right + offset;
+          transform = "translateY(-50%)";
+          tooltipHeight = tooltipRect.height / 2;
+          break;
+        case "bottom-left":
+          top = tRect.bottom + offset;
+          left = tRect.left + tRect.width - tooltipRect.width + offset / 2;
           break;
         default:
           top = tRect.bottom + offset;
           left = tRect.left;
       }
 
-      if (top + tooltipRect.height > viewportHeight - margin) {
+
+
+      if (top + tooltipHeight > viewportHeight - margin) {
         top = tRect.top - tooltipRect.height - offset;
       }
       if (top < margin) {
@@ -155,7 +174,7 @@ const Guide: FC = () => {
       }
 
       let effectiveLeft = left;
-      if (transform === "translateX(-50%)") {
+      if (transform === "translateX(-50%)" || transform === "translate(-50%,-50%)") {
         effectiveLeft -= tooltipWidth / 2;
       }
 
@@ -279,10 +298,13 @@ const Guide: FC = () => {
       <div ref={tooltipRef} style={styles.tooltip}>
         <div
           className="campaignbay-bg-white campaignbay-rounded-lg campaignbay-shadow-2xl campaignbay-p-4 campaignbay-animate-fade-in-up"
-          style={{ maxWidth: "300px" }}
+          style={{
+            maxWidth: "300px",
+            minWidth: 'min(300px , 80vw)'
+          }}
         >
           <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-start">
-            <p className="campaignbay-text-sm campaignbay-text-gray-700 campaignbay-pr-4">
+            <p className="campaignbay-text-sm campaignbay-text-[#3d3d3d] campaignbay-pr-4 campaignbay-font-medium">
               {stepConfig.text}
             </p>
             <button
@@ -301,16 +323,14 @@ const Guide: FC = () => {
             <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center">
               {/* Don't show again checkbox */}
               <div className="campaignbay-flex campaignbay-items-center">
-                <input
+                <CbCheckbox
                   id="cb-guide-dont-show"
-                  type="checkbox"
                   checked={dontShowAgain}
                   onChange={(e) => setDontShowAgain(e.target.checked)}
-                  className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-blue-600 campaignbay-border-gray-300 campaignbay-rounded focus:campaignbay-ring-blue-500"
                 />
                 <label
                   htmlFor="cb-guide-dont-show"
-                  className="campaignbay-ml-2 campaignbay-text-xs campaignbay-text-gray-500 campaignbay-cursor-pointer select-none"
+                  className="campaignbay-ml-2 campaignbay-text-xs campaignbay-font-bold campaignbay-text-gray-500 campaignbay-cursor-pointer select-none"
                 >
                   Don't show this again
                 </label>
@@ -328,7 +348,7 @@ const Guide: FC = () => {
                       setTourStep(tourStep + 1);
                     }
                   }}
-                  className="campaignbay-px-3 campaignbay-py-1 campaignbay-bg-blue-600 campaignbay-text-white text-sm campaignbay-font-medium campaignbay-rounded-md hover:campaignbay-bg-blue-700"
+                  className="campaignbay-px-3 campaignbay-py-1 campaignbay-bg-blue-600 campaignbay-text-white text-sm campaignbay-font-medium campaignbay-rounded-sm hover:campaignbay-bg-blue-700"
                 >
                   Next
                 </button>

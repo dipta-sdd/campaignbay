@@ -43,6 +43,7 @@ const CampaignsAdd: FC = () => {
   const [errors, setErrors] = useState<CampaignErrorsType>({});
 
   const handleSaveCampaign = async () => {
+    setTourStep(0);
     const campaignData = {
       ...campaign,
       discount_value: Number(campaign.discount_value) || 0,
@@ -74,7 +75,7 @@ const CampaignsAdd: FC = () => {
   //============================     Guide    =======================================
   //=================================================================================
   const saveBtnRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.SAVE_BTN);
-  const { tourStep, setConfig } = useGuide();
+  const { tourStep, setConfig, setTourStep } = useGuide();
   const TYPE_TO_STEP_MAP: Record<string, number> = {
     bogo: TOUR_STEPS.BOGO_BUY,
     quantity: TOUR_STEPS.QTY_RANGE,

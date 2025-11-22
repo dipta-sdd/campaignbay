@@ -254,27 +254,12 @@ export interface GuideActions {
 }
 
 interface TourStepConfig {
-  text: string;
+  text: string | React.ReactNode;
   position: string;
   showNext: boolean;
   autoFocus?: boolean;
   onNext?: (actions: GuideActions) => void;
 }
-
-export interface GuideActions {
-  next: () => void;
-  setStep: (step: number) => void;
-  navigate: (to: string) => void;
-}
-
-interface TourStepConfig {
-  text: string;
-  position: string;
-  showNext: boolean;
-  autoFocus?: boolean;
-  onNext?: (actions: GuideActions) => void;
-}
-
 export interface TourConfig {
   [key: number]: TourStepConfig;
 }

@@ -16,7 +16,7 @@ const GuideContext = createContext<GuideContextType | undefined>(undefined);
 export const GuideProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [tourStep, setTourStep] = useState<number>(TOUR_STEPS.USAGE_TOGGLE);
+  const [tourStep, setTourStep] = useState<number>(TOUR_STEPS.START);
   const [config, setConfig] = useState<TourConfig>(campaignTourConfig);
   const refs = useRef<Record<number, RefObject<HTMLElement>>>({});
 
