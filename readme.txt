@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,8 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 
 == Changelog ==
 = Changelog =
+= 1.0.2 =
+*   Enhancement: Added an interactive Tour Guide to help new users navigate the "Add Campaign" interface.
 
 = 1.0.1 =
 *   Enhancement: Updated the plugin display name to "CampaignBay - Automated Discount Campaigns & Flash Sales for WooCommerce" for better clarity and searchability in the WordPress repository.
@@ -109,6 +111,9 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+*   This update introduces a helpful Tour Guide for new users.
 
 = 1.0.1 =
 *   This update refines the plugin's display name and includes significant under-the-hood code quality improvements. The upgrade is seamless and requires no action from you.

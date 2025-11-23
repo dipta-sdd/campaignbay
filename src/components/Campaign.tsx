@@ -1,4 +1,4 @@
-import { useState } from "@wordpress/element";
+import { useState, useRef } from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
@@ -41,8 +41,10 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     useState<boolean>(false);
   const [settings, setSettings] = useState<CampaignSettingsType>({});
   const [enableUsageLimit, setEnableUsageLimit] = useState<boolean>(false);
+  const usageCheckboxRef = useRef<HTMLInputElement>(null);
   const [categories, setCategories] = useState<SelectOptionType[]>([]);
   const [products, setProducts] = useState<SelectOptionType[]>([]);
+  const scheduleCheckboxRef = useRef<HTMLInputElement>(null);
 
   //=================================================================================
   //============================     Guide    =======================================
@@ -398,11 +400,21 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         </div>
 
         {/* usage limit */}
-        <div ref={usageToggleRef} className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+        <div
+          ref={usageToggleRef}
+          className="campaignbay-flex campaignbay-items-center campaignbay-gap-2"
+          tabIndex={-1}
+          onFocus={(e) => {
+            if (e.target === e.currentTarget) {
+              usageCheckboxRef.current?.focus();
+            }
+          }}
+        >
           <CbCheckbox
             id="enable-usage-limit"
             checked={enableUsageLimit}
             onChange={(e) => setEnableUsageLimit(e.target.checked)}
+            ref={usageCheckboxRef}
           />
           <label htmlFor="enable-usage-limit" className="">
             {__("Enable Usage Limit", "campaignbay")}
@@ -448,7 +460,15 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
 
         {/* Schedule */}
         <div
-          ref={scheduleToggleRef} className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+          ref={scheduleToggleRef}
+          className="campaignbay-flex campaignbay-items-center campaignbay-gap-2"
+          tabIndex={-1}
+          onFocus={(e) => {
+            if (e.target === e.currentTarget) {
+              scheduleCheckboxRef.current?.focus();
+            }
+          }}
+        >
           <CbCheckbox
             id="schedule"
             checked={campaign.schedule_enabled}
@@ -459,6 +479,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               }))
             }
             disabled={campaign.status === "scheduled"}
+            ref={scheduleCheckboxRef}
           />
           <label htmlFor="schedule" className="">
             {__("Schedule", "campaignbay")}

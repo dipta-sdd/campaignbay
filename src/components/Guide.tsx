@@ -110,7 +110,7 @@ const Guide: FC = () => {
         } else {
           setTourStep(tourStep + 1);
         }
-      }, 100);
+      }, 1000);
     };
 
     targetElement.addEventListener("change", handleChange);

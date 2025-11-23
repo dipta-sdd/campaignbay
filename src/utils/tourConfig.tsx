@@ -164,7 +164,6 @@ export const campaignTourConfig: TourConfig = {
     position: "top",
     showNext: true,
     autoFocus: true,
-    nextOnSelect: true,
     onNext: ({ setStep }) => {
       setStep(TOUR_STEPS.EB_ADD_BTN);
       setTimeout(() => {
@@ -225,7 +224,7 @@ export const campaignTourConfig: TourConfig = {
     position: "top",
     showNext: true,
     autoFocus: true,
-    nextOnEnter: true,
+    nextOnSelect: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.SCHED_TOGGLE),
   },
   [TOUR_STEPS.SCHED_TOGGLE]: {
@@ -233,7 +232,6 @@ export const campaignTourConfig: TourConfig = {
     position: "top",
     showNext: true,
     autoFocus: true,
-    nextOnEnter: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.SAVE_BTN),
   },
   [TOUR_STEPS.START_TIME]: {
