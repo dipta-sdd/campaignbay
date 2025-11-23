@@ -198,6 +198,8 @@ class CampaignManager extends Base
 	 * Clears the active campaign transient cache.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param string $source The source of the cache clear.
 	 */
 	public function clear_cache($source = 'unknown')
 	{

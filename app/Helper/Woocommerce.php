@@ -62,6 +62,20 @@ class Woocommerce
         return false;
     }
 
+    /**
+     * Get price HTML.
+     *
+     * This method retrieves the HTML for the price of a product.
+     * 
+     * @since 1.0.0
+     *
+     * @param string $price_html The HTML for the price of the product.
+     * @param object $product The product object.
+     * @param float $original_price The original price of the product.
+     * @param float $discount_price The discount price of the product.
+     * @param bool $display_as_regular_price Whether to display the price as the regular price.
+     * @return string The HTML for the price of the product.
+     */
     static function get_price_html($price_html, $product, $original_price, $discount_price, $display_as_regular_price = false)
     {
         if ($display_as_regular_price || $original_price <= $discount_price) {
@@ -73,6 +87,18 @@ class Woocommerce
         return $price_html;
     }
 
+    /**
+     * Generate product banner.
+     *
+     * This method generates the HTML for a product banner.
+     *
+     * @since 1.0.0
+     *
+     * @param float $value The value of the product banner.
+     * @param string $type The type of the product banner.
+     * @param string $format The format of the product banner.
+     * @return string The HTML for the product banner.
+     */
     static function generate_product_banner($value, $type = '', $format = null)
     {
         if ($value === null || $value === '' || $type === null || $type === '')
@@ -90,11 +116,14 @@ class Woocommerce
 
     /**
      * Add notice
+     *  
+     * This method adds a notice to the WooCommerce cart.
+     * 
+     * @since 1.0.0
      *
-     * @access public
-     * @param $message string
-     * @param $type string
-     * @param $data array
+     * @param string $message The message to add.
+     * @param string $type The type of the notice.
+     * @param array $data The data to pass to the notice.
      */
     public static function wc_add_notice($message, $type = 'success', $data = array())
     {
@@ -113,6 +142,11 @@ class Woocommerce
     }
     /**
      * Format the sale price
+     * 
+     * This method formats the sale price of a product.
+     * 
+     * @since 1.0.0
+     * 
      * @param $price1
      * @param $price2
      * @return string|null
@@ -145,9 +179,14 @@ class Woocommerce
 
     /**
      * Get variation prices for variable product
-     * @param \WC_Product_Variable $product
-     * @param bool $for_display
-     * @return array|false
+     * 
+     * This method retrieves the variation prices for a variable product.
+     * 
+     * @since 1.0.0
+     * 
+     * @param \WC_Product_Variable $product The variable product object.
+     * @param bool $for_display Whether to return the prices for display.
+     * @return array|false The variation prices for the variable product.
      */
     static function get_variation_prices($product, $for_display = false)
     {
@@ -159,9 +198,14 @@ class Woocommerce
 
     /**
      * format the price
-     * @param $price
-     * @param $args
-     * @return string
+     * 
+     * This method formats the price of a product.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $price The price of the product.
+     * @param $args The arguments for formatting the price.
+     * @return string The formatted price.
      */
     static function format_price($price, $args = array())
     {
@@ -173,7 +217,13 @@ class Woocommerce
 
     /**
      * format currency code
-     * @return string
+     * 
+     * This method retrieves the currency symbol for a given currency code.
+     * 
+     * @since 1.0.0
+     * 
+     * @param string $code The currency code.
+     * @return string The currency symbol.
      */
     static function get_currency_symbol($code = '')
     {
@@ -184,8 +234,13 @@ class Woocommerce
     }
     /**
      * get the parent id of the particular product
-     * @param $product
-     * @return int
+     * 
+     * This method retrieves the parent ID of a given product.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product The product object.
+     * @return int The parent ID of the product.
      */
     static function get_product_parent_id($product)
     {
@@ -218,8 +273,13 @@ class Woocommerce
 
     /**
      * print the notice
-     * @param $message
-     * @param $type
+     * 
+     * This method prints a notice to the WooCommerce cart.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $message The message to print.
+     * @param $type The type of the notice.
      */
     static function print_notice($message, $type)
     {
@@ -229,8 +289,13 @@ class Woocommerce
     }
     /**
      * get available product variations
-     * @param $product
-     * @return array
+     * 
+     * This method retrieves the available product variations for a given product.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product The product object.
+     * @return array The available product variations.
      */
     public static function available_product_variations($product)
     {
@@ -251,8 +316,13 @@ class Woocommerce
 
     /**
      * get the product ID
-     * @param $product - woocommerce product object
-     * @return null
+     * 
+     * This method retrieves the ID of a given product.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product The product object.
+     * @return null The ID of the product.
      */
     static function get_product_id($product)
     {
@@ -273,8 +343,13 @@ class Woocommerce
     }
     /**
      * get the product ID or parent ID if variation
-     * @param $product - woocommerce product object
-     * @return null
+     * 
+     * This method retrieves the ID of a given product or its parent ID if it is a variation.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product The product object.
+     * @return null The ID of the product or its parent ID if it is a variation.
      */
     static function get_product_or_parent_id($product)
     {
@@ -288,8 +363,13 @@ class Woocommerce
 
     /**
      * Get the product from product id
-     * @param $product_id
-     * @return bool|false|WC_Product|null
+     * 
+     * This method retrieves the product object from a given product ID.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product_id The ID of the product.
+     * @return bool|false|WC_Product|null The product object.
      */
     static function get_product($product_id)
     {
@@ -323,8 +403,13 @@ class Woocommerce
 
     /**
      * Get the sale price of the product
-     * @param $product
-     * @return bool
+     * 
+     * This method retrieves the sale price of a given product.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product The product object.
+     * @return bool The sale price of the product.
      */
     static function get_product_sale_price($product)
     {
@@ -341,8 +426,13 @@ class Woocommerce
 
     /**
      * Check the produt in sale
-     * @param $product
-     * @return bool
+     * 
+     * This method checks if a given product is on sale.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product The product object.
+     * @return bool Whether the product is on sale.
      */
     static function is_product_in_sale($product)
     {
@@ -361,8 +451,13 @@ class Woocommerce
 
     /**
      * Get the regular price of the product
-     * @param $product
-     * @return bool
+     * 
+     * This method retrieves the regular price of a given product.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product The product object.
+     * @return bool The regular price of the product.
      */
     static function get_product_regular_price($product)
     {
@@ -376,8 +471,13 @@ class Woocommerce
 
     /**
      * Get the base price of the product
-     * @param $product
-     * @return bool
+     * 
+     * This method retrieves the base price of a given product.
+     * 
+     * @since 1.0.0
+     * 
+     * @param $product The product object.
+     * @return bool The base price of the product.
      */
     static function get_product_base_price($product)
     {

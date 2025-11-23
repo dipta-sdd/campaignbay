@@ -36,10 +36,32 @@ if (!defined('ABSPATH'))
  */
 class Helper
 {
+    /**
+     * Get settings.
+     *
+     * This method retrieves a specific setting value from the CampaignBay plugin.
+     *
+     * @since 1.0.0
+     *
+     * @param string $name The name of the setting.
+     * @return mixed The value of the setting.
+     */
     public static function get_settings($name)
     {
         return Common::get_instance()->get_settings($name);
     }
+
+    /**
+     * Get clean HTML.
+     *
+     * This method sanitizes HTML by removing script, style, and iframe tags,
+     * and allows only specific HTML tags with attributes.
+     *
+     * @since 1.0.0
+          * @param string $html The HTML to clean.
+     * @param bool $echo Whether to echo the cleaned HTML.
+     * @return string The cleaned HTML.
+     */
     public static function get_clean_html($html, $echo = false)
     {
         try {
@@ -67,7 +89,17 @@ class Helper
             return '';
         }
     }
-
+    /**
+     * Generate message.
+     *
+     * This method generates a message by replacing placeholders in a format string with provided arguments.
+     *
+     * @since 1.0.0
+     *
+     * @param string $format The format string containing placeholders.
+     * @param array $args The arguments to replace placeholders with.
+     * @return string The generated message.
+     */
     public static function generate_message($format, $args)
     {
         $format = self::get_clean_html($format);
@@ -76,6 +108,16 @@ class Helper
         return self::get_clean_message(str_replace(array_keys($args), array_values($args), $format));
     }
 
+    /**
+     * Get clean message.
+     *
+     * This method ensures that a message is clean by removing any potentially harmful content.
+     *
+     * @since 1.0.0
+     *
+     * @param string $message The message to clean.
+     * @return string The cleaned message.
+     */
     public static function get_clean_message($message)
     {
         /**
@@ -86,15 +128,46 @@ class Helper
         return $message;
     }
 
+    /**
+     * Get quantity campaigns.
+     *
+     * This method retrieves campaigns of type 'quantity' for a specific product.
+     *
+     * @since 1.0.0
+     *
+     * @param object $product The product object.
+     * @return array The quantity campaigns.
+     */
     public static function get_quantity_campaigns($product)
     {
         return self::get_type_of_campaign('quantity', $product);
     }
+    /**
+     * Get bogo campaigns.
+     *
+     * This method retrieves campaigns of type 'bogo' for a specific product.
+     *
+     * @since 1.0.0
+     *
+     * @param object $product The product object.
+     * @return array The bogo campaigns.
+     */
     public static function get_bogo_campaigns($product)
     {
         return self::get_type_of_campaign('bogo', $product);
     }
 
+    /**
+     * Get type of campaign.
+     *
+     * This method retrieves campaigns of a specific type for a specific product.
+     *
+     * @since 1.0.0
+     *
+     * @param string $type The type of campaign.
+     * @param object $product The product object.
+     * @return array The campaigns of the specified type.
+     */
     public static function get_type_of_campaign($type, $product = null)
     {
         $active_campaigns = CampaignManager::get_instance()->get_active_campaigns();
@@ -110,7 +183,16 @@ class Helper
         }
         return $campaigns;
     }
-
+    /**
+     * Get quantity tiers with campaign.
+     *
+     * This method retrieves the tiers of a quantity campaign for a specific product.
+     *
+     * @since 1.0.0
+     *
+     * @param object $product The product object.
+     * @return array The quantity tiers with campaign.
+     */
     public static function get_quantity_tiers_with_campaign($product)
     {
         $quantity_campaigns = self::get_quantity_campaigns($product);
@@ -131,6 +213,17 @@ class Helper
         return $tiers;
     }
 
+    /**
+     * Get unique quantity tiers.
+     *
+     * This method retrieves the unique tiers of a quantity campaign for a specific product.
+     *
+     * @since 1.0.0
+     *
+     * @param array $tiers The tiers of the quantity campaign.
+     * @param float $price The price of the product.
+     * @return array The unique quantity tiers.
+     */
     public static function get_unique_quantity_tiers($tiers, $price)
     {
         $unique_tiers = array();
@@ -157,6 +250,16 @@ class Helper
         return $unique_tiers;
     }
 
+    /**
+     * Get quantity message.
+     *
+     * This method retrieves the message of a quantity campaign for a specific tier.
+     *
+     * @since 1.0.0
+     *
+     * @param array $tier The tier of the quantity campaign.
+     * @return string The quantity message.
+     */
     public static function get_quantity_message($tier)
     {
         $message_format = $tier['settings']['cart_quantity_message_format'] ?? '';
@@ -173,6 +276,16 @@ class Helper
         return $message;
     }
 
+    /**
+     * Get bogo tiers.
+     *
+     * This method retrieves the tiers of a bogo campaign for a specific product.
+     *
+     * @since 1.0.0
+     *
+     * @param object $product The product object.
+     * @return array The bogo tiers.
+     */
     public static function get_bogo_tiers($product)
     {
         $bogo_campaigns = self::get_bogo_campaigns($product);
@@ -200,6 +313,16 @@ class Helper
         return $tiers;
     }
 
+    /**
+     * Render product bogo message.
+     *
+     * This method renders the message of a bogo campaign for a specific product.
+     *
+     * @since 1.0.0
+     *
+     * @param object $product The product object.
+     * @return string The rendered bogo message.
+     */
     public static function render_product_bogo_message($product)
     {
         $tiers = self::get_bogo_tiers($product);
@@ -241,6 +364,18 @@ class Helper
         );
 
     }
+
+    /**
+     * Get bogo meta.
+     *
+     * This method retrieves the meta of a bogo campaign for a specific product.
+     *
+     * @since 1.0.0
+     *
+     * @param object $product The product object.
+     * @param int $quantity The quantity of the product.
+     * @return array The bogo meta.
+     */
     public static function get_bogo_meta($product, $quantity = null)
     {
 
@@ -293,6 +428,16 @@ class Helper
         return $meta;
     }
 
+    /**
+     * Get bogo cart message.
+     *
+     * This method retrieves the message of a bogo campaign for a specific tier.
+     *
+     * @since 1.0.0
+     *
+     * @param array $tier The tier of the bogo campaign.
+     * @return string The bogo cart message.
+     */
     public static function get_bogo_cart_message($tier)
     {
         $message_format = $tier['settings']['cart_bogo_message_format'];
@@ -304,7 +449,17 @@ class Helper
         ));
     }
 
-
+    /**
+     * Is better price.
+     *
+     * This method determines if a new price is better than the current best price.
+     *
+     * @since 1.0.0
+     *
+     * @param float $current_best_price The current best price.
+     * @param float $new_price The new price to compare.
+     * @return bool True if the new price is better, false otherwise.
+     */
     public static function is_better_price($current_best_price, $new_price)
     {
         if ($new_price === null)
@@ -322,6 +477,17 @@ class Helper
         return false;
     }
 
+    /**
+     * Get quantity price.
+     *
+     * This method retrieves the price of a quantity campaign for a specific tier.
+     *
+     * @since 1.0.0
+     *
+     * @param float $base_price The base price of the product.
+     * @param array $tier The tier of the quantity campaign.
+     * @return float The quantity price.
+     */
     public static function get_quantity_price($base_price, $tier)
     {
         if ($base_price === null || $tier === null || empty($tier))
@@ -357,6 +523,14 @@ class Helper
         return max(0, $base_price - $discount_amount);
     }
 
+    /**
+     * Generates a table of discount tiers.
+     *
+     * @since 1.0.0
+     *
+     * @param array $tiers The tiers of the discount campaign.
+     * @return string The HTML for the discount table.
+     */
     public static function generate_quantity_table($tiers)
     {
         $settings = Common::get_instance()->get_settings('discount_table_options');
@@ -401,6 +575,16 @@ class Helper
         return;
     }
 
+    /**
+     * Get earlybird current tier.
+     *
+     * This method retrieves the current tier of an earlybird campaign.
+     *
+     * @since 1.0.0
+     *
+     * @param object $campaign The campaign object.
+     * @return array The current tier of the earlybird campaign.
+     */
     public static function earlybird_current_tier($campaign)
     {
         $usage_count = $campaign->get_usage_count();
@@ -417,6 +601,16 @@ class Helper
         return $current_tier;
     }
 
+    /**
+     * Get cart for session.
+     *
+     * This method retrieves the cart for the current session.
+     *
+     * @since 1.0.0
+     *
+     * @param object $cart The cart object.
+     * @return array The cart for the current session.
+     */
     public static function get_cart_for_session($cart)
     {
         $cart_session = array();
@@ -429,6 +623,15 @@ class Helper
         return $cart_session;
     }
 
+    /**
+     * Set cart session.
+     *
+     * This method sets the cart for the current session.
+     *
+     * @since 1.0.0
+     *
+     * @param object $cart The cart object.
+     */
     public static function set_cart_session($cart)
     {
         $cart = self::get_cart_for_session($cart);

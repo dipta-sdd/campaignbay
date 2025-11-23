@@ -18,7 +18,11 @@ use WpabCampaignBay\Core\Campaign;
  */
 class OrderManager extends Base
 {
-
+	/**
+	 * Constructor to define and build the hooks array.
+	 *
+	 * @since 1.0.0
+	 */
 	protected function __construct()
 	{
 		parent::__construct();
@@ -27,6 +31,8 @@ class OrderManager extends Base
 
 	/**
 	 * Defines all hooks this class needs to run.
+	 *
+	 * @since 1.0.0
 	 */
 	private function define_hooks()
 	{
