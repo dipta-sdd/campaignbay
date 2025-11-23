@@ -67,6 +67,58 @@ const Guide: FC = () => {
     }
   }, [targetElement, tourStep, config]);
 
+  // Effect to handle "Enter" key navigation
+  useEffect(() => {
+    if (!targetElement || !config[tourStep]?.nextOnEnter) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+
+        const stepConfig = config[tourStep];
+        if (stepConfig.onNext) {
+          stepConfig.onNext({
+            next: () => setTourStep(tourStep + 1),
+            setStep: setTourStep,
+            navigate: navigate,
+          });
+        } else {
+          setTourStep(tourStep + 1);
+        }
+      }
+    };
+
+    targetElement.addEventListener("keydown", handleKeyDown);
+    return () => {
+      targetElement.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [targetElement, tourStep, config, setTourStep, navigate]);
+
+  // Effect to handle "Change" event navigation (for selects)
+  useEffect(() => {
+    if (!targetElement || !config[tourStep]?.nextOnSelect) return;
+
+    const handleChange = () => {
+      const stepConfig = config[tourStep];
+      // Add a small delay to allow the selection to be registered by the browser/React state
+      setTimeout(() => {
+        if (stepConfig.onNext) {
+          stepConfig.onNext({
+            next: () => setTourStep(tourStep + 1),
+            setStep: setTourStep,
+            navigate: navigate,
+          });
+        } else {
+          setTourStep(tourStep + 1);
+        }
+      }, 100);
+    };
+
+    targetElement.addEventListener("change", handleChange);
+    return () => {
+      targetElement.removeEventListener("change", handleChange);
+    };
+  }, [targetElement, tourStep, config, setTourStep, navigate]);
+
   // Effect to calculate and apply styles once the target element is found.
   useLayoutEffect(() => {
     const tooltipEl = tooltipRef.current;

@@ -259,6 +259,8 @@ interface TourStepConfig {
   position: string;
   showNext: boolean;
   autoFocus?: boolean;
+  nextOnEnter?: boolean;
+  nextOnSelect?: boolean;
   onNext?: (actions: GuideActions) => void;
 }
 export interface TourConfig {

@@ -6,7 +6,8 @@ import {
 } from '@wordpress/components';
 import { useCbStore } from '../store/cbStore';
 import { QuantityTier, QuantityTierError } from '../types';
-
+import { useGuideStep } from '../store/GuideContext';
+import { TOUR_STEPS } from '../utils/tourSteps';
 interface TierRowProps {
   tierData: QuantityTier;
   onUpdate: (updatedTier: QuantityTier) => void;
@@ -29,6 +30,17 @@ const TierRow: FC<TierRowProps> = ({
   const [error, setError] = useState<string>('');
   const { woocommerce_currency_symbol } = useCbStore();
 
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================
+  const qtyRangeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.QTY_RANGE);
+  const qtyValueInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.QTY_VALUE);
+  const qtyToggleInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.QTY_TOGGLE);
+  const qtyAddBtnInputRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.QTY_ADD_BTN);
+  //=================================================================================
+  //============================     Guide    =======================================
+  //=================================================================================  
+
   const handleChange = (name: 'max' | 'value', rawValue: string) => {
     // Keep value as a string for empty input, otherwise convert to number for calculations
     const value = rawValue === '' ? '' : Number(rawValue);
@@ -39,7 +51,7 @@ const TierRow: FC<TierRowProps> = ({
     } else {
       setError('');
     }
-    
+
     onUpdate(updatedTier);
   };
 
@@ -63,6 +75,7 @@ const TierRow: FC<TierRowProps> = ({
             />
             <span className="wpab-input-label">to</span>
             <input
+              ref={isFirst ? qtyRangeInputRef : null}
               type="number"
               name="max"
               value={tierData.max}
@@ -75,6 +88,7 @@ const TierRow: FC<TierRowProps> = ({
           <div className="wpab-tier-input-grid-child">
             <span className="wpab-input-label">items, get</span>
             <input
+              ref={isFirst ? qtyValueInputRef : null}
               type="number"
               name="value"
               min="0"
@@ -85,11 +99,13 @@ const TierRow: FC<TierRowProps> = ({
             />
             <div className="type-toggle">
               <ToggleGroupControl
+                ref={isFirst ? qtyToggleInputRef : null}
                 className="cb-toggle-group-control"
                 __next40pxDefaultSize
                 __nextHasNoMarginBottom
                 isBlock
                 value={tierData.type}
+                // @ts-ignore
                 onChange={(value: 'percentage' | 'currency') => handleTypeToggle(value)}
               >
                 <ToggleGroupControlOption label={'%'} value="percentage" />
@@ -115,6 +131,7 @@ const TierRow: FC<TierRowProps> = ({
           )}
           {isLast && (
             <button
+              ref={isFirst ? qtyAddBtnInputRef : null}
               type="button"
               className="add-tier"
               onClick={() => onAdd(setError)}

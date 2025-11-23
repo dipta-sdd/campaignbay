@@ -14,7 +14,8 @@ export const TOUR_STEPS = {
 
   QTY_RANGE: 20,
   QTY_VALUE: 21,
-  QTY_ADD_BTN: 22,
+  QTY_TOGGLE: 22,
+  QTY_ADD_BTN: 23,
 
   EB_QUANTITY: 30,
   EB_VALUE: 31,

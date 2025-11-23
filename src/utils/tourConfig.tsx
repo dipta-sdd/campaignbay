@@ -9,6 +9,9 @@ export const campaignTourConfig: TourConfig = {
     text: <span className="">Click <b>Add Campaign</b> to create a new promotion.</span>,
     position: "bottom-left",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
+
     onNext: ({ next, setStep, navigate }) => {
       navigate("/campaigns/add");
       setTimeout(() => {
@@ -21,6 +24,7 @@ export const campaignTourConfig: TourConfig = {
     position: "bottom",
     showNext: true,
     autoFocus: true,
+    nextOnEnter: true,
   },
   [TOUR_STEPS.TYPE]: {
     text: <span>Choose your campaign strategy here. Options include
@@ -34,6 +38,7 @@ export const campaignTourConfig: TourConfig = {
     position: "bottom",
     showNext: true,
     autoFocus: true,
+    nextOnSelect: true,
   },
   [TOUR_STEPS.STATUS]: {
     text: (
@@ -51,6 +56,8 @@ export const campaignTourConfig: TourConfig = {
     ),
     position: "bottom",
     showNext: true,
+    autoFocus: true,
+    nextOnSelect: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.TARGET_TYPE),
   },
   // ===========================================================================
@@ -60,18 +67,22 @@ export const campaignTourConfig: TourConfig = {
     text: "Choose where this discount applies: The entire store, specific categories, or specific products.",
     position: "top",
     showNext: true,
+    autoFocus: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.BOGO_BUY),
   },
   [TOUR_STEPS.TARGET_IDS]: {
     text: "Search and select the specific Products, Categories, or Tags here.",
     position: "top",
     showNext: true,
+    autoFocus: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.BOGO_BUY),
   },
   [TOUR_STEPS.EXCLUDE_CHECK]: {
     text: "Check this if you want to exclude the selected items instead of including them.",
     position: "right",
     showNext: true,
+    autoFocus: true,
+    nextOnSelect: true,
   },
   // ===========================================================================
   // TYPE: SCHEDULED DISCOUNT
@@ -80,11 +91,16 @@ export const campaignTourConfig: TourConfig = {
     text: "Choose whether to apply a percentage discount (e.g., 20%) or a fixed currency amount (e.g., $10).",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
+
   },
   [TOUR_STEPS.SCHED_VALUE]: {
     text: "Enter the value of the discount here.",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.USAGE_TOGGLE),
   },
 
@@ -95,16 +111,34 @@ export const campaignTourConfig: TourConfig = {
     text: "Define the quantity range. For example, 'Buy from 5 to 10 items'.",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
   },
   [TOUR_STEPS.QTY_VALUE]: {
     text: "Set the discount reward for this range (e.g., get 10% off).",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
+  },
+  [TOUR_STEPS.QTY_TOGGLE]: {
+    text: "Choose between a Percentage (%) discount or a Fixed Currency amount for this tier.",
+    position: "top",
+    showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
+    onNext: ({ setStep }) => {
+      setStep(TOUR_STEPS.QTY_ADD_BTN);
+      setTimeout(() => {
+        setStep(TOUR_STEPS.USAGE_TOGGLE);
+      }, 1000);
+    },
   },
   [TOUR_STEPS.QTY_ADD_BTN]: {
     text: "Click here to add more tiers for higher quantities (e.g., Buy 11+ get 20% off).",
     position: "top",
     showNext: true,
+    autoFocus: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.USAGE_TOGGLE),
   },
 
@@ -115,27 +149,35 @@ export const campaignTourConfig: TourConfig = {
     text: "Set the number of initial sales that qualify for this discount (e.g., First 50 buyers).",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
   },
   [TOUR_STEPS.EB_VALUE]: {
     text: "Set the discount value those early buyers will receive.",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
   },
   [TOUR_STEPS.EB_TOGGLE]: {
     text: "Choose between a Percentage (%) discount or a Fixed Currency amount for this tier.",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnSelect: true,
     onNext: ({ setStep }) => {
       setStep(TOUR_STEPS.EB_ADD_BTN);
       setTimeout(() => {
         setStep(TOUR_STEPS.USAGE_TOGGLE);
-      }, 100);
+      }, 1000);
     },
   },
   [TOUR_STEPS.EB_ADD_BTN]: {
     text: "You can add more tiers for the next batch of buyers.But for now we will skip that.",
     position: "top",
     showNext: true,
+    autoFocus: true,
+
     onNext: ({ setStep }) => {
       setStep(TOUR_STEPS.USAGE_TOGGLE);
     },
@@ -148,11 +190,15 @@ export const campaignTourConfig: TourConfig = {
     text: "Set the 'Buy' quantity. How many items must the customer purchase?",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
   },
   [TOUR_STEPS.BOGO_GET]: {
     text: "Set the 'Get' quantity. How many items do they get for free?",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.USAGE_TOGGLE),
   },
 
@@ -163,35 +209,47 @@ export const campaignTourConfig: TourConfig = {
     text: "Prevent this discount from applying to products that are already on sale.",
     position: "right",
     showNext: true,
+    autoFocus: true,
+    nextOnSelect: true,
   },
   [TOUR_STEPS.USAGE_TOGGLE]: {
     text: "Enable this to limit how many times this campaign can be used in total.",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.SCHED_TOGGLE),
   },
   [TOUR_STEPS.USAGE_INPUT]: {
     text: "Enter the maximum number of uses (e.g., 100 total orders).",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.SCHED_TOGGLE),
   },
   [TOUR_STEPS.SCHED_TOGGLE]: {
     text: "Enable scheduling to run this campaign automatically during a specific time range.",
-    position: "right",
+    position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.SAVE_BTN),
   },
   [TOUR_STEPS.START_TIME]: {
     text: "Select the start date and time.",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.END_TIME),
   },
   [TOUR_STEPS.END_TIME]: {
     text: "Select the end date and time. Leave blank for an indefinite campaign.",
     position: "top",
     showNext: true,
+    autoFocus: true,
+    nextOnEnter: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.SAVE_BTN),
   },
 
@@ -211,5 +269,6 @@ export const campaignTourConfig: TourConfig = {
     text: "You're done! Click here to save and activate your campaign.",
     position: "bottom-left",
     showNext: false,
+    autoFocus: true,
   },
 };

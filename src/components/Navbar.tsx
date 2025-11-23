@@ -17,7 +17,7 @@ const Navbar: FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const addCampaignBtnRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.START);
-  const { setTourStep } = useGuide();
+  const { setTourStep, tourStep } = useGuide();
 
   const menus: MenuLink[] = [
     {
@@ -85,9 +85,11 @@ const Navbar: FC = () => {
               className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-0"
               onClick={() => {
                 navigate("/campaigns/add");
-                setTimeout(() => {
-                  setTourStep(2);
-                }, 100);
+                if(tourStep === 1){
+                  setTimeout(() => {
+                    setTourStep(2);
+                  }, 100);
+                }
               }}
             >
               {__("Add Campaign", "campaignbay")}
