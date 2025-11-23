@@ -184,6 +184,8 @@ class SettingsController extends ApiController
 	/**
 	 * Mark the guide as seen.
 	 *
+	 * @since 1.0.2
+	 * @access public
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error
 	 */

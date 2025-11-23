@@ -19,6 +19,7 @@ import GlobalSettings from "../components/GlobalSettings";
 import ProductSettings from "../components/ProductSettings";
 import CartSettings from "../components/CartSettings";
 import AdvancedSettings from "../components/AdvancedSettings";
+import { FloatingHelpButton } from "./Campaigns";
 
 export type ActiveTab = "global" | "product" | "cart" | "advanced";
 
@@ -253,6 +254,7 @@ const Settings: FC = () => {
         </div>
       </div>
       {/* </div> */}
+      <FloatingHelpButton />
     </div>
   );
 };

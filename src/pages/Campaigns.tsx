@@ -16,6 +16,7 @@ import {
   Table2,
   LayoutGrid,
   Plus,
+  MessageCircleQuestionMark,
 } from "lucide-react";
 
 import {
@@ -29,6 +30,7 @@ import {
   edit,
   copySmall,
   search,
+  help,
 } from "@wordpress/icons";
 
 import {
@@ -496,17 +498,15 @@ const Campaigns: FC = () => {
       </div>
       <div className="cb-page-container">
         <div
-          className={`campaignbay-bg-white ${
-            view === "table" ? "" : "!campaignbay-border-0"
-          }`}
+          className={`campaignbay-bg-white ${view === "table" ? "" : "!campaignbay-border-0"
+            }`}
         >
           {/* ==================================================================== */}
           {/* FILTERS SECTION                                                      */}
           {/* ==================================================================== */}
           <div
-            className={`campaignbay-filters ${
-              view === "table" ? "" : "campaignbay-bg-white"
-            }`}
+            className={`campaignbay-filters ${view === "table" ? "" : "campaignbay-bg-white"
+              }`}
           >
             <div className="campaignbay-filter-group">
               <div className="campaignbay-filter-group-1">
@@ -704,9 +704,8 @@ const Campaigns: FC = () => {
                           </td>
                           <td>
                             <span
-                              className={`campaignbay-status-pill campaignbay-status-${
-                                campaign?.status?.replace("", "") || ""
-                              }`}
+                              className={`campaignbay-status-pill campaignbay-status-${campaign?.status?.replace("", "") || ""
+                                }`}
                             >
                               {campaign?.status?.replace("", "") || ""}
                             </span>
@@ -1017,9 +1016,8 @@ const Campaigns: FC = () => {
                           {/* Status Badge */}
                           <div className="campaignbay-my-1.5">
                             <span
-                              className={`campaignbay-status-pill campaignbay-status-${
-                                campaign?.status?.replace("", "") || ""
-                              }`}
+                              className={`campaignbay-status-pill campaignbay-status-${campaign?.status?.replace("", "") || ""
+                                }`}
                             >
                               {campaign?.status?.replace("", "") || ""}
                             </span>
@@ -1036,9 +1034,8 @@ const Campaigns: FC = () => {
           {/* FOOTER SECTION                                                     */}
           {/* ==================================================================== */}
           <div
-            className={`campaignbay-table-footer ${
-              view === "table" ? "" : "campaignbay-bg-white"
-            }`}
+            className={`campaignbay-table-footer ${view === "table" ? "" : "campaignbay-bg-white"
+              }`}
           >
             <div className="campaignbay-bulk-actions-footer">
               {/* <CbCheckbox checked={isAllSelected} onChange={handleSelectAll} />
@@ -1119,15 +1116,32 @@ const Campaigns: FC = () => {
         {selectedCampaigns?.length > 0
           ? confirmationMessage
           : __(
-              "Please select campaigns to perform this action.",
-              "campaignbay"
-            )}
+            "Please select campaigns to perform this action.",
+            "campaignbay"
+          )}
       </ConfirmDialog>
+      <FloatingHelpButton />
     </div>
   );
 };
 
 export default Campaigns;
+
+export const FloatingHelpButton: React.FC<{ step?: number }> = ({ step = 1 }) => {
+  const { setTourStep } = useGuide();
+
+  return (
+    <div className="campaignbay-fixed campaignbay-bottom-4 campaignbay-right-4">
+      <button
+        onClick={() => setTourStep(step)}
+        className="campaignbay-bg-blue-600 campaignbay-rounded-full campaignbay-p-2 campaignbay-text-white campaignbay-hover:campaignbay-bg-blue-700 campaignbay-transition-colors campaignbay-cursor-pointer"
+        title={__("Help & Documentation", "campaignbay")}
+      >
+        <MessageCircleQuestionMark size={24} />
+      </button>
+    </div>
+  );
+}
 
 export const EmptyStateCampaigns = () => {
   const { setTourStep } = useGuide();
@@ -1166,7 +1180,7 @@ export const EmptyStateCampaigns = () => {
           >
             <Plus size={16} className="campaignbay-mr-2" />
             {__(
-              "Take a quick tour to create your first campaign",
+              "Create your first campaign",
               "campaignbay"
             )}
           </button>

@@ -10,6 +10,7 @@ import { Campaign as CampaignInterface, CampaignErrorsType } from "../types";
 import Campaign from "../components/Campaign";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
+import { FloatingHelpButton } from "./Campaigns";
 
 const CampaignsAdd: FC = () => {
   const [campaign, setCampaign] = useState<CampaignInterface>({
@@ -170,6 +171,7 @@ const CampaignsAdd: FC = () => {
           </button>
         </div>
       </div>
+      <FloatingHelpButton step={TOUR_STEPS.TITLE} />
     </div>
   );
 };

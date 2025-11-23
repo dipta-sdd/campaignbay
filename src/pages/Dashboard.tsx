@@ -25,6 +25,7 @@ import table_placeholder from "./../../assets/img/top_p_t.svg";
 import Navbar from "../components/Navbar";
 import ActivityLogModal from "../components/ActivityLogModal";
 import { useNavigate } from "react-router-dom";
+import { FloatingHelpButton } from "./Campaigns";
 
 interface KpiValue {
   value: number;
@@ -556,15 +557,14 @@ const Dashboard: FC = () => {
             </div>
             {dashboardData?.kpis?.total_discount_value?.change !== 0 && (
               <div
-                className={`cb-kpi-change ${
-                  dashboardData?.kpis?.total_discount_value?.change &&
-                  dashboardData?.kpis?.total_discount_value?.change > 0
+                className={`cb-kpi-change ${dashboardData?.kpis?.total_discount_value?.change &&
+                    dashboardData?.kpis?.total_discount_value?.change > 0
                     ? "positive"
                     : "negative"
-                }`}
+                  }`}
               >
                 {dashboardData?.kpis?.total_discount_value?.change &&
-                dashboardData?.kpis?.total_discount_value?.change > 0
+                  dashboardData?.kpis?.total_discount_value?.change > 0
                   ? "+"
                   : ""}
                 {dashboardData?.kpis?.total_discount_value?.change}% vs. prev
@@ -582,15 +582,14 @@ const Dashboard: FC = () => {
             </div>
             {dashboardData?.kpis?.discounted_orders?.change !== 0 && (
               <div
-                className={`cb-kpi-change ${
-                  dashboardData?.kpis?.discounted_orders?.change &&
-                  dashboardData?.kpis?.discounted_orders?.change > 0
+                className={`cb-kpi-change ${dashboardData?.kpis?.discounted_orders?.change &&
+                    dashboardData?.kpis?.discounted_orders?.change > 0
                     ? "positive"
                     : "negative"
-                }`}
+                  }`}
               >
                 {dashboardData?.kpis?.discounted_orders?.change &&
-                dashboardData?.kpis?.discounted_orders?.change > 0
+                  dashboardData?.kpis?.discounted_orders?.change > 0
                   ? "+"
                   : ""}
                 {dashboardData?.kpis?.discounted_orders?.change}% vs. prev
@@ -610,15 +609,14 @@ const Dashboard: FC = () => {
             </div>
             {dashboardData?.kpis?.sales_from_campaigns?.change !== 0 && (
               <div
-                className={`cb-kpi-change ${
-                  dashboardData?.kpis?.sales_from_campaigns?.change &&
-                  dashboardData?.kpis?.sales_from_campaigns?.change > 0
+                className={`cb-kpi-change ${dashboardData?.kpis?.sales_from_campaigns?.change &&
+                    dashboardData?.kpis?.sales_from_campaigns?.change > 0
                     ? "positive"
                     : "negative"
-                }`}
+                  }`}
               >
                 {dashboardData?.kpis?.sales_from_campaigns?.change &&
-                dashboardData?.kpis?.sales_from_campaigns?.change > 0
+                  dashboardData?.kpis?.sales_from_campaigns?.change > 0
                   ? "+"
                   : ""}
                 {dashboardData?.kpis?.sales_from_campaigns?.change}% vs. prev
@@ -635,18 +633,16 @@ const Dashboard: FC = () => {
               <div className="cb-chart-header-actions">
                 <div className="cb-chart-type-toggle">
                   <button
-                    className={`cb-toggle-btn ${
-                      chartType === "line" ? "active" : ""
-                    }`}
+                    className={`cb-toggle-btn ${chartType === "line" ? "active" : ""
+                      }`}
                     onClick={() => setChartType("line")}
                     title={__("Line Chart", "campaignbay")}
                   >
                     {__("Line", "campaignbay")}
                   </button>
                   <button
-                    className={`cb-toggle-btn ${
-                      chartType === "bar" ? "active" : ""
-                    }`}
+                    className={`cb-toggle-btn ${chartType === "bar" ? "active" : ""
+                      }`}
                     onClick={() => setChartType("bar")}
                     title={__("Bar Chart", "campaignbay")}
                   >
@@ -657,7 +653,7 @@ const Dashboard: FC = () => {
             </div>
             <div className="cb-chart-container">
               {dashboardData?.charts?.discount_trends?.length &&
-              dashboardData?.charts?.discount_trends?.length > 0 ? (
+                dashboardData?.charts?.discount_trends?.length > 0 ? (
                 chartType === "line" ? (
                   <Line
                     data={getDiscountTrendsData()}
@@ -690,7 +686,7 @@ const Dashboard: FC = () => {
             </div>
             <div className="cb-chart-container">
               {dashboardData?.charts?.top_campaigns?.length &&
-              dashboardData?.charts?.top_campaigns?.length > 0 ? (
+                dashboardData?.charts?.top_campaigns?.length > 0 ? (
                 <Doughnut
                   data={getTopCampaignsData()}
                   options={doughnutChartOptions}
@@ -715,7 +711,7 @@ const Dashboard: FC = () => {
             </div>
             <div className="cb-chart-container">
               {dashboardData?.charts?.most_impactful_types?.length &&
-              dashboardData?.charts?.most_impactful_types?.length > 0 ? (
+                dashboardData?.charts?.most_impactful_types?.length > 0 ? (
                 <Doughnut
                   data={getTopCampaignTypesData()}
                   options={doughnutChartOptions}
@@ -752,7 +748,7 @@ const Dashboard: FC = () => {
                   </thead>
                   <tbody>
                     {dashboardData?.live_and_upcoming?.active?.length &&
-                    dashboardData?.live_and_upcoming?.active?.length > 0 ? (
+                      dashboardData?.live_and_upcoming?.active?.length > 0 ? (
                       dashboardData.live_and_upcoming.active.map((campaign) => (
                         <tr key={campaign.id}>
                           <td className="">
@@ -819,7 +815,7 @@ const Dashboard: FC = () => {
                   </thead>
                   <tbody>
                     {dashboardData?.live_and_upcoming?.scheduled?.length &&
-                    dashboardData?.live_and_upcoming?.scheduled?.length > 0 ? (
+                      dashboardData?.live_and_upcoming?.scheduled?.length > 0 ? (
                       dashboardData.live_and_upcoming.scheduled.map(
                         (campaign) => (
                           <tr
@@ -886,7 +882,7 @@ const Dashboard: FC = () => {
             <h3>{__("Recent Activity", "campaignbay")}</h3>
             <div className="cb-activity-list">
               {dashboardData?.recent_activity?.length &&
-              dashboardData?.recent_activity?.length > 0 ? (
+                dashboardData?.recent_activity?.length > 0 ? (
                 dashboardData?.recent_activity
                   ?.slice(0, 5)
                   .map((activity, index) => (
@@ -939,14 +935,7 @@ const Dashboard: FC = () => {
         </div>
 
         {/* Floating Help Button */}
-        {/* <div className="cb-floating-help">
-          <button
-            className="cb-help-button"
-            title={__("Help & Documentation", "campaignbay")}
-          >
-            ?
-          </button>
-        </div> */}
+        <FloatingHelpButton />
       </div>
 
       {/* Activity Log Modal */}
