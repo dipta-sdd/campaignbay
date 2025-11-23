@@ -9,17 +9,17 @@ import React, {
 } from "react";
 import { GuideContextType, TourConfig } from "../types";
 import { campaignTourConfig } from "../utils/tourConfig";
-import { TOUR_STEPS } from "../utils/tourSteps";
 
 const GuideContext = createContext<GuideContextType | undefined>(undefined);
 
 export const GuideProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [tourStep, setTourStep] = useState<number>(TOUR_STEPS.START);
+  const [tourStep, setTourStep] = useState<number>(0);
   const [config, setConfig] = useState<TourConfig>(campaignTourConfig);
   const refs = useRef<Record<number, RefObject<HTMLElement>>>({});
 
+  
   const registerRef = useCallback(
     (step: number, ref: RefObject<HTMLElement>) => {
       refs.current[step] = ref;

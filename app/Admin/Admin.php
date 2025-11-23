@@ -249,6 +249,12 @@ class Admin
 
 		$woocommerce_currency_symbol = Woocommerce::get_currency_symbol();
 
+		$user_id = get_current_user_id();
+		$has_seen_guide = get_user_meta($user_id, '_campaignbay_has_seen_guide', true);
+
+		// Convert to boolean just to be safe
+		$has_seen_guide_bool = !empty($has_seen_guide);
+
 		/**
 		 * Filters the data passed from PHP to the main admin JavaScript application.
 		 *
@@ -285,6 +291,7 @@ class Admin
 				'rest_url' => get_rest_url(),
 				'white_label' => Common::get_instance()->get_white_label(),
 				'woocommerce_currency_symbol' => $woocommerce_currency_symbol,
+				'has_seen_guide' => $has_seen_guide_bool,
 				'wpSettings' => array(
 					'dateFormat' => get_option('date_format'),
 					'timeFormat' => get_option('time_format'),

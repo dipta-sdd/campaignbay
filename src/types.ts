@@ -71,6 +71,7 @@ export interface CbStore {
   rest_url: string;
   white_label: WhiteLabel;
   woocommerce_currency_symbol: string;
+  has_seen_guide: boolean;
   wpSettings: WpSettings;
   campaignbay_settings: CampaignBaySettingsType;
 }

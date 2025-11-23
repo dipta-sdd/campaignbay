@@ -3,6 +3,9 @@ import { useGuide } from "../store/GuideContext";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CbCheckbox from "./CbCheckbox";
+import apiFetch from "@wordpress/api-fetch";
+import { useToast } from "../store/toast/use-toast";
+import { __ } from "@wordpress/i18n";
 
 const initialStyles: {
   tooltip: React.CSSProperties;
@@ -116,7 +119,7 @@ const Guide: FC = () => {
         width: `${overlayWidth}px`,
         height: `${overlayHeight}px`,
         boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.6)",
-        borderRadius: "6px",
+        borderRadius: "2px",
         zIndex: 10000,
         pointerEvents: "none",
         transition: "opacity 0.3s ease-in-out",
@@ -225,13 +228,27 @@ const Guide: FC = () => {
 
   const stepConfig = config[tourStep];
 
-  const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(true);
 
-  const handleClose = () => {
+
+  const [isClosing, setIsClosing] = useState(false);
+  const { addToast } = useToast();
+  const handleClose = async () => {
     if (dontShowAgain) {
-      // Save preference to localStorage (or make an API call here)
-      localStorage.setItem("campaignbay_tour_dismissed", "true");
-      console.log("Tour dismissed permanently.");
+      setIsClosing(true);
+      try {
+        const response = await apiFetch({
+          path: "/campaignbay/v1/settings/guide",
+          method: "POST",
+        });
+        setIsClosing(false);
+        setTourStep(0);
+        addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
+      } catch (error) {
+        console.error("Failed to dismiss tour:", error);
+        setIsClosing(false);
+        addToast(__("Error dismissing tour.", "campaignbay"), "error");
+      }
     }
     setTourStep(0);
   };
@@ -297,17 +314,18 @@ const Guide: FC = () => {
 
       <div ref={tooltipRef} style={styles.tooltip}>
         <div
-          className="campaignbay-bg-white campaignbay-rounded-lg campaignbay-shadow-2xl campaignbay-p-4 campaignbay-animate-fade-in-up"
+          className="campaignbay-bg-white campaignbay-rounded-sm campaignbay-shadow-2xl campaignbay-p-4 campaignbay-animate-fade-in-up"
           style={{
             maxWidth: "300px",
             minWidth: 'min(300px , 80vw)'
           }}
         >
           <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-start">
-            <p className="campaignbay-text-sm campaignbay-text-[#3d3d3d] campaignbay-pr-4 campaignbay-font-medium">
+            <p className="campaignbay-text-[13px] campaignbay-text-[#3d3d3d] campaignbay-pr-4 campaignbay-font-medium">
               {stepConfig.text}
             </p>
             <button
+              disabled={isClosing}
               onClick={handleClose}
               className="campaignbay-p-1 campaignbay-rounded-full hover:campaignbay-bg-gray-200"
               aria-label="Close tour"

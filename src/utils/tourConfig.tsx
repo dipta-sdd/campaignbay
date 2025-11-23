@@ -23,13 +23,32 @@ export const campaignTourConfig: TourConfig = {
     autoFocus: true,
   },
   [TOUR_STEPS.TYPE]: {
-    text: "Choose your campaign strategy here. Options include 'Buy X Get X' (BOGO), 'Quantity' (Bulk discounts), 'Scheduled' (Time-based sales), or 'Early Bird' (Limited offers for first buyers).",
+    text: <span>Choose your campaign strategy here. Options include
+      <br />
+      <ul className="campaignbay-list-disc campaignbay-list-inside">
+        <li>'Buy X Get X' (BOGO)</li>
+        <li>'Quantity' (Bulk discounts)</li>
+        <li>'Scheduled' (Time-based sales)</li>
+        <li>'Early Bird' (Limited offers for first buyers)</li>
+      </ul></span>,
     position: "bottom",
     showNext: true,
     autoFocus: true,
   },
   [TOUR_STEPS.STATUS]: {
-    text: "Set the status. 'Active' runs immediately, 'Scheduled' waits for the start date.",
+    text: (
+      <span>
+        Set the status:
+        <ul className="campaignbay-list-disc campaignbay-list-inside">
+          <li>
+            <b>Active</b>: Runs immediately.
+          </li>
+          <li>
+            <b>Scheduled</b>: Waits for the specified start date.
+          </li>
+        </ul>
+      </span>
+    ),
     position: "bottom",
     showNext: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.TARGET_TYPE),
@@ -147,7 +166,7 @@ export const campaignTourConfig: TourConfig = {
   },
   [TOUR_STEPS.USAGE_TOGGLE]: {
     text: "Enable this to limit how many times this campaign can be used in total.",
-    position: "right",
+    position: "top",
     showNext: true,
     onNext: ({ setStep }) => setStep(TOUR_STEPS.SCHED_TOGGLE),
   },

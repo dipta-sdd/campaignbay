@@ -96,6 +96,18 @@ class SettingsController extends ApiController
 				'schema' => array($this, 'get_public_item_schema'),
 			)
 		);
+
+		register_rest_route(
+            $namespace,
+			'/' . $this->rest_base . '/guide',
+            array(
+                array(
+                    'methods'             => WP_REST_Server::CREATABLE, // POST
+                    'callback'            => array( $this, 'mark_guide_as_seen' ),
+                    'permission_callback' => array( $this, 'update_item_permissions_check' ),
+                ),
+            )
+        );
 	}
 
 
@@ -168,6 +180,25 @@ class SettingsController extends ApiController
 
 		return $this->get_item($request);
 	}
+
+	/**
+	 * Mark the guide as seen.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function mark_guide_as_seen( $request ) {
+        $user_id = get_current_user_id();
+
+        if ( ! $user_id ) {
+            return new \WP_Error( 'no_user', 'Invalid user', array( 'status' => 401 ) );
+        }
+
+        // Update the meta key. true means they have seen it.
+        update_user_meta( $user_id, '_campaignbay_has_seen_guide', true );
+
+        return new WP_REST_Response( array( 'success' => true ), 200 );
+    }
 
 	/**
 	 * Retrieves all of the registered options for the Settings API.
