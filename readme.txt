@@ -89,6 +89,7 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 8.  **Advanced Plugin Control.** The Advanced Settings tab for plugin data management.
 9.  **Frontend Product View.** A single product page showing a scheduled discount, a promotional message, and the quantity discount pricing table.
 10. **Frontend Cart View.** Discounts are applied directly to products in the cart, showing strikethrough pricing and the total savings for each item.
+11. **Fine-Tune Your Promotions.** The campaign editor, where you can modify every aspect of an existing campaign.
 
 == Installation ==
 
@@ -113,7 +114,7 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 == Upgrade Notice ==
 
 = 1.0.2 =
-*   This update introduces a helpful Tour Guide for new users.
+*   This update introduces a helpful Tour Guide for new users. The upgrade is seamless and requires no action from you.
 
 = 1.0.1 =
 *   This update refines the plugin's display name and includes significant under-the-hood code quality improvements. The upgrade is seamless and requires no action from you.

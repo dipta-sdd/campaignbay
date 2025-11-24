@@ -6,6 +6,7 @@ import CbCheckbox from "./CbCheckbox";
 import apiFetch from "@wordpress/api-fetch";
 import { useToast } from "../store/toast/use-toast";
 import { __ } from "@wordpress/i18n";
+import { useCbStore } from "../store/cbStore";
 
 const initialStyles: {
   tooltip: React.CSSProperties;
@@ -27,6 +28,8 @@ const Guide: FC = () => {
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  const { has_seen_guide } = useCbStore();
 
   // Derived visibility based on whether current state exists in config
   const isVisible = tourStep !== 0 && !!config[tourStep];
@@ -288,6 +291,13 @@ const Guide: FC = () => {
   const handleClose = async () => {
     if (dontShowAgain) {
       setIsClosing(true);
+      if (has_seen_guide) {
+        setIsClosing(false);
+        setTourStep(0);
+        // addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
+        return;
+      }
+
       try {
         const response = await apiFetch({
           path: "/campaignbay/v1/settings/guide",
@@ -295,11 +305,11 @@ const Guide: FC = () => {
         });
         setIsClosing(false);
         setTourStep(0);
-        addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
+        // addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
       } catch (error) {
         console.error("Failed to dismiss tour:", error);
         setIsClosing(false);
-        addToast(__("Error dismissing tour.", "campaignbay"), "error");
+        // addToast(__("Error dismissing tour.", "campaignbay"), "error");
       }
     }
     setTourStep(0);
