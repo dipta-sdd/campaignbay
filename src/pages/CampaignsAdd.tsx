@@ -83,10 +83,17 @@ const CampaignsAdd: FC = () => {
     scheduled: TOUR_STEPS.SCHED_TYPE,
     earlybird: TOUR_STEPS.EB_QUANTITY,
   };
+  const TYPE_TO_PREV_STEP_MAP: Record<string, number> = {
+    bogo: TOUR_STEPS.BOGO_GET,
+    quantity: TOUR_STEPS.QTY_TOGGLE,
+    scheduled: TOUR_STEPS.SCHED_VALUE,
+    earlybird: TOUR_STEPS.EB_TOGGLE,
+  };
 
   useEffect(() => {
     if (!tourStep) return;
     const nextStepId = TYPE_TO_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
+    const prevStepId = TYPE_TO_PREV_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
 
     if (campaign.target_type === "entire_store") {
       setConfig((prevConfig) => ({
@@ -96,7 +103,37 @@ const CampaignsAdd: FC = () => {
           onNext: ({ setStep }) => {
             setStep(nextStepId);
           },
-        }
+        },
+        [TOUR_STEPS.BOGO_BUY]: {
+          ...prevConfig[TOUR_STEPS.BOGO_BUY],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_TYPE);
+          },
+        },
+        [TOUR_STEPS.SCHED_TYPE]: {
+          ...prevConfig[TOUR_STEPS.SCHED_TYPE],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_TYPE);
+          },
+        },
+        [TOUR_STEPS.QTY_RANGE]: {
+          ...prevConfig[TOUR_STEPS.QTY_RANGE],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_TYPE);
+          },
+        },
+        [TOUR_STEPS.EB_QUANTITY]: {
+          ...prevConfig[TOUR_STEPS.EB_QUANTITY],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_TYPE);
+          },
+        },
+        [TOUR_STEPS.USAGE_TOGGLE]: {
+          ...prevConfig[TOUR_STEPS.USAGE_TOGGLE],
+          onPrev: ({ setStep }) => {
+            setStep(prevStepId);
+          },
+        },
       }));
     } else {
       setConfig((prevConfig) => ({
@@ -113,6 +150,36 @@ const CampaignsAdd: FC = () => {
             setStep(nextStepId);
           },
         },
+        [TOUR_STEPS.BOGO_BUY]: {
+          ...prevConfig[TOUR_STEPS.BOGO_BUY],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_IDS);
+          },
+        },
+        [TOUR_STEPS.SCHED_TYPE]: {
+          ...prevConfig[TOUR_STEPS.SCHED_TYPE],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_IDS);
+          },
+        },
+        [TOUR_STEPS.QTY_RANGE]: {
+          ...prevConfig[TOUR_STEPS.QTY_RANGE],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_IDS);
+          },
+        },
+        [TOUR_STEPS.EB_QUANTITY]: {
+          ...prevConfig[TOUR_STEPS.EB_QUANTITY],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_IDS);
+          },
+        },
+        [TOUR_STEPS.USAGE_TOGGLE]: {
+          ...prevConfig[TOUR_STEPS.USAGE_TOGGLE],
+          onPrev: ({ setStep }) => {
+            setStep(TOUR_STEPS.TARGET_IDS);
+          },
+        },
       }));
     }
   }, [campaign.target_type, campaign.type, setConfig]);
@@ -125,6 +192,12 @@ const CampaignsAdd: FC = () => {
         ...prevConfig[TOUR_STEPS.SCHED_TOGGLE],
         onNext: ({ setStep }) => {
           setStep(campaign.schedule_enabled ? TOUR_STEPS.START_TIME : TOUR_STEPS.SAVE_BTN);
+        },
+      },
+      [TOUR_STEPS.SAVE_BTN]: {
+        ...prevConfig[TOUR_STEPS.SAVE_BTN],
+        onPrev: ({ setStep }) => {
+          setStep(campaign.schedule_enabled ? TOUR_STEPS.END_TIME : TOUR_STEPS.SCHED_TOGGLE);
         },
       }
     }));

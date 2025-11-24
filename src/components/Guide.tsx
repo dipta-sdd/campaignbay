@@ -392,7 +392,7 @@ const Guide: FC = () => {
 
             <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center">
               {/* Don't show again checkbox */}
-              <div className="campaignbay-flex campaignbay-items-center">
+              {/* <div className="campaignbay-flex campaignbay-items-center">
                 <CbCheckbox
                   id="cb-guide-dont-show"
                   checked={dontShowAgain}
@@ -404,7 +404,25 @@ const Guide: FC = () => {
                 >
                   Don't show this again
                 </label>
-              </div>
+              </div> */}
+              {stepConfig.showPrev ? (
+                <button
+                  onClick={() => {
+                    if (stepConfig.onPrev) {
+                      stepConfig.onPrev({
+                        prev: () => setTourStep(tourStep - 1),
+                        setStep: setTourStep,
+                        navigate: navigate,
+                      });
+                    } else {
+                      setTourStep(tourStep - 1);
+                    }
+                  }}
+                  className="campaignbay-px-3 campaignbay-py-1 campaignbay-text-blue-600 text-sm campaignbay-border campaignbay-border-blue-600 campaignbay-font-medium campaignbay-rounded-sm hover:campaignbay-bg-blue-700 hover:campaignbay-text-white"
+                >
+                  Previous
+                </button>
+              ) : <span></span>}
               {stepConfig.showNext && (
                 <button
                   onClick={() => {
@@ -418,7 +436,7 @@ const Guide: FC = () => {
                       setTourStep(tourStep + 1);
                     }
                   }}
-                  className="campaignbay-px-3 campaignbay-py-1 campaignbay-bg-blue-600 campaignbay-text-white text-sm campaignbay-font-medium campaignbay-rounded-sm hover:campaignbay-bg-blue-700"
+                  className="campaignbay-px-3 campaignbay-py-1 campaignbay-bg-blue-600 campaignbay-text-white text-sm campaignbay-font-medium campaignbay-rounded-sm hover:campaignbay-bg-blue-700 campaignbay-border campaignbay-border-blue-600"
                 >
                   Next
                 </button>

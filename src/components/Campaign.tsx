@@ -70,6 +70,12 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         onNext: ({ setStep }) => {
           setStep(enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.SCHED_TOGGLE);
         },
+      },
+      [TOUR_STEPS.SCHED_TOGGLE]: {
+        ...prevConfig[TOUR_STEPS.SCHED_TOGGLE],
+        onPrev: ({ setStep }) => {
+          setStep(enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.USAGE_TOGGLE);
+        },
       }
     }));
 
