@@ -296,7 +296,7 @@ class Admin
 					'dateFormat' => get_option('date_format'),
 					'timeFormat' => get_option('time_format'),
 				),
-				'campaignbay_settings' => get_option(CAMPAIGNBAY_OPTION_NAME, wpab_campaignbay_default_options())
+				'campaignbay_settings' => Common::get_instance()->get_settings()
 			)
 		);
 
@@ -547,7 +547,7 @@ class Admin
 	 */
 	public function register_settings()
 	{
-		$defaults = wpab_campaignbay_default_options();
+		$defaults = Common::get_instance()->get_default_settings();
 
 		register_setting(
 			'campaignbay_settings_group',
@@ -578,7 +578,7 @@ class Admin
 	{
 		$schema = $this->get_settings_schema();
 		$properties = $schema['properties'] ?? array();
-		$default_options = wpab_campaignbay_default_options();
+		$default_options = Common::get_instance()->get_default_settings();
 
 
 		$sanitized_output = get_option(CAMPAIGNBAY_OPTION_NAME, $default_options);

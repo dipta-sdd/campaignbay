@@ -42,6 +42,82 @@ class Common
 	private static $instance = null;
 
 	/**
+	 * The default settings of the plugin.
+	 *
+	 * @since 1.0.3
+	 * @access private
+	 * @var   array
+	 */
+	private $default_settings = array(
+			/*==================================================
+			* Global Settings Tab
+			==================================================*/
+			'global_enableAddon' => true,
+			'global_calculate_discount_from' => 'regular_price',
+			'position_to_show_bulk_table' => 'woocommerce_after_add_to_cart_form',
+			'position_to_show_discount_bar' => 'woocommerce_before_add_to_cart_form',
+
+			/*==================================================
+			* Performance & Caching (from Global Tab)
+			==================================================*/
+			'perf_enableCaching' => true,
+
+			/*==================================================
+			* Debugging & Logging (from Global Tab)
+			==================================================*/
+			'debug_enableMode' => true,
+
+			/*==================================================
+			* Product Settings Tab
+			==================================================*/
+			'product_message_format_percentage' => 'You save {percentage_off}%',
+			'product_message_format_fixed' => 'You save {amount_off} per item',
+			'bogo_banner_message_format' => 'Buy {buy_quantity} and {get_quantity} free!!!!!!',
+			'product_priorityMethod' => 'apply_highest',
+			'show_discount_table' => 'true',
+			'discount_table_options' => array(
+				'show_header' => true,
+				'title' => array(
+					'show' => true,
+					'label' => 'Title',
+				),
+				'range' => array(
+					'show' => true,
+					'label' => 'Range',
+				),
+				'discount' => array(
+					'show' => true,
+					'label' => 'Discount',
+					'content' => 'price'
+				)
+			),
+
+
+			/*==================================================
+			* Cart Settings Tab
+			==================================================*/
+			'cart_allowWcCouponStacking' => false,
+			'cart_allowCampaignStacking' => false,
+			'cart_quantity_message_format_percentage' => 'Add {remainging_quantity_for_next_offer} more and get {percentage_off}% off',
+			'cart_quantity_message_format_fixed' => 'Add {remainging_quantity_for_next_offer} more and get {amount_off} off per item!!',
+			'cart_bogo_message_format' => '{title} discount applied.',
+
+			/*==================================================
+			* Advance Settings Tab
+			==================================================*/
+			'advanced_deleteAllOnUninstall' => false,
+		);
+
+	/**
+	 * The settings of the plugin.
+	 *
+	 * @since 1.0.3
+	 * @access private
+	 * @var   array
+	 */
+	private $settings = null;
+
+	/**
 	 * Gets an instance of this object.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.
 	 *
@@ -68,17 +144,66 @@ class Common
 	 */
 	public function get_settings($key = '')
 	{
-		static $cache = null;
-		if (!$cache) {
-			$cache = wpab_campaignbay_get_options();
+		if (!$this->settings) {
+			$this->load_settings();
 		}
 		if (!empty($key)) {
-			return isset($cache[$key]) ? $cache[$key] : false;
+			return isset($this->settings[$key]) ? $this->settings[$key] : false;
 		}
 
-		return $cache;
+		return $this->settings;
 	}
 
+	/**
+	 * Get the default settings.
+	 *
+	 * @since 1.0.3
+	 * @access public
+	 * @return array
+	 */
+	public function get_default_settings()
+	{
+		return $this->default_settings;
+	}
+
+	/**
+	 * Load the settings.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
+	 */
+	public function load_settings()
+	{
+		$options = get_option(CAMPAIGNBAY_OPTION_NAME);
+		if (!is_array($options)) {
+			$options = array();
+		}
+		$default_settings = $this->get_default_settings();
+		$settings = array_merge($default_settings, $options);
+		$this->settings = $settings;
+	}
+
+	/**
+	 * Update the settings.
+	 *
+	 * @since 1.0.3
+	 * @access public
+	 * @param string $key_or_data The key or data to update.
+	 * @param string $val The value to update.
+	 * @return void
+	 */
+	public function update_settings($key_or_data, $val = '')
+	{
+		if (is_string($key_or_data)) {
+			$options = $this->get_settings();
+			$options[$key_or_data] = $val;
+		} else {
+			$options = $key_or_data;
+		}
+		update_option(CAMPAIGNBAY_OPTION_NAME, $options);
+		$this->load_settings();
+	}
 	/**
 	 * Get options related to white label.
 	 *

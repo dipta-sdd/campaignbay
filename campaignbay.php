@@ -64,7 +64,8 @@ if (!function_exists('wpab_campaignbay_run')) {
 	{
 		if (is_plugin_active('woocommerce/woocommerce.php')) {
 			$plugin = \WpabCampaignBay\Core\Plugin::get_instance();
-			$plugin->run();
+			add_action('init', array($plugin, 'run'));
+			// $plugin->run();
 		} else {
 			add_action('admin_notices', 'wpab_campaignbay_woocommerce_not_active_notice');
 		}

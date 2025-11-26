@@ -2,6 +2,8 @@
 
 namespace WpabCampaignBay\Api;
 
+use WpabCampaignBay\Core\Common;
+
 if (!defined('ABSPATH')) {
 	exit;
 }
@@ -126,10 +128,11 @@ class SettingsController extends ApiController
 	{
 		$response = array();
 
-		$saved_options = wpab_campaignbay_get_options();
+		$saved_options = Common::get_instance()->get_settings();
 
 		$schema = $this->get_registered_schema();
-
+		error_log('setting controller');
+		// error_log(print_r($saved_options, true));
 		$response = $this->prepare_value($saved_options, $schema);
 
 		return $response;
@@ -176,7 +179,7 @@ class SettingsController extends ApiController
 		}
 
 		$sanitized_options = $this->prepare_value($params, $schema);
-		wpab_campaignbay_update_options($sanitized_options);
+		Common::get_instance()->update_settings($sanitized_options);
 
 		return $this->get_item($request);
 	}
