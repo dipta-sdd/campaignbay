@@ -127,12 +127,18 @@ class SettingsController extends ApiController
 	public function get_item($request)
 	{
 		$response = array();
-
-		$saved_options = Common::get_instance()->get_settings();
-
+		
+		/**
+		 * Filters the settings.
+		 * 
+		 * @since 1.0.3
+		 * @hook campaignbay_get_settings
+		 *
+		 * @param array $settings The settings.
+		 * @return array The filtered settings.
+		 */
+		$saved_options = apply_filters('campaignbay_get_settings', Common::get_instance()->get_settings());
 		$schema = $this->get_registered_schema();
-		error_log('setting controller');
-		// error_log(print_r($saved_options, true));
 		$response = $this->prepare_value($saved_options, $schema);
 
 		return $response;
