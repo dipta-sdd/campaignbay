@@ -92,6 +92,23 @@ const MultiSelect: FC<MultiSelectProps> = ({
     }
   };
 
+
+    useEffect(() => {
+    if (dropdownOpen && listRef.current) {
+      const highlightedElement = listRef.current.children[
+        highlightedIndex
+      ] as HTMLLIElement;
+
+      if (highlightedElement) {
+        highlightedElement.scrollIntoView({
+          block: "nearest", // Scrolls the minimum amount to bring the element into view
+          behavior: "smooth", // Optional: for a smoother scrolling effect
+        });
+      }
+    }
+  }, [highlightedIndex, dropdownOpen]); // Rerun this effect when the index or dropdown state changes
+
+
   return (
     <div className={`wpab-input-con${className ? ` ${className}` : ""}`}>
       <label className="wpab-input-label" htmlFor={selectId}>
