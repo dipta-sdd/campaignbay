@@ -544,6 +544,7 @@ const Campaigns: FC = () => {
                   onChange={(e) => setTypeFilter(e.target.value)}
                 >
                   <option value="">Filter by Type</option>
+                  <option value="bogo">BOGO</option>
                   <option value="scheduled">Schedule Discount</option>
                   <option value="quantity">Quantity Discount</option>
                   <option value="earlybird">EarlyBird Discount</option>
