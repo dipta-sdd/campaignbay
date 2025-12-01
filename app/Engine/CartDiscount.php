@@ -80,6 +80,7 @@ class CartDiscount
 		 * @param \WC_Cart $cart The main WooCommerce cart object.
 		 */
 		do_action('campaignbay_before_cart_discount_calculation', $cart);
+		error_log(print_r($cart, true));
 
 		$cart->campaignbay = array(
 			'coupon' => array(),
@@ -91,6 +92,9 @@ class CartDiscount
 				$meta = self::get_cart_discount($cart_item);
 				$simple_applied = false;
 				$cart_quantity = $cart_item['quantity'];
+				
+
+				self::add_bogo_free_product($cart, $key, $cart_item, 1, $meta);
 
 				/**
 				 * Fires just before the discount logic is processed for a single cart item.
@@ -493,6 +497,31 @@ class CartDiscount
 				'discount' => 0,
 			);
 		$cart->campaignbay['fee'][$code]['discount'] += $data['discount'];
+
+	}
+
+
+	public static function add_bogo_free_product($cart, $key,$cart_item, $quantity, $meta)
+	{
+		// $product_id = $meta['bogo']['free_product_id'];
+		$product_id = 22; // only for test
+		$product_data = $cart_item['data'];
+		$cart_item_key = $key . 'cb';
+		// if()
+		// $cart->cart_contents[ $cart_item_key ] = array(
+		// 	'key'          => $cart_item_key,
+		// 	'product_id'   => $product_id,
+		// 	'variation_id' => null,
+		// 	'variation'    => null,
+		// 	'quantity'     => 1,
+		// 	'data'         => $product_data,
+		// 	'data_hash'    => wc_get_cart_item_data_hash( $product_data ),
+		// );
+		error_log("add_bogo_free_product _________________________________________________________________________");
+		error_log("add_bogo_free_product _________________________________________________________________________");
+		error_log("add_bogo_free_product _________________________________________________________________________");
+		error_log("add_bogo_free_product _________________________________________________________________________");
+		error_log(print_r($cart_item_key, true));
 
 	}
 

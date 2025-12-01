@@ -109,8 +109,8 @@ class PricingEngine extends Base
 			['action', 'woocommerce_before_mini_cart', 'ensure_cart_calculate_totals', 20, 1],
 			['action', 'woocommerce_before_mini_cart_contents', 'ensure_cart_calculate_totals', 20, 1],
 
-			['action', 'woocommerce_before_calculate_totals', 'before_calculate_totals', 20, 1],
-			['action', 'woocommerce_after_calculate_totals', 'after_calculate_totals', 20, 1],
+			// ['action', 'woocommerce_before_calculate_totals', 'before_calculate_totals', 20, 1],
+			// ['action', 'woocommerce_after_calculate_totals', 'after_calculate_totals', 20, 1],
 			['filter', 'woocommerce_get_shop_coupon_data', 'validate_fake_coupon_data', 10, 2],
 			['filter', 'woocommerce_cart_totals_coupon_label', 'change_virtual_coupon_label', 10, 2],
 			['filter', 'woocommerce_coupon_is_valid', 'validate_fake_coupon', 10, 3],
@@ -121,6 +121,9 @@ class PricingEngine extends Base
 			['action', 'woocommerce_checkout_create_order', 'save_discount_breakdown_to_order_meta', 10, 2],
 			['action', 'woocommerce_store_api_checkout_update_order_meta', 'save_discount_breakdown_to_order_meta', 10, 1],
 		];
+
+		add_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
+		add_action('woocommerce_after_calculate_totals', [$this, 'after_calculate_totals'], 20, 1);
 
 		foreach ($hooks as $hook) {
 			$this->add_hook(...$hook);
@@ -354,6 +357,8 @@ class PricingEngine extends Base
 	 * Get the cart item name.
 	 *
 	 * @since 1.0.0
+	 * @hook woocommerce_cart_item_name
+	 * 
 	 * @param string $name The name.
 	 * @param array $cart_item The cart item.
 	 * @param string $cart_item_key The cart item key.
@@ -361,6 +366,8 @@ class PricingEngine extends Base
 	 */
 	public function cart_item_name($name, $cart_item, $cart_item_key)
 	{
+		if(!isset($cart_item['campaignbay']))
+			return $name;
 		$meta = $cart_item['campaignbay'];
 		if (isset($meta['quantity_next_tier'])) {
 			$message = Helper::get_quantity_message($meta['quantity_next_tier']);
@@ -551,11 +558,17 @@ class PricingEngine extends Base
 	 */
 	public function before_calculate_totals($cart)
 	{
+		remove_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
+		remove_action('woocommerce_after_calculate_totals', [$this, 'after_calculate_totals'], 20, 1);
 		$this->coupons = CartDiscount::calculate_cart_discount($cart);
 		$this->calculated_totals = true;
 		$discount_breakdown = $cart->campaignbay_discount_breakdown ?? array();
 		if (is_array($discount_breakdown) && !empty($discount_breakdown))
 			$this->discount_applied = true;
+
+
+		add_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
+		add_action('woocommerce_after_calculate_totals', [$this, 'after_calculate_totals'], 20, 1);
 	}
 
 	/**
