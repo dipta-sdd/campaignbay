@@ -2,9 +2,9 @@
 Contributors: wpanchorbay, sankarsan
 Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
-Tested up to: 6.8
+Tested up to: 6.8.3
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
