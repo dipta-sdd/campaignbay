@@ -258,7 +258,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
         {type === "bogo"  ? (
           <>
             {/* auto add to cart */}
-            <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+            {/* <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
               <CbCheckbox
                 id="auto-add-free-product"
                 checked={
@@ -292,7 +292,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 position="top"
               />
               {renderError(errors?.auto_add_free_product)}
-            </div>
+            </div> */}
 
             <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px]">
               {/* apply as  */}

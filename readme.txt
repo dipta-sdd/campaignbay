@@ -2,9 +2,9 @@
 Contributors: wpanchorbay, sankarsan
 Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
-Tested up to: 6.8
+Tested up to: 6.8.3
 Requires PHP: 7.0
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,8 @@ Automated Discount Campaigns & Flash Sales for WooCommerce
 == Description ==
 
 Move beyond basic coupons and revolutionize your WooCommerce store's promotions with CampaignBay.
+
+[Youtube](https://youtu.be/LpHZOeBCkk8)
 
 CampaignBay is a powerful, user-friendly marketing tool that empowers you to create sophisticated, automated discount campaigns directly from your WordPress dashboard. Whether you're running a Black Friday flash sale, rewarding customers for bulk purchases, or creating urgency with a limited-time offer, CampaignBay provides the robust features you need to drive sales and engage customers.
 
@@ -101,6 +103,10 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 
 == Changelog ==
 = Changelog =
+
+= 1.0.3 =
+*   FIX: Minor bug fixes and stability improvements for the admin interface.
+
 = 1.0.2 =
 *   Enhancement: Added an interactive Tour Guide to help new users navigate the "Add Campaign" interface.
 
@@ -112,6 +118,9 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+*   This update contains minor bug fixes for the admin area. The upgrade is seamless and requires no action.
 
 = 1.0.2 =
 *   This update introduces a helpful Tour Guide for new users. The upgrade is seamless and requires no action from you.
