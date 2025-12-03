@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.8.3
 Requires PHP: 7.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -104,6 +104,9 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 == Changelog ==
 = Changelog =
 
+= 1.0.4 =
+*   FIX: Error at new activation on 1.0.3 version.
+
 = 1.0.3 =
 *   FIX: Minor bug fixes and stability improvements for the admin interface.
 
@@ -119,7 +122,7 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 
 == Upgrade Notice ==
 
-= 1.0.3 =
+= 1.0.4 =
 *   This update contains minor bug fixes for the admin area. The upgrade is seamless and requires no action.
 
 = 1.0.2 =

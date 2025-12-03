@@ -8,8 +8,8 @@
  * Requires PHP:      7.0
  * Requires Plugins:  woocommerce
  * WC requires at least: 6.1
- * Version:           1.0.3
- * Stable tag:        1.0.3
+ * Version:           1.0.4
+ * Stable tag:        1.0.4
  * Author:            WPAnchorBay
  * Author URI:        https://wpanchorbay.com
  * License:           GPLv2 or later
