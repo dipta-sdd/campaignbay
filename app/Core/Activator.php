@@ -2,9 +2,9 @@
 
 namespace WpabCampaignBay\Core;
 
+use WpabCampaignBay\Core\Common;
 use WpabCampaignBay\Data\DbManager;
 use WpabCampaignBay\Engine\CampaignManager;
-use WpabCampaignBay\Core\Common;
 
 /**
  * Fired during plugin activation
@@ -50,7 +50,7 @@ class Activator
 
 		// Set up the default options if they don't exist.
 		if (!get_option(CAMPAIGNBAY_OPTION_NAME)) {
-			Common::get_instance()->update_settings();
+			Common::get_instance()->update_settings(Common::get_instance()->get_default_settings());
 		}
 
 		// Create custom database tables.
