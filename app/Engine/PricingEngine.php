@@ -110,7 +110,6 @@ class PricingEngine extends Base
 			['action', 'woocommerce_before_mini_cart_contents', 'ensure_cart_calculate_totals', 20, 1],
 
 			// ['action', 'woocommerce_before_calculate_totals', 'before_calculate_totals', 20, 1],
-			// ['action', 'woocommerce_after_calculate_totals', 'after_calculate_totals', 20, 1],
 			['filter', 'woocommerce_get_shop_coupon_data', 'validate_fake_coupon_data', 10, 2],
 			['filter', 'woocommerce_cart_totals_coupon_label', 'change_virtual_coupon_label', 10, 2],
 			['filter', 'woocommerce_coupon_is_valid', 'validate_fake_coupon', 10, 3],
@@ -123,7 +122,6 @@ class PricingEngine extends Base
 		];
 
 		add_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
-		add_action('woocommerce_after_calculate_totals', [$this, 'after_calculate_totals'], 20, 1);
 
 		foreach ($hooks as $hook) {
 			$this->add_hook(...$hook);
@@ -325,24 +323,7 @@ class PricingEngine extends Base
 			$price = $meta['simple']['price'];
 			$as_reg_price = $meta['simple']['display_as_regular_price'];
 		}
-		if (isset($meta['bogo']['free_quantity'])) {
-
-			$quantity = $cart_item['quantity'];
-			$sub_total = $price * $quantity;
-			$free_quantity = $meta['bogo']['free_quantity'];
-			$discount = Woocommerce::round(($sub_total / $quantity) * $free_quantity);
-			$sub_total -= $discount;
-
-			$price_html = Woocommerce::get_price_html(
-				$price_html,
-				$cart_item['data'],
-				$base_price * $cart_item['quantity'],
-				$sub_total,
-				$as_reg_price
-			);
-			return $price_html;
-		}
-
+		
 		$price_html = Woocommerce::get_price_html(
 			$price_html,
 			$cart_item['data'],
@@ -559,7 +540,6 @@ class PricingEngine extends Base
 	public function before_calculate_totals($cart)
 	{
 		remove_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
-		remove_action('woocommerce_after_calculate_totals', [$this, 'after_calculate_totals'], 20, 1);
 		$this->coupons = CartDiscount::calculate_cart_discount($cart);
 		$this->calculated_totals = true;
 		$discount_breakdown = $cart->campaignbay_discount_breakdown ?? array();
@@ -568,48 +548,9 @@ class PricingEngine extends Base
 
 
 		add_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
-		add_action('woocommerce_after_calculate_totals', [$this, 'after_calculate_totals'], 20, 1);
 	}
 
-	/**
-	 * After calculate totals.
-	 *
-	 * @since 1.0.0
-	 * @param WC_Cart $cart The cart object.
-	 * @return void
-	 */
-	public function after_calculate_totals($cart)
-	{
 
-		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
-			foreach ($cart->cart_contents as $key => $cart_item) {
-				$quantity = $cart_item['quantity'];
-
-				$meta = isset($cart_item['campaignbay']) ? $cart_item['campaignbay'] : null;
-				if ($meta === null || !isset($meta['is_bogo']) || !isset($meta['bogo']['free_quantity']))
-					continue;
-				if (isset($meta['bogo']['free_quantity'])) {
-
-					$free_quantity = $meta['bogo']['free_quantity'];
-					$cart->set_quantity($key, $quantity + $free_quantity, false);
-
-					$price = (float) $cart_item['line_total'] / $quantity;
-
-					$campaign_id = $meta['bogo']['id'];
-					if (!isset($cart->campaignbay_discount_breakdown[$campaign_id]))
-						$cart->campaignbay_discount_breakdown[$campaign_id] = array(
-							'title' => $meta['bogo']['title'],
-							'old_price' => 0,
-							'discount' => 0
-						);
-					$cart->campaignbay_discount_breakdown[$campaign_id]['old_price'] = $cart->campaignbay_discount_breakdown[$campaign_id]['old_price'] + (($quantity + $free_quantity) * $price);
-					$cart->campaignbay_discount_breakdown[$campaign_id]['discount'] = $cart->campaignbay_discount_breakdown[$campaign_id]['discount'] + ($free_quantity * $price);
-				}
-
-			}
-		}
-		Helper::set_cart_session($cart);
-	}
 
 
 	/**

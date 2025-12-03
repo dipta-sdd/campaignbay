@@ -200,8 +200,8 @@ class Helper
         foreach ($quantity_campaigns as $campaign) {
             foreach ($campaign->get_tiers() as $tier) {
                 $tiers[] = array(
-                    'id' => $campaign->get_id(),
-                    'title' => $campaign->get_title(),
+                    'campaign' => $campaign->get_id(),
+                    'campaign_title' => $campaign->get_title(),
                     'settings' => $campaign->get_settings(),
                     'min' => $tier['min'],
                     'max' => $tier['max'],
@@ -288,25 +288,31 @@ class Helper
      */
     public static function get_bogo_tiers($product)
     {
+        //get all bogo campaigns
         $bogo_campaigns = self::get_bogo_campaigns($product);
         $tiers = array();
         foreach ($bogo_campaigns as $campaign) {
+            //get all tiers with campaigns necessary data
             $tiers[] = array(
-                'id' => $campaign->get_id(),
-                'title' => $campaign->get_title(),
+                'campaign' => $campaign->get_id(),
+                'campaign_title' => $campaign->get_title(),
                 'settings' => $campaign->get_settings(),
                 'buy_quantity' => $campaign->get_tiers()[0]['buy_quantity'],
                 'get_quantity' => $campaign->get_tiers()[0]['get_quantity'],
                 'ratio' => (int) (($campaign->get_tiers()[0]['get_quantity'] / $campaign->get_tiers()[0]['buy_quantity']) * 100)
             );
         }
+        //remove duplicates
         $tmp_tiers = array();
         foreach ($tiers as $tier) {
+            //check if buy quantity is already in tmp tiers
             if (isset($tmp_tiers[$tier['buy_quantity']]))
                 continue;
+            //add to tmp tiers
             $tmp_tiers[$tier['buy_quantity']] = $tier;
         }
         $tiers = array_values($tmp_tiers);
+        //sort tiers by ratio
         usort($tiers, function ($a, $b) {
             return $b['ratio'] - $a['ratio'];
         });
@@ -331,10 +337,9 @@ class Helper
         });
         $message = "";
         $format = "";
-
         if (!empty($tiers)) {
             $tier = $tiers[0];
-            $format = $tier['settings']['bogo_banner_message_format'] ?? Common::get_instance()->get_settings('bogo_banner_message_format');
+            $format = wpab_campaignbay_get_value($tier, 'settings.bogo_banner_message_format', Common::get_instance()->get_settings('bogo_banner_message_format'));
             $message = self::generate_message($format, array(
                 '{buy_quantity}' => $tier['buy_quantity'],
                 '{get_quantity}' => $tier['get_quantity'],
@@ -364,7 +369,7 @@ class Helper
         );
 
     }
-
+ 
     /**
      * Get bogo meta.
      *
@@ -397,34 +402,27 @@ class Helper
                     $next_tier = $tier;
                 }
             }
-        } else {
-            $total = $current_tier['buy_quantity'] + $current_tier['get_quantity'];
-            $free_quantity = (int) ($quantity / $total);
-            $free_quantity *= $current_tier['get_quantity'];
-            $remaining = $quantity % $total;
-            $need_to_add = 0;
-            if ($remaining >= $current_tier['buy_quantity']) {
-                $remaining -= $current_tier['buy_quantity'];
-                $need_to_add = $current_tier['get_quantity'] - $remaining;
-                $free_quantity += $remaining;
+            if ($next_tier !== null) {
+                $meta['on_discount'] = true;
+                $meta['is_bogo'] = false;
+                $meta['bogo']['next_tier'] = $next_tier;
             }
+        } else {
             $meta['is_bogo'] = true;
+            $free_quantity = intval((intval($quantity / $current_tier['buy_quantity']) ) * $current_tier['get_quantity']);
             $meta['bogo'] = array(
-                'id' => $current_tier['id'],
-                'title' => $current_tier['title'],
+                'campaign' => $current_tier['campaign'],
+                'campaign_title' => $current_tier['campaign_title'],
                 'settings' => $current_tier['settings'],
                 'buy_quantity' => $current_tier['buy_quantity'],
                 'get_quantity' => $current_tier['get_quantity'],
+                'discount' => 100,
+                'discount_type' => 'percentage',
+                'free_product_id' => $product->get_id(),
                 'free_quantity' => $free_quantity,
-                'need_to_add' => $need_to_add,
             );
         }
 
-        if ($next_tier !== null) {
-            $meta['on_discount'] = true;
-            $meta['is_bogo'] = false;
-            $meta['bogo']['next_tier'] = $next_tier;
-        }
         return $meta;
     }
 
@@ -445,7 +443,9 @@ class Helper
             $message_format = self::get_settings('cart_bogo_message_format');
 
         return self::generate_message($message_format, array(
-            '{title}' => $tier['title'],
+            '{title}' => $tier['campaign_title'],
+            '{buy_quantity}' => $tier['buy_quantity'],
+            '{get_quantity}' => $tier['get_quantity'],
         ));
     }
 
