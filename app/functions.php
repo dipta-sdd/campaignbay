@@ -120,7 +120,8 @@ if (!function_exists('wpab_campaignbay_log')) {
 
 		$formatted_message = '';
 		if (is_array($message) || is_object($message)) {
-			$formatted_message = json_encode($message);
+			// phpcs:ignore
+			$formatted_message = print_r($message, true);
 		} else {
 			$formatted_message = $message;
 		}

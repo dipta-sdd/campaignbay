@@ -416,7 +416,7 @@ class Helper
                 'settings' => $current_tier['settings'],
                 'buy_quantity' => $current_tier['buy_quantity'],
                 'get_quantity' => $current_tier['get_quantity'],
-                'discount' => 100,
+                'discount' => 150,
                 'discount_type' => 'percentage',
                 'free_product_id' => $product->get_id(),
                 'free_quantity' => $free_quantity,
@@ -638,5 +638,15 @@ class Helper
         $wc_session = WC()->session;
         $wc_session->set('cart', empty($cart) ? null : $cart);
         // wpab_campaignbay_log('manualy updatede cart session');
+    }
+
+    public static function calculate_price($base_price, $discount_value, $discount_type)
+    {
+        if ($discount_type === 'fixed') {
+            return self::calculate_fixed_price($base_price, $discount_value);
+        } elseif ($discount_type === 'percentage') {
+            return self::calculate_percentage_price($base_price, $discount_value);
+        }
+        return $base_price;
     }
 }

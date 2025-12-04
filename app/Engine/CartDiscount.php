@@ -126,7 +126,7 @@ class CartDiscount
 				if (isset($meta['bogo']) && $meta['is_bogo'] === true) {
 					// auto adding free product
 					// error_log(print_r($meta, true));
-					$added_product_id = self::add_bogo_free_product($cart, $key, $meta['bogo']['free_product_id'], $meta['bogo']['free_quantity'], $meta['bogo']);
+					$added_product_id = self::add_bogo_free_product($cart, $key, $meta['bogo']);
 					if($added_product_id){
 						$free_products[$key]['campaignbay_free_products'] [$added_product_id]= true; 
 					}
@@ -254,10 +254,7 @@ class CartDiscount
 					self::remove_from_cart($cart, $key);
 					continue;
 				}
-
-				error_log(print_r(wpab_campaignbay_get_value($cart, 'cart_contents.' . $parent_cart_id . '.campaignbay_free_products.' . $key), true));
-
-				error_log('parent found for free product ' . print_r($parent, true));
+				error_log('parent found for free product ');
 			}
 		}
 
@@ -521,14 +518,30 @@ class CartDiscount
 	}
 
 
-	public static function add_bogo_free_product($cart, $key,$free_product_id, $quantity, $bogo_data)
+	public static function add_bogo_free_product($cart, $key, $bogo_data)
 	{
-		$product_data = wc_get_product($free_product_id);
+		error_log(print_r($bogo_data, true));
+		$free_product_id = $bogo_data['free_product_id'];
+		$quantity = $bogo_data['free_quantity'];
+		$discount = $bogo_data['discount'];
+		$discount_type = $bogo_data['discount_type'];
+		//get product data
+		$product_data = Woocommerce::get_product($free_product_id);
+
+		// generating cart item key
 		$cart_item_key = $key . 'cb' . $bogo_data['campaign'] . 'fp' . $free_product_id;
 		$campaignbay_parent = array(
 			'cart_id' => $key,
 			'data' => $bogo_data,
 		);
+
+		if ($discount_type === 'percentage' && intval($discount) === 100) {
+			$product_data->set_price(0);
+		}else{
+			$base_price = Woocommerce::get_product_base_price($product_data);
+			$product_data->set_price( Helper::calculate_price($base_price, $discount, $discount_type));
+		}
+		
 		$cart->cart_contents[ $cart_item_key ] = array(
 			'key'          => $cart_item_key,
 			'product_id'   => $free_product_id,
@@ -536,17 +549,11 @@ class CartDiscount
 			'variation'    => null,
 			'quantity'     => $quantity,
 			'data'         => $product_data,
-			'data_hash'    => wc_get_cart_item_data_hash( $product_data ),
+			'data_hash'    => Woocommerce::generate_cart_item_data_hash( $product_data ),
 			'campaignbay_parent' => $campaignbay_parent,
 			'is_campaignbay_free_product' => true,
 		);
-		// error_log(print_r($cart->cart_contents[$cart_item_key]['campaignbay_parent'], true));
 		return $cart_item_key;
-		error_log("add_bogo_free_product _________________________________________________________________________");
-		error_log("add_bogo_free_product _________________________________________________________________________");
-		error_log("add_bogo_free_product _________________________________________________________________________");
-		error_log("add_bogo_free_product _________________________________________________________________________");
-		// error_log(print_r($data, true));
 	}
 
 	public static function remove_from_cart( $cart,$cart_item_key ) {

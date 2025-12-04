@@ -497,4 +497,22 @@ class Woocommerce
         }
         return $price;
     }
+
+
+    /**
+     * Generate the cart item data hash
+     * 
+     * This method generates the hash of the cart item data.
+     * 
+     * @since 1.0.5
+     * 
+     * @param $product_data The product data.
+     * @return string The hash of the cart item data.
+     */
+    static function generate_cart_item_data_hash($product_data){
+        if (function_exists('wc_get_cart_item_data_hash')) {
+            return wc_get_cart_item_data_hash($product_data);
+        }
+        return null;
+    }
 }
