@@ -14,7 +14,7 @@ Automated Discount Campaigns & Flash Sales for WooCommerce
 
 Move beyond basic coupons and revolutionize your WooCommerce store's promotions with CampaignBay.
 
-[Youtube](https://youtu.be/LpHZOeBCkk8)
+[youtube https://www.youtube.com/watch?v=LpHZOeBCkk8]
 
 CampaignBay is a powerful, user-friendly marketing tool that empowers you to create sophisticated, automated discount campaigns directly from your WordPress dashboard. Whether you're running a Black Friday flash sale, rewarding customers for bulk purchases, or creating urgency with a limited-time offer, CampaignBay provides the robust features you need to drive sales and engage customers.
 
@@ -123,7 +123,7 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 == Upgrade Notice ==
 
 = 1.0.4 =
-*   This update contains minor bug fixes for the admin area. The upgrade is seamless and requires no action.
+*   This update contains minor bug fixes. The upgrade is seamless and requires no action.
 
 = 1.0.2 =
 *   This update introduces a helpful Tour Guide for new users. The upgrade is seamless and requires no action from you.
