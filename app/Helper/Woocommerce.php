@@ -515,4 +515,27 @@ class Woocommerce
         }
         return null;
     }
+
+    /**
+     * Get the categories of the product
+     * 
+     * @since 1.0.5
+     * 
+     * @param $product
+     * @return array
+     */
+    static function get_product_categories($product)
+    {
+        $categories = $variant = array();
+        if(!empty($product))
+            if (is_object($product) && method_exists($product, 'get_category_ids')) {
+                if (self::product_type_is($product, 'variation')) {
+                    $variant = $product;
+                    $parent_id = self::get_product_parent_id($product);
+                    $product = self::get_product($parent_id);
+                }
+                $categories = $product->get_category_ids();
+            }
+        return  $categories;
+    }
 }

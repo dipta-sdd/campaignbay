@@ -408,6 +408,7 @@ class CartDiscount
 		 */
 		do_action('campaignbay_after_cart_discount_data', $cart_item, $meta);
 
+		
 		/**
 		 * Filters the final discount metadata array for a single cart item before it is returned.
 		 *

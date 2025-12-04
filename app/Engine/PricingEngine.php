@@ -435,6 +435,7 @@ class PricingEngine extends Base
 
 		if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
 			return;
+		error_log(print_r($meta, true));
 		$format = $meta['simple']['message_format'];
 		$message = Woocommerce::generate_product_banner(
 			$meta['simple']['value'],

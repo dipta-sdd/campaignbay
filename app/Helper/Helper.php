@@ -416,7 +416,7 @@ class Helper
                 'settings' => $current_tier['settings'],
                 'buy_quantity' => $current_tier['buy_quantity'],
                 'get_quantity' => $current_tier['get_quantity'],
-                'discount' => 150,
+                'discount' => 100,
                 'discount_type' => 'percentage',
                 'free_product_id' => $product->get_id(),
                 'free_quantity' => $free_quantity,
