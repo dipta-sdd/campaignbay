@@ -58,7 +58,7 @@ class Helper
      * and allows only specific HTML tags with attributes.
      *
      * @since 1.0.0
-          * @param string $html The HTML to clean.
+     * @param string $html The HTML to clean.
      * @param bool $echo Whether to echo the cleaned HTML.
      * @return string The cleaned HTML.
      */
@@ -173,13 +173,17 @@ class Helper
         $active_campaigns = CampaignManager::get_instance()->get_active_campaigns();
         $campaigns = array();
         foreach ($active_campaigns as $campaign) {
-
-            if ($campaign->get_type() !== $type)
+            if ($campaign->get_type() !== $type) {
                 continue;
-            if ($product === null)
+            }
+            if ($product === null) {
                 $campaigns[] = $campaign;
-            elseif ($campaign->is_applicable_to_product($product))
-                $campaigns[] = $campaign;
+            } else {
+                $is_applicable = $campaign->is_applicable_to_product($product);
+                if ($is_applicable) {
+                    $campaigns[] = $campaign;
+                }
+            }
         }
         return $campaigns;
     }
@@ -369,7 +373,7 @@ class Helper
         );
 
     }
- 
+
     /**
      * Get bogo meta.
      *
@@ -409,7 +413,7 @@ class Helper
             }
         } else {
             $meta['is_bogo'] = true;
-            $free_quantity = intval((intval($quantity / $current_tier['buy_quantity']) ) * $current_tier['get_quantity']);
+            $free_quantity = intval((intval($quantity / $current_tier['buy_quantity'])) * $current_tier['get_quantity']);
             $meta['bogo'] = array(
                 'campaign' => $current_tier['campaign'],
                 'campaign_title' => $current_tier['campaign_title'],
@@ -557,7 +561,7 @@ class Helper
         foreach ($tiers as $tier) {
             $table .= '<tr>';
             if ($settings['title']['show'] === true)
-                $table .= '<td>' . $tier['title'] . '</td>';
+                $table .= '<td>' . $tier['campaign_title'] . '</td>';
             if ($settings['range']['show'] === true)
                 $table .= '<td>' . $tier['min'] . ' - ' . $tier['max'] . '</td>';
             if ($settings['discount']['show'] === true && $settings['discount']['content'] === 'price')

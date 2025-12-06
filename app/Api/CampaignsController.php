@@ -441,6 +441,7 @@ class CampaignsController extends ApiController
 	public function create_item($request)
 	{
 		$params = $request->get_json_params();
+		$params['conditions'] = array(); // we dont need conditions for now
 		$campaign = Campaign::create($params);
 
 		if (is_wp_error($campaign)) {
@@ -472,6 +473,7 @@ class CampaignsController extends ApiController
 		}
 
 		$params = $request->get_json_params();
+		$params['conditions'] = array(); // we dont need conditions for now
 		$result = $campaign->update($params);
 
 		if (is_wp_error($result)) {
@@ -541,7 +543,7 @@ class CampaignsController extends ApiController
 			$campaign = new Campaign($id);
 			if ($campaign) {
 				$title = $campaign->get_title();
-				$result = $campaign->update(array('status' => $status), true);
+				$result = $campaign->update(array('status' => $status, 'conditions' => array()), true);
 
 				if ($result === true && !is_wp_error($result)) {
 					wpab_campaignbay_log('title : ' . $campaign->get_title() . ' ' . $status, 'error');
@@ -641,7 +643,7 @@ class CampaignsController extends ApiController
 				'start_datetime' => $campaign->get_start_datetime(),
 				'end_datetime' => $campaign->get_end_datetime(),
 
-				'conditions' => $campaign->get_conditions(),
+				'conditions' => array(),// we dont need conditions for now
 				'settings' => $campaign->get_settings(),
 				'usage_limit' => $campaign->get_usage_limit(),
 			));

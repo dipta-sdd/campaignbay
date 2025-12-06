@@ -125,7 +125,7 @@ if (!function_exists('wpab_campaignbay_log')) {
 		} else {
 			$formatted_message = $message;
 		}
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		// phpcs:ignore 
 		$log_level = is_string($level) ? strtoupper($level) : (is_array($level) || is_object($level) ? print_r($level, true) : '');
 		$log_entry = sprintf(
 			"[%s] [%s]: %s\n",

@@ -70,6 +70,8 @@ class CampaignManager extends Base
 		// Use the inherited add_action method to register hooks.
 		// These hooks will clear the campaign cache whenever a campaign is saved or deleted.
 		$this->add_action('campaignbay_campaign_save', 'clear_cache', 10, 2);
+		$this->add_action('campaignbay_campaign_usage_incremented', 'clear_cache', 10, 2);
+		$this->add_action('campaignbay_campaign_usage_decremented', 'clear_cache', 10, 2);
 		$this->add_action('campaignbay_campaign_delete', 'clear_cache', 10, 1);
 	}
 

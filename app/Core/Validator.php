@@ -96,19 +96,15 @@ class Validator
 				$other_field = array_shift($rule_params);
 				$required_values = $rule_params;
 				$other_value = $this->data[$other_field] ?? null;
-				wpab_campaignbay_log("Checking required_if for field: {$field}, other_field: {$other_field}, other_value: {$other_value}, required_values: " . implode(', ', $required_values) . ", current_value: " . (is_array($value) ? 'Array' : (string) $value));
 
 
 				if ($other_field && in_array($other_value, $required_values, false)) {
-					wpab_campaignbay_log('=======1');
 					if (is_array($value)) {
-						wpab_campaignbay_log('=======2');
 						if (empty($value)) {
-							wpab_campaignbay_log('=======3');
 							$this->add_error($field, __('This field cannot be empty.', 'campaignbay'));
 						}
 					} elseif ((is_null($value) || trim((string) $value) === '' || $value == 0)) {
-						wpab_campaignbay_log('=======4');
+						
 						$this->add_error($field, __('This field is required.', 'campaignbay'));
 					}
 				}

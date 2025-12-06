@@ -32,7 +32,8 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
       quantity: "",
       value: "",
       type: lastTier.type,
-      total: lastTier.total + lastTier.quantity,
+      // @ts-ignore
+      total: parseInt(lastTier.total) + parseInt(lastTier.quantity),
     };
     setTiers([...tiers, newTier]);
   };
@@ -57,7 +58,8 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
     let total = 0;
     return tiers.map((tier, index) => {
       if (index !== 0) {
-        total = total + (tiers[index - 1].quantity || 0);
+        // @ts-ignore
+        total = parseInt(total) + parseInt(tiers[index - 1].quantity);
       }
       return {
         ...tier,

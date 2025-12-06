@@ -155,10 +155,10 @@ class PricingEngine extends Base
 				if (!isset($our_coupons[$key]))
 					continue;
 				$coupon = $our_coupons[$key];
-				$campaign_id = $coupon['id'];
+				$campaign_id = $coupon['campaign'];
 				if (!isset($discount_breakdown[$campaign_id]))
 					$discount_breakdown[$campaign_id] = array(
-						'title' => $coupon['title'],
+						'campaign_title' => $coupon['campaign_title'],
 						'old_price' => 0,
 						'discount' => 0
 					);
@@ -323,7 +323,7 @@ class PricingEngine extends Base
 			$price = $meta['simple']['price'];
 			$as_reg_price = $meta['simple']['display_as_regular_price'];
 		}
-		
+
 		$price_html = Woocommerce::get_price_html(
 			$price_html,
 			$cart_item['data'],
@@ -347,7 +347,7 @@ class PricingEngine extends Base
 	 */
 	public function cart_item_name($name, $cart_item, $cart_item_key)
 	{
-		if(!isset($cart_item['campaignbay']))
+		if (!isset($cart_item['campaignbay']))
 			return $name;
 		$meta = $cart_item['campaignbay'];
 		if (isset($meta['quantity_next_tier'])) {
@@ -433,15 +433,35 @@ class PricingEngine extends Base
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
 			return;
 
-		if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
-			return;
-		error_log(print_r($meta, true));
-		$format = $meta['simple']['message_format'];
-		$message = Woocommerce::generate_product_banner(
-			$meta['simple']['value'],
-			$meta['simple']['type'],
-			$format
-		);
+		// if a variable product has a simple campaign, use the first simple campaign
+		if (Woocommerce::product_type_is($product, 'variable')) {
+			foreach ($meta['simple'] as $simple) {
+				// if the simple campaign is set to display as regular price, return
+				if (wpab_campaignbay_get_value($simple, 'display_as_regular_price', false))
+					return;
+				$value = wpab_campaignbay_get_value($simple, 'value', 0);
+				$type = wpab_campaignbay_get_value($simple, 'type', 'percentage');
+				$format = wpab_campaignbay_get_value($simple, 'message_format');
+				// break after the first simple campaign , value and type will be same for all simple campaigns
+				break;
+			}
+			$message = Woocommerce::generate_product_banner(
+				$value,
+				$type,
+				$format
+			);
+		} else {
+			// if the simple campaign is set to display as regular price, return
+			if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
+				return;
+
+			$format = $meta['simple']['message_format'];
+			$message = Woocommerce::generate_product_banner(
+				$meta['simple']['value'],
+				$meta['simple']['type'],
+				$format
+			);
+		}
 
 		/**
 		 * Filter hook to allow modification of the final discount message string.
@@ -496,10 +516,23 @@ class PricingEngine extends Base
 
 		global $product;
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
-		$price = $meta['base_price'];
-		if ($this->settings['cart_allowCampaignStacking']) {
-			if (isset($meta['simple']) && $meta['is_simple'] === true && isset($meta['simple']['price']))
-				$price = $meta['simple']['price'];
+		if (Woocommerce::product_type_is($product, 'variable')) {
+			foreach ($meta['base_price'] as $key => $value) {
+				$price = $value;
+				break;
+			}
+			if (wpab_campaignbay_get_value($meta, 'is_simple', false)) {
+				foreach (wpab_campaignbay_get_value($meta, 'simple', []) as $key => $value) {
+					$price = $value['price'];
+					break;
+				}
+			}
+		} else {
+			$price = $meta['base_price'];
+			if ($this->settings['cart_allowCampaignStacking']) {
+				if (isset($meta['simple']) && $meta['is_simple'] === true && isset($meta['simple']['price']))
+					$price = $meta['simple']['price'];
+			}
 		}
 		$tiers = Helper::get_quantity_tiers_with_campaign($product);
 		$tiers = Helper::get_unique_quantity_tiers($tiers, $price);
@@ -629,7 +662,7 @@ class PricingEngine extends Base
 	{
 		$code = $coupon_code->get_code();
 		if (isset($this->coupons[$code])) {
-			return $this->coupons[$code]['title'];
+			return $this->coupons[$code]['campaign_title'];
 		}
 		return $label;
 	}
