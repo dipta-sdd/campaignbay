@@ -140,3 +140,4 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 
 = 1.0.0 =
 *   Initial release. Thank you for installing CampaignBay!
+
