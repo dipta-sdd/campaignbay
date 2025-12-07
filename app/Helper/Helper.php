@@ -437,19 +437,17 @@ class Helper
      *
      * @since 1.0.0
      *
-     * @param array $tier The tier of the bogo campaign.
+     * @param array $data The data of the bogo campaign.
      * @return string The bogo cart message.
      */
-    public static function get_bogo_cart_message($tier)
+    public static function get_bogo_cart_message($data)
     {
-        $message_format = $tier['settings']['cart_bogo_message_format'];
-        if ($message_format === '' || $message_format === null)
-            $message_format = self::get_settings('cart_bogo_message_format');
+        $default_message_format = self::get_settings('cart_bogo_message_format');
+        $message_format = wpab_campaignbay_get_value($data, 'settings.cart_bogo_message_format', $default_message_format);
 
         return self::generate_message($message_format, array(
-            '{title}' => $tier['campaign_title'],
-            '{buy_quantity}' => $tier['buy_quantity'],
-            '{get_quantity}' => $tier['get_quantity'],
+            '{title}' => $data['campaign_title'],
+            '{buy_product_name}' => $data['parent_name'],
         ));
     }
 

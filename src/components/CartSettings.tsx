@@ -38,9 +38,10 @@ const CartSettings: FC<CartSettingsProps> = ({
             value={cartSettings.cart_quantity_message_format_percentage}
             onChange={(value: string) => {
               setEdited(true);
+              // @ts-ignore
               setCartSettings((prev) => ({
                 ...prev,
-                cart_quantity_message_format_percentage: value,
+                cart_quantity_message_format_percentage: value || "",
               }));
             }}
           />
@@ -58,22 +59,24 @@ const CartSettings: FC<CartSettingsProps> = ({
             value={cartSettings.cart_quantity_message_format_fixed}
             onChange={(value: string) => {
               setEdited(true);
+              // @ts-ignore
               setCartSettings((prev) => ({
                 ...prev,
-                cart_quantity_message_format_fixed: value,
+                cart_quantity_message_format_fixed: value || "",
               }));
             }}
           />
           <Input
             className="w-100"
             label={__("Cart Page BOGO Discount Message Format", "campaignbay")}
-            help={<Placeholders options={["title"]} />}
+            help={<Placeholders options={["title", "buy_product_name"]} />}
             value={cartSettings.cart_bogo_message_format}
             onChange={(value: string) => {
               setEdited(true);
+              // @ts-ignore
               setCartSettings((prev) => ({
                 ...prev,
-                cart_bogo_message_format: value,
+                cart_bogo_message_format: value || "",
               }));
             }}
           />
@@ -85,6 +88,7 @@ const CartSettings: FC<CartSettingsProps> = ({
             checked={cartSettings.cart_allowWcCouponStacking}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setEdited(true);
+              // @ts-ignore
               setCartSettings((prev) => ({
                 ...prev,
                 cart_allowWcCouponStacking: e.target.checked,
@@ -97,6 +101,7 @@ const CartSettings: FC<CartSettingsProps> = ({
             checked={cartSettings.cart_allowCampaignStacking}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setEdited(true);
+              // @ts-ignore
               setCartSettings((prev) => ({
                 ...prev,
                 cart_allowCampaignStacking: e.target.checked,

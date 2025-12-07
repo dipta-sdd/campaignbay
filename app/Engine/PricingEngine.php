@@ -347,6 +347,17 @@ class PricingEngine extends Base
 	 */
 	public function cart_item_name($name, $cart_item, $cart_item_key)
 	{
+		if (isset($cart_item['is_campaignbay_free_product']) && $cart_item['is_campaignbay_free_product'] === true) {
+			$data = wpab_campaignbay_get_value($cart_item, 'campaignbay_parent.data');
+			$message = Helper::get_bogo_cart_message($data);
+			$location = wpab_campaignbay_get_value($data, 'settings.bogo_cart_message_location');
+			if ($message !== '' || $message !== null) {
+				if ($location === 'line_item_name')
+					$name .= '<br/><span>' . $message . '</span>';
+
+			}
+			return $name;
+		}
 		if (!isset($cart_item['campaignbay']))
 			return $name;
 		$meta = $cart_item['campaignbay'];
@@ -355,20 +366,20 @@ class PricingEngine extends Base
 			if ($message !== '' || $message !== null)
 				$name .= '<br/><span>' . $message . '</span>';
 		}
-		if (
-			isset($meta['is_bogo']) &&
-			$meta['is_bogo'] === true &&
-			isset($meta['bogo'])
-		) {
-			$message = Helper::get_bogo_cart_message($meta['bogo']);
-			$location = $meta['bogo']['settings']['bogo_cart_message_location'];
-			if ($message !== '' || $message !== null) {
-				if ($location === 'line_item_name')
-					$name .= '<br/><span>' . $message . '</span>';
-				// elseif ($location === 'notice')
-				// 	Woocommerce::wc_add_notice($message, 'success');
-			}
-		}
+		// if (
+		// 	isset($meta['is_bogo']) &&
+		// 	$meta['is_bogo'] === true &&
+		// 	isset($meta['bogo'])
+		// ) {
+		// 	$message = Helper::get_bogo_cart_message($meta['bogo']);
+		// 	$location = $meta['bogo']['settings']['bogo_cart_message_location'];
+		// 	if ($message !== '' || $message !== null) {
+		// 		if ($location === 'line_item_name')
+		// 			$name .= '<br/><span>' . $message . '</span>';
+		// 		// elseif ($location === 'notice')
+		// 		// 	Woocommerce::wc_add_notice($message, 'success');
+		// 	}
+		// }
 		return $name;
 	}
 

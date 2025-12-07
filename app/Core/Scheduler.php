@@ -183,7 +183,7 @@ class Scheduler extends Base
 
 			if (($campaign->get_status() === 'scheduled' && $campaign->get_schedule_enabled()) && $start_timestamp && $start_timestamp <= $current_timestamp) {
 				//phpcs:ignore
-				wpab_campaignbay_log(sprintf('Failsafe: Activating campaign #%d (%s) as its start time (%s) has passed. Current time: %s.', $campaign_id, $campaign->get_title(), date('Y-m-d H:i:s', $start_timestamp), date('Y-m-d H:i:s', $current_timestamp)), 'INFO');
+				wpab_campaignbay_log(sprintf('Failsafe: Activating campaign #%d (%s) as its start time (%s) has passed. Current time: %s.', $campaign->get_id(), $campaign->get_title(), date('Y-m-d H:i:s', $start_timestamp), date('Y-m-d H:i:s', $current_timestamp)), 'INFO');
 				$this->run_campaign_activation($campaign->get_id());
 				$cache_needs_clearing = true;
 			}
@@ -192,7 +192,7 @@ class Scheduler extends Base
 			// If the campaign is active and its end time has passed, expire it.
 			if (('active' === $campaign->get_status() || 'scheduled' === $campaign->get_status()) && $campaign->get_schedule_enabled() && $end_timestamp && $end_timestamp <= $current_timestamp) {
 				//phpcs:ignore
-				wpab_campaignbay_log(sprintf('Failsafe: Expiring campaign #%d (%s) as its end time (%s) has passed. Current time: %s.', $campaign_id, $campaign->get_title(), date('Y-m-d H:i:s', $end_timestamp), date('Y-m-d H:i:s', $current_timestamp)), 'INFO');
+				wpab_campaignbay_log(sprintf('Failsafe: Expiring campaign #%d (%s) as its end time (%s) has passed. Current time: %s.', $campaign->get_id(), $campaign->get_title(), date('Y-m-d H:i:s', $end_timestamp), date('Y-m-d H:i:s', $current_timestamp)), 'INFO');
 				$this->run_campaign_deactivation($campaign->get_id());
 				$cache_needs_clearing = true;
 			}

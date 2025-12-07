@@ -120,7 +120,10 @@ class CartDiscount
 					continue;
 
 				if (isset($meta['bogo']) && $meta['is_bogo'] === true) {
-					$added_product_id = self::add_bogo_free_product($cart, $key, $meta['bogo'], $discount_breakdown);
+					$bogo_data = $meta['bogo'];
+					$bogo_data['parent_id'] = $cart_item['data']->get_id();
+					$bogo_data['parent_name'] = $cart_item['data']->get_name();
+					$added_product_id = self::add_bogo_free_product($cart, $key, $bogo_data, $discount_breakdown);
 					if ($added_product_id) {
 						$free_products[$key]['campaignbay_free_products'][$added_product_id] = true;
 
