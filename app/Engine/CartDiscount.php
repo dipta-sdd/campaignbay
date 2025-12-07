@@ -80,17 +80,22 @@ class CartDiscount
 		 * @param \WC_Cart $cart The main WooCommerce cart object.
 		 */
 		do_action('campaignbay_before_cart_discount_calculation', $cart);
-
 		$cart->campaignbay = array(
 			'coupon' => array(),
 			'fee' => array()
 		);
 		$discount_breakdown = array();
+
+		$free_products = array();
 		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
 			foreach ($cart->cart_contents as $key => $cart_item) {
+				if (isset($cart_item['is_campaignbay_free_product']) && $cart_item['is_campaignbay_free_product'] == true) {
+					continue;
+				}
 				$meta = self::get_cart_discount($cart_item);
 				$simple_applied = false;
 				$cart_quantity = $cart_item['quantity'];
+
 
 				/**
 				 * Fires just before the discount logic is processed for a single cart item.
@@ -114,26 +119,16 @@ class CartDiscount
 				if ($meta === null)
 					continue;
 
-				if (isset($meta['bogo']) && isset($meta['bogo']['need_to_add']) && $meta['bogo']['settings']['auto_add_free_product'] === true) {
-					// auto adding free product
-					$cart_quantity += $meta['bogo']['need_to_add'];
-					$cart->set_quantity($key, $cart_quantity, false);
+				if (isset($meta['bogo']) && $meta['is_bogo'] === true) {
+					$bogo_data = $meta['bogo'];
+					$bogo_data['parent_id'] = $cart_item['data']->get_id();
+					$bogo_data['parent_name'] = $cart_item['data']->get_name();
+					$added_product_id = self::add_bogo_free_product($cart, $key, $bogo_data, $discount_breakdown);
+					if ($added_product_id) {
+						$free_products[$key]['campaignbay_free_products'][$added_product_id] = true;
 
-					// correcting meta
-					$meta['bogo']['free_quantity'] = $meta['bogo']['free_quantity'] + $meta['bogo']['need_to_add'];
-					$meta['bogo']['need_to_add'] = 0;
+					}
 				}
-
-
-				if (isset($meta['bogo']) && isset($meta['bogo']['free_quantity'])) {
-
-					$cart_quantity -= $meta['bogo']['free_quantity'];
-					$cart_quantity = max($cart_quantity, 0);
-					$cart->set_quantity($key, $cart_quantity, false);
-
-				}
-
-
 
 				$cart->cart_contents[$key]['campaignbay'] = $meta;
 				if (isset($meta['simple']) && isset($meta['simple']['price'])) {
@@ -152,26 +147,23 @@ class CartDiscount
 						$meta['quantity']['price'] < $meta['simple']['price']
 					)
 				) {
-					wpab_campaignbay_log('have quantity discount');
 					// campaign stacking not allowed
 					if (!self::cart_allow_campaign_stacking()) {
 						// seting orginal price as base price
-						wpab_campaignbay_log('seting orginal price as base price : ' . $meta['quantity']['base_price']);
 						$cart->cart_contents[$key]['data']->set_regular_price($meta['quantity']['base_price']);
 						$simple_applied = false;
 					}
-					wpab_campaignbay_log('setting quantity discount price : ' . $meta['quantity']['price']);
 					$cart->cart_contents[$key]['data']->set_price($meta['quantity']['base_price']);
 					$apply_as = $meta['quantity']['settings']['apply_as'] ?? 'line_total';
 					if ($apply_as === 'line_total') {
 						$cart->cart_contents[$key]['data']->set_price($meta['quantity']['price']);
 					} elseif ($apply_as === 'coupon') {
 						$data_to_add = array(
-							'id' => $meta['quantity']['id'],
+							'campaign' => $meta['quantity']['campaign'],
 							'old_price' => $cart_quantity * $meta['quantity']['base_price'],
 							'product_id' => $cart_item['data']->get_id(),
 							'type' => $meta['quantity']['type'] === 'percentage' ? 'percent' : 'fixed_product',
-							'title' => $meta['quantity']['title']
+							'campaign_title' => $meta['quantity']['campaign_title']
 						);
 						$data_to_add['discount'] = $meta['quantity']['value'];
 						if ($meta['quantity']['type'] !== 'percentage')
@@ -183,17 +175,17 @@ class CartDiscount
 						);
 					} else {
 						self::add_fee($cart, array(
-							'id' => $meta['quantity']['id'],
-							'title' => $meta['quantity']['title'],
+							'campaign' => $meta['quantity']['campaign'],
+							'campaign_title' => $meta['quantity']['campaign_title'],
 							'discount' => $meta['quantity']['discount'] * $cart_quantity
 						));
 					}
 
 					if ($apply_as !== 'coupon') {
-						$campaign_id = $meta['quantity']['id'];
+						$campaign_id = $meta['quantity']['campaign'];
 						if (!isset($discount_breakdown[$campaign_id]))
 							$discount_breakdown[$campaign_id] = array(
-								'title' => $meta['quantity']['title'],
+								'campaign_title' => $meta['quantity']['campaign_title'],
 								'old_price' => 0,
 								'discount' => 0
 							);
@@ -208,7 +200,7 @@ class CartDiscount
 					$campaign_id = $meta['simple']['campaign'];
 					if (!isset($discount_breakdown[$campaign_id]))
 						$discount_breakdown[$campaign_id] = array(
-							'title' => $meta['simple']['campaign_title'],
+							'campaign_title' => $meta['simple']['campaign_title'],
 							'old_price' => 0,
 							'discount' => 0
 						);
@@ -233,10 +225,28 @@ class CartDiscount
 				 * @param \WC_Cart $cart             The main WooCommerce cart object.
 				 * @param string   $key              The unique key for the cart item.
 				 */
-				do_action('campaignbay_before_cart_single_discount_calculation', $cart_item, $cart_quantity, $meta, $simple_applied, $discount_breakdown, $cart, $key);
+				do_action('campaignbay_after_cart_single_discount_calculation', $cart_item, $cart_quantity, $meta, $simple_applied, $discount_breakdown, $cart, $key);
 
 			}
+			// loop for free prodcuts verifications
+			foreach ($cart->cart_contents as $key => $cart_item) {
+				// if not free product then continue
+				if (!isset($cart_item['is_campaignbay_free_product']) || $cart_item['is_campaignbay_free_product'] === false) {
+					continue;
+				}
+				$parent = wpab_campaignbay_get_value($cart_item, 'campaignbay_parent');
+				if (!$parent || $parent === false) {
+					self::remove_from_cart($cart, $key);
+					continue;
+				}
+				$parent_cart_id = wpab_campaignbay_get_value($parent, 'cart_id');
+				if (wpab_campaignbay_get_value($free_products, $parent_cart_id . '.campaignbay_free_products.' . $key) !== true) {
+					self::remove_from_cart($cart, $key);
+					continue;
+				}
+			}
 		}
+
 
 		/**
 		 * Filters the discount breakdown array for a single cart item after it
@@ -264,7 +274,7 @@ class CartDiscount
 		}
 
 		foreach ($cart->campaignbay['fee'] as $key => $fee) {
-			$cart->add_fee($fee['title'], $fee['discount'] * -1);
+			$cart->add_fee($fee['campaign_title'], $fee['discount'] * -1);
 		}
 		/**
 		 * Fires after all CampaignBay discount calculations are complete and have been
@@ -339,8 +349,8 @@ class CartDiscount
 			$meta['on_discount'] = true;
 			$meta['is_quantity'] = true;
 			$meta['quantity'] = array(
-				'id' => $current_tier['id'],
-				'title' => $current_tier['title'],
+				'campaign' => $current_tier['campaign'],
+				'campaign_title' => $current_tier['campaign_title'],
 				'settings' => $current_tier['settings'],
 				'price' => $current_tier['price'],
 				'discount' => (float) $base_price - $current_tier['price'],
@@ -372,7 +382,7 @@ class CartDiscount
 		}
 
 		/**
-		 * Fires after the free version has calculated all its discount metadata for a single cart item.
+		 * Fires after plugin has calculated all its discount metadata for a single cart item.
 		 *
 		 * This action hook allows a Pro version or other extensions to inspect the discount data
 		 * calculated by the free version for a specific item in the cart. It can be used to
@@ -386,6 +396,7 @@ class CartDiscount
 		 *                         'simple', 'quantity', 'bogo', etc.
 		 */
 		do_action('campaignbay_after_cart_discount_data', $cart_item, $meta);
+
 
 		/**
 		 * Filters the final discount metadata array for a single cart item before it is returned.
@@ -419,13 +430,13 @@ class CartDiscount
 	public static function add_data($cart, $data = array())
 	{
 		if ($data['type'] === 'percent') {
-			$code = 'campaignbay_' . $data['id'] . '_' . $data['discount'];
+			$code = 'campaignbay_' . $data['campaign'] . '_' . $data['discount'];
 
 			if (!isset($cart->campaignbay['coupon'][$code]))
 				$cart->campaignbay['coupon'][$code] = array(
-					'id' => $data['id'],
+					'campaign' => $data['campaign'],
 					'old_price' => 0,
-					'title' => $data['title'],
+					'campaign_title' => $data['campaign_title'],
 					'type' => $data['type'],
 					'product_ids' => array(),
 					'discount' => $data['discount'],
@@ -433,11 +444,11 @@ class CartDiscount
 			$cart->campaignbay['coupon'][$code]['product_ids'][] = $data['product_id'];
 			$cart->campaignbay['coupon'][$code]['old_price'] = $cart->campaignbay['coupon'][$code]['old_price'] + $data['old_price'];
 		} else {
-			$code = 'campaignbay_' . $data['id'] . '_' . $data['product_id'];
+			$code = 'campaignbay_' . $data['campaign'] . '_' . $data['product_id'];
 			$cart->campaignbay['coupon'][$code] = array(
-				'id' => $data['id'],
+				'campaign' => $data['campaign'],
 				'old_price' => $data['old_price'],
-				'title' => $data['title'],
+				'campaign_title' => $data['campaign_title'],
 				'type' => $data['type'],
 				'discount' => $data['discount'],
 				'product_ids' => $data['product_id'],
@@ -486,14 +497,76 @@ class CartDiscount
 	 */
 	public static function add_fee($cart, $data)
 	{
-		$code = 'campaignbay_' . $data['id'];
+		$code = 'campaignbay_' . $data['campaign'];
 		if (!isset($cart->campaignbay['fee'][$code]))
 			$cart->campaignbay['fee'][$code] = array(
-				'title' => $data['title'],
+				'campaign_title' => $data['campaign_title'],
 				'discount' => 0,
 			);
 		$cart->campaignbay['fee'][$code]['discount'] += $data['discount'];
 
+	}
+
+
+	public static function add_bogo_free_product($cart, $key, $bogo_data, &$discount_breakdown)
+	{
+		$free_product_id = $bogo_data['free_product_id'];
+		$quantity = $bogo_data['free_quantity'];
+		$discount = $bogo_data['discount'];
+		$discount_type = $bogo_data['discount_type'];
+		//get product data
+		$product_data = Woocommerce::get_product($free_product_id);
+
+		// generating cart item key
+		$cart_item_key = $key . 'cb' . $bogo_data['campaign'] . 'fp' . $free_product_id;
+		$campaignbay_parent = array(
+			'cart_id' => $key,
+			'data' => $bogo_data,
+		);
+
+		$base_price = Woocommerce::get_product_base_price($product_data);
+		if ($discount_type === 'percentage' && intval($discount) === 100) {
+			$new_price = 0;
+		} else {
+			$new_price = Helper::calculate_price($base_price, $discount, $discount_type);
+		}
+		$product_data->set_price($new_price);
+		$cart->cart_contents[$cart_item_key] = array(
+			'key' => $cart_item_key,
+			'product_id' => $free_product_id,
+			'variation_id' => null,
+			'variation' => null,
+			'quantity' => $quantity,
+			'data' => $product_data,
+			'data_hash' => Woocommerce::generate_cart_item_data_hash($product_data),
+			'campaignbay_parent' => $campaignbay_parent,
+			'is_campaignbay_free_product' => true,
+		);
+
+		$campaign_id = $bogo_data['campaign'];
+		if (!isset($discount_breakdown[$campaign_id]))
+			$discount_breakdown[$campaign_id] = array(
+				'campaign_title' => $bogo_data['campaign_title'],
+				'old_price' => 0,
+				'discount' => 0
+			);
+		$discount_breakdown[$campaign_id]['old_price'] = $discount_breakdown[$campaign_id]['old_price'] + ($quantity * $base_price);
+		$discount_breakdown[$campaign_id]['discount'] = $discount_breakdown[$campaign_id]['discount'] + ($quantity * ($base_price - $new_price));
+
+		return $cart_item_key;
+	}
+
+	public static function remove_from_cart($cart, $cart_item_key)
+	{
+		if (isset($cart->cart_contents[$cart_item_key])) {
+			$cart->removed_cart_contents[$cart_item_key] = $cart->cart_contents[$cart_item_key];
+
+			unset($cart->removed_cart_contents[$cart_item_key]['data']);
+
+			unset($cart->cart_contents[$cart_item_key]);
+			return true;
+		}
+		return false;
 	}
 
 }

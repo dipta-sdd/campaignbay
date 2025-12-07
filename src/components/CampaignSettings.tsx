@@ -26,7 +26,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
 }) => {
   useEffect(() => {
     if (
-      (type === "bogo" ) &&
+      (type === "bogo") &&
       settings?.apply_as === "coupon"
     ) {
       setSettings((prev) => ({
@@ -118,9 +118,8 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   "Leave it blank for default message.",
                   "campaignbay"
                 )}
-                className={`wpab-input w-100  ${
-                  errors?.message_format ? "wpab-input-error" : ""
-                }`}
+                className={`wpab-input w-100  ${errors?.message_format ? "wpab-input-error" : ""
+                  }`}
                 value={settings?.message_format}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSettings((prev: CampaignSettingsType) => ({
@@ -190,9 +189,8 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 </label>
                 <select
                   id="apply_as"
-                  className={`wpab-input w-100 ${
-                    errors?.apply_as ? "wpab-input-error" : ""
-                  }`}
+                  className={`wpab-input w-100 ${errors?.apply_as ? "wpab-input-error" : ""
+                    }`}
                   value={settings?.apply_as || "line_total"}
                   onChange={handleApplyAsChange}
                 >
@@ -223,11 +221,10 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     "Cart Page Next Discount Message Format",
                     "campaignbay"
                   )}
-                  className={`wpab-input w-100  ${
-                    errors?.cart_quantity_message_format
+                  className={`wpab-input w-100  ${errors?.cart_quantity_message_format
                       ? "wpab-input-error"
                       : ""
-                  }`}
+                    }`}
                   value={settings?.cart_quantity_message_format}
                   onChange={(e) =>
                     setSettings((prev) => ({
@@ -255,7 +252,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
           </>
         ) : null}
 
-        {type === "bogo"  ? (
+        {type === "bogo" ? (
           <>
             {/* auto add to cart */}
             {/* <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
@@ -331,43 +328,42 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 >
                   {__("Product Page Discount Message Format", "campaignbay")}
                 </label>
-               
-                    <input
-                      type="text"
-                      placeholder={__(
-                        "Leave it blank for default message.",
-                        "campaignbay"
-                      )}
-                      id="message-format"
-                      aria-label={__(
-                        "Product Page Discount Message Format",
-                        "campaignbay"
-                      )}
-                      className={`wpab-input w-100  ${
-                        errors?.bogo_banner_message_format
-                          ? "wpab-input-error"
-                          : ""
-                      }`}
-                      value={settings?.bogo_banner_message_format}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setSettings((prev: CampaignSettingsType) => ({
-                          ...prev,
-                          bogo_banner_message_format: e.target.value,
-                        }))
-                      }
-                    />
-               
+
+                <input
+                  type="text"
+                  placeholder={__(
+                    "Leave it blank for default message.",
+                    "campaignbay"
+                  )}
+                  id="message-format"
+                  aria-label={__(
+                    "Product Page Discount Message Format",
+                    "campaignbay"
+                  )}
+                  className={`wpab-input w-100  ${errors?.bogo_banner_message_format
+                      ? "wpab-input-error"
+                      : ""
+                    }`}
+                  value={settings?.bogo_banner_message_format}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSettings((prev: CampaignSettingsType) => ({
+                      ...prev,
+                      bogo_banner_message_format: e.target.value,
+                    }))
+                  }
+                />
+
 
                 <span className="wpab-input-help">
                   {__(
                     "This message will be displayed on the product page. Leave blank for the default message.",
                     "campaignbay"
                   )}
-                      
-                      <Placeholders
-                        options={["buy_quantity", "get_quantity"]}
-                      />
-                 
+
+                  <Placeholders
+                    options={["buy_quantity", "get_quantity"]}
+                  />
+
                 </span>
                 {renderError(errors?.bogo_banner_message_format
                 )}
@@ -392,9 +388,8 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     "Cart Page Discount Message Format",
                     "campaignbay"
                   )}
-                  className={`wpab-input w-100  ${
-                    errors?.cart_bogo_message_format ? "wpab-input-error" : ""
-                  }`}
+                  className={`wpab-input w-100  ${errors?.cart_bogo_message_format ? "wpab-input-error" : ""
+                    }`}
                   value={settings?.cart_bogo_message_format}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setSettings((prev: CampaignSettingsType) => ({
@@ -408,7 +403,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     "This message will be displayed on the cart page. Leave blank for the default message.",
                     "campaignbay"
                   )}
-                  <Placeholders options={["title"]} />
+                  <Placeholders options={["title", "buy_product_name"]} />
                 </span>
                 {renderError(errors?.cart_bogo_message_format)}
               </div>
@@ -419,9 +414,8 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 </label>
                 <select
                   id="cart-message-location"
-                  className={`wpab-input w-100  ${
-                    errors?.bogo_cart_message_location ? "wpab-input-error" : ""
-                  }`}
+                  className={`wpab-input w-100  ${errors?.bogo_cart_message_location ? "wpab-input-error" : ""
+                    }`}
                   value={
                     settings?.bogo_cart_message_location || "line_item_name"
                   }
@@ -431,7 +425,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   <option value="line_item_name">
                     {__("Line Item Name", "campaignbay")}
                   </option>
-                  <option value="notice">{__("Notice", "campaignbay")}</option>
+                  <option value="notice" disabled>{__("Notice", "campaignbay")}</option>
                   <option value="dont_show">
                     {__("Don't Show", "campaignbay")}
                   </option>

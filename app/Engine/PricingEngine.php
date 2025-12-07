@@ -109,8 +109,7 @@ class PricingEngine extends Base
 			['action', 'woocommerce_before_mini_cart', 'ensure_cart_calculate_totals', 20, 1],
 			['action', 'woocommerce_before_mini_cart_contents', 'ensure_cart_calculate_totals', 20, 1],
 
-			['action', 'woocommerce_before_calculate_totals', 'before_calculate_totals', 20, 1],
-			['action', 'woocommerce_after_calculate_totals', 'after_calculate_totals', 20, 1],
+			// ['action', 'woocommerce_before_calculate_totals', 'before_calculate_totals', 20, 1],
 			['filter', 'woocommerce_get_shop_coupon_data', 'validate_fake_coupon_data', 10, 2],
 			['filter', 'woocommerce_cart_totals_coupon_label', 'change_virtual_coupon_label', 10, 2],
 			['filter', 'woocommerce_coupon_is_valid', 'validate_fake_coupon', 10, 3],
@@ -121,6 +120,8 @@ class PricingEngine extends Base
 			['action', 'woocommerce_checkout_create_order', 'save_discount_breakdown_to_order_meta', 10, 2],
 			['action', 'woocommerce_store_api_checkout_update_order_meta', 'save_discount_breakdown_to_order_meta', 10, 1],
 		];
+
+		add_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
 
 		foreach ($hooks as $hook) {
 			$this->add_hook(...$hook);
@@ -154,10 +155,10 @@ class PricingEngine extends Base
 				if (!isset($our_coupons[$key]))
 					continue;
 				$coupon = $our_coupons[$key];
-				$campaign_id = $coupon['id'];
+				$campaign_id = $coupon['campaign'];
 				if (!isset($discount_breakdown[$campaign_id]))
 					$discount_breakdown[$campaign_id] = array(
-						'title' => $coupon['title'],
+						'campaign_title' => $coupon['campaign_title'],
 						'old_price' => 0,
 						'discount' => 0
 					);
@@ -322,23 +323,6 @@ class PricingEngine extends Base
 			$price = $meta['simple']['price'];
 			$as_reg_price = $meta['simple']['display_as_regular_price'];
 		}
-		if (isset($meta['bogo']['free_quantity'])) {
-
-			$quantity = $cart_item['quantity'];
-			$sub_total = $price * $quantity;
-			$free_quantity = $meta['bogo']['free_quantity'];
-			$discount = Woocommerce::round(($sub_total / $quantity) * $free_quantity);
-			$sub_total -= $discount;
-
-			$price_html = Woocommerce::get_price_html(
-				$price_html,
-				$cart_item['data'],
-				$base_price * $cart_item['quantity'],
-				$sub_total,
-				$as_reg_price
-			);
-			return $price_html;
-		}
 
 		$price_html = Woocommerce::get_price_html(
 			$price_html,
@@ -354,6 +338,8 @@ class PricingEngine extends Base
 	 * Get the cart item name.
 	 *
 	 * @since 1.0.0
+	 * @hook woocommerce_cart_item_name
+	 * 
 	 * @param string $name The name.
 	 * @param array $cart_item The cart item.
 	 * @param string $cart_item_key The cart item key.
@@ -361,26 +347,39 @@ class PricingEngine extends Base
 	 */
 	public function cart_item_name($name, $cart_item, $cart_item_key)
 	{
+		if (isset($cart_item['is_campaignbay_free_product']) && $cart_item['is_campaignbay_free_product'] === true) {
+			$data = wpab_campaignbay_get_value($cart_item, 'campaignbay_parent.data');
+			$message = Helper::get_bogo_cart_message($data);
+			$location = wpab_campaignbay_get_value($data, 'settings.bogo_cart_message_location');
+			if ($message !== '' || $message !== null) {
+				if ($location === 'line_item_name')
+					$name .= '<br/><span>' . $message . '</span>';
+
+			}
+			return $name;
+		}
+		if (!isset($cart_item['campaignbay']))
+			return $name;
 		$meta = $cart_item['campaignbay'];
 		if (isset($meta['quantity_next_tier'])) {
 			$message = Helper::get_quantity_message($meta['quantity_next_tier']);
 			if ($message !== '' || $message !== null)
 				$name .= '<br/><span>' . $message . '</span>';
 		}
-		if (
-			isset($meta['is_bogo']) &&
-			$meta['is_bogo'] === true &&
-			isset($meta['bogo'])
-		) {
-			$message = Helper::get_bogo_cart_message($meta['bogo']);
-			$location = $meta['bogo']['settings']['bogo_cart_message_location'];
-			if ($message !== '' || $message !== null) {
-				if ($location === 'line_item_name')
-					$name .= '<br/><span>' . $message . '</span>';
-				// elseif ($location === 'notice')
-				// 	Woocommerce::wc_add_notice($message, 'success');
-			}
-		}
+		// if (
+		// 	isset($meta['is_bogo']) &&
+		// 	$meta['is_bogo'] === true &&
+		// 	isset($meta['bogo'])
+		// ) {
+		// 	$message = Helper::get_bogo_cart_message($meta['bogo']);
+		// 	$location = $meta['bogo']['settings']['bogo_cart_message_location'];
+		// 	if ($message !== '' || $message !== null) {
+		// 		if ($location === 'line_item_name')
+		// 			$name .= '<br/><span>' . $message . '</span>';
+		// 		// elseif ($location === 'notice')
+		// 		// 	Woocommerce::wc_add_notice($message, 'success');
+		// 	}
+		// }
 		return $name;
 	}
 
@@ -445,14 +444,35 @@ class PricingEngine extends Base
 		if (!is_array($meta) || empty($meta) || !$meta['on_discount'] || !isset($meta['simple']))
 			return;
 
-		if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
-			return;
-		$format = $meta['simple']['message_format'];
-		$message = Woocommerce::generate_product_banner(
-			$meta['simple']['value'],
-			$meta['simple']['type'],
-			$format
-		);
+		// if a variable product has a simple campaign, use the first simple campaign
+		if (Woocommerce::product_type_is($product, 'variable')) {
+			foreach ($meta['simple'] as $simple) {
+				// if the simple campaign is set to display as regular price, return
+				if (wpab_campaignbay_get_value($simple, 'display_as_regular_price', false))
+					return;
+				$value = wpab_campaignbay_get_value($simple, 'value', 0);
+				$type = wpab_campaignbay_get_value($simple, 'type', 'percentage');
+				$format = wpab_campaignbay_get_value($simple, 'message_format');
+				// break after the first simple campaign , value and type will be same for all simple campaigns
+				break;
+			}
+			$message = Woocommerce::generate_product_banner(
+				$value,
+				$type,
+				$format
+			);
+		} else {
+			// if the simple campaign is set to display as regular price, return
+			if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
+				return;
+
+			$format = $meta['simple']['message_format'];
+			$message = Woocommerce::generate_product_banner(
+				$meta['simple']['value'],
+				$meta['simple']['type'],
+				$format
+			);
+		}
 
 		/**
 		 * Filter hook to allow modification of the final discount message string.
@@ -507,10 +527,23 @@ class PricingEngine extends Base
 
 		global $product;
 		$meta = Woocommerce::get_product($product->get_id())->get_meta('campaignbay');
-		$price = $meta['base_price'];
-		if ($this->settings['cart_allowCampaignStacking']) {
-			if (isset($meta['simple']) && $meta['is_simple'] === true && isset($meta['simple']['price']))
-				$price = $meta['simple']['price'];
+		if (Woocommerce::product_type_is($product, 'variable')) {
+			foreach ($meta['base_price'] as $key => $value) {
+				$price = $value;
+				break;
+			}
+			if (wpab_campaignbay_get_value($meta, 'is_simple', false)) {
+				foreach (wpab_campaignbay_get_value($meta, 'simple', []) as $key => $value) {
+					$price = $value['price'];
+					break;
+				}
+			}
+		} else {
+			$price = $meta['base_price'];
+			if ($this->settings['cart_allowCampaignStacking']) {
+				if (isset($meta['simple']) && $meta['is_simple'] === true && isset($meta['simple']['price']))
+					$price = $meta['simple']['price'];
+			}
 		}
 		$tiers = Helper::get_quantity_tiers_with_campaign($product);
 		$tiers = Helper::get_unique_quantity_tiers($tiers, $price);
@@ -551,52 +584,18 @@ class PricingEngine extends Base
 	 */
 	public function before_calculate_totals($cart)
 	{
+		remove_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
 		$this->coupons = CartDiscount::calculate_cart_discount($cart);
 		$this->calculated_totals = true;
 		$discount_breakdown = $cart->campaignbay_discount_breakdown ?? array();
 		if (is_array($discount_breakdown) && !empty($discount_breakdown))
 			$this->discount_applied = true;
+
+
+		add_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
 	}
 
-	/**
-	 * After calculate totals.
-	 *
-	 * @since 1.0.0
-	 * @param WC_Cart $cart The cart object.
-	 * @return void
-	 */
-	public function after_calculate_totals($cart)
-	{
 
-		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
-			foreach ($cart->cart_contents as $key => $cart_item) {
-				$quantity = $cart_item['quantity'];
-
-				$meta = isset($cart_item['campaignbay']) ? $cart_item['campaignbay'] : null;
-				if ($meta === null || !isset($meta['is_bogo']) || !isset($meta['bogo']['free_quantity']))
-					continue;
-				if (isset($meta['bogo']['free_quantity'])) {
-
-					$free_quantity = $meta['bogo']['free_quantity'];
-					$cart->set_quantity($key, $quantity + $free_quantity, false);
-
-					$price = (float) $cart_item['line_total'] / $quantity;
-
-					$campaign_id = $meta['bogo']['id'];
-					if (!isset($cart->campaignbay_discount_breakdown[$campaign_id]))
-						$cart->campaignbay_discount_breakdown[$campaign_id] = array(
-							'title' => $meta['bogo']['title'],
-							'old_price' => 0,
-							'discount' => 0
-						);
-					$cart->campaignbay_discount_breakdown[$campaign_id]['old_price'] = $cart->campaignbay_discount_breakdown[$campaign_id]['old_price'] + (($quantity + $free_quantity) * $price);
-					$cart->campaignbay_discount_breakdown[$campaign_id]['discount'] = $cart->campaignbay_discount_breakdown[$campaign_id]['discount'] + ($free_quantity * $price);
-				}
-
-			}
-		}
-		Helper::set_cart_session($cart);
-	}
 
 
 	/**
@@ -674,7 +673,7 @@ class PricingEngine extends Base
 	{
 		$code = $coupon_code->get_code();
 		if (isset($this->coupons[$code])) {
-			return $this->coupons[$code]['title'];
+			return $this->coupons[$code]['campaign_title'];
 		}
 		return $label;
 	}

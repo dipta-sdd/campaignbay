@@ -108,10 +108,10 @@ class Filter
             } else if ('product' === $type) {
                 $result = $this->compareWithProducts($campaign->get_target_ids(), $is_exclude, $product_id, $product);
                 return $result;
+            } elseif ('category' === $type) {
+                return $this->compareWithCategories($product, $campaign->get_target_ids(), $is_exclude);
             }
-            // elseif ('category' === $type) {
-            //     return $this->compareWithCategories($product, $values, $method);
-            // } elseif ('tags' === $type) {
+            // elseif ('tags' === $type) {
             //     $product = Woocommerce::getParentProduct($product);
             //     return $this->compareWithTags($product, $values, $method);
             // } 
@@ -141,9 +141,9 @@ class Filter
     {
         $tag_ids = Woocommerce::getProductTags($product);
         $is_product_has_tag = count(array_intersect($tag_ids, $target_ids)) > 0;
-        if ('in_list' === $is_exclude) {
+        if (false === $is_exclude) {
             return $is_product_has_tag;
-        } elseif ('not_in_list' === $is_exclude) {
+        } elseif (true === $is_exclude) {
             return !$is_product_has_tag;
         }
         return false;
@@ -158,11 +158,11 @@ class Filter
      */
     protected function compareWithCategories($product, $target_ids, $is_exclude)
     {
-        $categories = Woocommerce::getProductCategories($product);
+        $categories = Woocommerce::get_product_categories($product);
         $is_product_in_category = count(array_intersect($categories, $target_ids)) > 0;
-        if ('in_list' === $is_exclude) {
+        if (false === $is_exclude) {
             return $is_product_in_category;
-        } elseif ('not_in_list' === $is_exclude) {
+        } elseif (true === $is_exclude) {
             return !$is_product_in_category;
         }
         return false;

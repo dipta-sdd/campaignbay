@@ -315,7 +315,7 @@ class Campaign
 				'%s',
 				'%s',
 				'%s',
-				'%d',
+				'%s',
 				'%s',
 				'%d'
 			);
@@ -1079,11 +1079,8 @@ class Campaign
 			return false;
 		}
 
-		// --- Sync the local object with the new data ---
-		// Instead of a full reload, just update the properties we know have changed.
 		$this->data->usage_count = (int) $this->data->usage_count + 1;
 
-		// Check if the status should now be 'expired' on the object
 		if ($this->data->usage_limit !== null && $this->data->usage_limit > 0 && $this->data->usage_count >= $this->data->usage_limit) {
 			$this->data->status = 'expired';
 		}
@@ -1104,6 +1101,67 @@ class Campaign
 		return true;
 	}
 
+	/**
+	 * Decrements the usage count for the campaign.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return bool True on success, false on failure.
+	 */
+	public function decrement_usage_count()
+	{
+		global $wpdb;
+		$campaigns_table = $wpdb->prefix . 'campaignbay_campaigns';
+
+		//phpcs:ignore 
+		$result = $wpdb->query(
+			$wpdb->prepare(
+				//phpcs:ignore
+				"UPDATE {$campaigns_table}
+             SET 
+                usage_count = CASE 
+                                WHEN usage_count > 0 
+                                THEN usage_count - 1 
+                                ELSE 0 
+                             END,
+                status = CASE 
+                            WHEN usage_limit IS NOT NULL AND usage_limit > 0 AND (usage_count - 1) >= usage_limit 
+                            THEN 'expired' 
+                            ELSE status 
+                         END
+             WHERE id = %d",
+				$this->id
+			)
+		);
+
+		if (is_wp_error($result) || false === $result) {
+			wpab_campaignbay_log('Failed to decrement usage count for campaign: #' . $this->get_id(), 'ERROR');
+			return false;
+		}
+
+		//UPDATING LOCAL DATA
+		$this->data->usage_count = max(0, (int) $this->data->usage_count - 1);
+
+		if ($this->data->usage_limit !== null && $this->data->usage_limit > 0 && $this->data->usage_count >= $this->data->usage_limit) {
+			$this->data->status = 'expired';
+		}
+
+		wpab_campaignbay_log('Usage count decremented for campaign: #' . $this->get_id() . ' ' . $this->get_title() . ' - New count: ' . $this->data->usage_count, 'DEBUG');
+
+		/**
+		 * Fires after a campaign's usage count is updated.
+		 * 
+		 * @since 1.0.0
+		 * @hook campaignbay_campaign_usage_decremented
+		 *
+		 * @param int      $campaign_id The ID of the updated campaign.
+		 * @param Campaign $campaign    The campaign object with the new usage count.
+		 */
+		do_action('campaignbay_campaign_usage_decremented', $this->id, $this);
+
+		return true;
+	}
+
 
 	/**
 	 * Checks if this campaign applies to a specific product.
@@ -1114,7 +1172,9 @@ class Campaign
 	 */
 	public function is_applicable_to_product($product)
 	{
-		return Filter::get_instance()->match($product, $this);
+
+		$result = Filter::get_instance()->match($product, $this);
+		return $result;
 	}
 
 

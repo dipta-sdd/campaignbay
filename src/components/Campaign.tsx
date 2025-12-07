@@ -252,6 +252,10 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               <option value="scheduled">
                 {__("Scheduled", "campaignbay")}
               </option>
+              {/* toaddpro */}
+              {campaign.status === "expired" && (
+                <option value="expired">{__("Expired", "campaignbay")}</option>
+              )}
             </select>
             {renderError(errors?.status)}
           </div>

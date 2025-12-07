@@ -55,10 +55,12 @@ class OrderManager extends Base
 	{
 		if ($old_status === 'processing' || $old_status === 'completed') {
 			wpab_campaignbay_log(sprintf('Order #%d status changed canceled for old status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+			$this->reverse_order($order_id, $old_status, $new_status, $order);
 			return;
 		}
 		if ($new_status !== 'processing' && $new_status !== 'completed') {
 			wpab_campaignbay_log(sprintf('Order #%d status changed canceled for new status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+			$this->reverse_order($order_id, $old_status, $new_status, $order);
 			return;
 		}
 		wpab_campaignbay_log(sprintf('Order #%d status changed from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
@@ -77,6 +79,44 @@ class OrderManager extends Base
 			wpab_campaignbay_log('incrementing usage count' . $campaign_id);
 			$this->log_sale_event($campaign_id, $order, $data, $new_status);
 		}
+	}
+
+	private function reverse_order($order_id, $old_status, $new_status, $order)
+	{
+		if ($old_status !== 'processing' && $old_status !== 'completed') {
+			wpab_campaignbay_log(sprintf('Order #%d status reversed for old status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+			return;
+		}
+		if ($new_status === 'processing' || $new_status === 'completed') {
+			wpab_campaignbay_log(sprintf('Order #%d status reversed for new status. from "%s" to "%s". Handling event.', $order_id, $old_status, $new_status), 'INFO');
+			return;
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_logs';
+
+		$sql = "SELECT campaign_id FROM $table_name WHERE order_id = %d";
+		// phpcs:ignore 
+		$campaign_ids = $wpdb->get_results(
+			$wpdb->prepare(
+				//phpcs:ignore 
+				$sql,
+				$order_id
+			)
+		);
+
+		$result = $wpdb->delete(
+			$table_name,
+			array('order_id' => $order_id),
+			array('%d')
+		);
+		foreach ($campaign_ids ?? [] as $key => $campaign) {
+			wpab_campaignbay_log('decrementing usage count' . $campaign->campaign_id);
+			$campaign = new Campaign($campaign->campaign_id);
+			$campaign->decrement_usage_count();
+		}
+
+
 	}
 
 	/**
@@ -103,7 +143,7 @@ class OrderManager extends Base
 
 		// Prepare the flexible JSON data column.
 		$extra_data = array(
-			'campaign_title' => $data['title'] ?? 'Unknown',
+			'campaign_title' => $data['campaign_title'] ?? 'Unknown',
 		);
 
 		// Prepare the data for the database record.

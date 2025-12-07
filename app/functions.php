@@ -120,11 +120,12 @@ if (!function_exists('wpab_campaignbay_log')) {
 
 		$formatted_message = '';
 		if (is_array($message) || is_object($message)) {
-			$formatted_message = json_encode($message);
+			// phpcs:ignore
+			$formatted_message = print_r($message, true);
 		} else {
 			$formatted_message = $message;
 		}
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+		// phpcs:ignore 
 		$log_level = is_string($level) ? strtoupper($level) : (is_array($level) || is_object($level) ? print_r($level, true) : '');
 		$log_entry = sprintf(
 			"[%s] [%s]: %s\n",
@@ -133,5 +134,45 @@ if (!function_exists('wpab_campaignbay_log')) {
 			$formatted_message
 		);
 		file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
+	}
+}
+
+
+
+if ( ! function_exists( 'wpab_campaignbay_get_value' ) ) {
+	/**
+	 * Safely retrieve a value from a nested array or object using dot notation.
+	 * Returns default if key is missing OR if value is an empty string.
+	 *
+	 * @since 1.0.0
+	 * @param array|object $target  The array or object to search.
+	 * @param string|array $key     The key path (e.g., 'settings.color').
+	 * @param mixed        $default The default value if key is not found or is empty string.
+	 * @return mixed
+	 */
+	function wpab_campaignbay_get_value( $target, $key, $default = null ) {
+		if ( is_null( $key ) || trim( $key ) == '' ) {
+			return $target;
+		}
+
+		$keys = is_array( $key ) ? $key : explode( '.', $key );
+
+		foreach ( $keys as $segment ) {
+			if ( is_array( $target ) && isset( $target[ $segment ] ) ) {
+				$target = $target[ $segment ];
+			} elseif ( is_object( $target ) && isset( $target->{$segment} ) ) {
+				$target = $target->{$segment};
+			} else {
+				// Key not found, return default
+				return $default;
+			}
+		}
+
+		// If the found value is exactly an empty string, return default.
+		if ( $target === '' ) {
+			return $default;
+		}
+
+		return $target;
 	}
 }

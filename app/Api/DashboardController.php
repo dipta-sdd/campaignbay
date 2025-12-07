@@ -194,8 +194,6 @@ class DashboardController extends ApiController
 
 		//phpcs:ignore
 		$active_count = $wpdb->get_var($sql);
-		wpab_campaignbay_log($sql);
-		wpab_campaignbay_log($active_count);
 
 		return array(
 			'active_campaigns' => array(

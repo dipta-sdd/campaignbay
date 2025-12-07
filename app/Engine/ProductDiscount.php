@@ -269,6 +269,8 @@ class ProductDiscount
 		if (empty($prices['price'])) {
 			return $this;
 		}
+		$base_price = array();
+		$original_price = array();
 		foreach ($prices['price'] as $key => $value) {
 			$meta = Woocommerce::get_product($key)->get_meta('campaignbay');
 			if ($meta['on_discount'])
@@ -283,8 +285,12 @@ class ProductDiscount
 					$this->data['simple'] = array();
 				$this->data['simple'][$key] = $meta['simple'];
 			}
+			$base_price[$key] = $meta['base_price'];
+			$original_price[$key] = $meta['original_price'];
 		}
 
+		$this->data['base_price'] = $base_price;
+		$this->data['original_price'] = $original_price;
 		$this->product->add_meta_data('campaignbay', $this->data, true);
 		return $this;
 	}
