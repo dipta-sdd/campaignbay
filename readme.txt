@@ -105,8 +105,9 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 = Changelog =
 
 = 1.0.5 =
-*   Enhancement: Major architectural improvement to BOGO (Buy One, Get One) discounts. Free products are now added as a separate, zero-price line item in the cart. This provides greater clarity for customers and significantly enhances compatibility with third-party plugins.
-*   FIX: Corrected an issue where discount messages for variable products were not formatted correctly on the product page.
+*   Enhancement: Major architectural improvement to BOGO (Buy One, Get One) discounts. Free products are now added as separate cart items, providing crystal-clear transparency for customers. This new system unlocks advanced capabilities for our upcoming Pro version, including cross-product BOGO offers and partial discounts.
+*   Enhancement: Improved hook system and standardized discount data structure, making it easier for CampaignBay Pro and other plugins to seamlessly extend campaign functionality.
+*   FIX: Corrected multiple issues where discount messages and quantity tables for variable products were not formatted correctly on product and cart pages.
 
 = 1.0.4 =
 *   FIX: Error at new activation on 1.0.3 version.
