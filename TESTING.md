@@ -1,6 +1,8 @@
 # CampaignBay End-to-End Test Plan
 
 This document outlines the comprehensive test suite for the CampaignBay WooCommerce plugin. It is designed to cover every setting, campaign type, and user flow.
+**Note**: Unless otherwise specified, all tests described below must be performed for each supported product type (Simple, Variable, Grouped, Subscription, etc.) where applicable.
+
 
 ## 1. Universal Campaign Features
 *These tests apply to ALL campaign types (Simple, Earlybird, Quantity, BOGO).*
@@ -67,7 +69,7 @@ This document outlines the comprehensive test suite for the CampaignBay WooComme
 - [ ] **Multiple Tiers**: Setup ranges (e.g., 1-5, 6-10, 11+). Verify correct discount at each step.
 
 ### 4.2. Specific Settings
-- [ ] **Enable Quantity Table**: Toggle on/off. Verify table visibility on product page.
+<!-- - [ ] **Enable Quantity Table**: Toggle on/off. Verify table visibility on product page. -->
 - [ ] **Apply As**:
     - [ ] **Line Total**: Verify discount reduces the line item unit price.
     - [ ] **Fee**: Verify discount is added as a negative fee line in cart totals.
@@ -92,14 +94,9 @@ This document outlines the comprehensive test suite for the CampaignBay WooComme
     - [ ] Verify math: (e.g., Buy 2 Get 1). Add 3 items -> Pay for 2.
 
 ### 5.2. Specific Settings
-- [ ] **Auto Add Free Product**:
-    - [ ] Enable: Add "Buy" quantity. Verify "Get" quantity is automatically added/adjusted.
-- [ ] **Apply As**:
-    - [ ] **Line Total**: Discount applied to line item.
-    - [ ] **Fee**: Discount applied as negative fee.
 - [ ] **BOGO Cart Message Location**:
     - [ ] **Line Item Name**: Message appended to product name.
-    - [ ] **Notice**: Message appears as a WC notice.
+    <!-- - [ ] **Notice**: Message appears as a WC notice. -->
     - [ ] **Don't Show**: Message hidden.
 
 ### 5.3. Message Formats
@@ -117,14 +114,22 @@ This document outlines the comprehensive test suite for the CampaignBay WooComme
     - [ ] `sale_price`: Base discount on sale price (if applicable).
 
 ### 6.2. Display & Positioning
-- [ ] **Bulk Table Position**: Change hook (e.g., `woocommerce_after_add_to_cart_form`). Verify position.
-- [ ] **Discount Bar Position**: Change hook (e.g., `woocommerce_before_add_to_cart_form`). Verify position.
+- [ ] **Bulk Table Position**:
+    - [ ] Change hook to `woocommerce_after_add_to_cart_form` (Below Cart). Verify position.
+    - [ ] Change hook to `woocommerce_before_add_to_cart_form` (Above Cart). Verify position.
+    - [ ] Change hook to `woocommerce_product_meta_end` (Below Meta). Verify position.
+    - [ ] Change hook to `woocommerce_product_meta_start` (Above Meta). Verify position.
+- [ ] **Discount Bar Position**:
+    - [ ] Change hook to `woocommerce_after_add_to_cart_form` (Below Cart). Verify position.
+    - [ ] Change hook to `woocommerce_before_add_to_cart_form` (Above Cart). Verify position.
+    - [ ] Change hook to `woocommerce_product_meta_end` (Below Meta). Verify position.
+    - [ ] Change hook to `woocommerce_product_meta_start` (Above Meta). Verify position.
 
 ### 6.3. Product Settings
 - [ ] **Priority Method**:
     - [ ] `apply_highest`: Create 10% and 20% campaigns. Verify 20% applies.
     - [ ] `apply_lowest`: Create 10% and 20% campaigns. Verify 10% applies.
-    - [ ] `apply_first`: Create 2 campaigns. Verify the one created/loaded first applies.
+    <!-- - [ ] `apply_first`: Create 2 campaigns. Verify the one created/loaded first applies. -->
 - [ ] **Show Discount Table**: Toggle `true`/`false`.
 - [ ] **Discount Table Options**:
     - [ ] **Show Header**: Toggle on/off.
@@ -141,8 +146,6 @@ This document outlines the comprehensive test suite for the CampaignBay WooComme
     - [ ] `false`: Apply Simple + Quantity campaign. Verify only one applies.
 
 ### 6.5. Performance & Debugging
-- [ ] **Performance Caching**:
-    - [ ] Enable `perf_enableCaching`. Browse site, add items. Verify no errors/crashes.
 - [ ] **Debugging**:
     - [ ] Enable `debug_enableMode`. Perform actions. Check `WooCommerce -> Status -> Logs` (or plugin specific log) for debug entries.
 
@@ -150,9 +153,9 @@ This document outlines the comprehensive test suite for the CampaignBay WooComme
 - [ ] **Delete All On Uninstall**:
     - [ ] Enable. Uninstall plugin. Verify settings/tables are deleted from DB.
 
----
+<!-- ---
 
 ## 7. End-to-End Flows
 - [ ] **Guest Checkout**: Verify pricing persists through checkout.
 - [ ] **Logged-in Checkout**: Verify pricing persists and order history is correct.
-- [ ] **Order Admin**: Verify order line items and meta data ("CampaignBay Discount Breakdown") are correct in backend.
+- [ ] **Order Admin**: Verify order line items and meta data ("CampaignBay Discount Breakdown") are correct in backend. -->
