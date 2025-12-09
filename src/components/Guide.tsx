@@ -80,7 +80,7 @@ const Guide: FC = () => {
         const stepConfig = config[tourStep];
         if (stepConfig.onNext) {
           stepConfig.onNext({
-            next: () => setTourStep(tourStep + 1),
+            next: () => { console.log("Next"); setTourStep(tourStep + 1); },
             setStep: setTourStep,
             navigate: navigate,
           });

@@ -26,7 +26,6 @@ export const campaignTourConfig: TourConfig = {
     showNext: true,
     showPrev: false,
     autoFocus: true,
-    nextOnEnter: true,
   },
   [TOUR_STEPS.TYPE]: {
     text: <span>Choose your campaign strategy here. Options include
@@ -101,7 +100,6 @@ export const campaignTourConfig: TourConfig = {
     showNext: true,
     showPrev: true,
     autoFocus: true,
-    nextOnEnter: true,
     onPrev: ({ setStep }) => setStep(TOUR_STEPS.TARGET_TYPE),
   },
   [TOUR_STEPS.SCHED_VALUE]: {
