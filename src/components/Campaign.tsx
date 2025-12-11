@@ -26,6 +26,7 @@ import CampaignSettings from "./CampaignSettings";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
 import MultiSelect from "./Multiselect";
+import CustomSelect from "./ui/CustomSelect";
 
 interface CampaignProps {
   campaign: CampaignInerface;
@@ -41,9 +42,9 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     useState<boolean>(false);
   const [settings, setSettings] = useState<CampaignSettingsType>({});
   const [enableUsageLimit, setEnableUsageLimit] = useState<boolean>(false);
-  const usageCheckboxRef = useRef<HTMLInputElement>(null);
   const [categories, setCategories] = useState<SelectOptionType[]>([]);
   const [products, setProducts] = useState<SelectOptionType[]>([]);
+  const usageCheckboxRef = useRef<HTMLInputElement>(null);
   const scheduleCheckboxRef = useRef<HTMLInputElement>(null);
 
   //=================================================================================
@@ -51,7 +52,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   //=================================================================================
   const { tourStep, setConfig } = useGuide();
   const campaignTitleInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.TITLE);
-  const campaignTypeInputRef = useGuideStep<HTMLSelectElement>(TOUR_STEPS.TYPE);
+  const campaignTypeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TYPE);
   const campaignStatusInputRef = useGuideStep<HTMLSelectElement>(TOUR_STEPS.STATUS);
   const targetTypeInputRef = useGuideStep<HTMLSelectElement>(TOUR_STEPS.TARGET_TYPE);
   const targetIdsInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TARGET_IDS);
@@ -203,27 +204,20 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
             <label htmlFor="campaign-type" className="!campaignbay-capitalize">
               {__("Select Discount Type", "campaignbay")} <Required />
             </label>
-            <select
-              id="campaign-type"
-              ref={campaignTypeInputRef}
-              className={`wpab-input w-100 ${errors?.type ? "wpab-input-error" : ""
-                }`}
-              value={campaign.type}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                handleSelectionTypeChange(e.target.value as CampaignType)
+            <CustomSelect
+              con_ref={campaignTypeInputRef}
+              options={[
+                { label: __("Buy X Get X", "campaignbay"), value: "bogo" },
+                { label: __("Scheduled Discount", "campaignbay"), value: "scheduled" },
+                { label: __("Quantity Based Discount", "campaignbay"), value: "quantity" },
+                { label: __("EarlyBird Discount", "campaignbay"), value: "earlybird" },
+                { label: __("Buy X Get Y - Advanced", "campaignbay"), value: "bogo_pro", variant: "buy_pro" },
+              ]}
+              value={campaign.type as string}
+              onChange={(value) =>
+                setCampaign((prev) => ({ ...prev, type: value as CampaignType }))
               }
-            >
-              <option value="bogo">{__("Buy X Get X", "campaignbay")}</option>
-              <option value="scheduled">
-                {__("Scheduled Discount", "campaignbay")}
-              </option>
-              <option value="quantity">
-                {__("Quantity Based Discount", "campaignbay")}
-              </option>
-              <option value="earlybird">
-                {__("EarlyBird Discount", "campaignbay")}
-              </option>
-            </select>
+            />
             {renderError(errors?.type)}
           </div>
 

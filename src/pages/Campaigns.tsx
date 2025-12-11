@@ -1146,7 +1146,6 @@ export const FloatingHelpButton: React.FC<{ step?: number }> = ({ step = 1 }) =>
 
 export const EmptyStateCampaigns = () => {
   const { setTourStep } = useGuide();
-
   return (
     <div className="campaignbay-w-full campaignbay-p-8 md:campaignbay-p-16">
       <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-text-center campaignbay-bg-gray-50 campaignbay-border-2 campaignbay-border-dashed campaignbay-border-gray-200 campaignbay-rounded-lg campaignbay-p-10">

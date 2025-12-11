@@ -7,8 +7,6 @@ import { ToastContainer } from "./components/ToastContainer";
 import { CbStoreProvider } from "./store/cbStore";
 import { CbStore } from "./types";
 import { ToastProvider } from "./store/toast/use-toast";
-import Guide, { TourConfig } from "./components/Guide";
-import { GuideProvider } from "./store/GuideContext";
 import CampaignsAdd from "./pages/CampaignsAdd";
 import CampaignsEdit from "./pages/CampaignsEdit";
 
