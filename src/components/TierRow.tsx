@@ -8,6 +8,7 @@ import { useCbStore } from '../store/cbStore';
 import { QuantityTier, QuantityTierError } from '../types';
 import { useGuideStep } from '../store/GuideContext';
 import { TOUR_STEPS } from '../utils/tourSteps';
+import { BuyProTooltip } from './ui/BuyProTooltip';
 interface TierRowProps {
   tierData: QuantityTier;
   onUpdate: (updatedTier: QuantityTier) => void;
@@ -66,13 +67,15 @@ const TierRow: FC<TierRowProps> = ({
         <div className="wpab-grid-2">
           <div className="wpab-tier-input-grid-child">
             <span className="wpab-input-label">Buy from</span>
-            <input
-              type="number"
-              name="min"
-              value={tierData.min}
-              readOnly
-              className={`min-input wpab-input ${errors?.min ? 'wpab-input-error' : ''}`}
-            />
+            <BuyProTooltip>
+              <input
+                type="number"
+                name="min"
+                value={tierData.min}
+                readOnly
+                className={`min-input wpab-input ${errors?.min ? 'wpab-input-error' : ''}`}
+              />
+            </BuyProTooltip>
             <span className="wpab-input-label">to</span>
             <input
               ref={isFirst ? qtyRangeInputRef : null}
