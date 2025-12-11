@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, KeyboardEvent, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useClickOutside } from './hooks/useClickOutside';
-import { LockKeyhole } from 'lucide-react';
+import { ChevronDown, LockKeyhole } from 'lucide-react';
 export interface SelectOption {
   value: string | number;
   label: string;
@@ -35,6 +35,16 @@ export interface SelectProps {
    * Placeholder text when no value is selected
    */
   placeholder?: string;
+
+  /**
+   * Font size for the select options
+   */
+  fontSize?: number;
+
+  /**
+   * Font weight for the select options
+   */
+  fontWeight?: number;
   /**
    * Disable the entire interaction
    */
@@ -55,6 +65,18 @@ export interface SelectProps {
    * Reference to the container element
    */
   con_ref?: React.Ref<HTMLDivElement>;
+  /**
+   * Custom border class
+   */
+  border?: string;
+  /**
+   * Custom hover border class
+   */
+  hoverBorder?: string;
+  /**
+   * Custom text color class
+   */
+  color?: string;
 }
 
 const CustomSelect: React.FC<SelectProps> = ({
@@ -65,8 +87,13 @@ const CustomSelect: React.FC<SelectProps> = ({
   placeholder = 'Select an option...',
   disabled = false,
   className = '',
+  fontSize = 13,
+  fontWeight = 500,
   label,
   enableSearch = false,
+  border = 'campaignbay-border-gray-300',
+  hoverBorder = '!campaignbay-border-[#183ad6]',
+  color = 'campaignbay-text-gray-[#0a4b78]',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -331,9 +358,10 @@ const CustomSelect: React.FC<SelectProps> = ({
         onKeyDown={handleTriggerKeyDown}
         className={`
           campaignbay-relative campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-w-full campaignbay-gap-0 campaignbay-px-4 campaignbay-py-[9px] campaignbay-text-left !campaignbay-cursor-pointer 
-          campaignbay-transition-all campaignbay-duration-200 campaignbay-ease-in-out wpab-multiselect-input
+          campaignbay-transition-all campaignbay-duration-200 campaignbay-ease-in-out wpab-multiselect-input campaignbay-border ${border} 
+          ${!disabled && !isOpen ? ` ${color} ` : ''}
           ${disabled ? 'campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-text-gray-400 campaignbay-border-gray-200' : ''}
-          ${isOpen ? 'campaignbay-border !campaignbay-border-blue-600' : ''}
+          ${isOpen ? `${hoverBorder}` : ''}
         `}
       >
         <div className="campaignbay-flex-1 campaignbay-min-w-0">
@@ -341,7 +369,7 @@ const CustomSelect: React.FC<SelectProps> = ({
             <input
               ref={searchInputRef}
               type="text"
-              className="campaignbay-w-full campaignbay-bg-transparent campaignbay-border-none campaignbay-outline-none campaignbay-p-0 campaignbay-text-gray-900 campaignbay-placeholder-gray-400"
+              className={`campaignbay-w-full campaignbay-bg-transparent campaignbay-border-none campaignbay-outline-none campaignbay-p-0 ${color} campaignbay-font-[${fontWeight}] campaignbay-text-[${fontSize}px] campaignbay-placeholder-gray-400`}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -352,9 +380,9 @@ const CustomSelect: React.FC<SelectProps> = ({
               placeholder="Search..."
             />
           ) : (
-            <span className={`campaignbay-block campaignbay-truncate ${!value ? 'campaignbay-text-gray-500' : ''}`}>
+            <span className={`campaignbay-block campaignbay-truncate ${color} hover:!campaignbay-text-[#183ad6] campaignbay-text-[${fontSize}px] campaignbay-font-[${fontWeight}]`}>
               {value ? (
-                <span className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                <span className={`campaignbay-flex campaignbay-items-center campaignbay-gap-2 `}>
                   {selectedOption?.label}
                 </span>
               ) : (
@@ -366,8 +394,9 @@ const CustomSelect: React.FC<SelectProps> = ({
 
         {/* Chevron Icon */}
         <span className="campaignbay-flex-shrink-0 campaignbay-ml-2 campaignbay-flex campaignbay-items-center">
-          <svg
-            className={`campaignbay-h-5 campaignbay-w-5 campaignbay-text-gray-400 campaignbay-transition-transform campaignbay-duration-200 ${isOpen ? 'campaignbay-transform campaignbay-rotate-180' : ''}`}
+          <ChevronDown className={`campaignbay-h-4 campaignbay-w-4 campaignbay-text-gray-700 campaignbay-transition-transform campaignbay-duration-200 ${isOpen ? 'campaignbay-transform campaignbay-rotate-180' : ''}`} />
+          {/* <svg
+            className={`campaignbay-h-5 campaignbay-w-5 ${color} campaignbay-transition-transform campaignbay-duration-200 ${isOpen ? 'campaignbay-transform campaignbay-rotate-180' : ''}`}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -378,7 +407,7 @@ const CustomSelect: React.FC<SelectProps> = ({
               d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
               clipRule="evenodd"
             />
-          </svg>
+          </svg> */}
         </span>
       </div>
 
@@ -392,11 +421,11 @@ const CustomSelect: React.FC<SelectProps> = ({
             role="listbox"
             tabIndex={-1}
             onScroll={() => setTooltipState(null)} // Hide tooltip on scroll to prevent detachment
-            className="campaignbay-max-h-60 campaignbay-overflow-auto campaignbay-py-1 focus:campaignbay-outline-none sm:campaignbay-text-sm campaignbay-scrollbar-hide campaignbay-relative"
+            className={`campaignbay-max-h-60 campaignbay-overflow-auto campaignbay-py-1 focus:campaignbay-outline-none  campaignbay-scrollbar-hide campaignbay-relative ${color} campaignbay-font-[${fontWeight}] campaignbay-text-[${fontSize}px]`}
             style={{ scrollbarWidth: 'none' }}
           >
             {filteredOptions.length === 0 ? (
-              <li className="campaignbay-relative campaignbay-cursor-default campaignbay-select-none campaignbay-p-1 campaignbay-text-[13px] campaignbay-text-gray-500 campaignbay-italic campaignbay-text-center ">
+              <li className="campaignbay-relative campaignbay-cursor-default campaignbay-select-none campaignbay-p-1  campaignbay-italic campaignbay-text-center ">
                 {searchQuery ? 'No results found' : 'No options available'}
               </li>
             ) : (
@@ -420,11 +449,11 @@ const CustomSelect: React.FC<SelectProps> = ({
                       handleSelect(option);
                     }}
                     className={`
-                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-p-1 campaignbay-py-2 campaignbay-pr-9 campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 
+                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-pl-[12px] campaignbay-py-2 campaignbay-pr-9 campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 
                       ${isDisabled ? 'campaignbay-opacity-100 campaignbay-cursor-not-allowed campaignbay-text-gray-500 campaignbay-bg-gray-100' : ''}
                       ${isHighlighted && !isDisabled
                         ? 'campaignbay-bg-blue-600 campaignbay-text-white'
-                        : (isDisabled ? 'campaignbay-text-gray-400' : 'campaignbay-text-gray-900')
+                        : (isDisabled ? 'campaignbay-text-gray-400' : '')
                       }
                       ${(!isHighlighted && !isDisabled) ? (option.className || '') : ''}
                     `}

@@ -128,7 +128,7 @@ export type CampaignStatusType =
   | "inactive"
   | "scheduled"
   | "expired";
-export type CampaignType = "bogo" | "scheduled" | "quantity" | "earlybird";
+export type CampaignType = "bogo" | "scheduled" | "quantity" | "earlybird" | "bogo_pro";
 export type DiscountType = "percentage" | "fixed" | "currency";
 export type TargetType = "entire_store" | "category" | "product" | "tag";
 // add /edit campaigns

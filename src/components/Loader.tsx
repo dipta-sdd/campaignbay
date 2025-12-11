@@ -3,7 +3,7 @@ import { Spinner } from "@wordpress/components";
 
 const Loader: FC = () => {
   return (
-    <div className="wpab-cb-loader">
+    <div className="campaignbay-loader-container">
       <Spinner />
     </div>
   );

@@ -168,7 +168,16 @@ class Admin
 	 */
 	public function add_setting_root_div()
 	{
-		echo '<div id="' . esc_attr(CAMPAIGNBAY_PLUGIN_NAME) . '"></div>';
+		echo '<div id="' . esc_attr(CAMPAIGNBAY_PLUGIN_NAME) . '">
+			<div class="campaignbay-loader-container">
+				<div class="campaignbay-newtons-cradle">
+					<div class="campaignbay-newtons-cradle__dot"></div>
+					<div class="campaignbay-newtons-cradle__dot"></div>
+					<div class="campaignbay-newtons-cradle__dot"></div>
+					<div class="campaignbay-newtons-cradle__dot"></div>
+				</div>
+			</div>
+		</div>';
 	}
 
 	/**

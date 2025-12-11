@@ -58,6 +58,8 @@ import {
 } from "../types";
 import { useGuide } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
+import { BuyProTooltip } from "../components/ui/BuyProTooltip";
+import CustomSelect from "../components/ui/CustomSelect";
 
 type SortableHeadValue =
   | "post_name"
@@ -441,15 +443,22 @@ const Campaigns: FC = () => {
       const tier: BogoTier | undefined = campaign?.tiers[0] as BogoTier;
       return tier?.get_quantity + " / " + tier?.buy_quantity;
     }
+
     const tier: QuantityTier | undefined = campaign?.tiers[0] as QuantityTier;
 
-    return (
-      tier?.value +
-      " " +
-      (tier?.type === "percentage" ? "%" : woocommerce_currency_symbol)
-    );
+    if (campaign?.type === "quantity" || campaign?.type === "earlybird") {
+      return (
+        tier?.value +
+        " " +
+        (tier?.type === "percentage" ? "%" : woocommerce_currency_symbol)
+      );
+    }
+    return '—';
   };
 
+  const isFreeCampaign = (type: CampaignType) => {
+    return type === "bogo" || type === "quantity" || type === "earlybird" || type === "scheduled";
+  };
   const duplicateCampaign = async (campaignId: number) => {
     try {
       const response = await apiFetch({
@@ -510,34 +519,46 @@ const Campaigns: FC = () => {
           >
             <div className="campaignbay-filter-group">
               <div className="campaignbay-filter-group-1">
-                <select
-                  className="wpab-select"
-                  value={bulkAction}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                    handleBulkAction(e.target.value as BulkActionType);
-                  }}
-                  disabled={!selectedCampaigns?.length}
-                >
-                  <option value="">Bulk Actions</option>
-                  <option value="activate">Activate</option>
-                  <option value="deactivate">Deactivate</option>
-                  <option value="delete">Delete</option>
-                </select>
-                <select
-                  className="wpab-select"
+                <CustomSelect
+                  placeholder="Bulk Actions"
+                  fontSize={14}
+                  fontWeight={300}
+                  options={[
+                    { value: "activate", label: "Activate", className: "campaignbay-text-green-500" },
+                    { value: "deactivate", label: "Deactivate", className: "campaignbay-text-gray-500" },
+                    { value: "delete", label: "Delete", className: "campaignbay-text-red-500" },
+                  ]}
+                  onChange={(value: string | number) => handleBulkAction(value as BulkActionType)}
+                />
+                <CustomSelect
+                  placeholder="Filter by Status"
+                  fontSize={14}
+                  fontWeight={300}
+                  options={[
+                    { value: "active", label: "Active" },
+                    { value: "scheduled", label: "Scheduled" },
+                    { value: "expired", label: "Expired" },
+                    { value: "inactive", label: "Inactive" },
+                  ]}
                   value={statusFilter}
-                  onChange={(e) => {
-                    setStatusFilter(e.target.value);
-                  }}
-                >
-                  <option value="">Filter by Status</option>
-                  <option value="active">Active</option>
-                  <option value="scheduled">Scheduled</option>
-                  <option value="expired">Expired</option>
-                  <option value="inactive">Inactive</option>
-                </select>
+                  onChange={(value: string | number) => setStatusFilter(value as string)}
+                />
               </div>
               <div className="campaignbay-filter-group-2">
+                <CustomSelect
+                  placeholder="Filter by Type"
+                  fontSize={14}
+                  fontWeight={300}
+                  options={[
+                    { value: "", label: "Filter by Type" },
+                    { value: "bogo", label: "BOGO" },
+                    { value: "scheduled", label: "Schedule Discount" },
+                    { value: "quantity", label: "Quantity Discount" },
+                    { value: "earlybird", label: "EarlyBird Discount" },
+                  ]}
+                  value={typeFilter}
+                  onChange={(value: string | number) => setTypeFilter(value as string)}
+                />
                 <select
                   className="wpab-select"
                   value={typeFilter}
@@ -696,12 +717,20 @@ const Campaigns: FC = () => {
                             />
                           </td>
                           <td>
-                            <a
-                              className="campaignbay-capitalize "
-                              href={`#/campaigns/${campaign.id}`}
-                            >
-                              {campaign.title}
-                            </a>
+                            {
+                              isFreeCampaign(campaign.type) ?
+                                <a
+                                  className="campaignbay-capitalize "
+                                  href={`#/campaigns/${campaign.id}`}
+                                >
+                                  {campaign.title}
+                                </a> : <BuyProTooltip > <span
+                                  className="campaignbay-inline-block campaignbay-pr-[30px] campaignbay-capitalize campaignbay-font-bold"
+                                >
+                                  {campaign.title}
+                                </span></BuyProTooltip>
+                            }
+
                           </td>
                           <td>
                             <span
@@ -712,7 +741,7 @@ const Campaigns: FC = () => {
                             </span>
                           </td>
                           <td className="campaignbay-capitalize campaignbay-text-secondary ">
-                            {campaign.type}
+                            {getCampaignTypeText(campaign.type)}
                           </td>
                           <td className="campaignbay-capitalize campaignbay-text-secondary ">
                             {getTargetType(campaign.target_type)}
@@ -734,15 +763,22 @@ const Campaigns: FC = () => {
                             <DropdownMenu
                               controls={[
                                 {
-                                  title: "Edit",
+                                  title: isFreeCampaign(campaign.type)
+                                    ? "Edit"
+                                    : <BuyProTooltip> <span className="campaignbay-pr-[30px]">Edit</span></BuyProTooltip>,
                                   icon: edit,
                                   onClick: () =>
-                                    navigate(`/campaigns/${campaign.id}`),
+                                    isFreeCampaign(campaign.type)
+                                      ? navigate(`/campaigns/${campaign.id}`)
+                                      : null,
                                 },
                                 {
-                                  title: "Duplicate",
+                                  title: isFreeCampaign(campaign.type)
+                                    ? "Duplicate"
+                                    : <BuyProTooltip> <span className="campaignbay-pr-[30px]">Duplicate</span></BuyProTooltip>,
                                   icon: copySmall,
                                   onClick: async () => {
+                                    if (!isFreeCampaign(campaign.type)) return;
                                     setIsLoading(true);
                                     duplicateCampaign(campaign.id);
                                   },
@@ -901,15 +937,22 @@ const Campaigns: FC = () => {
                           <DropdownMenu
                             controls={[
                               {
-                                title: "Edit",
+                                title: isFreeCampaign(campaign.type)
+                                  ? "Edit"
+                                  : <BuyProTooltip> <span className="campaignbay-pr-[30px]">Edit</span></BuyProTooltip>,
                                 icon: edit,
                                 onClick: () =>
-                                  navigate(`/campaigns/${campaign.id}`),
+                                  isFreeCampaign(campaign.type)
+                                    ? navigate(`/campaigns/${campaign.id}`)
+                                    : null,
                               },
                               {
-                                title: "Duplicate",
+                                title: isFreeCampaign(campaign.type)
+                                  ? "Duplicate"
+                                  : <BuyProTooltip> <span className="campaignbay-pr-[30px]">Duplicate</span></BuyProTooltip>,
                                 icon: copySmall,
                                 onClick: async () => {
+                                  if (!isFreeCampaign(campaign.type)) return;
                                   setIsLoading(true);
                                   duplicateCampaign(campaign.id);
                                 },
@@ -936,7 +979,7 @@ const Campaigns: FC = () => {
                               </div>
                               <div className="campaignbay-flex-1 campaignbay-min-w-0">
                                 <div className="campaignbay-text-xs campaignbay-text-gray-900 campaignbay-font-medium campaignbay-truncate campaignbay-capitalize">
-                                  {campaign.type}
+                                  {getCampaignTypeText(campaign.type)}
                                 </div>
                               </div>
                             </div>
@@ -1126,7 +1169,7 @@ const Campaigns: FC = () => {
   );
 };
 
-export default Campaigns; 
+export default Campaigns;
 
 export const FloatingHelpButton: React.FC<{ step?: number }> = ({ step = 1 }) => {
   const { setTourStep } = useGuide();
@@ -1188,4 +1231,23 @@ export const EmptyStateCampaigns = () => {
       </div>
     </div>
   );
+};
+
+
+
+export const getCampaignTypeText = (type: CampaignType) => {
+  switch (type) {
+    case "bogo_pro":
+      return "BOGO Advanced";
+    case "quantity":
+      return "Quantity";
+    case "earlybird":
+      return "Earlybird";
+    case "scheduled":
+      return "Scheduled";
+    case "bogo":
+      return "BOGO";
+    default:
+      return type;
+  }
 };

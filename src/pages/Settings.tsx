@@ -20,6 +20,7 @@ import ProductSettings from "../components/ProductSettings";
 import CartSettings from "../components/CartSettings";
 import AdvancedSettings from "../components/AdvancedSettings";
 import { FloatingHelpButton } from "./Campaigns";
+import ProductSettingsSkeleton from "../components/ui/ProductSettingsSkeleton";
 
 export type ActiveTab = "global" | "product" | "cart" | "advanced";
 
@@ -164,9 +165,9 @@ const Settings: FC = () => {
     setActiveTab(tab);
     setEdited(false);
   };
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return (
     <div className="campaignbay-block campaignbay-w-full campaignbay-p-0 campaignbay-m-0 campaignbay-h-auto">
@@ -209,7 +210,7 @@ const Settings: FC = () => {
             title: "Advanced Settings",
           },
         ]}
-      >
+      > {isLoading ? <ProductSettingsSkeleton /> : <>
         {activeTab === "global" && globalSettings && (
           <GlobalSettings
             globalSettings={globalSettings}
@@ -239,7 +240,7 @@ const Settings: FC = () => {
             setAdvancedSettings={setAdvancedSettings}
             setEdited={setEdited}
           />
-        )}
+        )}</>}
       </TabPanel>
       <div className="wpab-button-con-card">
         <div className="cb-container ">
