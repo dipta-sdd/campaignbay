@@ -514,12 +514,13 @@ const Campaigns: FC = () => {
           {/* FILTERS SECTION                                                      */}
           {/* ==================================================================== */}
           <div
-            className={`campaignbay-filters ${view === "table" ? "" : "campaignbay-bg-white"
+            className={`campaignbay-filters campaignbay-flex-col xl:campaignbay-flex-row ${view === "table" ? "" : "campaignbay-bg-white"
               }`}
           >
-            <div className="campaignbay-filter-group">
-              <div className="campaignbay-filter-group-1">
+            <div className="campaignbay-flex campaignbay-flex-col xl:campaignbay-flex-row campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-w-full xl:campaignbay-w-auto">
+              <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-wrap lg:campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
                 <CustomSelect
+                  className="campaignbay-min-w-[200px]"
                   placeholder="Bulk Actions"
                   fontSize={14}
                   fontWeight={300}
@@ -531,6 +532,7 @@ const Campaigns: FC = () => {
                   onChange={(value: string | number) => handleBulkAction(value as BulkActionType)}
                 />
                 <CustomSelect
+                  className="campaignbay-min-w-[200px]"
                   placeholder="Filter by Status"
                   fontSize={14}
                   fontWeight={300}
@@ -544,13 +546,13 @@ const Campaigns: FC = () => {
                   onChange={(value: string | number) => setStatusFilter(value as string)}
                 />
               </div>
-              <div className="campaignbay-filter-group-2">
+              <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-wrap lg:campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
                 <CustomSelect
+                  className="campaignbay-min-w-[200px]"
                   placeholder="Filter by Type"
                   fontSize={14}
                   fontWeight={300}
                   options={[
-                    { value: "", label: "Filter by Type" },
                     { value: "bogo", label: "BOGO" },
                     { value: "scheduled", label: "Schedule Discount" },
                     { value: "quantity", label: "Quantity Discount" },
@@ -559,17 +561,6 @@ const Campaigns: FC = () => {
                   value={typeFilter}
                   onChange={(value: string | number) => setTypeFilter(value as string)}
                 />
-                <select
-                  className="wpab-select"
-                  value={typeFilter}
-                  onChange={(e) => setTypeFilter(e.target.value)}
-                >
-                  <option value="">Filter by Type</option>
-                  <option value="bogo">BOGO</option>
-                  <option value="scheduled">Schedule Discount</option>
-                  <option value="quantity">Quantity Discount</option>
-                  <option value="earlybird">EarlyBird Discount</option>
-                </select>
                 <button
                   className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 wpab-cb-btn-primary"
                   onClick={applyFilters}
@@ -598,13 +589,14 @@ const Campaigns: FC = () => {
                 </ToggleGroupControl>
               </div>
             </div>
-            <div className="campaignbay-search-box">
+            <div className="campaignbay-search-box campaignbay-flex-1 xl:campaignbay-flex-none campaignbay-w-full xl:campaignbay-w-auto">
               <input
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="wpab-input"
                 placeholder="Search Campaign"
+                style={{ width: "100%" }}
               />
               <Icon
                 icon={search}

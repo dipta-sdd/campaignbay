@@ -421,7 +421,7 @@ const CustomSelect: React.FC<SelectProps> = ({
             role="listbox"
             tabIndex={-1}
             onScroll={() => setTooltipState(null)} // Hide tooltip on scroll to prevent detachment
-            className={`campaignbay-max-h-60 campaignbay-overflow-auto campaignbay-py-1 focus:campaignbay-outline-none  campaignbay-scrollbar-hide campaignbay-relative ${color} campaignbay-font-[${fontWeight}] campaignbay-text-[${fontSize}px]`}
+            className={`campaignbay-max-h-60 campaignbay-overflow-auto focus:campaignbay-outline-none campaignbay-scrollbar-hide campaignbay-relative ${color} campaignbay-font-[${fontWeight}] campaignbay-text-[${fontSize}px]`}
             style={{ scrollbarWidth: 'none' }}
           >
             {filteredOptions.length === 0 ? (
@@ -467,13 +467,13 @@ const CustomSelect: React.FC<SelectProps> = ({
                       </span>
 
                       {/* Lock Icon for Buy Pro */}
-                      {isPro && (
+                      {isPro && isSelected ? (
                         <LockKeyhole className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-[#f02a74]" />
-                      )}
+                      ) : null}
                     </div>
 
                     {/* Checkmark for selected item */}
-                    {isSelected && (
+                    {isSelected ? (
                       <span className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4 ${isHighlighted && !isDisabled ? 'campaignbay-text-white' : 'campaignbay-text-blue-600'}`}>
                         <svg
                           className="campaignbay-h-5 campaignbay-w-5"
@@ -489,7 +489,9 @@ const CustomSelect: React.FC<SelectProps> = ({
                           />
                         </svg>
                       </span>
-                    )}
+                    ) : isPro ? <span className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4`}>
+                      <LockKeyhole className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-[#f02a74] " />
+                    </span> : null}
                   </li>
                 );
               })
