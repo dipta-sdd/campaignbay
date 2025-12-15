@@ -72,7 +72,7 @@ const CampaignsEdit: FC = () => {
       });
       setIsSaving(false);
       addToast(__("Campaign saved successfully", "campaignbay"), "success");
-      navigate("/campaigns");
+      // navigate("/campaigns");
     } catch (error: any) {
       setIsSaving(false);
       if (
@@ -201,7 +201,7 @@ const CampaignsEdit: FC = () => {
                 onClick={handleSaveCampaign}
               >
                 <Icon icon={check} fill="currentColor" />
-                {__("Save Changes", "campaignbay")}
+                {__("Update Campaign", "campaignbay")}
               </button>
             </div>
           </div>

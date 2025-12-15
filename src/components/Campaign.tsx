@@ -26,6 +26,7 @@ import CampaignSettings from "./CampaignSettings";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
 import MultiSelect from "./Multiselect";
+import { getSettings } from "../utils/settings";
 
 interface CampaignProps {
   campaign: CampaignInerface;
@@ -91,10 +92,10 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     if (campaign.usage_limit) setEnableUsageLimit(true);
   }, []);
   useEffect(() => {
-    setCampaign((prev) => ({ ...prev, settings: { ...getSettings() } }));
+    setCampaign((prev) => ({ ...prev, settings: { ...getSettings(campaign.type, settings) } }));
   }, [campaign.type]);
   useEffect(() => {
-    setCampaign((prev) => ({ ...prev, settings: { ...getSettings() } }));
+    setCampaign((prev) => ({ ...prev, settings: { ...getSettings(campaign.type, settings) } }));
   }, [settings]);
 
   useEffect(() => {
@@ -136,47 +137,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     setCampaign((prev) => ({ ...prev, type: value }));
   };
 
-  const getSettings = () => {
-    let tmpSettings: CampaignSettingsType = {};
 
-    if (campaign.type === "earlybird" || campaign.type === "scheduled") {
-      tmpSettings["display_as_regular_price"] =
-        settings.display_as_regular_price === undefined
-          ? false
-          : settings.display_as_regular_price;
-
-      tmpSettings["message_format"] = settings.message_format || "";
-    } else if (campaign.type === "quantity") {
-      tmpSettings["enable_quantity_table"] =
-        settings.enable_quantity_table === undefined
-          ? true
-          : settings.enable_quantity_table;
-
-      tmpSettings["apply_as"] = settings?.apply_as || "line_total";
-
-      tmpSettings["cart_quantity_message_format"] =
-        settings.cart_quantity_message_format || "";
-    } else if (campaign.type === "bogo") {
-      tmpSettings["auto_add_free_product"] =
-        settings.auto_add_free_product !== undefined
-          ? settings.auto_add_free_product
-          : true;
-
-      // @ts-ignore
-      if (settings?.apply_as !== undefined && settings?.apply_as !== "") {
-        tmpSettings["apply_as"] = settings.apply_as;
-      }
-      tmpSettings["bogo_banner_message_format"] =
-        settings.bogo_banner_message_format || "";
-
-      tmpSettings["cart_bogo_message_format"] =
-        settings.cart_bogo_message_format || "";
-
-      tmpSettings["bogo_cart_message_location"] =
-        settings.bogo_cart_message_location || "line_item_name";
-    }
-    return tmpSettings;
-  };
   return (
     <>
       <div className="cb-form-input-con ">
