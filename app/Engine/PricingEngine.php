@@ -470,7 +470,6 @@ class PricingEngine extends Base
 			// if the simple campaign is set to display as regular price, return
 			if (wpab_campaignbay_get_value($meta['simple'], 'display_as_regular_price', false) === true)
 				return;
-			wpab_campaignbay_log('________ simple: ' . print_r($meta['simple'], true));
 			if (wpab_campaignbay_get_value($meta['simple'], 'show_product_message', true) === false)
 				return;
 			$format = wpab_campaignbay_get_value($meta['simple'], 'message_format');
