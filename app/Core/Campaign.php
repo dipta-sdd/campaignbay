@@ -163,7 +163,7 @@ class Campaign
 		$data['tiers'] = wp_json_encode($tmp_tiers ? $tmp_tiers : []);
 		$data['target_ids'] = wp_json_encode(isset($data['target_ids']) ? $data['target_ids'] : '[]');
 		$data['conditions'] = wp_json_encode(isset($data['conditions']) ? $data['conditions'] : '[]');
-		$data['settings'] = wp_json_encode(isset($data['settings']) ? $data['settings'] : '[]');
+		$data['settings'] = wp_json_encode($validated_settings ? $validated_settings : '[]');
 
 		// adding other default data
 		$data['usage_count'] = 0;
@@ -397,15 +397,18 @@ class Campaign
 			'is_exclude' => 'nullable|boolean',
 
 			'schedule_enabled' => 'boolean|required_if:status,scheduled',
-			'start_datetime' => 'datetime|required_if:status,scheduled',
+			'start_datetime' => 'datetime|nullable',
 			'end_datetime' => 'datetime|nullable',
 
 			'conditions' => 'nullable|array',
 			'settings' => 'nullable|array',
 			'usage_limit' => 'nullable|integer'
 		];
-		if ($args['schedule_enabled'] && ($args['start_datetime'] == null || $args['start_datetime'] === '')) {
-			$rules['end_datetime'] = 'boolean|required';
+		if ($args['schedule_enabled'] === true) {
+			if (($args['start_datetime'] === null || $args['start_datetime'] === '') || ($args['end_datetime'] === null || $args['end_datetime'] === '')) {
+				$rules['start_datetime'] = 'required|datetime';
+				// $rules['end_datetime'] = 'required|datetime';
+			}
 		}
 		/**
 		 * Filters the main validation rules for a campaign.
@@ -552,32 +555,58 @@ class Campaign
 	}
 
 
+	/**
+	 * Validates the settings for a campaign.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $settings The settings to validate.
+	 * @param string $type The type of the campaign being validated.
+	 * @return array|null The validated settings, or null if validation fails.
+	 */
 	public static function get_validated_settings($settings, $type)
 	{
 		if ($settings === null || !is_array($settings) || empty($settings)) {
 			return null;
 		}
-		$validator = new Validator($settings);
+
 		if ($type === 'scheduled' || $type === 'earlybird') {
+			$default = [
+				'display_as_regular_price' => false,
+				'show_product_message' => true,
+				'message_format' => '',
+			];
 			$rules = [
-				'display_as_regular_price' => 'nullable|boolean',
+				'display_as_regular_price' => 'required|boolean',
+				'show_product_message' => 'required_if:display_as_regular_price,0|boolean',
 				'message_format' => 'nullable|string',
 			];
 		} elseif ($type === 'quantity') {
+			$default = [
+				'apply_as' => 'line_total',
+				'cart_quantity_message_format' => '',
+				'cart_quantity_message_location' => 'line_item_name',
+			];
 			$rules = [
-				'enable_quantity_table' => 'nullable|boolean',
-				'apply_as' => 'nullable|string|in:line_total,fee,coupon',
+				'apply_as' => 'required|string|in:line_total,fee,coupon',
 				'cart_quantity_message_format' => 'nullable|string',
+				'cart_quantity_message_location' => 'required|string|in:line_item_name,notice,dont_show',
 			];
 		} elseif ($type === 'bogo') {
+			$default = [
+				'show_bogo_message' => true,
+				'bogo_banner_message_format' => '',
+				'cart_bogo_message_format' => '',
+				'bogo_cart_message_location' => 'line_item_name',
+			];
 			$rules = [
-				'auto_add_free_product' => 'nullable|boolean',
-				'apply_as' => 'nullable|string|in:line_total,fee',
+				'show_bogo_message' => 'required|boolean',
 				'bogo_banner_message_format' => 'nullable|string',
 				'cart_bogo_message_format' => 'nullable|string',
-				'bogo_cart_message_location' => 'nullable|string|in:line_item_name,notice,dont_show',
+				'bogo_cart_message_location' => 'required|string|in:line_item_name,notice,dont_show',
 			];
 		}
+
 		/**
 		 * Filters the settings validation rules for a campaign.
 		 *
@@ -588,6 +617,9 @@ class Campaign
 		 * @param string $type The type of the campaign being validated.
 		 */
 		$rules = apply_filters('campaignbay_get_settings_validation_rules', $rules, $type);
+
+		$validator = new Validator(array_merge($default, $settings));
+
 		if (!$validator->validate($rules)) {
 			return new WP_Error(
 				'rest_validation_error',
@@ -603,9 +635,6 @@ class Campaign
 	}
 
 
-	/**
-	 * Getters for core properties.
-	 */
 	/**
 	 * Gets the raw campaign data object.
 	 *
@@ -653,6 +682,14 @@ class Campaign
 		return $this->data->status;
 	}
 
+	/**
+	 * Sets the campaign status.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @param string $status The campaign status.
+	 * @return bool True if the status was updated successfully, false otherwise.
+	 */
 	public function set_status($status)
 	{
 		if (empty($status)) {
@@ -672,18 +709,24 @@ class Campaign
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 
+			$new_schedule_enabled = $this->data->status === 'expired' ? 0 : $this->data->schedule_enabled;
+			wpab_campaignbay_log('________ name: ' . $this->data->name);
+			wpab_campaignbay_log('________ status: ' . $this->data->status);
+			wpab_campaignbay_log('New schedule enabled: ' . $new_schedule_enabled);
 
 			//phpcs:ignore
 			$result = $wpdb->update(
 				$table_name,
 				array(
 					'status' => $status,
+					'schedule_enabled' => $new_schedule_enabled,
 				),
 				array(
 					'id' => $this->id,
 				),
 				array(
 					'%s',
+					'%d',
 				),
 				array(
 					'%d',

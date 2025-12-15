@@ -20,12 +20,37 @@ if (!defined('ABSPATH')) {
 class Validator
 {
 
+	/**
+	 * The raw data array to be validated.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array
+	 */
 	private $data;
+
+	/**
+	 * The validation errors.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array
+	 */
 	private $errors = array();
+
+	/**
+	 * The validated data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array
+	 */
 	private $validated_data = array();
 
 	/**
 	 * Constructor.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param array $data The raw data array to be validated.
 	 */
@@ -36,6 +61,8 @@ class Validator
 
 	/**
 	 * Main validation method. Runs data against a set of rules.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param array $rules An array defining the validation rules for each field.
 	 * @return bool True if validation passes, false otherwise.
@@ -69,6 +96,8 @@ class Validator
 
 	/**
 	 * Applies a single validation rule to a field.
+	 *	
+	 * @since 1.0.0
 	 *
 	 * @param string $field The name of the field.
 	 * @param mixed  $value The value of the field.
@@ -251,6 +280,8 @@ class Validator
 
 	/**
 	 * Adds an error message for a specific field.
+	 *	
+	 * @since 1.0.0
 	 *
 	 * @param string $field The field that failed validation.
 	 * @param string $message The error message.
@@ -260,26 +291,62 @@ class Validator
 		$this->errors[$field] = array("message" => $message);
 	}
 
+	/**
+	 * Checks if validation failed.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool True if validation failed, false otherwise.
+	 */
 	public function fails()
 	{
 		return !empty($this->errors);
 	}
 
+	/**
+	 * Gets the first error message.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The first error message, or an empty string if no errors exist.
+	 */
 	public function get_first_error()
 	{
 		return !empty($this->errors) ? reset($this->errors) : '';
 	}
 
+	/**
+	 * Gets all error messages.
+	 * 
+	 * @since 1.0.0
+	 *
+	 * @return array An array of error messages.
+	 */
 	public function get_errors()
 	{
 		return $this->errors;
 	}
 
+	/**
+	 * Gets the validated data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array The validated data.
+	 */
 	public function get_validated_data()
 	{
 		return $this->validated_data;
 	}
 
+	/**
+	 * Validates a datetime string.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $datetime The datetime string to validate.
+	 * @return string|null The validated datetime string, or null if validation fails.
+	 */
 	private static function validate_datetime($datetime)
 	{
 		if (empty($datetime)) {

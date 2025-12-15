@@ -343,6 +343,9 @@ class Helper
         $format = "";
         if (!empty($tiers)) {
             $tier = $tiers[0];
+            $show_bogo_message = wpab_campaignbay_get_value($tier, 'settings.show_bogo_message', true);
+            if (!$show_bogo_message)
+                return;
             $format = wpab_campaignbay_get_value($tier, 'settings.bogo_banner_message_format', Common::get_instance()->get_settings('bogo_banner_message_format'));
             $message = self::generate_message($format, array(
                 '{buy_quantity}' => $tier['buy_quantity'],
@@ -642,6 +645,19 @@ class Helper
         // wpab_campaignbay_log('manualy updatede cart session');
     }
 
+
+    /**
+     * Calculate price.
+     *
+     * This method calculates the price based on the discount type.
+     *
+     * @since 1.0.0
+     *
+     * @param float $base_price The base price.
+     * @param float $discount_value The discount value.
+     * @param string $discount_type The discount type.
+     * @return float The calculated price.
+     */
     public static function calculate_price($base_price, $discount_value, $discount_type)
     {
         if ($discount_type === 'fixed') {

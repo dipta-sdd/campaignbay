@@ -56,6 +56,8 @@ class Filter
 
     /**
      * Gets an instance of this object.
+     * 
+     * @since 1.0.0
      *
      * @static
      * @access public
@@ -85,6 +87,9 @@ class Filter
 
     /**
      * Match rule filters against product
+     * 
+     * @since 1.0.0
+     * 
      * @param $product
      * @param $campaign 
      * @param array $cart_item
@@ -132,6 +137,9 @@ class Filter
 
     /**
      * Compare product's tags against tag filters
+     * 
+     * @since 1.0.0
+     * 
      * @param $product
      * @param $target_ids
      * @param $is_exclude
@@ -151,6 +159,9 @@ class Filter
 
     /**
      * Compare product's categories against category filters
+     * 
+     * @since 1.0.0
+     * 
      * @param $product
      * @param $target_ids
      * @param $is_exclude
@@ -170,6 +181,9 @@ class Filter
 
     /**
      * Compare products against product filter values
+     * 
+     * @since 1.0.0
+     * 
      * @param $target_ids
      * @param $is_exclude
      * @param $product_id
@@ -184,6 +198,9 @@ class Filter
 
     /**
      * Compare products against product is on sale values
+     * 
+     * @since 1.0.0
+     * 
      * @param $product
      * @param $is_exclude
      * @return bool
@@ -202,6 +219,9 @@ class Filter
 
     /**
      * Check product in list
+     * 
+     * @since 1.0.0
+     * 
      * @param $product_id
      * @param $is_exclude
      * @param $target_ids
