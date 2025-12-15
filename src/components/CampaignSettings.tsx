@@ -10,6 +10,7 @@ import {
   CampaignType,
 } from "../types";
 import Tooltip from "./Tooltip";
+import { getSettings } from "../utils/settings";
 
 interface CampaignSettingsProps {
   settings: CampaignSettingsType;
@@ -24,14 +25,14 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
   errors,
   type,
 }) => {
-  useEffect(() => {
-    // if (type === "bogo" && settings?.apply_as === "coupon") {
-    //   setSettings((prev) => ({
-    //     ...prev,
-    //     apply_as: "line_total",
-    //   }));
-    // }
-  }, [type]);
+  // useEffect(() => {
+  //   // if (type === "bogo" && settings?.apply_as === "coupon") {
+  //   //   setSettings((prev) => ({
+  //   //     ...prev,
+  //   //     apply_as: "line_total",
+  //   //   }));
+  //   // }
+  // }, [type]);
 
   const handleApplyAsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value: string = e.target.value;
@@ -59,7 +60,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
     }));
   };
 
-  console.table(settings);
+  // console.table(getSettings(type, settings));
 
   return (
     <>
@@ -388,63 +389,54 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     "campaignbay"
                   )}
                 </label>
-                <Tooltip
-                  content={
-                    <span className="campaignbay-text-sm">
-                      {__(
-                        "When checked, the BOGO promotional message will be displayed at the product page.",
-                        "campaignbay"
-                      )}
-                    </span>
-                  }
-                  position="top"
-                />
                 {renderError(errors?.show_bogo_message)}
               </div>
 
               {/* prduct page message format */}
+              {settings?.show_bogo_message === true ||
+              settings?.show_bogo_message === undefined ? (
+                <div className="cb-form-input-con !campaignbay-p-0">
+                  <label
+                    htmlFor="message-format"
+                    className="campaignbay-whitespace-nowrap"
+                  >
+                    {__("Product Page Discount Message Format", "campaignbay")}
+                  </label>
 
-              <div className="cb-form-input-con !campaignbay-p-0">
-                <label
-                  htmlFor="message-format"
-                  className="campaignbay-whitespace-nowrap"
-                >
-                  {__("Product Page Discount Message Format", "campaignbay")}
-                </label>
+                  <input
+                    type="text"
+                    placeholder={__(
+                      "Leave it blank for default message.",
+                      "campaignbay"
+                    )}
+                    id="message-format"
+                    aria-label={__(
+                      "Product Page Discount Message Format",
+                      "campaignbay"
+                    )}
+                    className={`wpab-input w-100  ${
+                      errors?.bogo_banner_message_format ? "wpab-input-error" : ""
+                    }`}
+                    value={settings?.bogo_banner_message_format}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setSettings((prev: CampaignSettingsType) => ({
+                        ...prev,
+                        bogo_banner_message_format: e.target.value,
+                      }))
+                    }
+                  />
 
-                <input
-                  type="text"
-                  placeholder={__(
-                    "Leave it blank for default message.",
-                    "campaignbay"
-                  )}
-                  id="message-format"
-                  aria-label={__(
-                    "Product Page Discount Message Format",
-                    "campaignbay"
-                  )}
-                  className={`wpab-input w-100  ${
-                    errors?.bogo_banner_message_format ? "wpab-input-error" : ""
-                  }`}
-                  value={settings?.bogo_banner_message_format}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSettings((prev: CampaignSettingsType) => ({
-                      ...prev,
-                      bogo_banner_message_format: e.target.value,
-                    }))
-                  }
-                />
+                  <span className="wpab-input-help">
+                    {__(
+                      "This message will be displayed on the product page. Leave blank for the default message.",
+                      "campaignbay"
+                    )}
 
-                <span className="wpab-input-help">
-                  {__(
-                    "This message will be displayed on the product page. Leave blank for the default message.",
-                    "campaignbay"
-                  )}
-
-                  <Placeholders options={["buy_quantity", "get_quantity"]} />
-                </span>
-                {renderError(errors?.bogo_banner_message_format)}
-              </div>
+                    <Placeholders options={["buy_quantity", "get_quantity"]} />
+                  </span>
+                  {renderError(errors?.bogo_banner_message_format)}
+                </div>
+              ) : null}
             </>
           ) : null}
         </div>
