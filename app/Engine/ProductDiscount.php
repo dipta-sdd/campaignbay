@@ -39,12 +39,36 @@ if (!defined('ABSPATH')) {
 class ProductDiscount
 {
 
+	/**
+	 * Summary of settings
+	 * 
+	 * @since 1.0.0
+	 * @var array
+	 */
 	private $settings = array();
 
+	/**
+	 * Summary of product
+	 * 
+	 * @since 1.0.0
+	 * @var WC_Product
+	 */
 	private $product = null;
 
+	/**
+	 * Summary of campaigns
+	 * 
+	 * @since 1.0.0
+	 * @var array
+	 */
 	private $campaigns = array();
 
+	/**
+	 * Summary of data
+	 * 
+	 * @since 1.0.0
+	 * @var array
+	 */
 	private $data = array();
 
 	/**
@@ -187,6 +211,7 @@ class ProductDiscount
 				'price' => $best_price,
 				'discount' => $base_price - $best_price,
 				'message_format' => $applied_campaign->get_settings()['message_format'] ?? '',
+				'show_product_message' => $applied_campaign->get_settings()['show_product_message'] ?? true,
 				'display_as_regular_price' => $applied_campaign->get_settings()['display_as_regular_price'] ?? false
 			);
 			if ($applied_campaign->get_type() === 'scheduled') {
@@ -331,6 +356,15 @@ class ProductDiscount
 		return $calculated_price;
 	}
 
+	/**
+	 * Handles the price calculation for "earlybird" type campaigns.
+	 * This is a sub-dispatcher that checks for percentage or fixed discounts.
+	 *
+	 * @since 1.0.0
+	 * @param array $tier The tier data.
+	 * @param float $base_price The price before discount.
+	 * @return float The calculated price.
+	 */
 	public function calculate_earlybird_price($tier, $base_price)
 	{
 		$discount_type = $tier['type'];
@@ -371,6 +405,14 @@ class ProductDiscount
 		return max(0, $base_price - $discount_amount);
 	}
 
+	/**
+	 * Determines if a new price is better than the current best price based on the priority method.
+	 *
+	 * @since 1.0.0
+	 * @param float $new_price The new price to compare.
+	 * @param float $current_best_price The current best price.
+	 * @return bool True if the new price is better, false otherwise.
+	 */
 	public function is_better_price($new_price, $current_best_price)
 	{
 		if ($new_price === null)

@@ -543,7 +543,7 @@ class CampaignsController extends ApiController
 			$campaign = new Campaign($id);
 			if ($campaign) {
 				$title = $campaign->get_title();
-				$result = $campaign->update(array('status' => $status, 'conditions' => array()), true);
+				$result = $campaign->set_status($status);
 
 				if ($result === true && !is_wp_error($result)) {
 					wpab_campaignbay_log('title : ' . $campaign->get_title() . ' ' . $status, 'error');

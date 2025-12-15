@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,7 +102,8 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 5.  Look for the new **"CampaignBay"** menu in your admin sidebar to get started!
 
 == Changelog ==
-= Changelog =
+= 1.0.6 =
+*   New Feature: Added options to turn off promotional messages on the cart and product pages.
 
 = 1.0.5 =
 *   Enhancement: Major architectural improvement to BOGO (Buy One, Get One) discounts. Free products are now added as separate cart items, providing crystal-clear transparency for customers. This new system unlocks advanced capabilities for our upcoming Pro version, including cross-product BOGO offers and partial discounts.
@@ -127,10 +128,10 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 
 == Upgrade Notice ==
 
-= 1.0.5 =
-*   This update contains minor bug fixes. The upgrade is seamless and requires no action.
+= 1.0.6 =
+*   This update introduces a new feature to turn off promotional messages on the cart and product pages. The upgrade is seamless and requires no action from you.
 
-= 1.0.4 =
+= 1.0.5 =
 *   This update contains minor bug fixes. The upgrade is seamless and requires no action.
 
 = 1.0.2 =

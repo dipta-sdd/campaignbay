@@ -107,17 +107,20 @@ export interface CampaignSettingsType {
   // scheduled & earlybird
   display_as_regular_price?: boolean;
   message_format?: string;
+  show_product_message?: boolean;
 
   // quantity
   enable_quantity_table?: boolean;
   apply_as?: ApplyAsType;
+  cart_quantity_message_location?: BogoMessageLocationType;
   cart_quantity_message_format?: string;
 
   // bogo
   auto_add_free_product?: boolean;
+  show_bogo_message?: boolean;
   bogo_banner_message_format?: string;
   cart_bogo_message_format?: string;
-  bogo_cart_message_location?: BogoMessageLocationType;
+  bogo_cart_message_location?: BogoMessageLocationType;// dont show added here , no need boolean
 }
 export type CampaignSettingsErrorsType = Partial<
   Record<keyof CampaignSettingsType, { message: string }>

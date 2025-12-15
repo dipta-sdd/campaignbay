@@ -362,6 +362,9 @@ class PricingEngine extends Base
 			return $name;
 		$meta = $cart_item['campaignbay'];
 		if (isset($meta['quantity_next_tier'])) {
+			$cart_quantity_message_location = wpab_campaignbay_get_value($meta['quantity_next_tier'], 'settings.cart_quantity_message_location', 'line_item_name');
+			if ($cart_quantity_message_location !== 'line_item_name')
+				return $name;
 			$message = Helper::get_quantity_message($meta['quantity_next_tier']);
 			if ($message !== '' || $message !== null)
 				$name .= '<br/><span>' . $message . '</span>';
@@ -450,6 +453,8 @@ class PricingEngine extends Base
 				// if the simple campaign is set to display as regular price, return
 				if (wpab_campaignbay_get_value($simple, 'display_as_regular_price', false))
 					return;
+				if (wpab_campaignbay_get_value($simple, 'show_product_message', false) === false)
+					return;
 				$value = wpab_campaignbay_get_value($simple, 'value', 0);
 				$type = wpab_campaignbay_get_value($simple, 'type', 'percentage');
 				$format = wpab_campaignbay_get_value($simple, 'message_format');
@@ -463,13 +468,15 @@ class PricingEngine extends Base
 			);
 		} else {
 			// if the simple campaign is set to display as regular price, return
-			if (isset($meta['simple']['display_as_regular_price']) && $meta['simple']['display_as_regular_price'] === true)
+			if (wpab_campaignbay_get_value($meta['simple'], 'display_as_regular_price', false) === true)
 				return;
-
-			$format = $meta['simple']['message_format'];
+			wpab_campaignbay_log('________ simple: ' . print_r($meta['simple'], true));
+			if (wpab_campaignbay_get_value($meta['simple'], 'show_product_message', true) === false)
+				return;
+			$format = wpab_campaignbay_get_value($meta['simple'], 'message_format');
 			$message = Woocommerce::generate_product_banner(
-				$meta['simple']['value'],
-				$meta['simple']['type'],
+				wpab_campaignbay_get_value($meta['simple'], 'value', 0),
+				wpab_campaignbay_get_value($meta['simple'], 'type', 'percentage'),
 				$format
 			);
 		}
