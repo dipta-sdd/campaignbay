@@ -25,14 +25,6 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
   errors,
   type,
 }) => {
-  // useEffect(() => {
-  //   // if (type === "bogo" && settings?.apply_as === "coupon") {
-  //   //   setSettings((prev) => ({
-  //   //     ...prev,
-  //   //     apply_as: "line_total",
-  //   //   }));
-  //   // }
-  // }, [type]);
 
   const handleApplyAsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value: string = e.target.value;
