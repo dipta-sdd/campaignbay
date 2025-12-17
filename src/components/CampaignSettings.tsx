@@ -205,20 +205,20 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   options={[
                     {
                       value: "line_item_name",
+                      labelNode: (
+                        <span className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                          {__("Line Item Name", "campaignbay")}
+                          <span className="campaignbay-text-xs campaignbay-opacity-50 !campaignbay-font-normal">
+                            May not work in block theme.
+                          </span>
+                        </span>
+                      ),
                       label: __("Line Item Name", "campaignbay"),
                     },
                     {
                       value: "notice",
                       label: __("Notice", "campaignbay"),
-                      labelNode: (
-                        <span className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-4 campaignbay-text-gray-600">
-                          {__("Notice", "campaignbay")}
-                          <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded campaignbay-rounded-full campaignbay-text-xs">
-                            {__("Coming Soon", "campaignbay")}
-                          </span>
-                        </span>
-                      ),
-                      disabled: true,
+                      variant: "coming_soon",
                     },
                     {
                       value: "dont_show",
@@ -343,20 +343,20 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   options={[
                     {
                       value: "line_item_name",
+                      labelNode: (
+                        <span className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                          {__("Line Item Name", "campaignbay")}
+                          <span className="campaignbay-text-xs campaignbay-opacity-50 !campaignbay-font-normal">
+                            May not work in block theme.
+                          </span>
+                        </span>
+                      ),
                       label: __("Line Item Name", "campaignbay"),
                     },
                     {
                       value: "notice",
                       label: __("Notice", "campaignbay"),
-                      labelNode: (
-                        <span className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-4 campaignbay-text-gray-600">
-                          {__("Notice", "campaignbay")}
-                          <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded campaignbay-rounded-full campaignbay-text-xs">
-                            {__("Coming Soon", "campaignbay")}
-                          </span>
-                        </span>
-                      ),
-                      disabled: true,
+                      variant: "coming_soon",
                     },
                     {
                       value: "dont_show",

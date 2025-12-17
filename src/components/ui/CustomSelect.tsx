@@ -7,7 +7,8 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { useClickOutside } from "./hooks/useClickOutside";
-import { ChevronDown, LockKeyhole } from "lucide-react";
+import { ChevronDown, Hourglass, LockKeyhole } from "lucide-react";
+import { __ } from "@wordpress/i18n";
 export interface SelectOption {
   value: string | number;
   label: string;
@@ -22,7 +23,7 @@ export interface SelectOption {
    * Special variants for the option.
    * 'buy_pro' will disable the option and show a tooltip.
    */
-  variant?: "buy_pro";
+  variant?: "buy_pro" | "coming_soon";
 }
 
 export interface SelectProps {
@@ -209,7 +210,7 @@ const CustomSelect: React.FC<SelectProps> = ({
   }, [highlightedIndex, isOpen]);
 
   const handleSelect = (option: SelectOption) => {
-    if (option.disabled || option.variant === "buy_pro") return;
+    if (option.disabled || option.variant === "buy_pro" || option.variant === "coming_soon") return;
     onChange(option.value);
     setIsOpen(false);
     setSearchQuery("");
@@ -394,7 +395,7 @@ const CustomSelect: React.FC<SelectProps> = ({
           ${
             disabled
               ? "campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-text-gray-400 campaignbay-border-gray-200"
-              : ""
+              : "hover:!campaignbay-border-[#183ad6]"
           }
           ${isOpen ? `${hoverBorder}` : ""}
           ${isError ? `${errorClassName}` : ""}
@@ -483,7 +484,8 @@ const CustomSelect: React.FC<SelectProps> = ({
                   highlightedIndex === index ||
                   (tooltipState?.visible && tooltipState.index === index);
                 const isPro = option.variant === "buy_pro";
-                const isDisabled = option.disabled || isPro;
+                const isComingSoon = option.variant === "coming_soon";
+                const isDisabled = option.disabled || isPro || isComingSoon;
 
                 return (
                   <li
@@ -565,6 +567,15 @@ const CustomSelect: React.FC<SelectProps> = ({
                         className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
                       >
                         <LockKeyhole className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-[#f02a74] " />
+                      </span>
+                    ) : isComingSoon ? (
+                      <span
+                        className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
+                      >
+                        <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded campaignbay-rounded-full campaignbay-text-xs campaignbay-flex campaignbay-items-center campaignbay-gap-1">
+                          <Hourglass className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-white" />
+                          {__("Coming Soon", "campaignbay")}
+                        </span>
                       </span>
                     ) : null}
                   </li>
