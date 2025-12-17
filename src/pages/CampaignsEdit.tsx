@@ -72,7 +72,7 @@ const CampaignsEdit: FC = () => {
       });
       setIsSaving(false);
       addToast(__("Campaign saved successfully", "campaignbay"), "success");
-      // navigate("/campaigns");
+      navigate("/campaigns");
     } catch (error: any) {
       setIsSaving(false);
       if (

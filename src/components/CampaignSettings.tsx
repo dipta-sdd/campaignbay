@@ -11,6 +11,7 @@ import {
 } from "../types";
 import Tooltip from "./Tooltip";
 import { getSettings } from "../utils/settings";
+import CustomSelect from "./ui/CustomSelect";
 
 interface CampaignSettingsProps {
   settings: CampaignSettingsType;
@@ -25,9 +26,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
   errors,
   type,
 }) => {
-
-  const handleApplyAsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value: string = e.target.value;
+  const handleApplyAsChange = (value: string | number) => {
     if (value !== "coupon" && value !== "line_total" && value !== "fee") return;
     setSettings((prev: CampaignSettingsType) => ({
       ...settings,
@@ -35,10 +34,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
     }));
   };
 
-  const handleCartMessageLocationChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const value = e.target.value;
+  const handleCartMessageLocationChange = (value: string | number) => {
     if (
       value !== "line_item_name" &&
       value !== "notice" &&
@@ -169,20 +165,20 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 <label htmlFor="apply_as">
                   {__("Apply Discount As", "campaignbay")} <Required />
                 </label>
-                <select
+                <CustomSelect
                   id="apply_as"
-                  className={`wpab-input w-100 ${
-                    errors?.apply_as ? "wpab-input-error" : ""
-                  }`}
+                  isError={!!errors?.apply_as}
                   value={settings?.apply_as || "line_total"}
                   onChange={handleApplyAsChange}
-                >
-                  <option value="line_total">
-                    {__("Strike through in line total", "campaignbay")}
-                  </option>
-                  <option value="coupon">{__("Coupon", "campaignbay")}</option>
-                  <option value="fee">{__("Fee", "campaignbay")}</option>
-                </select>
+                  options={[
+                    {
+                      value: "line_total",
+                      label: __("Strike through in line total", "campaignbay"),
+                    },
+                    { value: "coupon", label: __("Coupon", "campaignbay") },
+                    { value: "fee", label: __("Fee", "campaignbay") },
+                  ]}
+                />
                 {renderError(errors?.apply_as)}
               </div>
 
@@ -195,13 +191,9 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   )}{" "}
                   <Required />
                 </label>
-                <select
+                <CustomSelect
                   id="cart-message-location"
-                  className={`wpab-input w-100  ${
-                    errors?.cart_quantity_message_location
-                      ? "wpab-input-error"
-                      : ""
-                  }`}
+                  isError={!!errors?.cart_quantity_message_location}
                   value={
                     settings?.cart_quantity_message_location || "line_item_name"
                   }
@@ -210,17 +202,30 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     "campaignbay"
                   )}
                   onChange={handleCartMessageLocationChange}
-                >
-                  <option value="line_item_name">
-                    {__("Line Item Name", "campaignbay")}
-                  </option>
-                  <option value="notice" disabled>
-                    {__("Notice", "campaignbay")}
-                  </option>
-                  <option value="dont_show">
-                    {__("Don't Show", "campaignbay")}
-                  </option>
-                </select>
+                  options={[
+                    {
+                      value: "line_item_name",
+                      label: __("Line Item Name", "campaignbay"),
+                    },
+                    {
+                      value: "notice",
+                      label: __("Notice", "campaignbay"),
+                      labelNode: (
+                        <span className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-4 campaignbay-text-gray-600">
+                          {__("Notice", "campaignbay")}
+                          <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded campaignbay-rounded-full campaignbay-text-xs">
+                            {__("Coming Soon", "campaignbay")}
+                          </span>
+                        </span>
+                      ),
+                      disabled: true,
+                    },
+                    {
+                      value: "dont_show",
+                      label: __("Don't Show", "campaignbay"),
+                    },
+                  ]}
+                />
                 <span className="wpab-input-help">
                   {__(
                     "Choose where the next quantity discount message will be displayed on the cart page.",
@@ -324,30 +329,41 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
               </div>
               {/* cart page message location , line items name or notice or dont show*/}
               <div className="cb-form-input-con !campaignbay-p-0">
-                <label htmlFor="cart-message-location">
+                <label htmlFor="bogo-cart-message-location">
                   {__("Cart Page Message Location", "campaignbay")} <Required />
                 </label>
-                <select
-                  id="cart-message-location"
-                  className={`wpab-input w-100  ${
-                    errors?.bogo_cart_message_location ? "wpab-input-error" : ""
-                  }`}
+                <CustomSelect
+                  id="bogo-cart-message-location"
+                  isError={!!errors?.bogo_cart_message_location}
                   value={
                     settings?.bogo_cart_message_location || "line_item_name"
                   }
                   aria-label={__("Cart Page Message Location", "campaignbay")}
                   onChange={handleCartMessageLocationChange}
-                >
-                  <option value="line_item_name">
-                    {__("Line Item Name", "campaignbay")}
-                  </option>
-                  <option value="notice" disabled>
-                    {__("Notice", "campaignbay")}
-                  </option>
-                  <option value="dont_show">
-                    {__("Don't Show", "campaignbay")}
-                  </option>
-                </select>
+                  options={[
+                    {
+                      value: "line_item_name",
+                      label: __("Line Item Name", "campaignbay"),
+                    },
+                    {
+                      value: "notice",
+                      label: __("Notice", "campaignbay"),
+                      labelNode: (
+                        <span className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-4 campaignbay-text-gray-600">
+                          {__("Notice", "campaignbay")}
+                          <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded campaignbay-rounded-full campaignbay-text-xs">
+                            {__("Coming Soon", "campaignbay")}
+                          </span>
+                        </span>
+                      ),
+                      disabled: true,
+                    },
+                    {
+                      value: "dont_show",
+                      label: __("Don't Show", "campaignbay"),
+                    },
+                  ]}
+                />
                 <span className="wpab-input-help">
                   {__(
                     "Choose where the BOGO discount message will be displayed on the cart page.",
@@ -407,7 +423,9 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                       "campaignbay"
                     )}
                     className={`wpab-input w-100  ${
-                      errors?.bogo_banner_message_format ? "wpab-input-error" : ""
+                      errors?.bogo_banner_message_format
+                        ? "wpab-input-error"
+                        : ""
                     }`}
                     value={settings?.bogo_banner_message_format}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

@@ -1,10 +1,17 @@
-import React, { useState, useRef, useEffect, KeyboardEvent, useMemo } from 'react';
-import { createPortal } from 'react-dom';
-import { useClickOutside } from './hooks/useClickOutside';
-import { ChevronDown, LockKeyhole } from 'lucide-react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  KeyboardEvent,
+  useMemo,
+} from "react";
+import { createPortal } from "react-dom";
+import { useClickOutside } from "./hooks/useClickOutside";
+import { ChevronDown, LockKeyhole } from "lucide-react";
 export interface SelectOption {
   value: string | number;
   label: string;
+  labelNode?: React.ReactNode;
   /**
    * Optional custom classes for this specific option.
    * Useful for multi-color dropdowns (e.g., badges, status colors).
@@ -15,18 +22,19 @@ export interface SelectOption {
    * Special variants for the option.
    * 'buy_pro' will disable the option and show a tooltip.
    */
-  variant?: 'buy_pro';
+  variant?: "buy_pro";
 }
 
 export interface SelectProps {
+  id?: string;
   /**
    * The current selected value(s)
    */
-  value?: SelectOption['value'] | null;
+  value?: SelectOption["value"] | null;
   /**
    * Callback when an option is selected
    */
-  onChange: (value: SelectOption['value']) => void;
+  onChange: (value: SelectOption["value"]) => void;
   /**
    * List of available options
    */
@@ -57,6 +65,7 @@ export interface SelectProps {
    * Helper text or label (optional)
    */
   label?: string;
+
   /**
    * Enable search functionality within the dropdown
    */
@@ -77,27 +86,34 @@ export interface SelectProps {
    * Custom text color class
    */
   color?: string;
+
+  isError?: boolean;
+
+  errorClassName?: string;
 }
 
 const CustomSelect: React.FC<SelectProps> = ({
+  id,
   value,
   con_ref,
   onChange,
   options,
-  placeholder = 'Select an option...',
+  placeholder = "Select an option...",
   disabled = false,
-  className = '',
+  className = "",
   fontSize = 13,
   fontWeight = 500,
   label,
   enableSearch = false,
-  border = 'campaignbay-border-gray-300',
-  hoverBorder = '!campaignbay-border-[#183ad6]',
-  color = 'campaignbay-text-gray-[#0a4b78]',
+  border = "campaignbay-border-gray-300",
+  hoverBorder = "!campaignbay-border-[#183ad6]",
+  color = "campaignbay-text-gray-[#0a4b78]",
+  isError = false,
+  errorClassName = "wpab-input-error",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Tooltip state
   const [tooltipState, setTooltipState] = useState<{
@@ -115,11 +131,14 @@ const CustomSelect: React.FC<SelectProps> = ({
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   // Track interaction type to prevent auto-scrolling on mouse hover
-  const interactionType = useRef<'mouse' | 'keyboard'>('keyboard');
+  const interactionType = useRef<"mouse" | "keyboard">("keyboard");
 
   // Close dropdown when clicking outside
   useClickOutside(containerRef, (event) => {
-    if (tooltipRef.current && tooltipRef.current.contains(event.target as Node)) {
+    if (
+      tooltipRef.current &&
+      tooltipRef.current.contains(event.target as Node)
+    ) {
       return;
     }
     setIsOpen(false);
@@ -156,17 +175,22 @@ const CustomSelect: React.FC<SelectProps> = ({
       setHighlightedIndex(initialIndex);
 
       // Ensure we allow scrolling to the initial selection
-      interactionType.current = 'keyboard';
+      interactionType.current = "keyboard";
     } else {
       // Clear search when closed
-      setSearchQuery('');
+      setSearchQuery("");
       setTooltipState(null);
     }
   }, [isOpen, value, enableSearch, filteredOptions.length]);
 
   // Scroll highlighted item into view (Only if interaction was keyboard or initial open)
   useEffect(() => {
-    if (isOpen && listRef.current && highlightedIndex >= 0 && interactionType.current === 'keyboard') {
+    if (
+      isOpen &&
+      listRef.current &&
+      highlightedIndex >= 0 &&
+      interactionType.current === "keyboard"
+    ) {
       const list = listRef.current;
       const element = list.children[highlightedIndex] as HTMLElement;
       if (element) {
@@ -185,10 +209,10 @@ const CustomSelect: React.FC<SelectProps> = ({
   }, [highlightedIndex, isOpen]);
 
   const handleSelect = (option: SelectOption) => {
-    if (option.disabled || option.variant === 'buy_pro') return;
+    if (option.disabled || option.variant === "buy_pro") return;
     onChange(option.value);
     setIsOpen(false);
-    setSearchQuery('');
+    setSearchQuery("");
     setTooltipState(null);
   };
 
@@ -199,11 +223,11 @@ const CustomSelect: React.FC<SelectProps> = ({
     // But if closed, or if search is disabled, this handles keys.
     if (isOpen && enableSearch) return;
 
-    interactionType.current = 'keyboard';
+    interactionType.current = "keyboard";
 
     switch (e.key) {
-      case 'Enter':
-      case ' ':
+      case "Enter":
+      case " ":
         e.preventDefault();
         if (isOpen) {
           if (filteredOptions[highlightedIndex]) {
@@ -213,7 +237,7 @@ const CustomSelect: React.FC<SelectProps> = ({
           setIsOpen((prev) => !prev);
         }
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
         if (!isOpen) {
           setIsOpen(true);
@@ -225,7 +249,7 @@ const CustomSelect: React.FC<SelectProps> = ({
           });
         }
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
         if (!isOpen) {
           setIsOpen(true);
@@ -237,10 +261,10 @@ const CustomSelect: React.FC<SelectProps> = ({
           });
         }
         break;
-      case 'Tab':
+      case "Tab":
         setIsOpen(false);
         break;
-      case 'Escape':
+      case "Escape":
         if (isOpen) {
           e.preventDefault();
           setIsOpen(false);
@@ -253,34 +277,36 @@ const CustomSelect: React.FC<SelectProps> = ({
 
   // Keyboard handler for the Search Input
   const handleSearchKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    interactionType.current = 'keyboard';
+    interactionType.current = "keyboard";
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
         setHighlightedIndex((prev) => {
           const next = prev < filteredOptions.length - 1 ? prev + 1 : 0;
           return next;
         });
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
         setHighlightedIndex((prev) => {
           const next = prev > 0 ? prev - 1 : filteredOptions.length - 1;
           return next;
         });
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (filteredOptions[highlightedIndex]) {
           handleSelect(filteredOptions[highlightedIndex]);
         }
         break;
-      case 'Escape':
+      case "Escape":
         e.preventDefault();
         setIsOpen(false);
         // Return focus to the trigger
         if (containerRef.current) {
-          const trigger = containerRef.current.querySelector('[role="combobox"]') as HTMLElement;
+          const trigger = containerRef.current.querySelector(
+            '[role="combobox"]'
+          ) as HTMLElement;
           trigger?.focus();
         }
         break;
@@ -290,8 +316,12 @@ const CustomSelect: React.FC<SelectProps> = ({
   };
 
   // Handle showing tooltip with delay logic
-  const handleOptionMouseEnter = (e: React.MouseEvent<HTMLLIElement>, index: number, isPro: boolean) => {
-    interactionType.current = 'mouse';
+  const handleOptionMouseEnter = (
+    e: React.MouseEvent<HTMLLIElement>,
+    index: number,
+    isPro: boolean
+  ) => {
+    interactionType.current = "mouse";
     setHighlightedIndex(index);
 
     if (hoverTimeoutRef.current) {
@@ -306,7 +336,7 @@ const CustomSelect: React.FC<SelectProps> = ({
         top: rect.top,
         left: rect.left + rect.width / 2,
         width: rect.width,
-        index: index
+        index: index,
       });
     } else {
       // If moving to a non-pro item, close tooltip immediately
@@ -347,6 +377,7 @@ const CustomSelect: React.FC<SelectProps> = ({
 
       {/* Trigger Button */}
       <div
+        id={id}
         ref={con_ref}
         tabIndex={disabled ? -1 : 0}
         role="combobox"
@@ -359,9 +390,14 @@ const CustomSelect: React.FC<SelectProps> = ({
         className={`
           campaignbay-relative campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-w-full campaignbay-gap-0 campaignbay-px-4 campaignbay-py-[9px] campaignbay-text-left !campaignbay-cursor-pointer 
           campaignbay-transition-all campaignbay-duration-200 campaignbay-ease-in-out wpab-multiselect-input campaignbay-border ${border} 
-          ${!disabled && !isOpen ? ` ${color} ` : ''}
-          ${disabled ? 'campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-text-gray-400 campaignbay-border-gray-200' : ''}
-          ${isOpen ? `${hoverBorder}` : ''}
+          ${!disabled && !isOpen ? ` ${color} ` : ""}
+          ${
+            disabled
+              ? "campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-text-gray-400 campaignbay-border-gray-200"
+              : ""
+          }
+          ${isOpen ? `${hoverBorder}` : ""}
+          ${isError ? `${errorClassName}` : ""}
         `}
       >
         <div className="campaignbay-flex-1 campaignbay-min-w-0">
@@ -380,10 +416,14 @@ const CustomSelect: React.FC<SelectProps> = ({
               placeholder="Search..."
             />
           ) : (
-            <span className={`campaignbay-block campaignbay-truncate ${color} hover:!campaignbay-text-[#183ad6] campaignbay-text-[${fontSize}px] campaignbay-font-[${fontWeight}]`}>
+            <span
+              className={`campaignbay-block campaignbay-truncate ${color} hover:!campaignbay-text-[#183ad6] campaignbay-text-[${fontSize}px] campaignbay-font-[${fontWeight}]`}
+            >
               {value ? (
-                <span className={`campaignbay-flex campaignbay-items-center campaignbay-gap-2 `}>
-                  {selectedOption?.label}
+                <span
+                  className={`campaignbay-flex campaignbay-items-center campaignbay-gap-2 `}
+                >
+                  {selectedOption?.labelNode || selectedOption?.label}
                 </span>
               ) : (
                 placeholder
@@ -394,7 +434,11 @@ const CustomSelect: React.FC<SelectProps> = ({
 
         {/* Chevron Icon */}
         <span className="campaignbay-flex-shrink-0 campaignbay-ml-2 campaignbay-flex campaignbay-items-center">
-          <ChevronDown className={`campaignbay-h-4 campaignbay-w-4 campaignbay-text-gray-700 campaignbay-transition-transform campaignbay-duration-200 ${isOpen ? 'campaignbay-transform campaignbay-rotate-180' : ''}`} />
+          <ChevronDown
+            className={`campaignbay-h-4 campaignbay-w-4 campaignbay-text-gray-700 campaignbay-transition-transform campaignbay-duration-200 ${
+              isOpen ? "campaignbay-transform campaignbay-rotate-180" : ""
+            }`}
+          />
           {/* <svg
             className={`campaignbay-h-5 campaignbay-w-5 ${color} campaignbay-transition-transform campaignbay-duration-200 ${isOpen ? 'campaignbay-transform campaignbay-rotate-180' : ''}`}
             xmlns="http://www.w3.org/2000/svg"
@@ -413,7 +457,10 @@ const CustomSelect: React.FC<SelectProps> = ({
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="campaignbay-absolute campaignbay-z-50 campaignbay-w-full campaignbay-bg-white campaignbay-border campaignbay-border-gray-200" style={{ zIndex: 50000 }}>
+        <div
+          className="campaignbay-absolute campaignbay-z-50 campaignbay-w-full campaignbay-bg-white campaignbay-border campaignbay-border-gray-200"
+          style={{ zIndex: 50000 }}
+        >
           {/* Options List */}
           <ul
             ref={listRef}
@@ -422,18 +469,20 @@ const CustomSelect: React.FC<SelectProps> = ({
             tabIndex={-1}
             onScroll={() => setTooltipState(null)} // Hide tooltip on scroll to prevent detachment
             className={`campaignbay-max-h-60 campaignbay-overflow-auto focus:campaignbay-outline-none campaignbay-scrollbar-hide campaignbay-relative ${color} campaignbay-font-[${fontWeight}] campaignbay-text-[${fontSize}px]`}
-            style={{ scrollbarWidth: 'none' }}
+            style={{ scrollbarWidth: "none" }}
           >
             {filteredOptions.length === 0 ? (
               <li className="campaignbay-relative campaignbay-cursor-default campaignbay-select-none campaignbay-p-1  campaignbay-italic campaignbay-text-center ">
-                {searchQuery ? 'No results found' : 'No options available'}
+                {searchQuery ? "No results found" : "No options available"}
               </li>
             ) : (
               filteredOptions.map((option, index) => {
                 const isSelected = selectedOption?.value === option.value;
                 // Highlight if matched index OR if it's the item keeping the tooltip open
-                const isHighlighted = highlightedIndex === index || (tooltipState?.visible && tooltipState.index === index);
-                const isPro = option.variant === 'buy_pro';
+                const isHighlighted =
+                  highlightedIndex === index ||
+                  (tooltipState?.visible && tooltipState.index === index);
+                const isPro = option.variant === "buy_pro";
                 const isDisabled = option.disabled || isPro;
 
                 return (
@@ -442,28 +491,44 @@ const CustomSelect: React.FC<SelectProps> = ({
                     id={`option-${index}`}
                     role="option"
                     aria-selected={isSelected}
-                    onMouseEnter={(e) => handleOptionMouseEnter(e, index, !!isPro)}
+                    onMouseEnter={(e) =>
+                      handleOptionMouseEnter(e, index, !!isPro)
+                    }
                     onMouseLeave={handleOptionMouseLeave}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSelect(option);
                     }}
                     className={`
-                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-pl-[12px] campaignbay-py-2 campaignbay-pr-9 campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 
-                      ${isDisabled ? 'campaignbay-opacity-100 campaignbay-cursor-not-allowed campaignbay-text-gray-500 campaignbay-bg-gray-100' : ''}
-                      ${isHighlighted && !isDisabled
-                        ? 'campaignbay-bg-blue-600 campaignbay-text-white'
-                        : (isDisabled ? 'campaignbay-text-gray-400' : '')
+                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-pl-[12px] campaignbay-min-h-[36px] campaignbay-pr-9 campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 
+                      ${
+                        isDisabled
+                          ? "campaignbay-opacity-100 !campaignbay-cursor-not-allowed campaignbay-text-gray-500 campaignbay-bg-gray-200"
+                          : ""
                       }
-                      ${(!isHighlighted && !isDisabled) ? (option.className || '') : ''}
+                      ${
+                        isHighlighted && !isDisabled
+                          ? "campaignbay-bg-blue-600 campaignbay-text-white"
+                          : isDisabled
+                          ? "campaignbay-text-gray-400"
+                          : ""
+                      }
+                      ${
+                        !isHighlighted && !isDisabled
+                          ? option.className || ""
+                          : ""
+                      }
                     `}
                   >
-                    <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between">
+                    <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-min-h-[36px]">
                       <span
-                        className={`campaignbay-block campaignbay-truncate ${isSelected ? 'campaignbay-font-semibold' : 'campaignbay-font-normal'
-                          }`}
+                        className={`campaignbay-block campaignbay-truncate ${
+                          isSelected
+                            ? "campaignbay-font-semibold"
+                            : "campaignbay-font-normal"
+                        }`}
                       >
-                        {option.label}
+                        {option.labelNode || option.label}
                       </span>
 
                       {/* Lock Icon for Buy Pro */}
@@ -474,7 +539,13 @@ const CustomSelect: React.FC<SelectProps> = ({
 
                     {/* Checkmark for selected item */}
                     {isSelected ? (
-                      <span className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4 ${isHighlighted && !isDisabled ? 'campaignbay-text-white' : 'campaignbay-text-blue-600'}`}>
+                      <span
+                        className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4 ${
+                          isHighlighted && !isDisabled
+                            ? "campaignbay-text-white"
+                            : "campaignbay-text-blue-600"
+                        }`}
+                      >
                         <svg
                           className="campaignbay-h-5 campaignbay-w-5"
                           xmlns="http://www.w3.org/2000/svg"
@@ -489,9 +560,13 @@ const CustomSelect: React.FC<SelectProps> = ({
                           />
                         </svg>
                       </span>
-                    ) : isPro ? <span className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4`}>
-                      <LockKeyhole className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-[#f02a74] " />
-                    </span> : null}
+                    ) : isPro ? (
+                      <span
+                        className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
+                      >
+                        <LockKeyhole className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-[#f02a74] " />
+                      </span>
+                    ) : null}
                   </li>
                 );
               })
@@ -501,31 +576,35 @@ const CustomSelect: React.FC<SelectProps> = ({
       )}
 
       {/* Tooltip Portal - Renders to body to avoid clipping and stacking issues */}
-      {isOpen && tooltipState?.visible && createPortal(
-        <div
-          ref={tooltipRef}
-          className="campaignbay-fixed campaignbay-z-[50001] campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-gap-1.5 campaignbay-bg-gray-900 campaignbay-text-white campaignbay-text-xs campaignbay-p-2 campaignbay-min-w-[140px]"
-          style={{
-            top: tooltipState.top + 5, // Adjusted to user preference
-            left: tooltipState.left,
-            transform: 'translate(-50%, -100%)',
-          }}
-          onMouseEnter={handleTooltipMouseEnter}
-          onMouseLeave={handleTooltipMouseLeave}
-        >
-          <span className="campaignbay-font-medium campaignbay-whitespace-nowrap">Upgrade to unlock</span>
-          <a
-            href="https://wpanchorbay.com/campaignbay/"
-            target="_blank"
-            className="campaignbay-w-full campaignbay-bg-[#f02a74] hover:!campaignbay-bg-[#e71161] campaignbay-text-white hover:!campaignbay-text-white campaignbay-font-bold campaignbay-py-1.5 campaignbay-px-3 campaignbay-transition-colors focus:campaignbay-outline-none focus:campaignbay-ring-0 campaignbay-cursor-pointer"
+      {isOpen &&
+        tooltipState?.visible &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            className="campaignbay-fixed campaignbay-z-[50001] campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-gap-1.5 campaignbay-bg-gray-900 campaignbay-text-white campaignbay-text-xs campaignbay-p-2 campaignbay-min-w-[140px]"
+            style={{
+              top: tooltipState.top + 5, // Adjusted to user preference
+              left: tooltipState.left,
+              transform: "translate(-50%, -100%)",
+            }}
+            onMouseEnter={handleTooltipMouseEnter}
+            onMouseLeave={handleTooltipMouseLeave}
           >
-            Buy Pro
-          </a>
-          {/* Tooltip Arrow */}
-          <div className="campaignbay-absolute campaignbay-top-full campaignbay-left-1/2 -campaignbay-translate-x-1/2 campaignbay-border-4 campaignbay-border-transparent campaignbay-border-t-gray-900"></div>
-        </div>,
-        document.body
-      )}
+            <span className="campaignbay-font-medium campaignbay-whitespace-nowrap">
+              Upgrade to unlock
+            </span>
+            <a
+              href="https://wpanchorbay.com/campaignbay/"
+              target="_blank"
+              className="campaignbay-w-full campaignbay-bg-[#f02a74] hover:!campaignbay-bg-[#e71161] campaignbay-text-white hover:!campaignbay-text-white campaignbay-font-bold campaignbay-py-1.5 campaignbay-px-3 campaignbay-transition-colors focus:campaignbay-outline-none focus:campaignbay-ring-0 campaignbay-cursor-pointer"
+            >
+              Buy Pro
+            </a>
+            {/* Tooltip Arrow */}
+            <div className="campaignbay-absolute campaignbay-top-full campaignbay-left-1/2 -campaignbay-translate-x-1/2 campaignbay-border-4 campaignbay-border-transparent campaignbay-border-t-gray-900"></div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
