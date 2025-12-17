@@ -173,6 +173,12 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
                 { label: __("Quantity Based Discount", "campaignbay"), value: "quantity" },
                 { label: __("EarlyBird Discount", "campaignbay"), value: "earlybird" },
                 { label: __("Buy X Get Y - Advanced", "campaignbay"), value: "bogo_pro", variant: "buy_pro" },
+                {
+                  label: __("Paired Discount", "campaignbay"),
+                  value: "paired",
+                  variant: "buy_pro",
+                },
+
               ]}
               value={campaign.type as string}
               onChange={(value) =>

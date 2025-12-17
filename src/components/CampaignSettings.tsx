@@ -2,15 +2,13 @@ import { __ } from "@wordpress/i18n";
 import Required from "./Required";
 import CbCheckbox from "./CbCheckbox";
 import { renderError } from "../pages/CampaignsEdit";
-import { useEffect, FC, Dispatch, SetStateAction } from "react";
+import { FC, Dispatch, SetStateAction } from "react";
 import Placeholders from "./PlaceHolders";
 import {
   CampaignSettingsErrorsType,
   CampaignSettingsType,
   CampaignType,
 } from "../types";
-import Tooltip from "./Tooltip";
-import { getSettings } from "../utils/settings";
 import CustomSelect from "./ui/CustomSelect";
 
 interface CampaignSettingsProps {
@@ -56,7 +54,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
         <label htmlFor="start-time">
           {__("DISPLAY CONFIGURATIONS", "campaignbay")} <Required />
         </label>
-        <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px]">
+        <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2  campaignbay-gap-[10px] campaignbay-gap-y-[20px]">
           {type === "earlybird" || type === "scheduled" ? (
             <>
               <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">

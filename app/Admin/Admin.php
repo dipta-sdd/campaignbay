@@ -100,6 +100,7 @@ class Admin
 			array($this, 'add_setting_root_div')
 		);
 		$submenu_pages = array();
+
 		$submenu_pages[] = array(
 			'menu_title' => 'All Campaigns',
 			'menu_slug' => '#/campaigns',
@@ -122,6 +123,35 @@ class Admin
 				array($this, 'add_setting_root_div')
 			);
 		}
+	}
+
+	/**
+	 * Add "Campaign" to the admin bar "New" dropdown.
+	 *
+	 * @since 1.0.7
+	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
+	 */
+	public function add_admin_bar_new_item($wp_admin_bar)
+	{
+		// 1. Check Permissions: Only show this to admins
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+
+		// 2. Define the URL
+		// This points to your React App's "Add Campaign" route.
+		// Adjust 'campaignbay' if your menu slug is different.
+		$href = admin_url('admin.php?page=' . CAMPAIGNBAY_PLUGIN_NAME . '#/campaigns/add');
+
+		// 3. Add the Node
+		$args = array(
+			'id' => 'wpab_cb_new_campaign',    // Unique ID for this node
+			'title' => __('Campaign', CAMPAIGNBAY_TEXT_DOMAIN),
+			'href' => $href,
+			'parent' => 'new-content',             // This ID puts it inside the "+ New" dropdown
+		);
+
+		$wp_admin_bar->add_node($args);
 	}
 
 
@@ -693,28 +723,7 @@ class Admin
 		return $output;
 	}
 
-	/**
-	 * Add plugin menu items.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @param string[] $actions     An array of plugin action links. By default this can include
-	 *                              'activate', 'deactivate', and 'delete'. With Multisite active
-	 *                              this can also include 'network_active' and 'network_only' items.
-	 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
-	 * @param array    $plugin_data An array of plugin data. See get_plugin_data()
-	 *                              and the {@see 'plugin_row_meta'} filter for the list
-	 *                              of possible values.
-	 * @param string   $context     The plugin context. By default this can include 'all',
-	 *                              'active', 'inactive', 'recently_activated', 'upgrade',
-	 *                              'mustuse', 'dropins', and 'search'.
-	 * @return array settings schema for this plugin.
-	 */
-	public function add_plugin_action_links($actions, $plugin_file, $plugin_data, $context)
-	{
-		$actions[] = '<a href="' . esc_url(menu_page_url($this->menu_info['menu_slug'], false)) . '">' . esc_html__('Settings', 'campaignbay') . '</a>';
-		return $actions;
-	}
+
 
 	/**
 	 * Add plugin row meta links.

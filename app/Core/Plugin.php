@@ -209,6 +209,7 @@ class Plugin
 		$plugin_basename = plugin_basename(CAMPAIGNBAY_PATH . 'campaignbay.php');
 		$this->loader->add_filter('plugin_action_links_' . $plugin_basename, $plugin_admin, 'add_plugin_action_links', 10, 4);
 		$this->loader->add_filter('plugin_row_meta', $plugin_admin, 'add_plugin_row_meta', 10, 2);
+		$this->loader->add_action('admin_bar_menu', $plugin_admin, 'add_admin_bar_new_item', 100);
 	}
 
 	/**

@@ -749,6 +749,7 @@
     & input {
       min-width: 20px;
       width: auto;
+    min-height: unset !important;
 
       &[type="number"] {
         width: 90px;
@@ -1141,7 +1142,6 @@
 
   & .cb-toggle-group-control::before {
     background-color: #{$cb-color-primary};
-    left: 0px;
   }
 
   & .cb-input-with-suffix {
@@ -1335,17 +1335,18 @@
       position: relative;
       .wpab-input {
         background-color: #{$cb-color-body};
-        border: none;
+        border: 1px solid transparent;
         box-shadow: none;
         border-radius: 0;
         &:hover {
-          border-color: #{$cb-color-body};
+          border-color: #{$cb-border-color-base}
         }
         &::placeholder {
           color: #{$cb-color-black}aa;
         }
         &:focus {
           background-color: #{$cb-color-white};
+          border-color: #{$cb-border-color-base};
         }
       }
     }
@@ -1428,7 +1429,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: #{$cb-fs-lg};
-      & tr:has(input[type="checkbox"]:checked) {
+      & tbody tr:has(input[type="checkbox"]:checked) {
         background-color: #{$cb-color-body};
         & td {
           background-color: #{$cb-color-body};
