@@ -98,7 +98,8 @@ class Filter
     public function match($product, $campaign)
     {
         $settings = Common::get_instance()->get_settings();
-        if (is_a($product, 'WC_Product')) {
+        if (is_a($product, 'WC_Product') ) {
+            $result = false;
             $is_on_sale = Woocommerce::is_product_in_sale($product);
             $product_id = Woocommerce::get_product_or_parent_id($product);
             $type = $campaign->get_target_type();
@@ -106,15 +107,14 @@ class Filter
             $exclude_sale_item = $campaign->get_exclude_sale_items();
 
             if ($is_on_sale && $exclude_sale_item) {
-                return false;
+                $result = false;
             }
             if ('entire_store' === $type) {
-                return true;
+                $result = true;
             } else if ('product' === $type) {
                 $result = $this->compareWithProducts($campaign->get_target_ids(), $is_exclude, $product_id, $product);
-                return $result;
             } elseif ('category' === $type) {
-                return $this->compareWithCategories($product, $campaign->get_target_ids(), $is_exclude);
+                $result = $this->compareWithCategories($product, $campaign->get_target_ids(), $is_exclude);
             }
             // elseif ('tags' === $type) {
             //     $product = Woocommerce::getParentProduct($product);
@@ -129,6 +129,19 @@ class Filter
             // } elseif (in_array($type, array_keys(Woocommerce::getCustomProductTaxonomies()))) {
             //     return $this->compareWithCustomTaxonomy($product_id, $values, $method, $type);
             // }
+
+            /**
+             * Filters the product against the campaign's targeting rules
+             * 
+             * @since 1.0.7
+             * @hook campaignbay_filter_match
+             * 
+             * @param bool $result the result of the match
+             * @param WC_Product $product the product to match  
+             * @param Campaign $campaign the campaign to match
+             */
+            $result = apply_filters('campaignbay_filter_match', $result, $product, $campaign);
+            return $result;
         }
         return false;
     }

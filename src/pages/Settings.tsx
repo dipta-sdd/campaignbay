@@ -148,6 +148,7 @@ const Settings: FC = () => {
       setSettings(response);
       addToast(__("Settings updated successfully", "campaignbay"), "success");
       setEdited(false);
+      setIsSaving(false);
     } catch (error: any) {
       setError(error);
       setIsSaving(false);
@@ -168,6 +169,9 @@ const Settings: FC = () => {
   // if (isLoading) {
   //   return <Loader />;
   // }
+
+  console.log("edited", edited);
+  console.log("isSaving", isSaving);
 
   return (
     <div className="campaignbay-block campaignbay-w-full campaignbay-p-0 campaignbay-m-0 campaignbay-h-auto">
@@ -210,37 +214,44 @@ const Settings: FC = () => {
             title: "Advanced Settings",
           },
         ]}
-      > {isLoading ? <ProductSettingsSkeleton /> : <>
-        {activeTab === "global" && globalSettings && (
-          <GlobalSettings
-            globalSettings={globalSettings}
-            setGlobalSettings={setGlobalSettings}
-            setEdited={setEdited}
-          />
+      >
+        {" "}
+        {isLoading ? (
+          <ProductSettingsSkeleton />
+        ) : (
+          <>
+            {activeTab === "global" && globalSettings && (
+              <GlobalSettings
+                globalSettings={globalSettings}
+                setGlobalSettings={setGlobalSettings}
+                setEdited={setEdited}
+              />
+            )}
+            {activeTab === "product" && productSettings && (
+              <ProductSettings
+                productSettings={productSettings}
+                setProductSettings={setProductSettings}
+                isSaving={isSaving}
+                updateSettings={updateSettings}
+                setEdited={setEdited}
+              />
+            )}
+            {activeTab === "cart" && cartSettings && (
+              <CartSettings
+                cartSettings={cartSettings}
+                setCartSettings={setCartSettings}
+                setEdited={setEdited}
+              />
+            )}
+            {activeTab === "advanced" && advancedSettings && (
+              <AdvancedSettings
+                advancedSettings={advancedSettings}
+                setAdvancedSettings={setAdvancedSettings}
+                setEdited={setEdited}
+              />
+            )}
+          </>
         )}
-        {activeTab === "product" && productSettings && (
-          <ProductSettings
-            productSettings={productSettings}
-            setProductSettings={setProductSettings}
-            isSaving={isSaving}
-            updateSettings={updateSettings}
-            setEdited={setEdited}
-          />
-        )}
-        {activeTab === "cart" && cartSettings && (
-          <CartSettings
-            cartSettings={cartSettings}
-            setCartSettings={setCartSettings}
-            setEdited={setEdited}
-          />
-        )}
-        {activeTab === "advanced" && advancedSettings && (
-          <AdvancedSettings
-            advancedSettings={advancedSettings}
-            setAdvancedSettings={setAdvancedSettings}
-            setEdited={setEdited}
-          />
-        )}</>}
       </TabPanel>
       <div className="wpab-button-con-card">
         <div className="cb-container ">

@@ -712,7 +712,7 @@ const Campaigns: FC = () => {
                             {
                               isFreeCampaign(campaign.type) ?
                                 <a
-                                  className="campaignbay-capitalize "
+                                  className="campaignbay-capitalize campaignbay-campaign-link"
                                   href={`#/campaigns/${campaign.id}`}
                                 >
                                   {campaign.title}
@@ -918,12 +918,20 @@ const Campaigns: FC = () => {
                               }
                             />
                             <div className="campaignbay-flex-1 campaignbay-min-w-0">
-                              <a
-                                className="campaignbay-capitalize campaignbay-campaign-link"
-                                href={`#/campaigns/${campaign.id}`}
-                              >
-                                {campaign.title}
-                              </a>
+                            {
+                              isFreeCampaign(campaign.type) ?
+                                <a
+                                  className="campaignbay-capitalize campaignbay-campaign-link"
+                                  href={`#/campaigns/${campaign.id}`}
+                                >
+                                  {campaign.title}
+                                </a> : <BuyProTooltip > <span
+                                  className="campaignbay-inline-block campaignbay-pr-[30px] campaignbay-capitalize campaignbay-font-bold"
+                                >
+                                  {campaign.title}
+                                </span></BuyProTooltip>
+                            }
+                              
                             </div>
                           </div>
                           <DropdownMenu

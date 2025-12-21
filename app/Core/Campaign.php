@@ -569,7 +569,8 @@ class Campaign
 		if ($settings === null || !is_array($settings) || empty($settings)) {
 			return null;
 		}
-
+		$rules = [];
+		$default = [];
 		if ($type === 'scheduled' || $type === 'earlybird') {
 			$default = [
 				'display_as_regular_price' => false,
@@ -606,7 +607,6 @@ class Campaign
 				'bogo_cart_message_location' => 'required|string|in:line_item_name,notice,dont_show',
 			];
 		}
-
 		/**
 		 * Filters the settings validation rules for a campaign.
 		 *

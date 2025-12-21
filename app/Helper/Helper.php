@@ -179,9 +179,14 @@ class Helper
             if ($product === null) {
                 $campaigns[] = $campaign;
             } else {
+                error_log('-------------------------------------------------------------');
                 $is_applicable = $campaign->is_applicable_to_product($product);
+
                 if ($is_applicable) {
+                    error_log('Applicable campaign: ' . $campaign->get_id() . ' - ' . $campaign->get_title());
                     $campaigns[] = $campaign;
+                } else {
+                    error_log('Not applicable campaign: ' . $campaign->get_id() . ' - ' . $campaign->get_title());
                 }
             }
         }
@@ -341,11 +346,12 @@ class Helper
         });
         $message = "";
         $format = "";
+        $tier = [];
         if (!empty($tiers)) {
             $tier = $tiers[0];
             $show_bogo_message = wpab_campaignbay_get_value($tier, 'settings.show_bogo_message', true);
             if (!$show_bogo_message)
-                return;
+                return '';
             $format = wpab_campaignbay_get_value($tier, 'settings.bogo_banner_message_format', Common::get_instance()->get_settings('bogo_banner_message_format'));
             $message = self::generate_message($format, array(
                 '{buy_quantity}' => $tier['buy_quantity'],
@@ -360,21 +366,37 @@ class Helper
          * details to the promotional bogo banner on the product page.
          *
          * @since 1.0.0
-         * @hook campaignbay_product_display_product_discount_message
+         * @deprecated 1.0.7
+         * @hook campaignbay_product_display_product_bogo_message
          * 
          * @param string     $message The generated message HTML.
          * @param WC_Product $product The current product object.
          * @param string     $format  The original message format.
          */
-        $message = apply_filters('campaignbay_product_display_product_bogo_message', $message, $product, $format);
+        $message = apply_filters_deprecated('campaignbay_product_display_product_bogo_message', array($message, $product, $format), '1.0.7', 'campaignbay_product_page_bogo_message', 'use campaignbay_product_page_bogo_message instead');
+        /**
+         * Filter hook to allow modification of the final discount bogo message string.
+         *
+         * This is useful for developers who want to change the wording or add extra
+         * details to the promotional bogo banner on the product page.
+         *
+         * @since 1.0.7
+         * @hook campaignbay_product_page_bogo_message
+         * 
+         * @param string     $message The generated message HTML.
+         * @param WC_Product $product The current product object.
+         * @param string     $format  The original message format.
+         * @param array      $tier    The current tier.
+         */
+        $message = apply_filters('campaignbay_product_page_bogo_message', $message, $product, $format, $tier);
         if ($message === '' || $message === null)
-            return;
+            return '';
 
         Woocommerce::print_notice(
             $message,
             'success'
         );
-
+        return '';
     }
 
     /**

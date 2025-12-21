@@ -481,9 +481,19 @@ class Woocommerce
      */
     static function get_product_base_price($product)
     {
+        
+        
         $price = null;
         if (empty($product))
             return $price;
+        if(self::product_type_is($product, 'variable')){
+            $children = self::get_product_children($product);
+            foreach ($children as $child) {
+                $child_product = wc_get_product($child);
+                $price = self::get_product_base_price($child_product);
+                return $price;
+            }
+        }
         $settings = Common::get_instance()->get_settings('global_calculate_discount_from');
         if ($settings == 'sale_price' && self::is_product_in_sale($product)) {
             $price = self::get_product_sale_price($product);
@@ -497,6 +507,8 @@ class Woocommerce
         }
         return $price;
     }
+
+
 
 
     /**
@@ -537,5 +549,23 @@ class Woocommerce
                 $categories = $product->get_category_ids();
             }
         return  $categories;
+    }
+
+    /**
+     * Get the children of a product
+     * 
+     * @since 1.0.7
+     * 
+     * @param WC_Product $product the product object
+     * @return array WC_Product[] the children of the product
+     */
+    static function get_product_children($product)
+    {
+        if (!empty($product)) {
+            if (is_object($product) && method_exists($product, 'get_children')) {
+                return $product->get_children();
+            }
+        }
+        return array();
     }
 }
