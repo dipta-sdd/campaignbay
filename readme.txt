@@ -82,7 +82,7 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 == Screenshots ==
 
 1.  **See Your Performance at a Glance.** The main Dashboard, showing key metrics (KPIs) and interactive performance charts.
-2. **Fine-Tune Your Promotions.** The campaign editor, where you can modify every aspect of an existing campaign.
+2. **Fine-Tune Your Promotions.** The campaign editor, where you can modify every aspect of an campaign.
 3.  **Manage All Your Campaigns.** The "All Campaigns" table view, with powerful options for filtering, sorting, and bulk actions.
 4.  **Visual Campaign Management.** The alternative Grid View for the "All Campaigns" page, offering a card-based overview of each promotion.
 5.  **Take Full Control.** The global Settings page, showing the tabbed interface for configuring all plugin options.
@@ -90,7 +90,7 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 7.  **Customize the Quantity Discount Table.** The modal editor for changing the appearance, columns, and labels of the pricing table.
 8.  **Configure Cart Logic.** The Cart Settings tab, with powerful options for coupon and campaign stacking.
 9.  **Advanced Plugin Control.** The Advanced Settings tab for plugin data management.
-10. **Frontend Product View.** A single product page showing a quantity discount pricing table.
+10. **Frontend Product View.** A single product page showing a quantity discount pricing table and promotional messages.
 11. **Frontend Cart View.** Discounts are applied directly to products in the cart, showing strikethrough pricing and the total savings for each item.
 
 == Installation ==
