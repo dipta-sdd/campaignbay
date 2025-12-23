@@ -380,7 +380,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
     <Modal
       title={__("Activity Log", "campaignbay")}
       onRequestClose={closeModal}
-      className="wpab-cb-activity-log-modal campaignbay-w-[95vw] md:campaignbay-w-[90vw] lg:campaignbay-w-[85vw] campaignbay-max-w-7xl campaignbay-rounded-none"
+      className="wpab-cb-activity-log-modal campaignbay-w-[95vw] md:campaignbay-w-[90vw] lg:campaignbay-w-[85vw] campaignbay-max-w-7xl campaignbay-max-h-[90vh] campaignbay-rounded-none campaignbay-overflow-y-auto"
     >
       {/* Filters Section */}
       <div className="campaignbay-mb-[6px] campaignbay-p-[16px] campaignbay-bg-gray-50 campaignbay-rounded-[8px] campaignbay-border campaignbay-border-gray-200">
@@ -437,7 +437,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
           )}
         </div>
         <Button
-        className="campaignbay-br-2"
+          className="campaignbay-br-2"
           variant="secondary"
           onClick={() => fetchActivityLogs(currentPage)}
           isBusy={isLoading}
@@ -633,7 +633,6 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
 
             {/* Next Page */}
             <Button
-            
               variant="secondary"
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}

@@ -127,7 +127,6 @@ const Dashboard: FC = () => {
         });
         setDashboardData(response);
       } catch (error) {
-        console.error(error);
       } finally {
         setLoading(false);
       }
