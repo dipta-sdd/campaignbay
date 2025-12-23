@@ -383,7 +383,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
       className="wpab-cb-activity-log-modal campaignbay-w-[95vw] md:campaignbay-w-[90vw] lg:campaignbay-w-[85vw] campaignbay-max-w-7xl campaignbay-rounded-none"
     >
       {/* Filters Section */}
-      <div className="campaignbay-mb-[6px] campaignbay-p-[4px] campaignbay-bg-gray-50 campaignbay-rounded campaignbay-border campaignbay-border-gray-200">
+      <div className="campaignbay-mb-[6px] campaignbay-p-[16px] campaignbay-bg-gray-50 campaignbay-rounded-[8px] campaignbay-border campaignbay-border-gray-200">
         <h3 className="campaignbay-text-lg campaignbay-font-semibold campaignbay-mb-[4px]">
           {__("Filters", "campaignbay")}
         </h3>
@@ -423,7 +423,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
       </div>
 
       {/* Results Summary */}
-      <div className="campaignbay-mb-[4px] campaignbay-flex campaignbay-justify-between campaignbay-items-center">
+      <div className="campaignbay-my-3 campaignbay-flex campaignbay-justify-between campaignbay-items-center">
         <div className="campaignbay-text-sm campaignbay-text-gray-600">
           {sprintf(
             _n(
@@ -437,6 +437,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
           )}
         </div>
         <Button
+        className="campaignbay-br-2"
           variant="secondary"
           onClick={() => fetchActivityLogs(currentPage)}
           isBusy={isLoading}
@@ -446,7 +447,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
       </div>
 
       {/* Activity Log Table */}
-      <div className="campaignbay-border campaignbay-border-gray-200 campaignbay-rounded campaignbay-overflow-hidden">
+      <div className="campaignbay-border campaignbay-border-gray-200 campaignbay-rounded-[8px] campaignbay-overflow-hidden">
         <div className="campaignbay-overflow-x-auto">
           <table className="campaignbay-w-full campaignbay-text-sm">
             <thead className="campaignbay-bg-gray-50 campaignbay-border-b campaignbay-border-gray-200">
@@ -475,12 +476,12 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
               ) : activityLogs.length > 0 ? (
                 activityLogs.map((log) => (
                   <tr key={log.id} className="hover:campaignbay-bg-gray-50">
-                    <td className="campaignbay-px-[4px] campaignbay-py-3 campaignbay-text-gray-600">
+                    <td className="campaignbay-px-[4px] campaignbay-pl-[16px] campaignbay-py-3 campaignbay-text-gray-600">
                       {formatDateTime(log.timestamp)}
                     </td>
                     <td className="campaignbay-px-[4px] campaignbay-py-3">
                       <span
-                        className="campaignbay-inline-flex campaignbay-px-[2px] campaignbay-py-[1px] campaignbay-text-xs campaignbay-font-medium campaignbay-rounded-full"
+                        className="campaignbay-inline-flex campaignbay-px-2 campaignbay-py-1 campaignbay-text-xs campaignbay-font-medium campaignbay-rounded-full"
                         style={{
                           backgroundColor: getLogTypeColor(log.log_type) + "20",
                           color: getLogTypeColor(log.log_type),
@@ -492,10 +493,10 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
                     <td className="campaignbay-px-[4px] campaignbay-py-3">
                       {log.campaign_id > 0 ? (
                         <a
-                          href={log.campaign_edit_link}
+                          href={"#/campaigns/" + log.campaign_id}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="campaignbay-text-blue-600 hover:campaignbay-text-blue-800 campaignbay-underline"
+                          className="campaignbay-text-blue-600 hover:campaignbay-text-blue-800 campaignbay-underline campaignbay-text-[14px] campaignbay-dashboard-campaigns-link"
                         >
                           {log.campaign_title || `Campaign #${log.campaign_id}`}
                         </a>
@@ -632,10 +633,11 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
 
             {/* Next Page */}
             <Button
+            
               variant="secondary"
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}
-              className="campaignbay-px-3 campaignbay-py-[1px]"
+              className="campaignbay-px-3 campaignbay-py-[1px] campaignbay-br-2"
             >
               {__("Next", "campaignbay")}
             </Button>
@@ -645,7 +647,7 @@ const ActivityLogModal: FC<ActivityLogModalProps> = ({
               variant="secondary"
               onClick={() => handlePageChange(totalPages)}
               disabled={currentPage >= totalPages}
-              className="campaignbay-px-3 campaignbay-py-[1px]"
+              className="campaignbay-px-3 campaignbay-py-[1px] campaignbay-br-2"
             >
               {__("Last", "campaignbay")}
             </Button>

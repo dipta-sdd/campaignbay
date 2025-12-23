@@ -453,11 +453,16 @@ const Campaigns: FC = () => {
         (tier?.type === "percentage" ? "%" : woocommerce_currency_symbol)
       );
     }
-    return '—';
+    return "—";
   };
 
   const isFreeCampaign = (type: CampaignType) => {
-    return type === "bogo" || type === "quantity" || type === "earlybird" || type === "scheduled";
+    return (
+      type === "bogo" ||
+      type === "quantity" ||
+      type === "earlybird" ||
+      type === "scheduled"
+    );
   };
   const duplicateCampaign = async (campaignId: number) => {
     try {
@@ -493,7 +498,6 @@ const Campaigns: FC = () => {
         return <Tag className="campaignbay-w-3.5 campaignbay-h-3.5" />;
     }
   };
-
   return (
     <div className="cb-page campaignbay-campaigns">
       <Navbar />
@@ -507,15 +511,19 @@ const Campaigns: FC = () => {
       </div>
       <div className="cb-page-container">
         <div
-          className={`campaignbay-bg-white ${view === "table" ? "" : "!campaignbay-border-0"
-            }`}
+          className={`${
+            view === "table"
+              ? "campaignbay-bg-white campaignbay-br-6"
+              : "!campaignbay-border-0"
+          }`}
         >
           {/* ==================================================================== */}
           {/* FILTERS SECTION                                                      */}
           {/* ==================================================================== */}
           <div
-            className={`campaignbay-filters campaignbay-flex-col xl:campaignbay-flex-row ${view === "table" ? "" : "campaignbay-bg-white"
-              }`}
+            className={`campaignbay-filters campaignbay-br-6 campaignbay-flex-col xl:campaignbay-flex-row ${
+              view === "table" ? "" : "campaignbay-bg-white"
+            }`}
           >
             <div className="campaignbay-flex campaignbay-flex-col xl:campaignbay-flex-row campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-w-full xl:campaignbay-w-auto">
               <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-wrap lg:campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
@@ -525,11 +533,25 @@ const Campaigns: FC = () => {
                   fontSize={14}
                   fontWeight={300}
                   options={[
-                    { value: "activate", label: "Activate", className: "campaignbay-text-green-500" },
-                    { value: "deactivate", label: "Deactivate", className: "campaignbay-text-gray-500" },
-                    { value: "delete", label: "Delete", className: "campaignbay-text-red-500" },
+                    {
+                      value: "activate",
+                      label: "Activate",
+                      className: "campaignbay-text-green-500",
+                    },
+                    {
+                      value: "deactivate",
+                      label: "Deactivate",
+                      className: "campaignbay-text-gray-500",
+                    },
+                    {
+                      value: "delete",
+                      label: "Delete",
+                      className: "campaignbay-text-red-500",
+                    },
                   ]}
-                  onChange={(value: string | number) => handleBulkAction(value as BulkActionType)}
+                  onChange={(value: string | number) =>
+                    handleBulkAction(value as BulkActionType)
+                  }
                 />
                 <CustomSelect
                   className="campaignbay-min-w-[200px]"
@@ -543,7 +565,9 @@ const Campaigns: FC = () => {
                     { value: "inactive", label: "Inactive" },
                   ]}
                   value={statusFilter}
-                  onChange={(value: string | number) => setStatusFilter(value as string)}
+                  onChange={(value: string | number) =>
+                    setStatusFilter(value as string)
+                  }
                 />
               </div>
               <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-wrap lg:campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
@@ -559,7 +583,9 @@ const Campaigns: FC = () => {
                     { value: "earlybird", label: "EarlyBird Discount" },
                   ]}
                   value={typeFilter}
-                  onChange={(value: string | number) => setTypeFilter(value as string)}
+                  onChange={(value: string | number) =>
+                    setTypeFilter(value as string)
+                  }
                 />
                 <button
                   className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 wpab-cb-btn-primary"
@@ -569,7 +595,7 @@ const Campaigns: FC = () => {
                 </button>
                 {/* @ts-ignore */}
                 <ToggleGroupControl
-                  className={`cb-toggle-group-control campaignbay-mt-[-8px]`}
+                  className={`cb-toggle-group-control campaignbay-br-2 campaignbay-mt-[-8px]`}
                   __next40pxDefaultSize
                   __nextHasNoMarginBottom
                   isBlock
@@ -709,25 +735,27 @@ const Campaigns: FC = () => {
                             />
                           </td>
                           <td>
-                            {
-                              isFreeCampaign(campaign.type) ?
-                                <a
-                                  className="campaignbay-capitalize campaignbay-campaign-link"
-                                  href={`#/campaigns/${campaign.id}`}
-                                >
+                            {isFreeCampaign(campaign.type) ? (
+                              <a
+                                className="campaignbay-capitalize campaignbay-campaign-link"
+                                href={`#/campaigns/${campaign.id}`}
+                              >
+                                {campaign.title}
+                              </a>
+                            ) : (
+                              <BuyProTooltip>
+                                {" "}
+                                <span className="campaignbay-inline-block campaignbay-pr-[30px] campaignbay-capitalize campaignbay-font-bold">
                                   {campaign.title}
-                                </a> : <BuyProTooltip > <span
-                                  className="campaignbay-inline-block campaignbay-pr-[30px] campaignbay-capitalize campaignbay-font-bold"
-                                >
-                                  {campaign.title}
-                                </span></BuyProTooltip>
-                            }
-
+                                </span>
+                              </BuyProTooltip>
+                            )}
                           </td>
                           <td>
                             <span
-                              className={`campaignbay-status-pill campaignbay-status-${campaign?.status?.replace("", "") || ""
-                                }`}
+                              className={`campaignbay-status-pill campaignbay-status-${
+                                campaign?.status?.replace("", "") || ""
+                              }`}
                             >
                               {campaign?.status?.replace("", "") || ""}
                             </span>
@@ -755,9 +783,16 @@ const Campaigns: FC = () => {
                             <DropdownMenu
                               controls={[
                                 {
-                                  title: isFreeCampaign(campaign.type)
-                                    ? "Edit"
-                                    : <BuyProTooltip> <span className="campaignbay-pr-[30px]">Edit</span></BuyProTooltip>,
+                                  title: isFreeCampaign(campaign.type) ? (
+                                    "Edit"
+                                  ) : (
+                                    <BuyProTooltip>
+                                      {" "}
+                                      <span className="campaignbay-pr-[30px]">
+                                        Edit
+                                      </span>
+                                    </BuyProTooltip>
+                                  ),
                                   icon: edit,
                                   onClick: () =>
                                     isFreeCampaign(campaign.type)
@@ -765,9 +800,16 @@ const Campaigns: FC = () => {
                                       : null,
                                 },
                                 {
-                                  title: isFreeCampaign(campaign.type)
-                                    ? "Duplicate"
-                                    : <BuyProTooltip> <span className="campaignbay-pr-[30px]">Duplicate</span></BuyProTooltip>,
+                                  title: isFreeCampaign(campaign.type) ? (
+                                    "Duplicate"
+                                  ) : (
+                                    <BuyProTooltip>
+                                      {" "}
+                                      <span className="campaignbay-pr-[30px]">
+                                        Duplicate
+                                      </span>
+                                    </BuyProTooltip>
+                                  ),
                                   icon: copySmall,
                                   onClick: async () => {
                                     if (!isFreeCampaign(campaign.type)) return;
@@ -906,7 +948,7 @@ const Campaigns: FC = () => {
                     {campaigns.map((campaign) => (
                       <div
                         key={campaign.id}
-                        className="campaignbay-bg-white campaignbay-rounded-xs campaignbay-border campaignbay-border-gray-200 campaignbay-p-3.5 campaignbay-pb-1.5 campaignbay-hover:shadow-md campaignbay-hover:border-gray-300 campaignbay-transition-all campaignbay-duration-200 campaignbay-group"
+                        className="campaignbay-bg-white campaignbay-br-4 campaignbay-border campaignbay-border-gray-200 campaignbay-p-3.5 campaignbay-pb-1.5 campaignbay-hover:shadow-md campaignbay-hover:border-gray-300 campaignbay-transition-all campaignbay-duration-200 campaignbay-group"
                       >
                         {/* Card Header */}
                         <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-mb-2.5">
@@ -918,28 +960,36 @@ const Campaigns: FC = () => {
                               }
                             />
                             <div className="campaignbay-flex-1 campaignbay-min-w-0">
-                            {
-                              isFreeCampaign(campaign.type) ?
+                              {isFreeCampaign(campaign.type) ? (
                                 <a
                                   className="campaignbay-capitalize campaignbay-campaign-link"
                                   href={`#/campaigns/${campaign.id}`}
                                 >
                                   {campaign.title}
-                                </a> : <BuyProTooltip > <span
-                                  className="campaignbay-inline-block campaignbay-pr-[30px] campaignbay-capitalize campaignbay-font-bold"
-                                >
-                                  {campaign.title}
-                                </span></BuyProTooltip>
-                            }
-                              
+                                </a>
+                              ) : (
+                                <BuyProTooltip>
+                                  {" "}
+                                  <span className="campaignbay-inline-block campaignbay-pr-[30px] campaignbay-capitalize campaignbay-font-bold">
+                                    {campaign.title}
+                                  </span>
+                                </BuyProTooltip>
+                              )}
                             </div>
                           </div>
                           <DropdownMenu
                             controls={[
                               {
-                                title: isFreeCampaign(campaign.type)
-                                  ? "Edit"
-                                  : <BuyProTooltip> <span className="campaignbay-pr-[30px]">Edit</span></BuyProTooltip>,
+                                title: isFreeCampaign(campaign.type) ? (
+                                  "Edit"
+                                ) : (
+                                  <BuyProTooltip>
+                                    {" "}
+                                    <span className="campaignbay-pr-[30px]">
+                                      Edit
+                                    </span>
+                                  </BuyProTooltip>
+                                ),
                                 icon: edit,
                                 onClick: () =>
                                   isFreeCampaign(campaign.type)
@@ -947,9 +997,16 @@ const Campaigns: FC = () => {
                                     : null,
                               },
                               {
-                                title: isFreeCampaign(campaign.type)
-                                  ? "Duplicate"
-                                  : <BuyProTooltip> <span className="campaignbay-pr-[30px]">Duplicate</span></BuyProTooltip>,
+                                title: isFreeCampaign(campaign.type) ? (
+                                  "Duplicate"
+                                ) : (
+                                  <BuyProTooltip>
+                                    {" "}
+                                    <span className="campaignbay-pr-[30px]">
+                                      Duplicate
+                                    </span>
+                                  </BuyProTooltip>
+                                ),
                                 icon: copySmall,
                                 onClick: async () => {
                                   if (!isFreeCampaign(campaign.type)) return;
@@ -1060,8 +1117,9 @@ const Campaigns: FC = () => {
                           {/* Status Badge */}
                           <div className="campaignbay-my-1.5">
                             <span
-                              className={`campaignbay-status-pill campaignbay-status-${campaign?.status?.replace("", "") || ""
-                                }`}
+                              className={`campaignbay-status-pill campaignbay-status-${
+                                campaign?.status?.replace("", "") || ""
+                              }`}
                             >
                               {campaign?.status?.replace("", "") || ""}
                             </span>
@@ -1078,8 +1136,9 @@ const Campaigns: FC = () => {
           {/* FOOTER SECTION                                                     */}
           {/* ==================================================================== */}
           <div
-            className={`campaignbay-table-footer ${view === "table" ? "" : "campaignbay-bg-white"
-              }`}
+            className={`campaignbay-table-footer ${
+              view === "table" ? "" : "campaignbay-bg-white campaignbay-br-6"
+            }`}
           >
             <div className="campaignbay-bulk-actions-footer">
               {/* <CbCheckbox checked={isAllSelected} onChange={handleSelectAll} />
@@ -1127,7 +1186,8 @@ const Campaigns: FC = () => {
                 </button>
                 <button
                   className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 campaignbay-arrow-button"
-                  disabled={currentPage === totalPages}
+                  // @ts-ignore
+                  disabled={parseInt(currentPage) === parseInt(totalPages)}
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >
                   <Icon icon={next} fill="currentColor" />
@@ -1160,9 +1220,9 @@ const Campaigns: FC = () => {
         {selectedCampaigns?.length > 0
           ? confirmationMessage
           : __(
-            "Please select campaigns to perform this action.",
-            "campaignbay"
-          )}
+              "Please select campaigns to perform this action.",
+              "campaignbay"
+            )}
       </ConfirmDialog>
       <FloatingHelpButton />
     </div>
@@ -1171,7 +1231,9 @@ const Campaigns: FC = () => {
 
 export default Campaigns;
 
-export const FloatingHelpButton: React.FC<{ step?: number }> = ({ step = 1 }) => {
+export const FloatingHelpButton: React.FC<{ step?: number }> = ({
+  step = 1,
+}) => {
   const { setTourStep } = useGuide();
 
   return (
@@ -1185,7 +1247,7 @@ export const FloatingHelpButton: React.FC<{ step?: number }> = ({ step = 1 }) =>
       </button>
     </div>
   );
-}
+};
 
 export const EmptyStateCampaigns = () => {
   const { setTourStep } = useGuide();
@@ -1222,18 +1284,13 @@ export const EmptyStateCampaigns = () => {
             className="campaignbay-inline-flex campaignbay-items-center campaignbay-justify-center campaignbay-px-5 campaignbay-py-2.5 campaignbay-text-sm campaignbay-font-medium campaignbay-text-white campaignbay-bg-blue-600 campaignbay-rounded-md hover:campaignbay-bg-blue-700 focus:campaignbay-outline-none focus:campaignbay-ring-2 focus:campaignbay-ring-offset-2 focus:campaignbay-ring-blue-500 campaignbay-transition-colors campaignbay-shadow-sm"
           >
             <Plus size={16} className="campaignbay-mr-2" />
-            {__(
-              "Create your first campaign",
-              "campaignbay"
-            )}
+            {__("Create your first campaign", "campaignbay")}
           </button>
         </div>
       </div>
     </div>
   );
 };
-
-
 
 export const getCampaignTypeText = (type: CampaignType) => {
   switch (type) {

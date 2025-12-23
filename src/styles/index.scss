@@ -104,6 +104,24 @@
   $cb-color-black: #1e1e1e;
   $cb-color-body: #dddddd; //manually change in line 3 of index.scss
 
+  .campaignbay-br-1{
+    border-radius: 2px;
+  }
+  .campaignbay-br-2{
+    border-radius: 4px;
+  }
+  .campaignbay-br-3{
+    border-radius: 6px;
+  } 
+  .campaignbay-br-4{
+    border-radius: 8px;
+  } 
+  .campaignbay-br-5{
+    border-radius: 10px;
+  } 
+  .campaignbay-br-6{
+    border-radius: 12px;
+  } 
 
   .campaignbay-text-secondary {
     color: #{$cb-text-secondary};
@@ -254,6 +272,7 @@
     background-color: #{$cb-color-primary};
     color: #{$cb-color-white};
     border: 1px solid #{$cb-color-primary};
+    border-radius: 4px;
 
     &:hover {
       background-color: #2145e6;
@@ -270,6 +289,7 @@
     background-color: rgba(204, 24, 24, 0.04);
     color: #{$cb-color-danger};
     border: 1px solid #{$cb-color-danger};
+    border-radius: 4px;
 
     &:hover {
       background-color: rgba(204, 24, 24, 0.14);
@@ -285,6 +305,7 @@
     background-color: #{$cb-color-white};
     color: #{$cb-color-primary};
     border: 1px solid #{$cb-color-primary};
+    border-radius: 4px;
 
     &:hover {
       background-color: rgba(56, 88, 233, 0.04);
@@ -302,6 +323,7 @@
     background-color: #{$cb-color-white};
     color: #{$cb-color-danger};
     border: 1px solid #{$cb-color-danger};
+    border-radius: 4px;
 
     &:hover {
       background-color: #{$cb-color-danger}0a;
@@ -420,7 +442,7 @@
   & .wpab-select {
     min-width: min(100%, 200px);
     padding: 10px 10px 10px 12px;
-    border-radius: #{$cb-border-radius-base * 0.5};
+    border-radius: #{$cb-border-radius-base};
     font-size: #{$cb-fs-base};
     line-height: #{$cb-lh-base};
     font-weight: #{$cb-fw-normal};
@@ -701,7 +723,14 @@
     margin: 0;
     border: 0;
     outline: 0;
+    
     background: #{$cb-color-white};
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+    & .cb-form-input-con{
+      box-shadow: none;
+    }
 
     & label {
       font-size: #{$cb-fs-sm};
@@ -744,6 +773,8 @@
     font-size: #{$cb-fs-base};
     line-height: #{$cb-lh-base};
     font-weight: #{$cb-fw-normal};
+    border-radius: 6px;
+    
 
     & .wpab-bogo-select,
     & input {
@@ -850,7 +881,7 @@
   & .components-text-control__input,
   & .components-input-control__container,
   & .components-textarea-control__input {
-    border-radius: #{$cb-border-radius-base * 0.5};
+    border-radius: #{$cb-border-radius-base};
     border: #{$cb-border-width-base} solid #{$cb-border-color-base};
   }
 
@@ -1034,7 +1065,7 @@
     align-items: center;
     cursor: text;
     background: #fff;
-    border-radius: #{$cb-border-radius-base * 0.5};
+    border-radius: #{$cb-border-radius-base};
     position: relative;
     width: 100%;
     min-height: 40px;
@@ -1112,7 +1143,7 @@
       display: none; // Chrome, Safari, Opera
     }
 
-    border-radius: #{$cb-border-radius-base * 0.5};
+    border-radius: #{$cb-border-radius-base};
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     top: 100%;
     left: 0;
@@ -1138,6 +1169,10 @@
   & .wpab-multiselect-option--highlighted {
     background: #007cba;
     color: #fff;
+  }
+
+  & .cb-toggle-group-control{
+    border-radius: 4px;
   }
 
   & .cb-toggle-group-control::before {
@@ -1337,7 +1372,7 @@
         background-color: #{$cb-color-body};
         border: 1px solid transparent;
         box-shadow: none;
-        border-radius: 0;
+        border-radius: #{$cb-border-radius-base};
         &:hover {
           border-color: #{$cb-border-color-base}
         }
@@ -1690,7 +1725,7 @@
   & .cb-kpi-card {
     background: #{$cb-color-white};
     border: 1px solid #{$cb-border-color-base-light};
-    border-radius: #{$cb-border-radius-base};
+    border-radius: 8px;
     padding: 24px 20px;
     text-align: center;
     transition: all 0.2s ease;
@@ -1775,7 +1810,7 @@
   & .cb-chart-card {
     background: #{$cb-color-white};
     border: 1px solid #{$cb-border-color-base-light};
-    border-radius: #{$cb-border-radius-base};
+    border-radius: 8px;
     padding: 24px;
     min-height: min(500px, 80vw);
     height: auto;

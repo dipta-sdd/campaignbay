@@ -111,7 +111,7 @@ const Dashboard: FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<ChartPeriod>("7days");
   const [chartType, setChartType] = useState<ChartDisplayType>("bar");
   const [isActivityModalOpen, setIsActivityModalOpen] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -784,7 +784,7 @@ const Dashboard: FC = () => {
                             image={table_placeholder}
                             mainText={__("No Live Campaigns", "campaignbay")}
                             seconderyText={
-                              <button className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 ">
+                              <button className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 ">
                                 Add New Campaign
                               </button>
                             }
@@ -860,7 +860,7 @@ const Dashboard: FC = () => {
                             )}
                             seconderyText={
                               <button
-                                className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[2px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
+                                className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
                                 onClick={() => navigate("/campaigns/add")}
                               >
                                 Add New Campaign

@@ -174,7 +174,7 @@ const Guide: FC = () => {
         width: `${overlayWidth}px`,
         height: `${overlayHeight}px`,
         boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.6)",
-        borderRadius: "2px",
+        borderRadius: "6px",
         zIndex: 10000,
         pointerEvents: "none",
         transition: "opacity 0.3s ease-in-out",
@@ -379,7 +379,8 @@ const Guide: FC = () => {
           className="campaignbay-bg-white campaignbay-rounded-sm campaignbay-shadow-2xl campaignbay-p-4 campaignbay-animate-fade-in-up"
           style={{
             maxWidth: "300px",
-            minWidth: 'min(300px , 80vw)'
+            minWidth: 'min(300px , 80vw)',
+            borderRadius: "6px",
           }}
         >
           <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-start">

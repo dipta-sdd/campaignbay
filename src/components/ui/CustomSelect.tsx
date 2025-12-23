@@ -460,7 +460,10 @@ const CustomSelect: React.FC<SelectProps> = ({
       {isOpen && (
         <div
           className="campaignbay-absolute campaignbay-z-50 campaignbay-w-full campaignbay-bg-white campaignbay-border campaignbay-border-gray-200"
-          style={{ zIndex: 50000 }}
+          style={{ zIndex: 50000 ,
+            boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.3)",
+            borderTop: "none"
+          }}
         >
           {/* Options List */}
           <ul
