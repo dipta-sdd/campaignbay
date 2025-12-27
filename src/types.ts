@@ -88,7 +88,7 @@ export interface QuantityTier {
   value?: number | "";
   type?: "percentage" | "currency";
 }
-export type Error = Partial<
+export type ValidationError = Partial<
   Record<string | number, { message: string }>
 >;
 export type QuantityTierError = Partial<

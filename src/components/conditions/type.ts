@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { CampaignErrorsType, CampaignType, Error } from "../../types";
+import { CampaignErrorsType, CampaignType, ValidationError } from "../../types";
 
 export type ConditionRuleType = "user_role" | "user_roles" | "users";
 export type UserRuleCondition = {
@@ -30,4 +30,4 @@ export type ConditionsInterface = {
   rules: ConditionInterface[];
 };
 
-export type RuleErrors = Record<string | number, Error> | null;
+export type RuleErrors = Record<string | number, ValidationError> | null;

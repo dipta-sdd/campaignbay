@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The Filter helper class.
  *
@@ -12,6 +13,7 @@
  * @package    WPAB_CampaignBay
  * @subpackage WPAB_CampaignBay/Helper
  */
+
 namespace WpabCampaignBay\Helper;
 
 use WpabCampaignBay\Core\Common;
@@ -45,24 +47,18 @@ class Filter
      */
     private static $instance = null;
 
-    /**
-     * 
-     * @since 1.0.0
-     * @access private
-     * @var array
-     */
-    private $settings = array();
-
 
     /**
-     * Gets an instance of this object.
-     * 
-     * @since 1.0.0
+     * Gets the singleton instance of this class.
      *
-     * @static
+     * Ensures only one instance of Filter exists in memory at any time.
+     * This is important for maintaining consistent state across the application.
+     *
+     * @since  1.0.0
      * @access public
-     * @since 1.0.0
-     * @return object
+     * @static
+     *
+     * @return Filter The singleton instance.
      */
     public static function get_instance()
     {
@@ -78,27 +74,38 @@ class Filter
      *
      * @since 1.0.0
      */
-    private function __construct()
-    {
-        $this->settings = Common::get_instance()->get_settings();
-    }
+    private function __construct() {}
 
 
 
     /**
-     * Match rule filters against product
-     * 
-     * @since 1.0.0
-     * 
-     * @param $product
-     * @param $campaign 
-     * @param array $cart_item
-     * @return bool
+     * Determines if a product matches a campaign's targeting rules.
+     *
+     * This is the main entry point for product-campaign matching logic.
+     * It evaluates sale item exclusions, product-level conditions, and
+     * targeting rules (entire store, specific products, or categories).
+     *
+     * @since  1.0.0
+     * @access public
+     *
+     * @param \WC_Product $product  The WooCommerce product to evaluate.
+     * @param Campaign    $campaign The campaign containing targeting rules.
+     *
+     * @return bool True if the product matches the campaign's rules, false otherwise.
      */
     public function match($product, $campaign)
     {
-        $settings = Common::get_instance()->get_settings();
         $result = false;
+
+        if ($this->exclude_sale_item_and_on_sale($product, $campaign))
+            return false;
+
+        if (!Condition::check_product_level_conditions($product, $campaign)) {
+            wpab_campaignbay_log('Product level conditions not matched: ' . $campaign->get_title() . ' -- -- -- ' . $product->get_name());
+            return false;
+        }
+
+
         /**
          * Filters the product against the campaign's targeting rules
          * 
@@ -109,7 +116,7 @@ class Filter
          * @param WC_Product $product the product to match  
          * @param Campaign $campaign the campaign to match
          */
-        do_action('campaignbay_before_filter_match',$result, $product, $campaign);
+        do_action('campaignbay_before_filter_match', $result, $product, $campaign);
         if (is_a($product, 'WC_Product')) {
 
             $is_on_sale = Woocommerce::is_product_in_sale($product);
@@ -153,7 +160,6 @@ class Filter
              * @param Campaign $campaign the campaign to match
              */
             $result = apply_filters('campaignbay_filter_match', $result, $product, $campaign);
-            
         }
         /**
          * Filters the product against the campaign's targeting rules
@@ -182,27 +188,32 @@ class Filter
      * @param $is_exclude
      * @return bool
      */
-    protected function compareWithTags($product, $target_ids, $is_exclude)
-    {
-        $tag_ids = Woocommerce::getProductTags($product);
-        $is_product_has_tag = count(array_intersect($tag_ids, $target_ids)) > 0;
-        if (false === $is_exclude) {
-            return $is_product_has_tag;
-        } elseif (true === $is_exclude) {
-            return !$is_product_has_tag;
-        }
-        return false;
-    }
+    // protected function compareWithTags($product, $target_ids, $is_exclude)
+    // {
+    //     $tag_ids = Woocommerce::getProductTags($product);
+    //     $is_product_has_tag = count(array_intersect($tag_ids, $target_ids)) > 0;
+    //     if (false === $is_exclude) {
+    //         return $is_product_has_tag;
+    //     } elseif (true === $is_exclude) {
+    //         return !$is_product_has_tag;
+    //     }
+    //     return false;
+    // }
 
     /**
-     * Compare product's categories against category filters
-     * 
-     * @since 1.0.0
-     * 
-     * @param $product
-     * @param $target_ids
-     * @param $is_exclude
-     * @return bool
+     * Compares a product's categories against campaign category filters.
+     *
+     * Checks if any of the product's categories match the campaign's target category IDs,
+     * respecting the inclusion/exclusion mode.
+     *
+     * @since  1.0.0
+     * @access protected
+     *
+     * @param \WC_Product $product    The product to check.
+     * @param array       $target_ids Array of category IDs to match against.
+     * @param bool        $is_exclude If true, product must NOT be in any of the categories.
+     *
+     * @return bool True if product matches the category criteria.
      */
     protected function compareWithCategories($product, $target_ids, $is_exclude)
     {
@@ -217,15 +228,20 @@ class Filter
     }
 
     /**
-     * Compare products against product filter values
-     * 
-     * @since 1.0.0
-     * 
-     * @param $target_ids
-     * @param $is_exclude
-     * @param $product_id
-     * @param $product
-     * @return bool
+     * Compares a product against campaign product filters.
+     *
+     * Checks if the product ID is in the campaign's target product IDs list,
+     * respecting the inclusion/exclusion mode.
+     *
+     * @since  1.0.0
+     * @access protected
+     *
+     * @param array       $target_ids Array of product IDs to match against.
+     * @param bool        $is_exclude If true, product must NOT be in the list.
+     * @param int         $product_id The product ID to check.
+     * @param \WC_Product $product    The product object (for potential future use).
+     *
+     * @return bool True if product matches the product criteria.
      */
     protected function compareWithProducts($target_ids, $is_exclude, $product_id, $product)
     {
@@ -233,36 +249,21 @@ class Filter
         return $result;
     }
 
-    /**
-     * Compare products against product is on sale values
-     * 
-     * @since 1.0.0
-     * 
-     * @param $product
-     * @param $is_exclude
-     * @return bool
-     */
-    protected function compareWithOnSale($product, $is_exclude)
-    {
-        if ('in_list' === $is_exclude) {
-            return (Woocommerce::isProductInSale($product)) ? true : false;
-        } elseif ('not_in_list' === $is_exclude) {
-            return (Woocommerce::isProductInSale($product)) ? false : true;
-        } elseif ('any' === $is_exclude) {
-            return false;
-        }
-
-    }
 
     /**
-     * Check product in list
-     * 
-     * @since 1.0.0
-     * 
-     * @param $product_id
-     * @param $is_exclude
-     * @param $target_ids
-     * @return bool
+     * Checks if a product ID exists in a target list.
+     *
+     * Performs a type-safe comparison of the product ID against the target IDs array,
+     * and inverts the result when in exclusion mode.
+     *
+     * @since  1.0.0
+     * @access public
+     *
+     * @param int|string $product_id The product ID to search for.
+     * @param bool       $is_exclude If true, returns true when product is NOT in the list.
+     * @param array      $target_ids Array of target product IDs.
+     *
+     * @return bool True if product matches the list criteria.
      */
     function checkInList($product_id, $is_exclude, $target_ids)
     {
@@ -275,5 +276,29 @@ class Filter
             $result = !(in_array($product_id, $target_ids, true));
         }
         return $result;
+    }
+
+    /**
+     * Checks if a product should be excluded due to sale status.
+     *
+     * If the campaign has "exclude sale items" enabled and the product
+     * is currently on sale, the product should be excluded from the campaign.
+     *
+     * @since  1.0.0
+     * @access protected
+     *
+     * @param \WC_Product $product  The product to check.
+     * @param Campaign    $campaign The campaign with exclusion settings.
+     *
+     * @return bool True if product should be excluded (is on sale and exclusion is enabled).
+     */
+    protected function exclude_sale_item_and_on_sale($product, $campaign)
+    {
+        $exclude_sale_item = $campaign->get_exclude_sale_items();
+        $is_on_sale = Woocommerce::is_product_in_sale($product);
+        if ($is_on_sale && $exclude_sale_item)
+            return true;
+
+        return false;
     }
 }
