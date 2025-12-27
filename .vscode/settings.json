@@ -5,5 +5,8 @@
     "activityBar.background": "#f02a74",
     "activityBar.foreground": "#eda3ce",
     "activityBar.inactiveForeground": "#ffffff",
-  }
+  },
+  "intelephense.environment.includePaths": [
+        "/var/www/html/wp-content/plugins/woocommerce"
+    ]
 }

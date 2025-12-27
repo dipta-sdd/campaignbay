@@ -103,11 +103,12 @@ class Condition
          *
          * @param bool $result The result of the rule check.
          * @param \WC_Product $product The product to check.
-         * @param array $rule The rule to check against.
+         * @param string $type The type of the rule.
+         * @param array $condition The condition to check against.
          *
          * @return bool The filtered result of the rule check.
          */
-        return apply_filters('campaignbay_pass_product_level_rule', $result, $product, $rule);
+        return apply_filters('campaignbay_pass_product_level_condition', $result, $product, $type, $condition);
     }
 
     /**
