@@ -66,9 +66,11 @@ class Loader
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
+	 * Sets up empty arrays for handling action and filter hooks that will be
+	 * registered with the WordPress API.
+	 *
 	 * @since    1.0.0
-	 * @access public
-	 * @return void
+	 * @access   public
 	 */
 	public function __construct()
 	{
@@ -81,6 +83,7 @@ class Loader
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
 	 * @since    1.0.0
+	 * @access   public
 	 * @param    string $hook             The name of the WordPress action that is being registered.
 	 * @param    object $component        A reference to the instance of the object on which the action is defined.
 	 * @param    string $callback         The name of the function definition on the $component.
@@ -96,6 +99,7 @@ class Loader
 	 * Add a new filter to the collection to be registered with WordPress.
 	 *
 	 * @since    1.0.0
+	 * @access   public
 	 * @param    string $hook             The name of the WordPress filter that is being registered.
 	 * @param    object $component        A reference to the instance of the object on which the filter is defined.
 	 * @param    string $callback         The name of the function definition on the $component.

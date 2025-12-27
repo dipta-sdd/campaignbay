@@ -59,11 +59,15 @@ class Logger
 	/**
 	 * Central logging function for the entire plugin.
 	 *
+	 * Records events to a custom database table. It handles standard fields like
+	 * campaign ID, order ID, and user ID, while also storing flexible contextual
+	 * data in a JSON column.
+	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @param string $log_type    The category of the log entry (e.g., 'sale', 'activity', 'error').
 	 * @param string $message     A short, human-readable message describing the event.
-	 * @param array  $context     An associative array of contextual data.
+	 * @param array  $context     Optional. An associative array of contextual data (e.g., IDs, totals) to store.
 	 * @return void
 	 */
 	public function log($log_type, $message, $context = array())

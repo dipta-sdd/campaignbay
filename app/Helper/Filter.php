@@ -41,9 +41,9 @@ class Filter
     /**
      * The single instance of the class.
      *
-     * @since 1.0.0
-     * @var   DiscountManager
+     * @since  1.0.0
      * @access private
+     * @var    Filter
      */
     private static $instance = null;
 
@@ -70,9 +70,12 @@ class Filter
     }
 
     /**
-     * Constructor to define and build the hooks array.
+     * Private constructor to prevent direct instantiation.
      *
-     * @since 1.0.0
+     * Use Filter::get_instance() to get the singleton instance.
+     *
+     * @since  1.0.0
+     * @access private
      */
     private function __construct() {}
 
@@ -88,8 +91,8 @@ class Filter
      * @since  1.0.0
      * @access public
      *
-     * @param \WC_Product $product  The WooCommerce product to evaluate.
-     * @param Campaign    $campaign The campaign containing targeting rules.
+     * @param \WC_Product                       $product  The WooCommerce product to evaluate.
+     * @param \WpabCampaignBay\Model\Campaign   $campaign The campaign containing targeting rules.
      *
      * @return bool True if the product matches the campaign's rules, false otherwise.
      */
@@ -107,14 +110,17 @@ class Filter
 
 
         /**
-         * Filters the product against the campaign's targeting rules
-         * 
+         * Fires before evaluating product against campaign targeting rules.
+         *
+         * Allows third-party code to perform actions or modify state
+         * before the main matching logic runs.
+         *
          * @since 1.0.7
-         * @hook campaignbay_before_filter_match
-         * 
-         * @param bool $result the result of the match
-         * @param WC_Product $product the product to match  
-         * @param Campaign $campaign the campaign to match
+         * @hook  campaignbay_before_filter_match
+         *
+         * @param bool                              $result   The initial result.
+         * @param \WC_Product                       $product  The product being evaluated.
+         * @param \WpabCampaignBay\Model\Campaign   $campaign The campaign being matched against.
          */
         do_action('campaignbay_before_filter_match', $result, $product, $campaign);
         if (is_a($product, 'WC_Product')) {
@@ -150,26 +156,34 @@ class Filter
             // }
 
             /**
-             * Filters the product against the campaign's targeting rules
-             * 
+             * Filters the result of product-campaign matching.
+             *
+             * Allows third-party code to override or modify the matching result
+             * based on custom logic or additional conditions.
+             *
              * @since 1.0.7
-             * @hook campaignbay_filter_match
-             * 
-             * @param bool $result the result of the match
-             * @param WC_Product $product the product to match  
-             * @param Campaign $campaign the campaign to match
+             * @hook  campaignbay_filter_match
+             *
+             * @param bool                              $result   The current matching result.
+             * @param \WC_Product                       $product  The product being evaluated.
+             * @param \WpabCampaignBay\Model\Campaign   $campaign The campaign being matched against.
+             *
+             * @return bool Modified matching result.
              */
             $result = apply_filters('campaignbay_filter_match', $result, $product, $campaign);
         }
         /**
-         * Filters the product against the campaign's targeting rules
-         * 
+         * Fires after evaluating product against campaign targeting rules.
+         *
+         * Allows third-party code to perform actions after
+         * the matching logic has completed.
+         *
          * @since 1.0.7
-         * @hook campaignbay_after_filter_match
-         * 
-         * @param bool $result the result of the match
-         * @param WC_Product $product the product to match  
-         * @param Campaign $campaign the campaign to match
+         * @hook  campaignbay_after_filter_match
+         *
+         * @param bool                              $result   The final matching result.
+         * @param \WC_Product                       $product  The product that was evaluated.
+         * @param \WpabCampaignBay\Model\Campaign   $campaign The campaign that was matched against.
          */
         do_action('campaignbay_after_filter_match', $result, $product, $campaign);
 
@@ -287,8 +301,8 @@ class Filter
      * @since  1.0.0
      * @access protected
      *
-     * @param \WC_Product $product  The product to check.
-     * @param Campaign    $campaign The campaign with exclusion settings.
+     * @param \WC_Product                       $product  The product to check.
+     * @param \WpabCampaignBay\Model\Campaign   $campaign The campaign with exclusion settings.
      *
      * @return bool True if product should be excluded (is on sale and exclusion is enabled).
      */

@@ -38,14 +38,18 @@ if (!defined('ABSPATH'))
 class Helper
 {
     /**
-     * Get settings.
+     * Retrieves a specific setting value for the CampaignBay plugin.
      *
-     * This method retrieves a specific setting value from the CampaignBay plugin.
+     * Delegates to the Common core class to fetch configuration options
+     * stored in the database.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param string $name The name of the setting.
-     * @return mixed The value of the setting.
+     * @param string $name The unique key of the setting to retrieve.
+     *
+     * @return mixed The setting value, or null/default if not found.
      */
     public static function get_settings($name)
     {
@@ -53,15 +57,20 @@ class Helper
     }
 
     /**
-     * Get clean HTML.
+     * Sanitizes and cleans HTML content.
      *
-     * This method sanitizes HTML by removing script, style, and iframe tags,
-     * and allows only specific HTML tags with attributes.
+     * Removes potentially malicious tags like script, style, and iframe.
+     * Allows a specific set of safe HTML tags (br, strong, span, div, p, table related).
+     * Useful for safely outputting user-generated or dynamic content.
      *
      * @since 1.0.0
-     * @param string $html The HTML to clean.
-     * @param bool $echo Whether to echo the cleaned HTML.
-     * @return string The cleaned HTML.
+     * @access public
+     * @static
+     *
+     * @param string $html The raw HTML content to be cleaned.
+     * @param bool   $echo Optional. Whether to echo the output directly. Default false.
+     *
+     * @return string|void The sanitized HTML string, or void if $echo is true.
      */
     public static function get_clean_html($html, $echo = false)
     {
@@ -101,6 +110,21 @@ class Helper
      * @param array $args The arguments to replace placeholders with.
      * @return string The generated message.
      */
+    /**
+     * Generates a formatted message with placeholder replacements.
+     *
+     * Replaces placeholders (keys in $args) with values in the format string.
+     * The result is sanitized before being returned.
+     *
+     * @since 1.0.0
+     * @access public
+     * @static
+     *
+     * @param string $format The message string containing placeholders (e.g., "Hello {name}").
+     * @param array  $args   Associative array where keys are placeholders and values are replacements.
+     *
+     * @return string The formatted and sanitized message.
+     */
     public static function generate_message($format, $args)
     {
         $format = self::get_clean_html($format);
@@ -110,14 +134,18 @@ class Helper
     }
 
     /**
-     * Get clean message.
+     * Sanitizes a string to ensure it is safe for display.
      *
-     * This method ensures that a message is clean by removing any potentially harmful content.
+     * Currently a passthrough, but intended as a safety net for any
+     * content that might have missed prior sanitization.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param string $message The message to clean.
-     * @return string The cleaned message.
+     * @param string $message The raw message string.
+     *
+     * @return string The sanitized message.
      */
     public static function get_clean_message($message)
     {
@@ -130,28 +158,34 @@ class Helper
     }
 
     /**
-     * Get quantity campaigns.
+     * Retrieves all 'quantity' type campaigns applicable to a product.
      *
-     * This method retrieves campaigns of type 'quantity' for a specific product.
+     * Wrapper for get_type_of_campaign specialized for quantity discounts.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param object $product The product object.
-     * @return array The quantity campaigns.
+     * @param object $product The WooCommerce product to check.
+     *
+     * @return array Array of matching Campaign attributes.
      */
     public static function get_quantity_campaigns($product)
     {
         return self::get_type_of_campaign('quantity', $product);
     }
     /**
-     * Get bogo campaigns.
+     * Retrieves all 'bogo' type campaigns applicable to a product.
      *
-     * This method retrieves campaigns of type 'bogo' for a specific product.
+     * Wrapper for get_type_of_campaign specialized for Buy One Get One offers.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param object $product The product object.
-     * @return array The bogo campaigns.
+     * @param object $product The WooCommerce product to check.
+     *
+     * @return array Array of matching Campaign objects.
      */
     public static function get_bogo_campaigns($product)
     {
@@ -159,15 +193,19 @@ class Helper
     }
 
     /**
-     * Get type of campaign.
+     * Retrieves campaigns of a specific type for a specific product.
      *
-     * This method retrieves campaigns of a specific type for a specific product.
+     * Fetches all active campaigns and filters them by the requested type.
+     * If a product is provided, checks applicability against that product.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param string $type The type of campaign.
-     * @param object $product The product object.
-     * @return array The campaigns of the specified type.
+     * @param string      $type    The campaign type identifier (e.g., 'quantity', 'bogo').
+     * @param object|null $product Optional. The WooCommerce product object to check against.
+     *
+     * @return array Array of Campaign objects matching the criteria.
      */
     public static function get_type_of_campaign($type, $product = null)
     {
@@ -194,14 +232,18 @@ class Helper
         return $campaigns;
     }
     /**
-     * Get quantity tiers with campaign.
+     * Combines quantity tiers with their parent campaign data.
      *
-     * This method retrieves the tiers of a quantity campaign for a specific product.
+     * Iterates through all applicable quantity campaigns for a product and extract
+     * tier details, enriching them with campaign metadata (ID, title, settings).
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param object $product The product object.
-     * @return array The quantity tiers with campaign.
+     * @param object $product The WooCommerce product object.
+     *
+     * @return array Array of tiers with flattened campaign info.
      */
     public static function get_quantity_tiers_with_campaign($product)
     {
@@ -224,15 +266,19 @@ class Helper
     }
 
     /**
-     * Get unique quantity tiers.
+     * Filters and retrieves unique, most beneficial pricing tiers.
      *
-     * This method retrieves the unique tiers of a quantity campaign for a specific product.
+     * Processes raw tier data to remove duplicates and keep only the best pricing
+     * options for overlapping ranges. Sorts tiers by minimum quantity.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param array $tiers The tiers of the quantity campaign.
-     * @param float $price The price of the product.
-     * @return array The unique quantity tiers.
+     * @param array $tiers Array of tier definitions.
+     * @param float $price The base price of the product to calculate discounts against.
+     *
+     * @return array Sorted array of unique, optimal pricing tiers.
      */
     public static function get_unique_quantity_tiers($tiers, $price)
     {
@@ -261,14 +307,18 @@ class Helper
     }
 
     /**
-     * Get quantity message.
+     * Generates the promotional message text for a specific quantity tier.
      *
-     * This method retrieves the message of a quantity campaign for a specific tier.
+     * Uses the configured message format (from tier or global settings) to create
+     * a dynamic string indicating remaining quantity needed or discount amount.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param array $tier The tier of the quantity campaign.
-     * @return string The quantity message.
+     * @param array $tier The tier data array including 'settings', 'type', 'value', 'remaining'.
+     *
+     * @return string The formatted message.
      */
     public static function get_quantity_message($tier)
     {
@@ -287,14 +337,18 @@ class Helper
     }
 
     /**
-     * Get bogo tiers.
+     * Retrieves BOGO (Buy One Get One) tiers for a product.
      *
-     * This method retrieves the tiers of a bogo campaign for a specific product.
+     * Fetches all applicable BOGO campaigns, calculates the 'ratio' of free items,
+     * removes duplicates based on 'buy quantity', and sorts by best value.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param object $product The product object.
-     * @return array The bogo tiers.
+     * @param object $product The WooCommerce product object.
+     *
+     * @return array Sorted array of BOGO tier data.
      */
     public static function get_bogo_tiers($product)
     {
@@ -401,15 +455,19 @@ class Helper
     }
 
     /**
-     * Get bogo meta.
+     * Calculates BOGO meta information for the current cart state.
      *
-     * This method retrieves the meta of a bogo campaign for a specific product.
+     * Determines if a product in the cart qualifies for a BOGO offer or if a
+     * better tier is available (next tier). Calculates free quantities if applicable.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param object $product The product object.
-     * @param int $quantity The quantity of the product.
-     * @return array The bogo meta.
+     * @param object   $product  The product object.
+     * @param int|null $quantity The current quantity in cart.
+     *
+     * @return array Meta data array containing 'is_bogo', 'bogo' details, or 'next_tier' info.
      */
     public static function get_bogo_meta($product, $quantity = null)
     {
@@ -457,14 +515,18 @@ class Helper
     }
 
     /**
-     * Get bogo cart message.
+     * Generates the cart message for a BOGO offer.
      *
-     * This method retrieves the message of a bogo campaign for a specific tier.
+     * Formats a message to be displayed in the cart, typically notifying the user
+     * about the applied Buy One Get One deal.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param array $data The data of the bogo campaign.
-     * @return string The bogo cart message.
+     * @param array $data Array containing campaign data like 'settings', 'campaign_title', 'parent_name'.
+     *
+     * @return string The formatted BOGO cart message.
      */
     public static function get_bogo_cart_message($data)
     {
@@ -478,15 +540,19 @@ class Helper
     }
 
     /**
-     * Is better price.
+     * Compares two prices to determine which is better based on settings.
      *
-     * This method determines if a new price is better than the current best price.
+     * Uses the 'product_priorityMethod' setting (lowest, highest, or first) to
+     * decide if $new_price is preferable to $current_best_price.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param float $current_best_price The current best price.
-     * @param float $new_price The new price to compare.
-     * @return bool True if the new price is better, false otherwise.
+     * @param float|null $current_best_price The existing best price found so far.
+     * @param float|null $new_price          The new price candidate to compare.
+     *
+     * @return bool True if $new_price is considered better than $current_best_price.
      */
     public static function is_better_price($current_best_price, $new_price)
     {
@@ -506,15 +572,19 @@ class Helper
     }
 
     /**
-     * Get quantity price.
+     * Calculates the discounted price for a specific quantity tier.
      *
-     * This method retrieves the price of a quantity campaign for a specific tier.
+     * Based on the tier's discount type (percentage or fixed), calculates
+     * the new price for the given base price.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param float $base_price The base price of the product.
-     * @param array $tier The tier of the quantity campaign.
-     * @return float The quantity price.
+     * @param float      $base_price The product's original price.
+     * @param array|null $tier       The tier definition containing 'type' and 'value'.
+     *
+     * @return float|null The calculated price, or null if inputs are invalid.
      */
     public static function get_quantity_price($base_price, $tier)
     {
@@ -527,9 +597,15 @@ class Helper
     /**
      * Calculates a price based on a fixed amount discount.
      *
+     * Subtracts a fixed value from the base price.
+     *
      * @since 1.0.0
-     * @param float $base_price The price before discount.
+     * @access public
+     * @static
+     *
+     * @param float $base_price     The price before discount.
      * @param float $discount_value The fixed amount to subtract.
+     *
      * @return float The final price, ensuring it's not below zero.
      */
     public static function calculate_fixed_price($base_price, $discount_value)
@@ -540,9 +616,15 @@ class Helper
     /**
      * Calculates a price based on a percentage discount.
      *
+     * Subtracts a percentage from the base price.
+     *
      * @since 1.0.0
-     * @param float $base_price The price before discount.
+     * @access public
+     * @static
+     *
+     * @param float $base_price     The price before discount.
      * @param float $discount_value The percentage to subtract (e.g., 10 for 10%).
+     *
      * @return float The final price, ensuring it's not below zero.
      */
     public static function calculate_percentage_price($base_price, $discount_value)
@@ -552,12 +634,18 @@ class Helper
     }
 
     /**
-     * Generates a table of discount tiers.
+     * Generates an HTML table displaying quantity discount tiers.
+     *
+     * Renders a table with columns for Title, Range, and Discount based on the
+     * enabled fields in global settings.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param array $tiers The tiers of the discount campaign.
-     * @return string The HTML for the discount table.
+     * @param array $tiers Array of discount tier data to display.
+     *
+     * @return void Outputs the HTML directly if $echo is true (internal logic uses get_clean_html with echo=true).
      */
     public static function generate_quantity_table($tiers)
     {
@@ -604,14 +692,18 @@ class Helper
     }
 
     /**
-     * Get earlybird current tier.
+     * Determines the current active tier for an earlybird campaign.
      *
-     * This method retrieves the current tier of an earlybird campaign.
+     * Checks the campaign's total usage count against the defined tiers to find
+     * which tier is currently active (i.e., has remaining quantity).
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param object $campaign The campaign object.
-     * @return array The current tier of the earlybird campaign.
+     * @param object $campaign The earlybird campaign object.
+     *
+     * @return array|null The current active tier array, or null if all tiers are exhausted.
      */
     public static function earlybird_current_tier($campaign)
     {
@@ -630,14 +722,18 @@ class Helper
     }
 
     /**
-     * Get cart for session.
+     * Prepares cart data for session storage.
      *
-     * This method retrieves the cart for the current session.
+     * Extracts relevant cart item data and removes the full `WC_Product` data object
+     * to keep the session size manageable.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param object $cart The cart object.
-     * @return array The cart for the current session.
+     * @param object $cart The WooCommerce cart object.
+     *
+     * @return array Associative array of cart items stripped of heavy objects.
      */
     public static function get_cart_for_session($cart)
     {
@@ -651,35 +747,22 @@ class Helper
         return $cart_session;
     }
 
-    /**
-     * Set cart session.
-     *
-     * This method sets the cart for the current session.
-     *
-     * @since 1.0.0
-     *
-     * @param object $cart The cart object.
-     */
-    public static function set_cart_session($cart)
-    {
-        $cart = self::get_cart_for_session($cart);
-        $wc_session = WC()->session;
-        $wc_session->set('cart', empty($cart) ? null : $cart);
-        // wpab_campaignbay_log('manualy updatede cart session');
-    }
-
 
     /**
-     * Calculate price.
+     * Calculates a discounted price.
      *
-     * This method calculates the price based on the discount type.
+     * Route calculation to specific methods based on 'fixed' or 'percentage' type.
+     * Returns base price unmodified if type is unknown.
      *
      * @since 1.0.0
+     * @access public
+     * @static
      *
-     * @param float $base_price The base price.
-     * @param float $discount_value The discount value.
-     * @param string $discount_type The discount type.
-     * @return float The calculated price.
+     * @param float  $base_price    The original price.
+     * @param float  $discount_value The amount or percentage to deduct.
+     * @param string $discount_type  Type of discount: 'fixed' or 'percentage'.
+     *
+     * @return float The calculated final price.
      */
     public static function calculate_price($base_price, $discount_value, $discount_type)
     {

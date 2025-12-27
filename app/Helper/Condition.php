@@ -20,31 +20,32 @@ if (!defined('ABSPATH'))
     exit; // Exit if accessed directly
 
 /**
- * The Condition helper class.
+ * Condition Class.
  *
- * This file is responsible for defining the Condition class, which contains all the logic
- * for matching a product against a campaign's targeting rules and conditions.
- * It is a core component of the discount engine.
+ * Handles the evaluation of specific conditions and rules defined within a campaign.
+ * This class serves as a static helper to validate products against complex user
+ * or cart-level rules.
  *
- * @link       https://campaignbay.github.io
  * @since      1.0.7
- *
  * @package    WPAB_CampaignBay
  * @subpackage WPAB_CampaignBay/Helper
  */
 class Condition
 {
     /**
-     * Check if a product matches the campaign's targeting rules and conditions.
-     * 
-     * This function checks if the product matches the campaign's targeting rules and conditions.
+     * Evaluates product-level conditions for a campaign.
+     *
+     * Iterates through all configured rules in the campaign and determines if the product
+     * matches based on the match type ('any' or 'all').
      *
      * @since 1.0.7
+     * @access public
+     * @static
      *
-     * @param \WC_Product $product The product to check.
-     * @param \WpabCampaignBay\Model\Campaign $campaign The campaign to check against.
+     * @param \WC_Product                       $product  The WooCommerce product to evaluate.
+     * @param \WpabCampaignBay\Model\Campaign   $campaign The campaign configuration object.
      *
-     * @return bool True if the product matches the campaign's targeting rules and conditions, false otherwise.
+     * @return bool True if conditions are met, false otherwise.
      */
     public static function check_product_level_conditions($product, $campaign)
     {
@@ -65,16 +66,19 @@ class Condition
     }
 
     /**
-     * Check if a product matches a specific rule.
+     * Validates a single product rule.
      * 
-     * This function checks if the product matches a specific rule based on the rule type and condition.
+     * Routes the validation logic to the appropriate handler based on the rule type
+     * (e.g., user_role).
      *
      * @since 1.0.7
+     * @access public
+     * @static
      *
-     * @param \WC_Product $product The product to check.
-     * @param array $rule The rule to check against.
+     * @param \WC_Product $product The product being checked.
+     * @param array       $rule    The rule configuration array containing type and conditions.
      *
-     * @return bool True if the product matches the rule, false otherwise.
+     * @return bool True if the rule is passed.
      */
     public static function pass_product_level_rule($product, $rule)
     {
@@ -107,15 +111,19 @@ class Condition
     }
 
     /**
-     * Check if a user has a specific role.
+     * Verifies if the current user matches the required role condition.
      * 
-     * This function checks if the current user has a specific role based on the condition.
+     * Checks the currently logged-in user's roles against the condition settings,
+     * supporting both inclusion ("is") and exclusion ("is not") logic.
+     * Handles edge cases for guests (non-logged-in users).
      * 
      * @since 1.0.7
+     * @access public
+     * @static
      *
-     * @param array $condition The condition to check against.
+     * @param array $condition Array definition containing 'option' (role) and 'is_included' (bool).
      *
-     * @return bool True if the user has the role, false otherwise.
+     * @return bool True if condition is satisfied.
      */
     public static function check_user_role($condition)
     {
