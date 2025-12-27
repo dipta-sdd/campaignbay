@@ -385,8 +385,6 @@ class CampaignsController extends ApiController
 		// Get the campaigns (using the final, complete parameter array)
 		//phpcs:ignore
 		$results = $wpdb->get_results($wpdb->prepare($sql, $query_params));
-
-
 		$response_data = array();
 		if ($results) {
 			foreach ($results as $row) {
@@ -441,7 +439,6 @@ class CampaignsController extends ApiController
 	public function create_item($request)
 	{
 		$params = $request->get_json_params();
-		$params['conditions'] = array(); // we dont need conditions for now
 		$campaign = Campaign::create($params);
 
 		if (is_wp_error($campaign)) {
@@ -473,7 +470,6 @@ class CampaignsController extends ApiController
 		}
 
 		$params = $request->get_json_params();
-		$params['conditions'] = array(); // we dont need conditions for now
 		$result = $campaign->update($params);
 
 		if (is_wp_error($result)) {

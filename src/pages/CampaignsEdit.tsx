@@ -36,7 +36,10 @@ const CampaignsEdit: FC = () => {
       },
     ],
     settings: {},
-    conditions: [],
+    conditions: {
+      match_type: "all",
+      rules: [],
+    },
   });
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -72,7 +75,7 @@ const CampaignsEdit: FC = () => {
       });
       setIsSaving(false);
       addToast(__("Campaign saved successfully", "campaignbay"), "success");
-      navigate("/campaigns");
+      // navigate("/campaigns");
     } catch (error: any) {
       setIsSaving(false);
       if (
@@ -119,6 +122,10 @@ const CampaignsEdit: FC = () => {
         schedule_enabled: getBool(response.schedule_enabled),
         exclude_sale_items: getBool(response.exclude_sale_items),
         is_exclude: getBool(response.is_exclude),
+        conditions: {
+          match_type: "any",
+          ...response.conditions,
+        },
       });
       setIsLoading(false);
     } catch (error) {

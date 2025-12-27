@@ -98,8 +98,20 @@ class Filter
     public function match($product, $campaign)
     {
         $settings = Common::get_instance()->get_settings();
-        if (is_a($product, 'WC_Product') ) {
-            $result = false;
+        $result = false;
+        /**
+         * Filters the product against the campaign's targeting rules
+         * 
+         * @since 1.0.7
+         * @hook campaignbay_before_filter_match
+         * 
+         * @param bool $result the result of the match
+         * @param WC_Product $product the product to match  
+         * @param Campaign $campaign the campaign to match
+         */
+        do_action('campaignbay_before_filter_match',$result, $product, $campaign);
+        if (is_a($product, 'WC_Product')) {
+
             $is_on_sale = Woocommerce::is_product_in_sale($product);
             $product_id = Woocommerce::get_product_or_parent_id($product);
             $type = $campaign->get_target_type();
@@ -141,9 +153,21 @@ class Filter
              * @param Campaign $campaign the campaign to match
              */
             $result = apply_filters('campaignbay_filter_match', $result, $product, $campaign);
-            return $result;
+            
         }
-        return false;
+        /**
+         * Filters the product against the campaign's targeting rules
+         * 
+         * @since 1.0.7
+         * @hook campaignbay_after_filter_match
+         * 
+         * @param bool $result the result of the match
+         * @param WC_Product $product the product to match  
+         * @param Campaign $campaign the campaign to match
+         */
+        do_action('campaignbay_after_filter_match', $result, $product, $campaign);
+
+        return $result;
     }
 
 

@@ -14,6 +14,7 @@ use WpabCampaignBay\Api\ActivityLogController;
 use WpabCampaignBay\Api\CampaignsController;
 use WpabCampaignBay\Api\DashboardController;
 use WpabCampaignBay\Api\LogsController;
+use WpabCampaignBay\Api\ResourceController;
 use WpabCampaignBay\Api\SettingsController;
 use WpabCampaignBay\Core\Scheduler;
 use WpabCampaignBay\Engine\CampaignManager;
@@ -111,6 +112,7 @@ class Plugin
 		LogsController::get_instance()->run();
 		ActivityLogController::get_instance()->run();
 		DashboardController::get_instance()->run();
+		ResourceController::get_instance()->run();
 		Scheduler::get_instance()->run();
 		// Get instances of components that have hooks
 		$discount_manager = DiscountManager::get_instance();

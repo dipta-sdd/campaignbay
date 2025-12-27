@@ -86,8 +86,6 @@ class Campaign
 		if (!$this->data) {
 			throw new Exception('Invalid campaign provided.');
 		}
-
-
 	}
 
 
@@ -157,13 +155,18 @@ class Campaign
 		if (is_wp_error($validated_settings)) {
 			return $validated_settings;
 		}
+		// validating conditions
+		$validated_conditions = self::get_validated_conditions($data['conditions'] ?? array(), $data['type']);
+		if (is_wp_error($validated_conditions)) {
+			return $validated_conditions;
+		}
 
 		// json encoding json fields
 
 		$data['tiers'] = wp_json_encode($tmp_tiers ? $tmp_tiers : []);
 		$data['target_ids'] = wp_json_encode(isset($data['target_ids']) ? $data['target_ids'] : '[]');
-		$data['conditions'] = wp_json_encode(isset($data['conditions']) ? $data['conditions'] : '[]');
 		$data['settings'] = wp_json_encode($validated_settings ? $validated_settings : '[]');
+		$data['conditions'] = wp_json_encode($validated_conditions ? $validated_conditions : '[]');
 
 		// adding other default data
 		$data['usage_count'] = 0;
@@ -175,12 +178,12 @@ class Campaign
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'campaignbay_campaigns';
 			$formats = array(
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%f',
-				'%s',
+				'%s', // title
+				'%s', // type
+				'%s', // target_ids
+				'%s', // conditions
+				'%f', // discount
+				'%s', // discount_type
 				'%s',
 				'%s',
 				'%s',
@@ -245,7 +248,7 @@ class Campaign
 	 *
 	 * @since 1.0.0
 	 * @param array $args The campaign arguments to update.
-	 * @return bool True on success, false on failure.
+	 * @return bool|WP_Error True on success, false on failure.
 	 */
 	public function update($args, $partial = false)
 	{
@@ -285,10 +288,15 @@ class Campaign
 		if (is_wp_error($validated_settings)) {
 			return $validated_settings;
 		}
+		// validating conditions
+		$validated_conditions = $this->get_validated_conditions($data['conditions'] ?? array(), $data['type']);
+		if (is_wp_error($validated_conditions)) {
+			return $validated_conditions;
+		}
 		// json encoding json fields
 		$data['target_ids'] = isset($data['target_ids']) ? wp_json_encode($data['target_ids']) : wp_json_encode($this->data->target_ids ?? '[]');
 		$data['settings'] = $validated_settings ? wp_json_encode($validated_settings) : wp_json_encode($this->data->settings ?? '[]');
-		$data['conditions'] = isset($data['conditions']) ? wp_json_encode($data['conditions']) : wp_json_encode($this->data->conditions ?? '[]');
+		$data['conditions'] = $validated_conditions ? wp_json_encode($validated_conditions) : wp_json_encode($this->data->conditions ?? '[]');
 		$data['tiers'] = wp_json_encode(isset($tmp_tiers) ? $tmp_tiers : $this->data->tiers ?? '[]');
 		// adding other default data
 		$data['date_modified'] = current_time('mysql');
@@ -400,8 +408,8 @@ class Campaign
 			'start_datetime' => 'datetime|nullable',
 			'end_datetime' => 'datetime|nullable',
 
-			'conditions' => 'nullable|array',
 			'settings' => 'nullable|array',
+			'conditions' => 'nullable|object',
 			'usage_limit' => 'nullable|integer'
 		];
 		if ($args['schedule_enabled'] === true) {
@@ -497,62 +505,7 @@ class Campaign
 	}
 
 
-	/**
-	 * Deletes a campaign.
-	 *
-	 * @since 1.0.0
-	 * @param int  $campaign_id The campaign ID to delete.
-	 * @param bool $force_delete Whether to force delete (unused for compatibility).
-	 * @return bool True on success, false on failure.
-	 */
-	public static function delete($campaign_id, $force_delete = true)
-	{
-		$campaign = new self($campaign_id);
-		$title = $campaign->get_title();
 
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
-		/**
-		 * Fires before a campaign is deleted.
-		 *
-		 * @since 1.0.0
-		 * @hook campaignbay_before_campaign_delete
-		 * 
-		 * @param int $campaign_id The ID of the deleted campaign.
-		 */
-		do_action('campaignbay_before_campaign_delete', $campaign_id);
-
-		//phpcs:ignore
-		$result = $wpdb->delete(
-			$table_name,
-			array('id' => $campaign_id),
-			array('%d')
-		);
-
-		/**
-		 * Fires after a campaign is deleted.
-		 * 
-		 * @since 1.0.0
-		 * @hook campaignbay_campaign_delete
-		 *
-		 * @param int $campaign_id The ID of the deleted campaign.
-		 */
-		do_action('campaignbay_campaign_delete', $campaign_id);
-
-		// Log the activity.
-		Logger::get_instance()->log(
-			'campaign_deleted',
-			'deleted',
-			array(
-				'campaign_id' => $campaign_id,
-				'extra_data' => array(
-					'title' => $title,
-				)
-			)
-		);
-
-		return false !== $result;
-	}
 
 
 	/**
@@ -562,7 +515,7 @@ class Campaign
 	 *
 	 * @param array $settings The settings to validate.
 	 * @param string $type The type of the campaign being validated.
-	 * @return array|null The validated settings, or null if validation fails.
+	 * @return array|null|WP_Error The validated settings, or null if validation fails.
 	 */
 	public static function get_validated_settings($settings, $type)
 	{
@@ -632,6 +585,138 @@ class Campaign
 		}
 
 		return $validator->get_validated_data();
+	}
+
+
+	public static function get_validated_conditions($conditions)
+	{
+		$validator = new Validator($conditions);
+		$rules = [
+			'match_type' => 'required|string|in:all,any',
+			'rules' => 'nullable|array',
+		];
+		if (!$validator->validate($rules)) {
+			return new WP_Error(
+				'rest_validation_error',
+				$validator->get_first_error(),
+				array(
+					'status' => 400,
+					'details' => array('conditions' => $validator->get_errors())
+				)
+			);
+		}
+		$validated_data = $validator->get_validated_data();
+		$validated_rules_data = [];
+		$default_rules = [
+			'user_role' => [
+				'option' => 'required|string',
+				'is_included' => 'required|boolean',
+			],
+			'user_roles' => [
+				'options' => 'required|array',
+				'is_included' => 'required|boolean',
+			],
+			'users' => [
+				'options' => 'required|array',
+				'is_included' => 'required|boolean',
+			],
+		];
+		error_log('___________________________');
+		/**
+		 * Filters the default conditions validation rules.
+		 * 
+		 * This filter allows adding or modifying validation rules for different condition types.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_get_conditions_validation_rules
+		 * 
+		 * @param array $default_rules The array of default validation rules.
+		 * @return array The array of default validation rules.
+		 */
+		$default_rules = apply_filters('campaignbay_get_conditions_validation_rules', $default_rules);
+		foreach ($conditions['rules'] as $index => $rule) {
+			$condition_validator = new Validator($rule['condition']);
+			$validation_rules = $default_rules[$rule['type']];
+			if (!$condition_validator->validate($validation_rules)) {
+				// error_log('condition_validator->get_first_error()');
+				// error_log(print_r($condition_validator->get_errors(), true));
+				// error_log('condition: ' . print_r($rule['condition'], true));
+				return new WP_Error(
+					'rest_validation_error',
+					$condition_validator->get_first_error(),
+					array(
+						'status' => 400,
+						'details' => array('rules' => array($index => $condition_validator->get_errors())),
+					)
+				);
+			}
+			$validated_rules_data[] = array(
+				'type' => $rule['type'],
+				'condition' => $condition_validator->get_validated_data(),
+			);
+		}
+		$validated_data['rules'] = $validated_rules_data;
+		error_log('validated_data');
+		error_log(print_r($validated_data, true));
+		return $validated_data;
+	}
+
+
+	/**
+	 * Deletes a campaign.
+	 *
+	 * @since 1.0.0
+	 * @param int  $campaign_id The campaign ID to delete.
+	 * @param bool $force_delete Whether to force delete (unused for compatibility).
+	 * @return bool True on success, false on failure.
+	 */
+	public static function delete($campaign_id, $force_delete = true)
+	{
+		$campaign = new self($campaign_id);
+		$title = $campaign->get_title();
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'campaignbay_campaigns';
+		/**
+		 * Fires before a campaign is deleted.
+		 *
+		 * @since 1.0.0
+		 * @hook campaignbay_before_campaign_delete
+		 * 
+		 * @param int $campaign_id The ID of the deleted campaign.
+		 */
+		do_action('campaignbay_before_campaign_delete', $campaign_id);
+
+		//phpcs:ignore
+		$result = $wpdb->delete(
+			$table_name,
+			array('id' => $campaign_id),
+			array('%d')
+		);
+
+		/**
+		 * Fires after a campaign is deleted.
+		 * 
+		 * @since 1.0.0
+		 * @hook campaignbay_campaign_delete
+		 *
+		 * @param int $campaign_id The ID of the deleted campaign.
+		 */
+		do_action('campaignbay_campaign_delete', $campaign_id);
+
+		// Log the activity.
+		Logger::get_instance()->log(
+			'campaign_deleted',
+			'deleted',
+			array(
+				'campaign_id' => $campaign_id,
+				'extra_data' => array(
+					'title' => $title,
+				)
+			)
+		);
+
+		return false !== $result;
 	}
 
 
@@ -1219,6 +1304,4 @@ class Campaign
 		$result = Filter::get_instance()->match($product, $this);
 		return $result;
 	}
-
-
 }

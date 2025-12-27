@@ -13,13 +13,14 @@ import { SelectOptionType } from "../types";
 // Define the component's props, extending standard input attributes
 interface MultiSelectProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> {
-
   con_ref?: React.Ref<HTMLDivElement>;
   label: ReactNode;
   help?: ReactNode;
   options?: SelectOptionType[];
   value?: number[];
-  onChange: React.Dispatch<React.SetStateAction<number[]>> | ((value: number[]) => void);
+  onChange:
+    | React.Dispatch<React.SetStateAction<number[]>>
+    | ((value: number[]) => void);
   className?: string;
 }
 
@@ -92,8 +93,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
     }
   };
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (dropdownOpen && listRef.current) {
       const highlightedElement = listRef.current.children[
         highlightedIndex
@@ -107,7 +107,6 @@ const MultiSelect: FC<MultiSelectProps> = ({
       }
     }
   }, [highlightedIndex, dropdownOpen]); // Rerun this effect when the index or dropdown state changes
-
 
   return (
     <div className={`wpab-input-con${className ? ` ${className}` : ""}`}>
@@ -161,10 +160,11 @@ const MultiSelect: FC<MultiSelectProps> = ({
             {filteredOptions.map((option, idx) => (
               <li
                 key={option.value}
-                className={`wpab-multiselect-option${idx === highlightedIndex
-                  ? " wpab-multiselect-option--highlighted"
-                  : ""
-                  }`}
+                className={`wpab-multiselect-option${
+                  idx === highlightedIndex
+                    ? " wpab-multiselect-option--highlighted"
+                    : ""
+                }`}
                 onMouseDown={() => handleSelect(option.value)}
                 onMouseEnter={() => setHighlightedIndex(idx)}
               >

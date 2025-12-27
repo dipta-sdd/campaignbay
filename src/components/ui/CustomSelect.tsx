@@ -35,7 +35,7 @@ export interface SelectProps {
   /**
    * Callback when an option is selected
    */
-  onChange: (value: SelectOption["value"]) => void;
+  onChange: (value: string | number) => void;
   /**
    * List of available options
    */
@@ -91,6 +91,8 @@ export interface SelectProps {
   isError?: boolean;
 
   errorClassName?: string;
+
+  differentDropdownWidth?: boolean;
 }
 
 const CustomSelect: React.FC<SelectProps> = ({
@@ -111,6 +113,7 @@ const CustomSelect: React.FC<SelectProps> = ({
   color = "campaignbay-text-gray-[#0a4b78]",
   isError = false,
   errorClassName = "wpab-input-error",
+  differentDropdownWidth = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -210,7 +213,12 @@ const CustomSelect: React.FC<SelectProps> = ({
   }, [highlightedIndex, isOpen]);
 
   const handleSelect = (option: SelectOption) => {
-    if (option.disabled || option.variant === "buy_pro" || option.variant === "coming_soon") return;
+    if (
+      option.disabled ||
+      option.variant === "buy_pro" ||
+      option.variant === "coming_soon"
+    )
+      return;
     onChange(option.value);
     setIsOpen(false);
     setSearchQuery("");
@@ -459,10 +467,13 @@ const CustomSelect: React.FC<SelectProps> = ({
       {/* Dropdown Panel */}
       {isOpen && (
         <div
-          className="campaignbay-absolute campaignbay-z-50 campaignbay-w-full campaignbay-bg-white campaignbay-border campaignbay-border-gray-200"
-          style={{ zIndex: 50000 ,
+          className={`campaignbay-absolute campaignbay-z-50  campaignbay-bg-white campaignbay-border campaignbay-border-gray-200 ${
+            differentDropdownWidth ? "" : "campaignbay-w-full"
+          }`}
+          style={{
+            zIndex: 50000,
             boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.3)",
-            borderTop: "none"
+            borderTop: "none",
           }}
         >
           {/* Options List */}
@@ -505,7 +516,7 @@ const CustomSelect: React.FC<SelectProps> = ({
                       handleSelect(option);
                     }}
                     className={`
-                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-pl-[12px] campaignbay-min-h-[36px] campaignbay-pr-9 campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 
+                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-pl-[12px] campaignbay-min-h-[36px] campaignbay-pr-9 campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 campaignbay-border-b-[1px] campaignbay-border-gray-100
                       ${
                         isDisabled
                           ? "campaignbay-opacity-100 !campaignbay-cursor-not-allowed campaignbay-text-gray-500 campaignbay-bg-gray-200"

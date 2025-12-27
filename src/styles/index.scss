@@ -774,6 +774,10 @@
     line-height: #{$cb-lh-base};
     font-weight: #{$cb-fw-normal};
     border-radius: 6px;
+
+    &:has(*.wpab-input-error) {
+      border-color: #{$bg-error} !important;
+    }
     
 
     & .wpab-bogo-select,
@@ -933,6 +937,11 @@
     gap: #{$cb-spacing-unit * 2};
   }
 
+  & .campaignbay-fix-toggle-group{
+    & .components-base-control__label {
+        display: none;
+      }
+  }
   // toast
   /**
     * =================================================================

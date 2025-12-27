@@ -28,6 +28,8 @@ import { TOUR_STEPS } from "../utils/tourSteps";
 import MultiSelect from "./Multiselect";
 import CustomSelect from "./ui/CustomSelect";
 import { getSettings } from "../utils/settings";
+import Conditions from "./conditions/Conditions";
+import { ConditionsInterface } from "./conditions/type";
 
 interface CampaignProps {
   campaign: CampaignInerface;
@@ -52,15 +54,25 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   //============================     Guide    =======================================
   //=================================================================================
   const { tourStep, setConfig } = useGuide();
-  const campaignTitleInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.TITLE);
+  const campaignTitleInputRef = useGuideStep<HTMLInputElement>(
+    TOUR_STEPS.TITLE
+  );
   const campaignTypeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TYPE);
-  const campaignStatusInputRef = useGuideStep<HTMLSelectElement>(TOUR_STEPS.STATUS);
-  const targetTypeInputRef = useGuideStep<HTMLSelectElement>(TOUR_STEPS.TARGET_TYPE);
+  const campaignStatusInputRef = useGuideStep<HTMLSelectElement>(
+    TOUR_STEPS.STATUS
+  );
+  const targetTypeInputRef = useGuideStep<HTMLSelectElement>(
+    TOUR_STEPS.TARGET_TYPE
+  );
   const targetIdsInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TARGET_IDS);
   const usageToggleRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.USAGE_TOGGLE);
   const usageInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.USAGE_INPUT);
-  const scheduleToggleRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.SCHED_TOGGLE);
-  const startTimeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.START_TIME);
+  const scheduleToggleRef = useGuideStep<HTMLDivElement>(
+    TOUR_STEPS.SCHED_TOGGLE
+  );
+  const startTimeInputRef = useGuideStep<HTMLInputElement>(
+    TOUR_STEPS.START_TIME
+  );
   const endTimeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.END_TIME);
 
   useEffect(() => {
@@ -70,17 +82,20 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
       [TOUR_STEPS.USAGE_TOGGLE]: {
         ...prevConfig[TOUR_STEPS.USAGE_TOGGLE],
         onNext: ({ setStep }) => {
-          setStep(enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.SCHED_TOGGLE);
+          setStep(
+            enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.SCHED_TOGGLE
+          );
         },
       },
       [TOUR_STEPS.SCHED_TOGGLE]: {
         ...prevConfig[TOUR_STEPS.SCHED_TOGGLE],
         onPrev: ({ setStep }) => {
-          setStep(enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.USAGE_TOGGLE);
+          setStep(
+            enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.USAGE_TOGGLE
+          );
         },
-      }
+      },
     }));
-
   }, [enableUsageLimit, setConfig]);
 
   //=================================================================================
@@ -93,10 +108,16 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     if (campaign.usage_limit) setEnableUsageLimit(true);
   }, []);
   useEffect(() => {
-    setCampaign((prev) => ({ ...prev, settings: { ...getSettings(campaign.type, settings) } }));
+    setCampaign((prev) => ({
+      ...prev,
+      settings: { ...getSettings(campaign.type, settings) },
+    }));
   }, [campaign.type]);
   useEffect(() => {
-    setCampaign((prev) => ({ ...prev, settings: { ...getSettings(campaign.type, settings) } }));
+    setCampaign((prev) => ({
+      ...prev,
+      settings: { ...getSettings(campaign.type, settings) },
+    }));
   }, [settings]);
 
   useEffect(() => {
@@ -138,7 +159,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     setCampaign((prev) => ({ ...prev, type: value }));
   };
 
-
+  // console.log(campaign.conditions);
   return (
     <>
       <div className="cb-form-input-con ">
@@ -151,8 +172,9 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               ref={campaignTitleInputRef}
               type="text"
               id="campaign-title"
-              className={`wpab-input w-100 ${errors?.title ? "wpab-input-error" : ""
-                }`}
+              className={`wpab-input w-100 ${
+                errors?.title ? "wpab-input-error" : ""
+              }`}
               value={campaign.title}
               onChange={(e) =>
                 setCampaign((prev) => ({ ...prev, title: e.target.value }))
@@ -169,14 +191,30 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               con_ref={campaignTypeInputRef}
               options={[
                 { label: __("Buy X Get X", "campaignbay"), value: "bogo" },
-                { label: __("Scheduled Discount", "campaignbay"), value: "scheduled" },
-                { label: __("Quantity Based Discount", "campaignbay"), value: "quantity" },
-                { label: __("EarlyBird Discount", "campaignbay"), value: "earlybird" },
-                { label: __("Buy X Get Y - Advanced", "campaignbay"), value: "bogo_pro", variant: "buy_pro" },
+                {
+                  label: __("Scheduled Discount", "campaignbay"),
+                  value: "scheduled",
+                },
+                {
+                  label: __("Quantity Based Discount", "campaignbay"),
+                  value: "quantity",
+                },
+                {
+                  label: __("EarlyBird Discount", "campaignbay"),
+                  value: "earlybird",
+                },
+                {
+                  label: __("Buy X Get Y - Advanced", "campaignbay"),
+                  value: "bogo_pro",
+                  variant: "buy_pro",
+                },
               ]}
               value={campaign.type as string}
               onChange={(value) =>
-                setCampaign((prev) => ({ ...prev, type: value as CampaignType }))
+                setCampaign((prev) => ({
+                  ...prev,
+                  type: value as CampaignType,
+                }))
               }
             />
             {renderError(errors?.type)}
@@ -192,8 +230,9 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
             <select
               id="campaign-status"
               ref={campaignStatusInputRef}
-              className={`wpab-input w-100 ${errors?.status ? "wpab-input-error" : ""
-                }`}
+              className={`wpab-input w-100 ${
+                errors?.status ? "wpab-input-error" : ""
+              }`}
               value={campaign.status}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setCampaign((prev) => ({
@@ -217,7 +256,6 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         </div>
       </div>
 
-
       <div className="cb-form-input-con">
         <label htmlFor="selection-type">
           {__("DISCOUNT TARGET", "campaignbay")} <Required />
@@ -225,8 +263,9 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         <select
           ref={targetTypeInputRef}
           id="selection-type"
-          className={`wpab-input w-100 ${errors?.target_type ? "wpab-input-error" : ""
-            }`}
+          className={`wpab-input w-100 ${
+            errors?.target_type ? "wpab-input-error" : ""
+          }`}
           value={campaign.target_type}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
             setCampaign((prev) => ({
@@ -258,15 +297,15 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
                   campaign.target_type === "product"
                     ? __("Select Products *", "campaignbay")
                     : campaign.target_type === "category"
-                      ? __("Select Categories *", "campaignbay")
-                      : ""
+                    ? __("Select Categories *", "campaignbay")
+                    : ""
                 }
                 options={
                   campaign.target_type === "product"
                     ? products
                     : campaign.target_type === "category"
-                      ? categories
-                      : []
+                    ? categories
+                    : []
                 }
                 value={campaign.target_ids}
                 onChange={(value: number[]) =>
@@ -321,12 +360,20 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         ) : null}
       </div>
 
-
       <CampaignTiers
         campaign={campaign}
         setCampaign={setCampaign}
         errors={errors}
         products={products}
+      />
+
+      <Conditions
+        type={campaign.type}
+        errors={errors}
+        conditions={campaign.conditions}
+        setConditions={(conditions: ConditionsInterface) =>
+          setCampaign((prev) => ({ ...prev, conditions }))
+        }
       />
 
       {/* other config */}
@@ -409,8 +456,9 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               ref={usageInputRef}
               type="number"
               id="usage-limit"
-              className={`wpab-input w-100  ${errors?.usage_limit ? "wpab-input-error" : ""
-                }`}
+              className={`wpab-input w-100  ${
+                errors?.usage_limit ? "wpab-input-error" : ""
+              }`}
               value={campaign.usage_limit ? campaign.usage_limit : ""}
               onChange={(e) =>
                 setCampaign((prev) => ({

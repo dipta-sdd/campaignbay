@@ -294,6 +294,14 @@ class Admin
 		// Convert to boolean just to be safe
 		$has_seen_guide_bool = !empty($has_seen_guide);
 
+		$user_roles = get_editable_roles();
+		$user_roles = array_map(function ($key, $role) {
+			return [
+				'value' => $key,
+				'name'  => $role['name'],
+			];
+		}, array_keys($user_roles), $user_roles);
+
 		/**
 		 * Filters the data passed from PHP to the main admin JavaScript application.
 		 *
@@ -334,6 +342,7 @@ class Admin
 				'wpSettings' => array(
 					'dateFormat' => get_option('date_format'),
 					'timeFormat' => get_option('time_format'),
+					'user_roles' => $user_roles,
 				),
 				'campaignbay_settings' => Common::get_instance()->get_settings()
 			)

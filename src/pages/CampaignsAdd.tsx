@@ -36,7 +36,10 @@ const CampaignsAdd: FC = () => {
       },
     ],
     settings: {},
-    conditions: [],
+    conditions: {
+      match_type: "all",
+      rules: [],
+    },
   });
   const navigate = useNavigate();
   const { addToast } = useToast();

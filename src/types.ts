@@ -1,4 +1,5 @@
 import { Dispatch, RefObject, SetStateAction } from "react";
+import { ConditionsInterface } from "./components/conditions/type";
 
 export interface DiscountTableOptionsType {
   show_header: boolean;
@@ -61,6 +62,10 @@ export interface WhiteLabel {
 export interface WpSettings {
   dateFormat: string;
   timeFormat: string;
+  user_roles: {
+    name: string;
+    value: string;
+  }[];
 }
 
 export interface CbStore {
@@ -83,6 +88,9 @@ export interface QuantityTier {
   value?: number | "";
   type?: "percentage" | "currency";
 }
+export type Error = Partial<
+  Record<string | number, { message: string }>
+>;
 export type QuantityTierError = Partial<
   Record<"min" | "max" | "value" | "type", { message: string }>
 >;
@@ -216,7 +224,7 @@ export interface Campaign {
   date_modified_unix?: number | null;
   date_created_unix?: number | null;
 
-  conditions: any[];
+  conditions: ConditionsInterface;
 
   settings: CampaignSettingsType;
 }
@@ -285,3 +293,4 @@ export interface GuideContextType {
   config: TourConfig;
   setConfig: Dispatch<SetStateAction<TourConfig>>;
 }
+
