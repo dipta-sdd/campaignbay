@@ -7,7 +7,7 @@
  * for matching a product against a campaign's targeting rules and conditions.
  * It is a core component of the discount engine.
  *
- * @link       https://campaignbay.github.io
+ * @link       https://wpanchorbay.com/campaignbay
  * @since      1.0.0
  *
  * @package    WPAB_CampaignBay

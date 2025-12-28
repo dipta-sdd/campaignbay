@@ -6,7 +6,7 @@
  * creation and management of the plugin's custom database tables. This is
  * a core infrastructural component that runs on plugin activation.
  *
- * @link       https://campaignbay.github.io
+ * @link       https://wpanchorbay.com/campaignbay
  * @since      1.0.0
  *
  * @package    WPAB_CampaignBay

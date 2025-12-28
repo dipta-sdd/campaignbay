@@ -7,7 +7,7 @@
  * throughout the CampaignBay plugin. It handles tasks like data filtering, price
  * calculation, HTML sanitization, and message generation.
  *
- * @link       https://campaignbay.github.io
+ * @link       https://wpanchorbay.com/campaignbay
  * @since      1.0.0
  *
  * @package    WPAB_CampaignBay
