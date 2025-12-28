@@ -192,21 +192,26 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               options={[
                 { label: __("Buy X Get X", "campaignbay"), value: "bogo" },
                 {
-                  label: __("Scheduled Discount", "campaignbay"),
-                  value: "scheduled",
-                },
-                {
-                  label: __("Quantity Based Discount", "campaignbay"),
-                  value: "quantity",
+                  label: __("Buy X Get Y - Advanced", "campaignbay"),
+                  value: "bogo_pro",
+                  variant: "buy_pro",
                 },
                 {
                   label: __("EarlyBird Discount", "campaignbay"),
                   value: "earlybird",
                 },
                 {
-                  label: __("Buy X Get Y - Advanced", "campaignbay"),
-                  value: "bogo_pro",
+                  label: __("Product in Cart", "campaignbay"),
+                  value: "product_in_cart",
                   variant: "buy_pro",
+                },
+                {
+                  label: __("Quantity Based Discount", "campaignbay"),
+                  value: "quantity",
+                },
+                {
+                  label: __("Scheduled Discount", "campaignbay"),
+                  value: "scheduled",
                 },
               ]}
               value={campaign.type as string}

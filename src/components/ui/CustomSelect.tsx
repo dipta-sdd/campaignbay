@@ -414,7 +414,7 @@ const CustomSelect: React.FC<SelectProps> = ({
             <input
               ref={searchInputRef}
               type="text"
-              className={`campaignbay-w-full campaignbay-bg-transparent campaignbay-border-none campaignbay-outline-none campaignbay-p-0 ${color} campaignbay-font-[${fontWeight}] campaignbay-text-[${fontSize}px] campaignbay-placeholder-gray-400`}
+              className={`campaignbay-w-full !campaignbay-bg-transparent !campaignbay-border-none !campaignbay-shadow-none !campaignbay-outline-none !campaignbay-p-0 !campaignbay-font-[${fontWeight}] !campaignbay-text-[${fontSize}px] !campaignbay-min-h-[unset]`}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);

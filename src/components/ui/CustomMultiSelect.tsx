@@ -219,7 +219,7 @@ const CustomMultiSelect: React.FC<MultiSelectProps> = ({
         id={id}
         onClick={handleTriggerClick}
         className={`
-          campaignbay-relative campaignbay-flex campaignbay-flex-wrap campaignbay-items-center campaignbay-gap-1 campaignbay-w-full campaignbay-min-h-[42px] campaignbay-px-2 campaignbay-py-1 campaignbay-text-left !campaignbay-cursor-text
+          campaignbay-relative campaignbay-flex campaignbay-flex-wrap campaignbay-items-center campaignbay-gap-1 campaignbay-w-full campaignbay-min-h-[40px] !campaignbay-py-[4px] campaignbay-text-left !campaignbay-cursor-text
           campaignbay-transition-all campaignbay-duration-200 campaignbay-ease-in-out wpab-multiselect-input campaignbay-border campaignbay-border-gray-300
           ${
             disabled
@@ -286,7 +286,7 @@ const CustomMultiSelect: React.FC<MultiSelectProps> = ({
             role="listbox"
             tabIndex={-1}
             className="campaignbay-max-h-60 campaignbay-overflow-auto focus:campaignbay-outline-none campaignbay-py-1"
-            style={{ scrollbarWidth: "thin" }}
+            style={{ scrollbarWidth: "none" }}
           >
             {filteredOptions.length === 0 ? (
               <li className="campaignbay-px-3 campaignbay-py-2 campaignbay-text-gray-500 campaignbay-text-sm campaignbay-text-center campaignbay-italic">

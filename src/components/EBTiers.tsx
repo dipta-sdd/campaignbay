@@ -2,7 +2,7 @@ import { FC } from "react";
 import { __ } from "@wordpress/i18n";
 import Required from "./Required";
 import EBTierRow from "./EBTierRow";
-import { EBTier, EBTierError, EBTierErrorMap } from "../types";
+import { EBTier, EBTierError } from "../types";
 
 interface EBTiersProps {
   tiers: EBTier[];
@@ -87,6 +87,7 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
           onAdd={handleAddTier}
           isLast={index === tiers.length - 1}
           isFirst={index === 0}
+          // @ts-ignore
           errors={errors?.[tier.id]}
         />
       ))}

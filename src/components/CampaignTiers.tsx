@@ -189,7 +189,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
         <>
           <div className="cb-form-input-con">
             <label htmlFor="discount-type">
-              {__("DEFINE QUANTITY TIERS", "campaignbay")} <Required />
+              {__("DEFINE BOGO QUANTITY", "campaignbay")} <Required />
             </label>
 
             <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-overflow-hidden campaignbay-flex-wrap">
