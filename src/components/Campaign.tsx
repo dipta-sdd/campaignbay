@@ -58,10 +58,10 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     TOUR_STEPS.TITLE
   );
   const campaignTypeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TYPE);
-  const campaignStatusInputRef = useGuideStep<HTMLSelectElement>(
+  const campaignStatusInputRef = useGuideStep<HTMLDivElement>(
     TOUR_STEPS.STATUS
   );
-  const targetTypeInputRef = useGuideStep<HTMLSelectElement>(
+  const targetTypeInputRef = useGuideStep<HTMLDivElement>(
     TOUR_STEPS.TARGET_TYPE
   );
   const targetIdsInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TARGET_IDS);
@@ -155,8 +155,20 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
       );
     }
   };
-  const handleSelectionTypeChange = (value: CampaignType) => {
-    setCampaign((prev) => ({ ...prev, type: value }));
+
+  const campaignStatusOptions = () => {
+    let options = [
+      { label: __("Active", "campaignbay"), className: "campaignbay-text-green-500", value: "active" },
+      { label: __("Inactive", "campaignbay"), className: "campaignbay-text-red-500", value: "inactive" },
+      { label: __("Scheduled", "campaignbay"), className: "campaignbay-text-blue-500", value: "scheduled" },
+    ];
+    if (campaign.status === "expired") {
+      options = [
+        ...options,
+        { label: __("Expired", "campaignbay"), className: "campaignbay-text-red-500", value: "expired" },
+      ];
+    }
+    return options;
   };
 
   // console.log(campaign.conditions);
@@ -232,30 +244,19 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
             >
               {__("Select Status", "campaignbay")} <Required />
             </label>
-            <select
+
+            <CustomSelect
               id="campaign-status"
-              ref={campaignStatusInputRef}
-              className={`wpab-input w-100 ${
-                errors?.status ? "wpab-input-error" : ""
-              }`}
+              con_ref={campaignStatusInputRef}
+              options={campaignStatusOptions()}
               value={campaign.status}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              onChange={(value) =>
                 setCampaign((prev) => ({
                   ...prev,
-                  status: e.target.value as CampaignStatusType,
+                  status: value as CampaignStatusType,
                 }))
               }
-            >
-              <option value="active">{__("Active", "campaignbay")}</option>
-              <option value="inactive">{__("Inactive", "campaignbay")}</option>
-              <option value="scheduled">
-                {__("Scheduled", "campaignbay")}
-              </option>
-              {/* toaddpro */}
-              {campaign.status === "expired" && (
-                <option value="expired">{__("Expired", "campaignbay")}</option>
-              )}
-            </select>
+            />
             {renderError(errors?.status)}
           </div>
         </div>
@@ -265,29 +266,23 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         <label htmlFor="selection-type">
           {__("DISCOUNT TARGET", "campaignbay")} <Required />
         </label>
-        <select
-          ref={targetTypeInputRef}
+        
+        <CustomSelect
           id="selection-type"
-          className={`wpab-input w-100 ${
-            errors?.target_type ? "wpab-input-error" : ""
-          }`}
+          con_ref={targetTypeInputRef}
+          options={[
+            { label: __("Entire Store", "campaignbay"), value: "entire_store" },
+            { label: __("By Product Category", "campaignbay"), value: "category" },
+            { label: __("By Product", "campaignbay"), value: "product" },
+          ]}
           value={campaign.target_type}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+          onChange={(value) =>
             setCampaign((prev) => ({
               ...prev,
-              target_type: e.target.value as TargetType,
+              target_type: value as TargetType,
             }))
           }
-        >
-          <option value="entire_store">
-            {__("Entire Store", "campaignbay")}
-          </option>
-          <option value="category">
-            {__("By Product Category", "campaignbay")}
-          </option>
-          <option value="product">{__("By Product", "campaignbay")}</option>
-          {/* <option value="tag">{__("By Tags", "campaignbay")}</option> */}
-        </select>
+        />
         {renderError(errors?.target_type)}
 
         {campaign.target_type !== "entire_store" ? (

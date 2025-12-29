@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,13 +95,34 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 
 == Installation ==
 
-1.  From your WordPress dashboard, navigate to **Plugins → Add New**.
+**Please note:** CampaignBay requires **WooCommerce** to be installed and activated on your site to function correctly.
+
+**From your WordPress Dashboard (Recommended)**
+
+1.  In your WordPress admin panel, navigate to **Plugins → Add New**.
 2.  In the search field, type **"CampaignBay"** and press Enter.
-3.  Find the CampaignBay plugin in the search results and click **"Install Now"**.
-4.  After installation, click the **"Activate"** button.
-5.  Look for the new **"CampaignBay"** menu in your admin sidebar to get started!
+3.  Once you find the plugin in the search results, click the **"Install Now"** button.
+4.  After the installation is complete, click the **"Activate"** button.
+
+**Manual Upload via .zip File**
+
+1.  Download the plugin from the WordPress.org plugin page by clicking the "Download" button. This will give you a `campaignbay.zip` file.
+2.  In your WordPress admin panel, navigate to **Plugins → Add New**.
+3.  At the top of the page, click the **"Upload Plugin"** button.
+4.  Click **"Choose File"**, select the `campaignbay.zip` file you downloaded, and click **"Install Now"**.
+5.  Once the upload is complete, click the **"Activate Plugin"** button.
+
+**After Activation**
+
+You're all set! Look for the new **CampaignBay** menu item in your admin sidebar. Click on it to visit the dashboard and start creating your first automated discount campaign!
 
 == Changelog ==
+
+= 1.0.7 =
+*   **New Feature: Introducing Conditional Discounts!** A new "Conditions" section has been added to the campaign editor. This lays the foundation for a powerful rule engine, allowing you to create smarter, more targeted campaigns. More conditions will be added in future updates.
+*   **Enhancement:** The campaign editor and settings pages have received a significant UI upgrade for a cleaner, faster, and more intuitive user experience.
+*   **DEV:** Added new developer hooks to improve extensibility and integration capabilities for developers.
+
 = 1.0.6 =
 *   New Feature: Added options to turn off promotional messages on the cart and product pages.
 
@@ -127,6 +148,9 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.0.7 =
+*   This is a great update! We've introduced a powerful new 'Conditions' feature for creating smarter campaigns and have given the entire admin interface a fresh, modern upgrade. The update is seamless and no action is required.
 
 = 1.0.6 =
 *   This update introduces a new feature to turn off promotional messages on the cart and product pages. The upgrade is seamless and requires no action from you.

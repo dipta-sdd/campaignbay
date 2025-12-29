@@ -590,6 +590,8 @@ class Campaign
 
 	public static function get_validated_conditions($conditions)
 	{
+		//old campaigns dont have match_type default , raising error on import
+		$conditions['match_type'] = $conditions['match_type'] ?? 'all';
 		$validator = new Validator($conditions);
 		$rules = [
 			'match_type' => 'required|string|in:all,any',

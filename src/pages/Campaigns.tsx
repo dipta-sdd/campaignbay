@@ -528,6 +528,7 @@ const Campaigns: FC = () => {
             <div className="campaignbay-flex campaignbay-flex-col xl:campaignbay-flex-row campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-w-full xl:campaignbay-w-auto">
               <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-wrap lg:campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
                 <CustomSelect
+                disabled={!selectedCampaigns.length}
                   className="campaignbay-min-w-[200px]"
                   placeholder="Bulk Actions"
                   fontSize={14}
