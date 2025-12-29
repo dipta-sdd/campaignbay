@@ -5,7 +5,6 @@ namespace WpabCampaignBay\Engine;
 use WC_Product;
 use WP_Error;
 use WpabCampaignBay\Core\Common;
-use WpabCampaignBay\Engine\CampaignManager;
 use WpabCampaignBay\Helper\Helper;
 use WpabCampaignBay\Helper\Woocommerce;
 
@@ -89,11 +88,15 @@ class CartDiscount
 		$free_products = array();
 		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
 			foreach ($cart->cart_contents as $key => $cart_item) {
+				// skip it if it is a free product with bogo or any other type of discount
 				if (isset($cart_item['is_campaignbay_free_product']) && $cart_item['is_campaignbay_free_product'] == true) {
 					continue;
 				}
+				// meta contains simple and cart level discount data 
 				$meta = self::get_cart_discount($cart_item);
+				// flag to check if simple discount is applied
 				$simple_applied = false;
+				// cart quantity -> quantity of the product in the cart
 				$cart_quantity = $cart_item['quantity'];
 
 
@@ -116,20 +119,23 @@ class CartDiscount
 				 */
 				do_action('campaignbay_before_cart_single_discount_calculation', $cart_item, $cart_quantity, $meta, $simple_applied, $discount_breakdown, $cart, $key);
 
+				//
 				if ($meta === null)
 					continue;
-
+				// bogo discount
 				if (isset($meta['bogo']) && $meta['is_bogo'] === true) {
 					$bogo_data = $meta['bogo'];
 					$bogo_data['parent_id'] = $cart_item['data']->get_id();
 					$bogo_data['parent_name'] = $cart_item['data']->get_name();
+					// add bogo free product to the cart
 					$added_product_id = self::add_bogo_free_product($cart, $key, $bogo_data, $discount_breakdown);
 					if ($added_product_id) {
+						//store the added product id for later verification
 						$free_products[$key]['campaignbay_free_products'][$added_product_id] = true;
 
 					}
 				}
-
+				// save the meta data to the cart item
 				$cart->cart_contents[$key]['campaignbay'] = $meta;
 				if (isset($meta['simple']) && isset($meta['simple']['price'])) {
 					$simple_applied = true;
@@ -249,6 +255,22 @@ class CartDiscount
 
 
 		/**
+		 * Fires before the discount coupons and fees are applied to the cart.
+		 *
+		 * This hook is useful for add-ons that need to perform a final action based on
+		 * the fully discounted cart, such as logging the discount details or sending
+		 * an email notification.
+		 * 
+		 * @since 1.0.0
+		 * @hook campaignbay_before_cart_coupon_and_fee_application
+		 *
+		 * @param \WC_Cart $cart 			   The main WooCommerce cart object.
+		 * @param array    $discount_breakdown The discount breakdown array for the entire cart.
+		 */
+		do_action('campaignbay_before_cart_coupon_and_fee_application', $cart , $discount_breakdown);
+
+
+		/**
 		 * Filters the discount breakdown array for a single cart item after it
 		 * has been calculated.
 		 *
@@ -269,10 +291,12 @@ class CartDiscount
 		 */
 		$cart->campaignbay_discount_breakdown = apply_filters('campaignbay_discount_breakdown', $discount_breakdown ?? array(), $cart);
 
+		
+
 		foreach ($cart->campaignbay['coupon'] as $key => $coupon) {
 			self::apply_fake_coupons($key, $cart);
 		}
-
+		// apply the fee
 		foreach ($cart->campaignbay['fee'] as $key => $fee) {
 			$cart->add_fee($fee['campaign_title'], $fee['discount'] * -1);
 		}
@@ -289,7 +313,7 @@ class CartDiscount
 		 * 
 		 * @param \WC_Cart $cart The fully processed WooCommerce cart object.
 		 */
-		do_action('campaignbay_after_cart_discount_calculation', $cart, );
+		do_action('campaignbay_after_cart_discount_calculation', $cart);
 
 		return $cart->campaignbay['coupon'];
 	}

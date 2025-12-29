@@ -111,7 +111,7 @@ const Dashboard: FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<ChartPeriod>("7days");
   const [chartType, setChartType] = useState<ChartDisplayType>("bar");
   const [isActivityModalOpen, setIsActivityModalOpen] =
-    useState<boolean>(true);
+    useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
