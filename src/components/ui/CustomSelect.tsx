@@ -499,7 +499,7 @@ const CustomSelect: React.FC<SelectProps> = ({
                   (tooltipState?.visible && tooltipState.index === index);
                 const isPro = option.variant === "buy_pro";
                 const isComingSoon = option.variant === "coming_soon";
-                const isDisabled = option.disabled || isPro || isComingSoon;
+                const isDisabled = option.disabled || isPro;
 
                 return (
                   <li
@@ -516,10 +516,15 @@ const CustomSelect: React.FC<SelectProps> = ({
                       handleSelect(option);
                     }}
                     className={`
-                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-pl-[12px] campaignbay-min-h-[36px] campaignbay-pr-9 campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 campaignbay-border-b-[1px] campaignbay-border-gray-100
+                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-px-3  campaignbay-flex campaignbay-flex-nowrap campaignbay-justify-between campaignbay-min-h-[36px]campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 campaignbay-border-b-[1px] campaignbay-border-gray-100
                       ${
                         isDisabled
                           ? "campaignbay-opacity-100 !campaignbay-cursor-not-allowed campaignbay-text-gray-500 campaignbay-bg-gray-200"
+                          : ""
+                      }
+                      ${
+                        isComingSoon
+                          ? "campaignbay-opacity-100 !campaignbay-cursor-not-allowed !campaignbay-text-pink-500 hover:!campaignbay-text-pink-600 campaignbay-bg-gray-200"
                           : ""
                       }
                       ${
@@ -556,7 +561,7 @@ const CustomSelect: React.FC<SelectProps> = ({
                     {/* Checkmark for selected item */}
                     {isSelected ? (
                       <span
-                        className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4 ${
+                        className={`campaignbay-px-3 campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4 ${
                           isHighlighted && !isDisabled
                             ? "campaignbay-text-white"
                             : "campaignbay-text-blue-600"
@@ -578,17 +583,19 @@ const CustomSelect: React.FC<SelectProps> = ({
                       </span>
                     ) : isPro ? (
                       <span
-                        className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
+                        className={`campaignbay-px-3 campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
                       >
                         <LockKeyhole className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-[#f02a74] " />
                       </span>
                     ) : isComingSoon ? (
                       <span
-                        className={`campaignbay-absolute campaignbay-inset-y-0 campaignbay-right-0 campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
+                        className={`campaignbay-px-3 campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
                       >
-                        <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded campaignbay-rounded-full campaignbay-text-xs campaignbay-flex campaignbay-items-center campaignbay-gap-1">
+                        <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded campaignbay-rounded-full campaignbay-text-xs campaignbay-flex campaignbay-items-center campaignbay-gap-1 campaignbay-flex-nowrap">
                           <Hourglass className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-white" />
-                          {__("Coming Soon", "campaignbay")}
+                          <span className="campaignbay-text-nowrap">
+                            {__("Coming Soon", "campaignbay")}
+                          </span>
                         </span>
                       </span>
                     ) : null}

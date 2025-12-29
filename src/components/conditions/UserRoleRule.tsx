@@ -23,9 +23,9 @@ const UserRoleRule: FC<UserRoleRuleProps> = ({
   return (
     <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
       <span className="wpab-input-label">
-        {__("Apply this campaign to only users ", "campaignbay")}
+        {__("Apply this campaign to only users with", "campaignbay")}
       </span>
-      <CustomSelect
+      {/* <CustomSelect
         isError={!!errors?.is_included}
         differentDropdownWidth={true}
         className="!campaignbay-w-max"
@@ -47,7 +47,7 @@ const UserRoleRule: FC<UserRoleRuleProps> = ({
             variant: "buy_pro",
           },
         ]}
-      />
+      /> */}
       <CustomSelect
         isError={!!errors?.option}
         differentDropdownWidth={true}
