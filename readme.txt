@@ -20,11 +20,14 @@ CampaignBay is a powerful, user-friendly marketing tool that empowers you to cre
 
 With its intuitive dashboard, flexible campaign types, and high-performance discount engine, you get unparalleled control over your marketing strategy without sacrificing site speed.
 
+**New:** Take control to the next level with our robust **Conditional Logic**. Now you can restrict campaigns to specific User Roles, perfect for wholesale programs or VIP exclusives.
+
 **Key Features:**
 
 *   **Multiple Campaign Types:** Create classic **Scheduled Sales**, tiered **Quantity Discounts**, urgency-driven **Early Bird** offers, and popular **BOGO (Buy X Get X)** deals.
 *   **Advanced Analytics Dashboard:** Get an instant, data-rich overview of your campaign performance. Track total discount value, sales from campaigns, and discounted orders with interactive charts.
 *   **Flexible Targeting:** Apply discounts to your entire store, specific products, or categories, with powerful exclusion rules for precise control.
+*   **User Role Targeting:** Limit campaigns to specific user roles (e.g., Wholesale Customers, VIPs) using our new Condition engine.
 *   **Full Scheduling & Automation:** Set specific start and end dates for your campaigns. Our reliable, automated system handles activation and expiration using a robust WP-Cron and failsafe mechanism.
 *   **Intelligent Stacking Logic:** Configure powerful rules for how your discounts interact with each other and with native WooCommerce coupons.
 *   **Customizable Display:** Tailor promotional messages on product and cart pages with dynamic placeholders (e.g., `{percentage_off}`, `{buy_quantity}`).
@@ -82,7 +85,7 @@ CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automaticall
 == Screenshots ==
 
 1.  **See Your Performance at a Glance.** The main Dashboard, showing key metrics (KPIs) and interactive performance charts.
-2. **Fine-Tune Your Promotions.** The campaign editor, where you can modify every aspect of an campaign.
+2.  **Fine-Tune Your Promotions.** The campaign editor, where you can modify every aspect of an campaign.
 3.  **Manage All Your Campaigns.** The "All Campaigns" table view, with powerful options for filtering, sorting, and bulk actions.
 4.  **Visual Campaign Management.** The alternative Grid View for the "All Campaigns" page, offering a card-based overview of each promotion.
 5.  **Take Full Control.** The global Settings page, showing the tabbed interface for configuring all plugin options.
