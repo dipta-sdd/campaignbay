@@ -568,4 +568,29 @@ class Woocommerce
         }
         return array();
     }
+
+    /**
+     * Get the product id from the cart item
+     * 
+     * This method retrieves the product id from the cart item.
+     * 
+     * @since 1.0.8
+     * 
+     * @param mixed $cart_item
+     * @return int|null the product id
+     */
+    public static function get_product_id_from_cart_item($cart_item){
+        $product_id = null;
+        
+        if(isset($cart_item['product_id'])){
+            $product_id = $cart_item['product_id'];
+            if(isset($cart_item['variation_id']) && !empty($cart_item['variation_id'])){
+                $product_id = $cart_item['variation_id'];
+            }
+        } else if(isset($cart_item['data'])){
+            $product_id = self::get_product_id($cart_item['data']);
+        }
+
+        return $product_id;
+    }
 }

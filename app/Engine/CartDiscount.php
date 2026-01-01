@@ -84,8 +84,31 @@ class CartDiscount
 			'fee' => array()
 		);
 		$discount_breakdown = array();
-
 		$free_products = array();
+
+
+		/**
+		 * Fires before the cart discount calculations begin.
+		 * 
+		 * This is the primary entry point for a Pro version or third-party add-on to
+		 * run its own complete set of cart discount rules. An add-on can use this hook
+		 * to calculate its own discounts and add them to a custom property on the $cart object
+		 * before the Free version's logic starts.
+		 *
+		 * @since 1.0.8
+		 * @hook campaignbay_before_cart_discount_calculation_loop
+		 *
+		 * @param \WC_Cart $cart The main WooCommerce cart object.
+		 * @param array    $discount_breakdown The discount breakdown array.
+		 * @param array    $free_products The free products array.
+		 */
+		do_action('campaignbay_before_cart_discount_calculation_loop', $cart, $discount_breakdown, $free_products);
+
+
+
+
+
+
 		if (isset($cart->cart_contents) && !empty($cart->cart_contents)) {
 			foreach ($cart->cart_contents as $key => $cart_item) {
 				// skip it if it is a free product with bogo or any other type of discount
@@ -175,7 +198,7 @@ class CartDiscount
 						if ($meta['quantity']['type'] !== 'percentage')
 							$data_to_add['discount'] = $meta['quantity']['discount'] * $cart_quantity;
 
-						self::add_data(
+						Helper::add_data(
 							$cart,
 							$data_to_add
 						);
@@ -446,39 +469,15 @@ class CartDiscount
 	 *
 	 * This helper function organizes discount data into a structured format within the
 	 * `$cart->campaignbay['coupon']` array, grouping discounts by type and campaign.
+	 * 
+	 * @deprecated 1.0.8 This function has been moved to WpabCampaignBay\Helper\Helper.
 	 *
 	 * @since 1.0.0
 	 * @param \WC_Cart $cart The main WooCommerce cart object.
 	 * @param array    $data The discount data to add.
 	 */
-	public static function add_data($cart, $data = array())
-	{
-		if ($data['type'] === 'percent') {
-			$code = 'campaignbay_' . $data['campaign'] . '_' . $data['discount'];
-
-			if (!isset($cart->campaignbay['coupon'][$code]))
-				$cart->campaignbay['coupon'][$code] = array(
-					'campaign' => $data['campaign'],
-					'old_price' => 0,
-					'campaign_title' => $data['campaign_title'],
-					'type' => $data['type'],
-					'product_ids' => array(),
-					'discount' => $data['discount'],
-				);
-			$cart->campaignbay['coupon'][$code]['product_ids'][] = $data['product_id'];
-			$cart->campaignbay['coupon'][$code]['old_price'] = $cart->campaignbay['coupon'][$code]['old_price'] + $data['old_price'];
-		} else {
-			$code = 'campaignbay_' . $data['campaign'] . '_' . $data['product_id'];
-			$cart->campaignbay['coupon'][$code] = array(
-				'campaign' => $data['campaign'],
-				'old_price' => $data['old_price'],
-				'campaign_title' => $data['campaign_title'],
-				'type' => $data['type'],
-				'discount' => $data['discount'],
-				'product_ids' => $data['product_id'],
-			);
-		}
-	}
+	// public static function add_data($cart, $data = array())
+	
 
 	/**
 	 * Programmatically applies a coupon code to the cart.

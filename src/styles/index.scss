@@ -732,6 +732,7 @@
       box-shadow: none;
     }
 
+    & span.campaignbay-label,
     & label {
       font-size: #{$cb-fs-sm};
       line-height: #{$cb-lh-sm};

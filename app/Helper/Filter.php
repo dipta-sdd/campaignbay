@@ -103,7 +103,7 @@ class Filter
         if ($this->exclude_sale_item_and_on_sale($product, $campaign))
             return false;
 
-        if (!Condition::check_product_level_conditions($product, $campaign)) {
+        if (!Condition::check_product_level_conditions($campaign, $product)) {
             wpab_campaignbay_log('Product level conditions not matched: ' . $campaign->get_title() . ' -- -- -- ' . $product->get_name());
             return false;
         }

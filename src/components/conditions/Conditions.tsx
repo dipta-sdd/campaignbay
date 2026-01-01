@@ -90,7 +90,7 @@ const Conditions: FC<ConditionsProps> = ({
     <>
       <div className="cb-form-input-con">
         <label htmlFor="start-time">
-          {__("Conditions / Rules", "campaignbay")}
+          {__("CONDITIONS / RULES", "campaignbay")}
         </label>
         <span className="wpab-input-help">
           {__("Define conditions or rules for the discount", "campaignbay")}

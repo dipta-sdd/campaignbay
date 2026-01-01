@@ -42,19 +42,19 @@ class Condition
      * @access public
      * @static
      *
-     * @param \WC_Product                       $product  The WooCommerce product to evaluate.
      * @param \WpabCampaignBay\Model\Campaign   $campaign The campaign configuration object.
+     * @param \WC_Product                       $product  The WooCommerce product to evaluate.
      *
      * @return bool True if conditions are met, false otherwise.
      */
-    public static function check_product_level_conditions($product, $campaign)
+    public static function check_product_level_conditions($campaign, $product = null)
     {
         $conditions = $campaign->get_conditions();
-        $rules = $conditions['rules'];
+        $rules = $conditions['rules'] ?? [];
         $match_type = $conditions['match_type'] ?? 'any';
 
         foreach ($rules as $rule) {
-            $result = self::pass_product_level_rule($product, $rule);
+            $result = self::pass_product_level_rule($rule, $product);
             if ($match_type === 'all' && !$result) {
                 return false;
             }
@@ -62,7 +62,7 @@ class Condition
                 return true;
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -75,12 +75,12 @@ class Condition
      * @access public
      * @static
      *
-     * @param \WC_Product $product The product being checked.
      * @param array       $rule    The rule configuration array containing type and conditions.
+     * @param \WC_Product $product The product being checked.
      *
      * @return bool True if the rule is passed.
      */
-    public static function pass_product_level_rule($product, $rule)
+    public static function pass_product_level_rule($rule, $product = null)
     {
         $result = true;
         $type = $rule['type'];

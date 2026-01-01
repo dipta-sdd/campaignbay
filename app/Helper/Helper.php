@@ -773,4 +773,53 @@ class Helper
         }
         return $base_price;
     }
+
+    /**
+	 * Prepares and adds discount data to the cart object to be applied as a virtual coupon.
+	 *
+	 * This helper function organizes discount data into a structured format within the
+	 * `$cart->campaignbay['coupon']` array, grouping discounts by type and campaign.
+     * 
+     * Moved from WpabCampaignBay\Engine\CartDiscount
+	 *
+	 * @since 1.0.8
+	 * @param \WC_Cart $cart The main WooCommerce cart object.
+	 * @param array    $data The discount data to add.
+	 */
+	public static function add_data($cart, $data = array())
+	{
+		if ($data['type'] === 'percent') {
+			$code = 'campaignbay_' . $data['campaign'] . '_' . $data['discount'];
+
+			if (!isset($cart->campaignbay['coupon'][$code]))
+				$cart->campaignbay['coupon'][$code] = array(
+					'campaign' => $data['campaign'],
+					'old_price' => 0,
+					'campaign_title' => $data['campaign_title'],
+					'type' => $data['type'],
+					'product_ids' => array(),
+					'discount' => $data['discount'],
+				);
+            if(is_array($data['product_id']))
+			    $cart->campaignbay['coupon'][$code]['product_ids'] = array_merge($cart->campaignbay['coupon'][$code]['product_ids'], $data['product_id']);
+			else
+			    $cart->campaignbay['coupon'][$code]['product_ids'][] = $data['product_id'];
+			$cart->campaignbay['coupon'][$code]['old_price'] = $cart->campaignbay['coupon'][$code]['old_price'] + $data['old_price'];
+		} else {
+            if(is_array($data['product_id'])){
+                $product_id_str = implode('_', $data['product_id']);
+                $code = 'campaignbay_' . $data['campaign'] . '_' . $product_id_str;
+            }else {
+                $code = 'campaignbay_' . $data['campaign'] . '_' . $data['product_id'];
+            }
+			$cart->campaignbay['coupon'][$code] = array(
+				'campaign' => $data['campaign'],
+				'old_price' => $data['old_price'],
+				'campaign_title' => $data['campaign_title'],
+				'type' => $data['type'],
+				'discount' => $data['discount'],
+				'product_ids' => $data['product_id'],
+			);
+		}
+	}
 }
