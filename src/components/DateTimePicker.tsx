@@ -51,7 +51,7 @@ const DateTimePicker: FC<DateTimePickerProps> = ({
         ref={inputRef}
         className="wpab-input w-100 "
         type="datetime-local"
-        value={dateTime ? dateTime as string : ""}
+        value={dateTime ? (dateTime as string) : ""}
         onChange={(e) =>
           onDateTimeChange(e.target.value.replace("T", " ").slice(0, 16))
         }

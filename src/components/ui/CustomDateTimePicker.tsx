@@ -12,6 +12,8 @@ import {
   Check,
   ChevronDown,
 } from "lucide-react";
+import { useCbStore } from "../../store/cbStore";
+import { date, getSettings as getDateSettings } from "@wordpress/date";
 
 interface DateTimePickerProps {
   label?: string;
@@ -43,13 +45,6 @@ const MINUTES = Array.from({ length: 60 }, (_, i) => i);
 const AM_PM = ["AM", "PM"];
 
 const ITEM_HEIGHT = 40;
-
-// Helper to get Server Date
-// Replace the implementation of this function to return your server time.
-const getServerDate = (): Date => {
-  // Example: return new Date("2025-12-23T11:57:00");
-  return new Date();
-};
 
 // Helper to format date to 'YYYY-MM-DD HH:mm'
 const formatDate = (date: Date): string => {
@@ -123,7 +118,7 @@ const TimeColumn: React.FC<TimeColumnProps> = ({
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      className="campaignbay-h-[200px] campaignbay-overflow-y-auto scrollbar-hide campaignbay-w-full campaignbay-flex campaignbay-flex-col campaignbay-relative"
+      className="campaignbay-h-[240px] campaignbay-overflow-y-auto scrollbar-hide campaignbay-w-full campaignbay-flex campaignbay-flex-col campaignbay-relative"
     >
       <div className="campaignbay-flex campaignbay-flex-col campaignbay-w-full">
         {loopedItems.map((item, i) => {
@@ -138,8 +133,8 @@ const TimeColumn: React.FC<TimeColumnProps> = ({
                 className={`campaignbay-w-10 campaignbay-h-10 campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-transition-all campaignbay-duration-200 campaignbay-rounded-md
                                     ${
                                       isSelected
-                                        ? "campaignbay-bg-[#007bff] campaignbay-text-white campaignbay-font-bold campaignbay-shadow-sm"
-                                        : "campaignbay-text-gray-700 dark:campaignbay-text-gray-300 hover:campaignbay-bg-gray-100 dark:hover:campaignbay-bg-gray-700 hover:campaignbay-text-blue-500"
+                                        ? "campaignbay-bg-[#183ad6] campaignbay-text-white campaignbay-font-bold campaignbay-shadow-sm"
+                                        : "hover:campaignbay-bg-[#183ad650] "
                                     }
                                 `}
               >
@@ -162,6 +157,29 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
   use24Hour = false,
   className,
 }) => {
+  // Helper to get Server Date
+  // Replace the implementation of this function to return your server time.
+  const { wpSettings } = useCbStore();
+  const { timezone } = getDateSettings();
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
+  useEffect(() => {
+    loadTime();
+  }, [wpSettings, timezone]);
+  useEffect(() => {
+    const timer = setInterval(loadTime, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const loadTime = () => {
+    const localTime = new Date();
+    const format = `${wpSettings?.dateFormat} ${wpSettings?.timeFormat}`;
+    const formatedDate = date(format, localTime, timezone?.offset);
+    setCurrentTime(formatedDate);
+  };
+  const getServerDate = (): Date => {
+    return new Date(currentTime);
+  };
+
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPos, setDropdownPos] = useState<"bottom" | "top">("bottom");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -583,21 +601,21 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
     const years = Array.from({ length: 100 }, (_, i) => startYear + i);
 
     return (
-      <div className="campaignbay-absolute campaignbay-inset-0 campaignbay-bg-white dark:campaignbay-bg-gray-800 campaignbay-z-10 campaignbay-overflow-y-auto scrollbar-hide campaignbay-rounded-lg">
+      <div className="campaignbay-absolute campaignbay-inset-0 campaignbay-bg-white !campaignbay-border-none campaignbay-z-10 campaignbay-overflow-y-auto scrollbar-hide campaignbay-rounded-lg">
         {years.map((year) => (
           <div
             key={year}
-            className="campaignbay-border-b campaignbay-border-gray-100 dark:campaignbay-border-gray-700/50"
+            className="campaignbay-border-b campaignbay-border-[#bdc4d1]"
           >
             <button
               ref={year === navYear ? activeYearRef : null}
               onClick={() =>
                 setExpandedYear(expandedYear === year ? null : year)
               }
-              className={`campaignbay-w-full campaignbay-text-left campaignbay-px-4 campaignbay-py-3 campaignbay-text-sm campaignbay-font-medium campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-transition-colors ${
+              className={`campaignbay-w-full campaignbay-text-left campaignbay-px-2 campaignbay-py-1.5 campaignbay-text-sm campaignbay-font-medium campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-transition-colors ${
                 year === navYear
-                  ? "campaignbay-bg-indigo-50 dark:campaignbay-bg-indigo-900/20 campaignbay-text-indigo-700 dark:campaignbay-text-indigo-300"
-                  : "campaignbay-text-gray-600 dark:campaignbay-text-gray-400 hover:campaignbay-bg-gray-50 dark:hover:campaignbay-bg-gray-700"
+                  ? "campaignbay-bg-blue-50 campaignbay-text-blue-700"
+                  : "campaignbay-text-gray-600 hover:campaignbay-bg-gray-50"
               }`}
             >
               <span>{year}</span>
@@ -609,7 +627,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             </button>
 
             {expandedYear === year && (
-              <div className="campaignbay-grid campaignbay-grid-cols-3 campaignbay-gap-2 campaignbay-p-3 campaignbay-bg-gray-50 dark:campaignbay-bg-gray-800/50 campaignbay-border-t campaignbay-border-gray-100 dark:campaignbay-border-gray-700/50 campaignbay-animate-in campaignbay-slide-in-from-top-2 campaignbay-duration-150">
+              <div className="campaignbay-grid campaignbay-grid-cols-4 campaignbay-gap-2 campaignbay-p-2 campaignbay-bg-gray-50 campaignbay-animate-in campaignbay-slide-in-from-top-2 campaignbay-duration-150">
                 {MONTHS.map((m, i) => (
                   <button
                     key={m}
@@ -618,10 +636,10 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                       setNavMonth(i);
                       setView("dates");
                     }}
-                    className={`campaignbay-py-2 campaignbay-text-xs campaignbay-rounded-md campaignbay-transition-colors campaignbay-border ${
+                    className={`campaignbay-py-1.5 campaignbay-pt-1 campaignbay-text-xs campaignbay-rounded-[4px] campaignbay-transition-colors campaignbay-border ${
                       i === navMonth && year === navYear
-                        ? "campaignbay-bg-indigo-600 campaignbay-border-indigo-600 campaignbay-text-white campaignbay-shadow-sm campaignbay-font-medium"
-                        : "campaignbay-bg-white dark:campaignbay-bg-gray-700 campaignbay-border-gray-200 dark:campaignbay-border-gray-600 campaignbay-text-gray-700 dark:campaignbay-text-gray-300 hover:campaignbay-border-indigo-300 dark:hover:campaignbay-border-indigo-500"
+                        ? "campaignbay-bg-[#183ad6] campaignbay-border-[#183ad6] campaignbay-text-white campaignbay-shadow-sm campaignbay-font-medium"
+                        : "campaignbay-bg-white campaignbay-border-[#bdc4d1] campaignbay-text-gray-700 hover:!campaignbay-border-[#183ad6] hover:!campaignbay-bg-[#183ad6] hover:!campaignbay-text-white"
                     }`}
                   >
                     {m.substring(0, 3)}
@@ -656,7 +674,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             setNavMonth(date.getMonth());
             setNavYear(date.getFullYear());
           }}
-          className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 dark:campaignbay-text-gray-600 hover:campaignbay-bg-gray-100 dark:hover:campaignbay-bg-gray-700 campaignbay-transition-colors"
+          className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors"
         >
           {dayNum}
         </button>
@@ -684,12 +702,12 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
           className={`campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-transition-colors
                         ${
                           isSelected
-                            ? "campaignbay-bg-indigo-600 campaignbay-text-white campaignbay-font-bold"
-                            : "campaignbay-text-gray-700 dark:campaignbay-text-gray-300 hover:campaignbay-bg-gray-100 dark:hover:campaignbay-bg-gray-700"
+                            ? "campaignbay-bg-[#183ad6] campaignbay-text-white campaignbay-font-bold"
+                            : "campaignbay-text-gray-700 hover:campaignbay-bg-gray-100"
                         }
                         ${
                           isToday && !isSelected
-                            ? "campaignbay-border campaignbay-border-indigo-500 campaignbay-text-indigo-600 dark:campaignbay-text-indigo-400"
+                            ? "campaignbay-border campaignbay-border-[#183ad6] campaignbay-text-[#183ad6]"
                             : ""
                         }
                     `}
@@ -711,7 +729,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             setNavMonth(date.getMonth());
             setNavYear(date.getFullYear());
           }}
-          className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 dark:campaignbay-text-gray-600 hover:campaignbay-bg-gray-100 dark:hover:campaignbay-bg-gray-700 campaignbay-transition-colors"
+          className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors"
         >
           {i}
         </button>
@@ -738,13 +756,13 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
       ref={containerRef}
     >
       {label && (
-        <label className="campaignbay-block campaignbay-text-sm campaignbay-font-medium campaignbay-text-gray-700 dark:campaignbay-text-gray-300 campaignbay-mb-1">
+        <label className="campaignbay-block campaignbay-text-sm campaignbay-font-medium campaignbay-text-gray-700 campaignbay-mb-1">
           {label}
         </label>
       )}
 
       <div
-        className="campaignbay-flex campaignbay-items-center campaignbay-w-full campaignbay-border campaignbay-border-[#bdc4d1] campaignbay-rounded-[4px] campaignbay-shadow-none focus-within:campaignbay-border-[#183ad6] campaignbay-transition-all"
+        className="campaignbay-flex campaignbay-items-center campaignbay-w-full campaignbay-border campaignbay-border-[#bdc4d1] hover:campaignbay-border-[#183ad6] campaignbay-rounded-[4px] campaignbay-shadow-none focus-within:campaignbay-border-[#183ad6] campaignbay-transition-all"
         onClick={(e) => {
           // Only focus first element if we clicked the CONTAINER background, not an input
           if (e.target === e.currentTarget) {
@@ -752,7 +770,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
           }
         }}
       >
-        <div className="campaignbay-flex-grow campaignbay-flex campaignbay-items-center campaignbay-cursor-text campaignbay-text-sm md:campaignbay-text-base ">
+        <div className="campaignbay-flex-grow campaignbay-flex campaignbay-items-center campaignbay-pl-1 campaignbay-cursor-text campaignbay-text-sm md:campaignbay-text-base ">
           {/* Month */}
           {renderCharInput("month", 0, gIdx++, "M")}
           {renderCharInput("month", 1, gIdx++, "M")}
@@ -801,24 +819,24 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
           onClick={toggleOpen}
           className="campaignbay-p-2 campaignbay-border-l campaignbay-border-[#bdc4d1] hover:campaignbay-bg-[#bdc4d1] campaignbay-transition-colors campaignbay-group"
         >
-          <CalendarIcon className="campaignbay-w-5 campaignbay-h-5 campaignbay-text-gray-400 group-hover:campaignbay-text-indigo-500 campaignbay-transition-colors" />
+          <CalendarIcon className="campaignbay-w-5 campaignbay-h-5 campaignbay-text-gray-400 group-hover:campaignbay-text-[#183ad6] campaignbay-transition-colors" />
         </button>
       </div>
 
       {isOpen && (
         <div
-          className={`campaignbay-absolute campaignbay-z-50 campaignbay-bg-white dark:campaignbay-bg-gray-800 campaignbay-rounded-lg campaignbay-shadow-xl campaignbay-border campaignbay-border-[#bdc4d1] campaignbay-flex campaignbay-flex-row campaignbay-items-stretch campaignbay-right-0 ${
+          className={`campaignbay-absolute campaignbay-z-50 campaignbay-bg-white  campaignbay-rounded-lg campaignbay-shadow-xl campaignbay-border campaignbay-border-[#bdc4d1] campaignbay-flex campaignbay-flex-row campaignbay-items-stretch campaignbay-right-0 ${
             dropdownPos === "top"
               ? "campaignbay-bottom-full campaignbay-mb-1"
               : "campaignbay-top-full campaignbay-mt-1"
           }`}
         >
-          <div className="campaignbay-p-2 md:campaignbay-p-4 campaignbay-border-r campaignbay-border-gray-200 dark:campaignbay-border-gray-700 campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-rounded-l-lg">
+          <div className="campaignbay-p-2 md:campaignbay-p-4 campaignbay-border-r campaignbay-border-[#bdc4d1] campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-rounded-l-lg">
             <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-2 md:campaignbay-mb-4">
               {view === "dates" && (
                 <button
                   onClick={handlePrevMonth}
-                  className="campaignbay-p-1 hover:campaignbay-bg-gray-100 dark:hover:campaignbay-bg-gray-700 campaignbay-rounded-full campaignbay-text-gray-600 dark:campaignbay-text-gray-300"
+                  className="campaignbay-p-1 hover:campaignbay-bg-gray-100 campaignbay-rounded-full campaignbay-text-gray-600"
                 >
                   <ChevronLeft className="campaignbay-w-5 campaignbay-h-5" />
                 </button>
@@ -826,7 +844,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
 
               <button
                 onClick={() => setView(view === "dates" ? "months" : "dates")}
-                className={`campaignbay-flex campaignbay-items-center campaignbay-gap-1 campaignbay-font-semibold campaignbay-text-gray-900 dark:campaignbay-text-gray-100 hover:campaignbay-bg-gray-100 dark:hover:campaignbay-bg-gray-700 campaignbay-px-2 campaignbay-py-1 campaignbay-rounded campaignbay-transition-colors ${
+                className={`campaignbay-flex campaignbay-items-center campaignbay-gap-1 campaignbay-font-semibold campaignbay-text-gray-900 hover:campaignbay-bg-gray-100 campaignbay-px-2 campaignbay-py-1 campaignbay-rounded campaignbay-transition-colors ${
                   view === "months" ? "campaignbay-mx-auto" : ""
                 }`}
               >
@@ -843,7 +861,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
               {view === "dates" && (
                 <button
                   onClick={handleNextMonth}
-                  className="campaignbay-p-1 hover:campaignbay-bg-gray-100 dark:hover:campaignbay-bg-gray-700 campaignbay-rounded-full campaignbay-text-gray-600 dark:campaignbay-text-gray-300"
+                  className="campaignbay-p-1 hover:campaignbay-bg-gray-100 campaignbay-rounded-full campaignbay-text-gray-600"
                 >
                   <ChevronRight className="campaignbay-w-5 campaignbay-h-5" />
                 </button>
@@ -875,9 +893,9 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
               {view === "months" && renderMonthYearSelection()}
             </div>
 
-            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mt-2 md:campaignbay-mt-4 campaignbay-pt-2 campaignbay-border-t campaignbay-border-gray-100 dark:campaignbay-border-gray-700/50">
+            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mt-2 md:campaignbay-mt-4 campaignbay-pt-2 campaignbay-border-t campaignbay-border-[#bdc4d1]">
               <button
-                className="campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-500 hover:campaignbay-text-gray-700 dark:campaignbay-text-gray-400 dark:hover:campaignbay-text-gray-200 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
+                className="campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-500 hover:campaignbay-text-gray-700 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
                 onClick={() => {
                   onChange("");
                   setIsOpen(false);
@@ -886,7 +904,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                 Clear
               </button>
               <button
-                className="campaignbay-text-xs campaignbay-font-bold campaignbay-text-indigo-600 dark:campaignbay-text-indigo-400 hover:campaignbay-text-indigo-800 dark:hover:campaignbay-text-indigo-300 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
+                className="campaignbay-text-xs campaignbay-font-bold campaignbay-text-[#183ad6] hover:campaignbay-text-blue-800 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
                 onClick={() => {
                   const now = getServerDate();
                   onChange(formatDate(now));
@@ -900,7 +918,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             </div>
           </div>
 
-          <div className="campaignbay-bg-gray-50 dark:campaignbay-bg-gray-800/50 campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-flex campaignbay-flex-col campaignbay-pt-2 md:campaignbay-pt-4 campaignbay-rounded-r-lg">
+          <div className="campaignbay-bg-gray-50 campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-flex campaignbay-flex-col campaignbay-pt-2 md:campaignbay-pt-4 campaignbay-rounded-r-lg">
             <div className="campaignbay-flex campaignbay-justify-center campaignbay-h-[200px] campaignbay-relative campaignbay-w-full campaignbay-px-2 md:campaignbay-px-4 campaignbay-mb-2 md:campaignbay-mb-4">
               <div className="campaignbay-flex campaignbay-w-full campaignbay-items-start campaignbay-gap-1 md:campaignbay-gap-0">
                 <TimeColumn
@@ -930,10 +948,10 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
               </div>
             </div>
 
-            <div className="campaignbay-p-2 md:campaignbay-p-4 campaignbay-mt-auto campaignbay-border-t campaignbay-border-gray-200 dark:campaignbay-border-gray-700 campaignbay-bg-white dark:campaignbay-bg-gray-800 campaignbay-rounded-br-lg">
+            <div className="campaignbay-p-2 campaignbay-mt-auto !campaignbay-border-0 campaignbay-bg-white campaignbay-rounded-br-lg">
               <button
                 onClick={() => setIsOpen(false)}
-                className="campaignbay-w-full campaignbay-px-4 campaignbay-py-2 campaignbay-bg-indigo-600 hover:campaignbay-bg-indigo-700 campaignbay-text-white campaignbay-text-sm campaignbay-font-medium campaignbay-rounded-md campaignbay-shadow-sm campaignbay-transition-colors campaignbay-flex campaignbay-items-center campaignbay-justify-center"
+                className="campaignbay-w-full campaignbay-px-2 campaignbay-py-2 campaignbay-bg-[#183ad6] hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-text-sm campaignbay-font-medium campaignbay-rounded-md campaignbay-shadow-sm campaignbay-transition-colors campaignbay-flex campaignbay-items-center campaignbay-justify-center"
               >
                 <Check className="campaignbay-w-4 campaignbay-h-4 campaignbay-mr-1" />{" "}
                 Done
