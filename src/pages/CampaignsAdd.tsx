@@ -96,7 +96,8 @@ const CampaignsAdd: FC = () => {
   useEffect(() => {
     if (!tourStep) return;
     const nextStepId = TYPE_TO_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
-    const prevStepId = TYPE_TO_PREV_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
+    const prevStepId =
+      TYPE_TO_PREV_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
 
     if (campaign.target_type === "entire_store") {
       setConfig((prevConfig) => ({
@@ -194,19 +195,25 @@ const CampaignsAdd: FC = () => {
       [TOUR_STEPS.SCHED_TOGGLE]: {
         ...prevConfig[TOUR_STEPS.SCHED_TOGGLE],
         onNext: ({ setStep }) => {
-          setStep(campaign.schedule_enabled ? TOUR_STEPS.START_TIME : TOUR_STEPS.SAVE_BTN);
+          setStep(
+            campaign.schedule_enabled
+              ? TOUR_STEPS.START_TIME
+              : TOUR_STEPS.SAVE_BTN
+          );
         },
       },
       [TOUR_STEPS.SAVE_BTN]: {
         ...prevConfig[TOUR_STEPS.SAVE_BTN],
         onPrev: ({ setStep }) => {
-          setStep(campaign.schedule_enabled ? TOUR_STEPS.END_TIME : TOUR_STEPS.SCHED_TOGGLE);
+          setStep(
+            campaign.schedule_enabled
+              ? TOUR_STEPS.END_TIME
+              : TOUR_STEPS.SCHED_TOGGLE
+          );
         },
-      }
+      },
     }));
-
   }, [campaign.schedule_enabled, setConfig]);
-
 
   //=================================================================================
   //============================     Guide    =======================================

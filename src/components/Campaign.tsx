@@ -6,7 +6,6 @@ import { FC, useEffect } from "react";
 import Required from "../components/Required";
 import { useCbStore } from "../store/cbStore";
 import { getSettings as getDateSettings } from "@wordpress/date";
-import DateTimePicker from "../components/DateTimePicker";
 import CbCheckbox from "../components/CbCheckbox";
 import Tooltip from "../components/Tooltip";
 import {
@@ -71,9 +70,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   const scheduleToggleRef = useGuideStep<HTMLDivElement>(
     TOUR_STEPS.SCHED_TOGGLE
   );
-  const startTimeInputRef = useGuideStep<HTMLDivElement>(
-    TOUR_STEPS.START_TIME
-  );
+  const startTimeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.START_TIME);
   const endTimeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.END_TIME);
 
   useEffect(() => {
@@ -530,56 +527,52 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
           />
         </div>
 
-        
-          <div className="wpab-grid-2 cb-date-time-fix" style={{ gap: "16px" }}>
-            <div
-              className={`${errors?.start_datetime ? "wpab-input-error" : ""}`}
+        <div className="wpab-grid-2 cb-date-time-fix" style={{ gap: "16px" }}>
+          <div
+            className={`${errors?.start_datetime ? "wpab-input-error" : ""}`}
+          >
+            <span
+              className="wpab-input-label"
+              style={{ display: "block", marginBottom: "10px" }}
             >
-              <span
-                className="wpab-input-label"
-                style={{ display: "block", marginBottom: "10px" }}
-              >
-                {__("Start Time", "campaignbay")}
-                {<Required />}
-              </span>
-              <CustomDateTimePicker
+              {__("Start Time", "campaignbay")}
+              {<Required />}
+            </span>
+            <CustomDateTimePicker
               inputRef={startTimeInputRef}
-                value={campaign.start_datetime}
-                onChange={(date: Date | string) => {
-                  setCampaign((prev) => ({
-                    ...prev,
-                    start_datetime: date,
-                  }));
-                }}
-                disabled={!campaign.schedule_enabled}
-              />
+              value={campaign.start_datetime}
+              onChange={(date: Date | string) => {
+                setCampaign((prev) => ({
+                  ...prev,
+                  start_datetime: date,
+                }));
+              }}
+              disabled={!campaign.schedule_enabled}
+            />
 
-              {renderError(errors?.start_datetime, false)}
-            </div>
-            <div
-              className={`${errors?.end_datetime ? "wpab-input-error" : ""}`}
-            >
-              <span
-                className="wpab-input-label"
-                style={{ display: "block", marginBottom: "10px" }}
-              >
-                {__("End Time", "campaignbay")}
-              </span>
-              <CustomDateTimePicker
-              inputRef={endTimeInputRef}
-                value={campaign.end_datetime}
-                onChange={(date: Date | string) => {
-                  setCampaign((prev) => ({
-                    ...prev,
-                    end_datetime: date,
-                  }));
-                }}
-                disabled={!campaign.schedule_enabled}
-              />
-              {renderError(errors?.end_datetime, false)}
-            </div>
+            {renderError(errors?.start_datetime, false)}
           </div>
-        
+          <div className={`${errors?.end_datetime ? "wpab-input-error" : ""}`}>
+            <span
+              className="wpab-input-label"
+              style={{ display: "block", marginBottom: "10px" }}
+            >
+              {__("End Time", "campaignbay")}
+            </span>
+            <CustomDateTimePicker
+              inputRef={endTimeInputRef}
+              value={campaign.end_datetime}
+              onChange={(date: Date | string) => {
+                setCampaign((prev) => ({
+                  ...prev,
+                  end_datetime: date,
+                }));
+              }}
+              disabled={!campaign.schedule_enabled}
+            />
+            {renderError(errors?.end_datetime, false)}
+          </div>
+        </div>
       </div>
 
       <CampaignSettings
