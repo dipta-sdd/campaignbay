@@ -30,6 +30,7 @@ import CustomSelect from "./ui/CustomSelect";
 import { getSettings } from "../utils/settings";
 import Conditions from "./conditions/Conditions";
 import { ConditionsInterface } from "./conditions/type";
+import CustomDateTimePicker from "./ui/CustomDateTimePicker";
 
 interface CampaignProps {
   campaign: CampaignInerface;
@@ -158,14 +159,30 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
 
   const campaignStatusOptions = () => {
     let options = [
-      { label: __("Active", "campaignbay"), className: "campaignbay-text-green-500", value: "active" },
-      { label: __("Inactive", "campaignbay"), className: "campaignbay-text-red-500", value: "inactive" },
-      { label: __("Scheduled", "campaignbay"), className: "campaignbay-text-blue-500", value: "scheduled" },
+      {
+        label: __("Active", "campaignbay"),
+        className: "campaignbay-text-green-500",
+        value: "active",
+      },
+      {
+        label: __("Inactive", "campaignbay"),
+        className: "campaignbay-text-red-500",
+        value: "inactive",
+      },
+      {
+        label: __("Scheduled", "campaignbay"),
+        className: "campaignbay-text-blue-500",
+        value: "scheduled",
+      },
     ];
     if (campaign.status === "expired") {
       options = [
         ...options,
-        { label: __("Expired", "campaignbay"), className: "campaignbay-text-red-500", value: "expired" },
+        {
+          label: __("Expired", "campaignbay"),
+          className: "campaignbay-text-red-500",
+          value: "expired",
+        },
       ];
     }
     return options;
@@ -266,13 +283,16 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         <label htmlFor="selection-type">
           {__("DISCOUNT TARGET", "campaignbay")} <Required />
         </label>
-        
+
         <CustomSelect
           id="selection-type"
           con_ref={targetTypeInputRef}
           options={[
             { label: __("Entire Store", "campaignbay"), value: "entire_store" },
-            { label: __("By Product Category", "campaignbay"), value: "category" },
+            {
+              label: __("By Product Category", "campaignbay"),
+              value: "category",
+            },
             { label: __("By Product", "campaignbay"), value: "product" },
           ]}
           value={campaign.target_type}
@@ -547,12 +567,22 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               >
                 {__("End Time", "campaignbay")}
               </span>
-              <DateTimePicker
+              {/* <DateTimePicker
                 inputRef={endTimeInputRef}
                 timezone={timezone}
                 id="end-time"
                 dateTime={campaign.end_datetime}
                 onDateTimeChange={(date: Date | string) => {
+                  setCampaign((prev) => ({
+                    ...prev,
+                    end_datetime: date,
+                  }));
+                }}
+                disabled={!campaign.schedule_enabled}
+              /> */}
+              <CustomDateTimePicker
+                value={campaign.end_datetime}
+                onChange={(date: Date | string) => {
                   setCampaign((prev) => ({
                     ...prev,
                     end_datetime: date,
