@@ -16,11 +16,13 @@ import { useCbStore } from "../../store/cbStore";
 import { date, getSettings as getDateSettings } from "@wordpress/date";
 
 interface DateTimePickerProps {
+  inputRef?: React.Ref<HTMLDivElement>;
   label?: string;
   value?: string | Date | null;
   onChange: (date: string) => void;
   use24Hour?: boolean;
   className?: string;
+  disabled?: boolean;
 }
 
 const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -151,11 +153,13 @@ const TimeColumn: React.FC<TimeColumnProps> = ({
 };
 
 const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
+  inputRef,
   label,
   value,
   onChange,
   use24Hour = false,
   className,
+  disabled = false,
 }) => {
   // Helper to get Server Date
   // Replace the implementation of this function to return your server time.
@@ -204,7 +208,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
     ampm: "", // "AM" or "PM"
   });
 
-  const parsedValue = useMemo(() => parseDate(value), [value]);
+  const parsedValue = useMemo(() => parseDate(value as string), [value]);
 
   // Sync external value to inputs
   useEffect(() => {
@@ -282,6 +286,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
   }, [view]);
 
   const toggleOpen = () => {
+    if (disabled) return;
     if (!isOpen && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       // Estimate dropdown height as ~350px
@@ -513,6 +518,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
         maxLength={1}
         placeholder={placeholder}
         value={displayVal}
+        disabled={disabled}
         onChange={(e) =>
           handleCharChange(section, charIndex, e.target.value, globalIndex)
         }
@@ -522,7 +528,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
           isAmPm
             ? "campaignbay-cursor-pointer campaignbay-caret-transparent selection:campaignbay-bg-transparent"
             : ""
-        }`}
+        } ${disabled ? "campaignbay-cursor-not-allowed" : ""}`}
         onClick={(e) => {
           // For AM/PM, toggle immediately on click
           if (section === "ampm") {
@@ -601,7 +607,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
     const years = Array.from({ length: 100 }, (_, i) => startYear + i);
 
     return (
-      <div className="campaignbay-absolute campaignbay-inset-0 campaignbay-bg-white !campaignbay-border-none campaignbay-z-10 campaignbay-overflow-y-auto scrollbar-hide campaignbay-rounded-lg">
+      <div className="campaignbay-absolute campaignbay-inset-0 campaignbay-bg-white !campaignbay-border-none campaignbay-z-[9999] campaignbay-overflow-y-auto scrollbar-hide campaignbay-rounded-lg">
         {years.map((year) => (
           <div
             key={year}
@@ -762,8 +768,14 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
       )}
 
       <div
-        className="campaignbay-flex campaignbay-items-center campaignbay-w-full campaignbay-border campaignbay-border-[#bdc4d1] hover:campaignbay-border-[#183ad6] campaignbay-rounded-[4px] campaignbay-shadow-none focus-within:campaignbay-border-[#183ad6] campaignbay-transition-all"
+        ref={inputRef}
+        className={`campaignbay-flex campaignbay-items-center campaignbay-w-full campaignbay-border campaignbay-border-[#bdc4d1] campaignbay-rounded-[4px] campaignbay-shadow-none campaignbay-transition-all ${
+          disabled
+            ? "campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-opacity-60"
+            : "hover:campaignbay-border-[#183ad6] focus-within:campaignbay-border-[#183ad6]"
+        }`}
         onClick={(e) => {
+          if (disabled) return;
           // Only focus first element if we clicked the CONTAINER background, not an input
           if (e.target === e.currentTarget) {
             inputsRef.current[0]?.focus();
@@ -817,15 +829,24 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
         <button
           type="button"
           onClick={toggleOpen}
-          className="campaignbay-p-2 campaignbay-border-l campaignbay-border-[#bdc4d1] hover:campaignbay-bg-[#bdc4d1] campaignbay-transition-colors campaignbay-group"
+          disabled={disabled}
+          className={`campaignbay-p-2 campaignbay-border-l campaignbay-border-[#bdc4d1] campaignbay-transition-colors campaignbay-group ${
+            disabled
+              ? "campaignbay-cursor-not-allowed"
+              : "hover:campaignbay-bg-[#bdc4d1]"
+          }`}
         >
-          <CalendarIcon className="campaignbay-w-5 campaignbay-h-5 campaignbay-text-gray-400 group-hover:campaignbay-text-[#183ad6] campaignbay-transition-colors" />
+          <CalendarIcon
+            className={`campaignbay-w-5 campaignbay-h-5 campaignbay-text-gray-400 campaignbay-transition-colors ${
+              disabled ? "" : "group-hover:campaignbay-text-[#183ad6]"
+            }`}
+          />
         </button>
       </div>
 
       {isOpen && (
         <div
-          className={`campaignbay-absolute campaignbay-z-50 campaignbay-bg-white  campaignbay-rounded-lg campaignbay-shadow-xl campaignbay-border campaignbay-border-[#bdc4d1] campaignbay-flex campaignbay-flex-row campaignbay-items-stretch campaignbay-right-0 ${
+          className={`campaignbay-absolute campaignbay-z-[99999] campaignbay-bg-white  campaignbay-rounded-lg campaignbay-shadow-xl campaignbay-border campaignbay-border-[#bdc4d1] campaignbay-flex campaignbay-flex-row campaignbay-items-stretch campaignbay-right-0 ${
             dropdownPos === "top"
               ? "campaignbay-bottom-full campaignbay-mb-1"
               : "campaignbay-top-full campaignbay-mt-1"

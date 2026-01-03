@@ -71,10 +71,10 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   const scheduleToggleRef = useGuideStep<HTMLDivElement>(
     TOUR_STEPS.SCHED_TOGGLE
   );
-  const startTimeInputRef = useGuideStep<HTMLInputElement>(
+  const startTimeInputRef = useGuideStep<HTMLDivElement>(
     TOUR_STEPS.START_TIME
   );
-  const endTimeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.END_TIME);
+  const endTimeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.END_TIME);
 
   useEffect(() => {
     if (!tourStep) return;
@@ -530,7 +530,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
           />
         </div>
 
-        {campaign.schedule_enabled && (
+        
           <div className="wpab-grid-2 cb-date-time-fix" style={{ gap: "16px" }}>
             <div
               className={`${errors?.start_datetime ? "wpab-input-error" : ""}`}
@@ -542,13 +542,10 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
                 {__("Start Time", "campaignbay")}
                 {<Required />}
               </span>
-              <DateTimePicker
-                inputRef={startTimeInputRef}
-                timezone={timezone}
-                wpSettings={wpSettings}
-                id="start-time"
-                dateTime={campaign.start_datetime}
-                onDateTimeChange={(date: Date | string) => {
+              <CustomDateTimePicker
+              inputRef={startTimeInputRef}
+                value={campaign.start_datetime}
+                onChange={(date: Date | string) => {
                   setCampaign((prev) => ({
                     ...prev,
                     start_datetime: date,
@@ -556,6 +553,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
                 }}
                 disabled={!campaign.schedule_enabled}
               />
+
               {renderError(errors?.start_datetime, false)}
             </div>
             <div
@@ -567,20 +565,8 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               >
                 {__("End Time", "campaignbay")}
               </span>
-              {/* <DateTimePicker
-                inputRef={endTimeInputRef}
-                timezone={timezone}
-                id="end-time"
-                dateTime={campaign.end_datetime}
-                onDateTimeChange={(date: Date | string) => {
-                  setCampaign((prev) => ({
-                    ...prev,
-                    end_datetime: date,
-                  }));
-                }}
-                disabled={!campaign.schedule_enabled}
-              /> */}
               <CustomDateTimePicker
+              inputRef={endTimeInputRef}
                 value={campaign.end_datetime}
                 onChange={(date: Date | string) => {
                   setCampaign((prev) => ({
@@ -593,7 +579,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               {renderError(errors?.end_datetime, false)}
             </div>
           </div>
-        )}
+        
       </div>
 
       <CampaignSettings
