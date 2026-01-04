@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Campaign } from "../types";
 
 export interface Template {
@@ -502,3 +502,6 @@ const templates: Template[] = [
 ];
 
 export default templates;
+
+
+export const getTemplate = (id: string) => templates.find((template) => template.id === id);

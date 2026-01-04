@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import templates from "../../utils/templates";
+import templates, { getTemplate } from "../../utils/templates";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,14 +16,7 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
     null
   );
 
-  const selectedTemplate = templates.find(
-    (template) => template.id === selectedTemplateId
-  );
-  const hoveredTemplate = templates.find(
-    (template) => template.id === hoveredTemplateId
-  );
-
-  console.log(selectedTemplateId);
+  const selectedTemplate = getTemplate(selectedTemplateId || "");
 
   return (
     <div className="campaignbay-bg-zinc-300 campaignbay-p-0 campaignbay-gap-0 campaignbay-flex campaignbay-h-full campaignbay-text-gray-950 campaignbay-rounded-[4px] campaignbay-overflow-hidden campaignbay-max-h-[calc(92vh-65px)] campaignbay-w-min">

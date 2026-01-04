@@ -4,13 +4,14 @@ import { check, Icon } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
 import { FC, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { Campaign as CampaignInterface, CampaignErrorsType } from "../types";
 import Campaign from "../components/Campaign";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
 import { FloatingHelpButton } from "./Campaigns";
+import templates, { getTemplate } from "../utils/templates";
 
 const CampaignsAdd: FC = () => {
   const [campaign, setCampaign] = useState<CampaignInterface>({
@@ -43,8 +44,23 @@ const CampaignsAdd: FC = () => {
   });
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const [searchParams] = useSearchParams();
 
   const [errors, setErrors] = useState<CampaignErrorsType>({});
+
+  // Load template data if templateId is in URL
+  useEffect(() => {
+    const templateId = searchParams.get("templateId");
+    if (templateId && templateId !== "blank") {
+      const template = getTemplate(templateId);
+      if (template) {
+        setCampaign({
+          ...campaign,
+          ...template.campaign_data,
+        });
+      }
+    }
+  }, [searchParams]);
 
   const handleSaveCampaign = async () => {
     setTourStep(0);
