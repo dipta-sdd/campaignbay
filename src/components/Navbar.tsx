@@ -177,13 +177,13 @@ const Navbar: FC = () => {
       <CustomModal
         isOpen={isModalOpen}
         showHeader={true}
-        maxWidth="campaignbay-add-campaigns-modal"
+        maxWidth="campaignbay-add-campaigns-modal campaignbay-w-min"
         className="campaignbay-w-full !campaignbay-rounded-[4px] !campaignbay-max-h-[92vh]"
         onClose={() => setIsModalOpen(false)}
         title={__("Add Campaign", "campaignbay")}
         classNames={{
           header: "campaignbay-bg-blue-500b campaignbay-height-[44px]",
-          body: "!campaignbay-p-0",
+          body: "!campaignbay-p-0 campaignbay-w-min",
           footer: "",
         }}
       >
