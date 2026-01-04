@@ -6,6 +6,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
+import CustomModal from "./ui/CustomModal";
+import { Plus, Tag } from "lucide-react";
+import AddCampaignModal from "./Onboarding/AddCampaignModal";
 
 interface MenuLink {
   label: string;
@@ -15,6 +18,7 @@ interface MenuLink {
 const Navbar: FC = () => {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
 
   const addCampaignBtnRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.START);
   const { setTourStep, tourStep } = useGuide();
@@ -84,12 +88,13 @@ const Navbar: FC = () => {
               ref={addCampaignBtnRef}
               className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-0"
               onClick={() => {
-                navigate("/campaigns/add");
-                if(tourStep === 1){
-                  setTimeout(() => {
-                    setTourStep(2);
-                  }, 100);
-                }
+                // navigate("/campaigns/add");
+                // if(tourStep === 1){
+                //   setTimeout(() => {
+                //     setTourStep(2);
+                //   }, 100);
+                // }
+                setIsModalOpen(true);
               }}
             >
               {__("Add Campaign", "campaignbay")}
@@ -168,6 +173,22 @@ const Navbar: FC = () => {
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
+
+      <CustomModal
+        isOpen={isModalOpen}
+        showHeader={true}
+        maxWidth="campaignbay-max-w-[nin(90vw,1080px)]"
+        className="!campaignbay-w-[1080px] campaignbay-h-min-[400px] !campaignbay-rounded-[4px]"
+        onClose={() => setIsModalOpen(false)}
+        title={__("Add Campaign", "campaignbay")}
+        classNames={{
+          header: "campaignbay-bg-blue-500b campaignbay-height-[44px]",
+          body: "!campaignbay-p-0",
+          footer: "",
+        }}
+      >
+        <AddCampaignModal onClose={() => setIsModalOpen(false)} />
+      </CustomModal>
     </>
   );
 };
