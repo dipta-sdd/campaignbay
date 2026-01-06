@@ -67,8 +67,12 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
   //=================================================================================
   const bogoBuyInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.BOGO_BUY);
   const bogoGetInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.BOGO_GET);
-  const schedValueInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.SCHED_VALUE);
-  const schedTypeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.SCHED_TYPE);
+  const schedValueInputRef = useGuideStep<HTMLInputElement>(
+    TOUR_STEPS.SCHED_VALUE
+  );
+  const schedTypeInputRef = useGuideStep<HTMLInputElement>(
+    TOUR_STEPS.SCHED_TYPE
+  );
   //=================================================================================
   //============================     Guide    =======================================
   //=================================================================================
@@ -114,7 +118,6 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
         />
       )}
 
-
       {campaign.type === "scheduled" && (
         <div className="cb-form-input-con">
           <label htmlFor="discount-type">
@@ -123,8 +126,9 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
           {/* @ts-ignore */}
           <ToggleGroupControl
             ref={schedTypeInputRef}
-            className={`cb-toggle-group-control ${errors?.discount_type ? "wpab-input-error" : ""
-              }`}
+            className={`cb-toggle-group-control ${
+              errors?.discount_type ? "wpab-input-error" : ""
+            }`}
             __next40pxDefaultSize
             __nextHasNoMarginBottom
             isBlock
@@ -164,8 +168,9 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
               name="discount-value"
               inputMode="numeric"
               pattern="[0-9]*"
-              className={`wpab-input w-100 ${errors?.discount_value ? "wpab-input-error" : ""
-                }`}
+              className={`wpab-input w-100 ${
+                errors?.discount_value ? "wpab-input-error" : ""
+              }`}
               placeholder="Enter Value"
               onChange={(e) =>
                 setCampaign((prev) => ({
@@ -208,7 +213,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
                     className={`wpab-input  ${
                       // @ts-ignore
                       errors?.tiers?.[0]?.buy_quantity ? "wpab-input-error" : ""
-                      }`}
+                    }`}
                     value={bogoTiers.buy_quantity ? bogoTiers.buy_quantity : ""}
                     onChange={(e) =>
                       setBogoTiers((prev) => ({
@@ -237,7 +242,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
                     className={`wpab-input  ${
                       // @ts-ignore
                       errors?.tiers?.[0]?.get_quantity ? "wpab-input-error" : ""
-                      }`}
+                    }`}
                     value={bogoTiers.get_quantity ? bogoTiers.get_quantity : ""}
                     onChange={(e) =>
                       setBogoTiers((prev) => ({

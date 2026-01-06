@@ -105,6 +105,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     setSettings(campaign.settings);
     if (campaign.usage_limit) setEnableUsageLimit(true);
   }, []);
+  
   useEffect(() => {
     setCampaign((prev) => ({
       ...prev,
@@ -185,7 +186,6 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
     return options;
   };
 
-  // console.log(campaign.conditions);
   return (
     <>
       <div className="cb-form-input-con ">

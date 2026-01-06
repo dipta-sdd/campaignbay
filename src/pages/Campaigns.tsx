@@ -290,9 +290,8 @@ const Campaigns: FC = () => {
     return "All Products";
   };
 
-  const handleBulkAction = (action: BulkActionType) => {
-    setBulkAction(action);
-    if (action !== "" && action !== null && action !== undefined) {
+  const handleBulkAction = () => {
+    if (bulkAction !== "" && bulkAction !== null && bulkAction !== undefined) {
       setIsBulkActionModalOpen(true);
     }
   };
@@ -549,7 +548,8 @@ const Campaigns: FC = () => {
                 />
                 <button
                   className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 wpab-cb-btn-primary"
-                  // onClick={applyFilters}
+                  onClick={handleBulkAction}
+                  disabled={!selectedCampaigns.length}
                 >
                   Apply
                 </button>

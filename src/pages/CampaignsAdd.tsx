@@ -5,15 +5,17 @@ import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
 import { FC, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
 import { Campaign as CampaignInterface, CampaignErrorsType } from "../types";
 import Campaign from "../components/Campaign";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
 import { FloatingHelpButton } from "./Campaigns";
-import templates, { getTemplate } from "../utils/templates";
+import { getTemplate } from "../utils/templates";
 
 const CampaignsAdd: FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [campaign, setCampaign] = useState<CampaignInterface>({
     id: 0,
     title: "",
@@ -60,6 +62,7 @@ const CampaignsAdd: FC = () => {
         });
       }
     }
+    setIsLoading(false);
   }, [searchParams]);
 
   const handleSaveCampaign = async () => {
@@ -236,42 +239,51 @@ const CampaignsAdd: FC = () => {
   //=================================================================================
 
   return (
-    <div className="cb-page">
-      <Navbar />
-      <div className="cb-page-header-container">
-        <div className="cb-page-header-title">
-          {__("Add Campaign", "campaignbay")}
-        </div>
-        <div className="cb-page-header-actions">
-          <button
-            className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary "
-            onClick={handleSaveCampaign}
-          >
-            <Icon icon={check} fill="currentColor" />
-            {__("Save Campaign", "campaignbay")}
-          </button>
-        </div>
-      </div>
-      <div className="cb-page-container">
-        <Campaign
-          campaign={campaign}
-          setCampaign={setCampaign}
-          errors={errors}
-        />
-        {/* buttons */}
-        <div className="wpab-btn-bottom-con">
-          <button
-            ref={saveBtnRef}
-            className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary"
-            onClick={handleSaveCampaign}
-          >
-            <Icon icon={check} fill="currentColor" />
-            {__("Save Changes", "campaignbay")}
-          </button>
-        </div>
-      </div>
-      <FloatingHelpButton step={TOUR_STEPS.TITLE} />
-    </div>
+    <>
+      {" "}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="cb-page">
+            <Navbar />
+            <div className="cb-page-header-container">
+              <div className="cb-page-header-title">
+                {__("Add Campaign", "campaignbay")}
+              </div>
+              <div className="cb-page-header-actions">
+                <button
+                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary "
+                  onClick={handleSaveCampaign}
+                >
+                  <Icon icon={check} fill="currentColor" />
+                  {__("Save Campaign", "campaignbay")}
+                </button>
+              </div>
+            </div>
+            <div className="cb-page-container">
+              <Campaign
+                campaign={campaign}
+                setCampaign={setCampaign}
+                errors={errors}
+              />
+              {/* buttons */}
+              <div className="wpab-btn-bottom-con">
+                <button
+                  ref={saveBtnRef}
+                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary"
+                  onClick={handleSaveCampaign}
+                >
+                  <Icon icon={check} fill="currentColor" />
+                  {__("Save Changes", "campaignbay")}
+                </button>
+              </div>
+            </div>
+            <FloatingHelpButton step={TOUR_STEPS.TITLE} />
+          </div>
+        </>
+      )}
+    </>
   );
 };
 

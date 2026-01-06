@@ -2,8 +2,6 @@ import React, { useState, useLayoutEffect, FC, useRef, useEffect } from "react";
 import { useGuide } from "../store/GuideContext";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import CbCheckbox from "./CbCheckbox";
-import apiFetch from "@wordpress/api-fetch";
 import { useToast } from "../store/toast/use-toast";
 import { __ } from "@wordpress/i18n";
 import { useCbStore } from "../store/cbStore";
@@ -291,26 +289,26 @@ const Guide: FC = () => {
   const handleClose = async () => {
     if (dontShowAgain) {
       setIsClosing(true);
-      if (has_seen_guide) {
-        setIsClosing(false);
-        setTourStep(0);
-        // addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
-        return;
-      }
+      // if (has_seen_guide) {
+      //   setIsClosing(false);
+      //   setTourStep(0);
+      //   // addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
+      //   return;
+      // }
 
-      try {
-        const response = await apiFetch({
-          path: "/campaignbay/v1/settings/guide",
-          method: "POST",
-        });
-        setIsClosing(false);
-        setTourStep(0);
-        // addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
-      } catch (error) {
-        console.error("Failed to dismiss tour:", error);
-        setIsClosing(false);
-        // addToast(__("Error dismissing tour.", "campaignbay"), "error");
-      }
+      // try {
+      //   const response = await apiFetch({
+      //     path: "/campaignbay/v1/settings/guide",
+      //     method: "POST",
+      //   });
+      //   setIsClosing(false);
+      //   setTourStep(0);
+      //   // addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
+      // } catch (error) {
+      //   console.error("Failed to dismiss tour:", error);
+      //   setIsClosing(false);
+      //   // addToast(__("Error dismissing tour.", "campaignbay"), "error");
+      // }
     }
     setTourStep(0);
   };
