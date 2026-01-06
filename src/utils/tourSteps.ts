@@ -1,16 +1,20 @@
 // src/utils/tourConstants.ts
 export const TOUR_STEPS = {
   START: 1,
-  TITLE: 2,
-  TYPE: 3,
-  STATUS: 4,
+  BLANK_CAMPAIGN: 2,
+  CREATE: 3,
 
-  TARGET_TYPE: 5,
-  TARGET_IDS: 6,
-  EXCLUDE_CHECK: 7,
+
+  TITLE: 11,
+  TYPE: 12,
+  STATUS: 13,
+
+  TARGET_TYPE: 14,
+  TARGET_IDS: 15,
+  EXCLUDE_CHECK: 16,
  
-  SCHED_TYPE: 10,
-  SCHED_VALUE: 11,
+  SCHED_TYPE: 17,
+  SCHED_VALUE: 18,
 
   QTY_RANGE: 20,
   QTY_VALUE: 21,

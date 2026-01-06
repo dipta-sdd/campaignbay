@@ -8,18 +8,26 @@ export const campaignTourConfig: TourConfig = {
   [TOUR_STEPS.START]: {
     text: <span className="">Click <b>Add Campaign</b> to create a new promotion.</span>,
     position: "bottom-left",
+    showNext: false,
+    showPrev: false,
+    autoFocus: true,
+  },
+  [TOUR_STEPS.BLANK_CAMPAIGN]:{
+    text: <span className="">Select <b>Blank Campaign</b> to create your custom campaign.</span>,
+    position: "bottom",
     showNext: true,
     showPrev: false,
     autoFocus: true,
-    nextOnEnter: true,
-    onNext: ({ next, setStep, navigate }) => {
-      navigate("/campaigns/add");
-      setTimeout(() => {
-        next();
-      }, 100);
-    },
-    
   },
+  [TOUR_STEPS.CREATE]:{
+    text: <span className="">Click <b>Create</b> to start creating.</span>,
+    position: "bottom",
+    showNext: false,
+    showPrev: true,
+    autoFocus: true,
+  },
+
+
   [TOUR_STEPS.TITLE]: {
     text: "Start by giving your campaign a descriptive title (e.g., 'Summer Flash Sale').",
     position: "bottom",

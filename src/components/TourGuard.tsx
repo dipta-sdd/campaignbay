@@ -1,24 +1,23 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useGuide } from "../store/GuideContext";
-import { useCbStore } from "../store/cbStore";
 import { TOUR_STEPS } from "../utils/tourSteps";
 
 const TourGuard = () => {
   const location = useLocation();
   const { tourStep, setTourStep } = useGuide();
-  const { has_seen_guide } = useCbStore();
+  // const { has_seen_guide } = useCbStore();
 
-  useEffect(() => {
-    if (!has_seen_guide) {
-      const currentPath = location.pathname;
-      if (currentPath === "/campaigns/add") {
-        setTourStep(TOUR_STEPS.TITLE);
-      } else {
-        setTourStep(TOUR_STEPS.START);
-      }
-    }
-  }, [has_seen_guide]);
+  // useEffect(() => {
+  //   if (!has_seen_guide) {
+  //     const currentPath = location.pathname;
+  //     if (currentPath === "/campaigns/add") {
+  //       setTourStep(TOUR_STEPS.TITLE);
+  //     } else {
+  //       setTourStep(TOUR_STEPS.START);
+  //     }
+  //   }
+  // }, [has_seen_guide]);
 
 
   useEffect(() => {
@@ -36,10 +35,10 @@ const TourGuard = () => {
         case "/":
         case "/dashboard":
         case "/campaigns":
-          return [1];
+          return range(TOUR_STEPS.START, TOUR_STEPS.TITLE - 1);
 
         case "/campaigns/add":
-          return range(2, 100);
+          return range(TOUR_STEPS.TITLE, 100);
 
         case "/settings":
         default:

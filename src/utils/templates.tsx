@@ -46,7 +46,7 @@ const templates: Template[] = [
     campaign_data: {
       id: 0,
       title: "24H Flash Sale",
-      status: "inactive",
+      status: "active",
       type: "scheduled",
       discount_type: "percentage",
       discount_value: 20,
@@ -106,7 +106,7 @@ const templates: Template[] = [
     campaign_data: {
       id: 0,
       title: "Buy 1 Get 1 Free Details",
-      status: "inactive",
+      status: "active",
       type: "bogo",
       discount_type: "percentage",
       discount_value: null,
@@ -165,7 +165,7 @@ const templates: Template[] = [
     campaign_data: {
       id: 0,
       title: "Bulk Saver - Buy Moar Save Moar",
-      status: "inactive",
+      status: "active",
       type: "quantity",
       discount_type: "percentage",
       discount_value: null,
@@ -228,7 +228,7 @@ const templates: Template[] = [
     campaign_data: {
       id: 0,
       title: "Early Bird Special",
-      status: "inactive",
+      status: "active",
       type: "earlybird",
       discount_type: "percentage",
       discount_value: null,
@@ -288,7 +288,7 @@ const templates: Template[] = [
     campaign_data: {
       id: 0,
       title: "Weekend Blast - $5 Off",
-      status: "inactive",
+      status: "active",
       type: "scheduled",
       discount_type: "fixed",
       discount_value: 5,
@@ -340,7 +340,7 @@ const templates: Template[] = [
     campaign_data: {
       id: 0,
       title: "Clearance Sale - 30% Off",
-      status: "inactive",
+      status: "active",
       type: "scheduled",
       discount_type: "percentage",
       discount_value: 30,
@@ -393,7 +393,7 @@ const templates: Template[] = [
     campaign_data: {
       id: 0,
       title: "Spend More Save More",
-      status: "inactive",
+      status: "active",
       type: "quantity",
       discount_type: "percentage",
       discount_value: null,
@@ -470,7 +470,7 @@ const templates: Template[] = [
     campaign_data: {
       id: 0,
       title: "Stock Up: Buy 3 Get 1 Free",
-      status: "inactive",
+      status: "active",
       type: "bogo",
       discount_type: "percentage",
       discount_value: null,

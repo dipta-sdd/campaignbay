@@ -56,7 +56,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="campaignbay-fixed campaignbay-inset-0 campaignbay-z-[99999] campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-p-4 campaignbay-bg-black/50 campaignbay-backdrop-blur-[1px] campaignbay-transition-opacity campaignbay-duration-300">
+    <div className="campaignbay-fixed campaignbay-inset-0 campaignbay-z-[9998] campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-p-4 campaignbay-bg-black/50 campaignbay-backdrop-blur-[1px] campaignbay-transition-opacity campaignbay-duration-300">
       {/* Backdrop click handler */}
       <div
         className="campaignbay-absolute campaignbay-inset-0"
