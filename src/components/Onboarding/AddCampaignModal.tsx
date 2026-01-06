@@ -16,22 +16,40 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
     null
   );
 
+  const handleSelect=(templateId:string)=>{
+    if(selectedTemplateId === templateId){
+      setSelectedTemplateId(null);
+    }else{
+      setSelectedTemplateId(templateId);
+    }
+  }
   const selectedTemplate = getTemplate(selectedTemplateId || "");
 
   return (
     <div className="campaignbay-bg-zinc-300 campaignbay-p-0 campaignbay-gap-0 campaignbay-flex campaignbay-h-full campaignbay-text-gray-950 campaignbay-rounded-[4px] campaignbay-overflow-hidden campaignbay-max-h-[calc(92vh-65px)] campaignbay-w-min">
       <div className="campaignbay-w-full campaignbay-py-[20px] campaignbay-pt-[10px] campaignbay-flex-1 campaignbay-flex campaignbay-flex-col campaignbay-gap-[10px]">
-        <span className="campaignbay-text-[16px] campaignbay-px-[20px] campaignbay-font-bold campaignbay-block campaignbay-leading-[24px]">
-          Choose a Campaign Template
-        </span>
-        <div className="campaignbay-grid campaignbay-add-campaigns-modal-grid-cols campaignbay-gap-[10px] campaignbay-px-[20px] ">
+        <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-px-[20px]">
+          <span className="campaignbay-text-[16px] campaignbay-font-bold ">
+            Choose a Campaign Template
+          </span>
+          <button
+            className="campaignbay-bg-[#183ad6] campaignbay-text-white campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-text-[14px] campaignbay-font-bold campaignbay-leading-[16px] disabled:campaignbay-opacity-40 disabled:campaignbay-cursor-not-allowed"
+            disabled={selectedTemplateId === "" || selectedTemplateId === null}
+            onClick={() => {
+              navigate("/campaigns/add?templateId=" + selectedTemplateId);
+            }}
+          >
+            Create
+          </button>
+        </div>
+        <div className="campaignbay-grid campaignbay-add-campaigns-modal-grid-cols campaignbay-gap-[10px] campaignbay-px-[20px] campaignbay-py-[10px]">
           <div
-            className={`campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-pt-[28px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer ${
+            className={`campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-pt-[28px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer hover:campaignbay-shadow-sm ${
               selectedTemplateId === "blank"
                 ? "!campaignbay-bg-[#183ad6] campaignbay-text-white"
                 : "campaignbay-bg-white "
             }`}
-            onClick={() => setSelectedTemplateId("blank")}
+            onClick={() => handleSelect("blank")}
             onMouseEnter={() => setHoveredTemplateId("blank")}
             onMouseLeave={() => setHoveredTemplateId(null)}
           >
@@ -46,10 +64,10 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
           {templates.map((template, index) => (
             <div
               key={index}
-              onClick={() => setSelectedTemplateId(template.id)}
+              onClick={() => handleSelect(template.id)}
               onMouseEnter={() => setHoveredTemplateId(template.id)}
               onMouseLeave={() => setHoveredTemplateId(null)}
-              className={`campaignbay-relative campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer ${
+              className={`campaignbay-relative campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer hover:campaignbay-shadow-sm campaignbay-transition-all campaignbay-duration-[200ms] ${
                 selectedTemplateId === template.id
                   ? "!campaignbay-bg-[#183ad6] campaignbay-text-white"
                   : "campaignbay-bg-white "
@@ -69,20 +87,24 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
 
               {/* Overlay for small devices */}
               {hoveredTemplateId === template.id && (
-                <div className={`campaignbay-add-campaigns-modal-overlay campaignbay-absolute campaignbay-inset-0 campaignbay-rounded-[4px] campaignbay-shadow-lg campaignbay-z-10 campaignbay-overflow-y-auto ${
-                  selectedTemplateId === template.id
-                    ? "campaignbay-bg-[#183ad6] campaignbay-text-white"
-                    : "campaignbay-bg-white"
-                }`}>
+                <div
+                  className={`campaignbay-add-campaigns-modal-overlay campaignbay-overflow-hidden campaignbay-transition-all campaignbay-duration-[200ms] campaignbay-absolute campaignbay-inset-0 campaignbay-rounded-[4px] campaignbay-shadow-sm campaignbay-z-10 ${
+                    selectedTemplateId === template.id
+                      ? "campaignbay-bg-[#183ad6] campaignbay-text-white"
+                      : "campaignbay-bg-white"
+                  }`}
+                >
                   <div className="campaignbay-p-[10px]">
                     <span className="campaignbay-block campaignbay-text-[14px] campaignbay-font-bold campaignbay-mb-1">
                       Example
                     </span>
-                    <div className={`campaignbay-flex campaignbay-flex-col campaignbay-gap-[5px] campaignbay-text-[12px] campaignbay-font-normal campaignbay-leading-[16px] ${
-                      selectedTemplateId === template.id
-                        ? "campaignbay-text-white"
-                        : "campaignbay-text-gray-600"
-                    }`}>
+                    <div
+                      className={`campaignbay-flex campaignbay-flex-col campaignbay-gap-[5px] campaignbay-text-[12px] campaignbay-font-normal campaignbay-leading-[16px] ${
+                        selectedTemplateId === template.id
+                          ? "campaignbay-text-white"
+                          : "campaignbay-text-gray-600"
+                      }`}
+                    >
                       <span>{template.example?.text}</span>
                       <ul className="campaignbay-list-disc campaignbay-list-inside campaignbay-leading-[16px]">
                         {template.example?.list.map((item, i) => (
@@ -95,14 +117,6 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
               )}
             </div>
           ))}
-        </div>
-        <div className="campaignbay-flex campaignbay-justify-start campaignbay-px-[20px]">
-          <button className="campaignbay-bg-[#183ad6] campaignbay-text-white campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-text-[14px] campaignbay-font-bold campaignbay-leading-[16px] disabled:campaignbay-bg-blue-500 disabled:campaignbay-cursor-not-allowed" disabled={selectedTemplateId === "" || selectedTemplateId === null}
-          onClick={() => {
-            navigate("/campaigns/add?templateId=" + selectedTemplateId);
-          }}>
-            Create
-          </button>
         </div>
       </div>
       <div className="campaignbay-add-campaigns-modal-example campaignbay-bg-[#f7f8fe]">

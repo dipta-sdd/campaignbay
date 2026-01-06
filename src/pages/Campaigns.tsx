@@ -146,7 +146,7 @@ const Campaigns: FC = () => {
 
   useEffect(() => {
     fetchCampaigns();
-  }, [orderby, order, searchQuery, currentPage, itemsPerPage]);
+  }, [orderby, order, searchQuery, currentPage, itemsPerPage, statusFilter, typeFilter]);
 
   const fetchCampaigns = async () => {
     try {
@@ -288,13 +288,6 @@ const Campaigns: FC = () => {
       return "All Products";
     }
     return "All Products";
-  };
-  const applyFilters = () => {
-    if (currentPage !== 1) {
-      setCurrentPage(1);
-    } else {
-      fetchCampaigns();
-    }
   };
 
   const handleBulkAction = (action: BulkActionType) => {
@@ -526,10 +519,10 @@ const Campaigns: FC = () => {
             }`}
           >
             <div className="campaignbay-flex campaignbay-flex-col xl:campaignbay-flex-row campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-w-full xl:campaignbay-w-auto">
-              <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-wrap lg:campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
+              <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
                 <CustomSelect
-                disabled={!selectedCampaigns.length}
-                  className="campaignbay-min-w-[200px]"
+                  disabled={!selectedCampaigns.length}
+                  className="campaignbay-min-w-[180px]"
                   placeholder="Bulk Actions"
                   fontSize={14}
                   fontWeight={300}
@@ -551,15 +544,24 @@ const Campaigns: FC = () => {
                     },
                   ]}
                   onChange={(value: string | number) =>
-                    handleBulkAction(value as BulkActionType)
+                    setBulkAction(value as BulkActionType)
                   }
                 />
+                <button
+                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 wpab-cb-btn-primary"
+                  // onClick={applyFilters}
+                >
+                  Apply
+                </button>
+              </div>
+              <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-wrap lg:campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
                 <CustomSelect
-                  className="campaignbay-min-w-[200px]"
+                  className="campaignbay-min-w-[180px]"
                   placeholder="Filter by Status"
                   fontSize={14}
                   fontWeight={300}
                   options={[
+                    { value: "", label: "All" },
                     { value: "active", label: "Active" },
                     { value: "scheduled", label: "Scheduled" },
                     { value: "expired", label: "Expired" },
@@ -570,14 +572,13 @@ const Campaigns: FC = () => {
                     setStatusFilter(value as string)
                   }
                 />
-              </div>
-              <div className="campaignbay-flex campaignbay-flex-row campaignbay-flex-wrap lg:campaignbay-flex-nowrap campaignbay-gap-[10px] campaignbay-flex-1">
                 <CustomSelect
-                  className="campaignbay-min-w-[200px]"
+                  className="campaignbay-min-w-[180px]"
                   placeholder="Filter by Type"
                   fontSize={14}
                   fontWeight={300}
                   options={[
+                    { value: "", label: "All" },
                     { value: "bogo", label: "BOGO" },
                     { value: "scheduled", label: "Schedule Discount" },
                     { value: "quantity", label: "Quantity Discount" },
@@ -588,35 +589,29 @@ const Campaigns: FC = () => {
                     setTypeFilter(value as string)
                   }
                 />
-                <button
-                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-py-2 campaignbay-px-4 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-border-none campaignbay-text-sm campaignbay-leading-5 campaignbay-font-light campaignbay-h-10 wpab-cb-btn-primary"
-                  onClick={applyFilters}
-                >
-                  Apply
-                </button>
-                {/* @ts-ignore */}
-                <ToggleGroupControl
-                  className={`cb-toggle-group-control campaignbay-br-2 campaignbay-mt-[-8px]`}
-                  __next40pxDefaultSize
-                  __nextHasNoMarginBottom
-                  isBlock
-                  value={view as string}
-                  onChange={(value: any) => setView(value as ViewType)}
-                >
-                  <ToggleGroupControlOption
-                    // @ts-ignore
-                    label={<Table2 size={16} />}
-                    value="table"
-                  />
-                  <ToggleGroupControlOption
-                    // @ts-ignore
-                    label={<LayoutGrid size={16} />}
-                    value="grid"
-                  />
-                </ToggleGroupControl>
               </div>
             </div>
-            <div className="campaignbay-search-box campaignbay-flex-1 xl:campaignbay-flex-none campaignbay-w-full xl:campaignbay-w-auto">
+            <div className="campaignbay-search-box campaignbay-flex-1 xl:campaignbay-flex-none campaignbay-w-full xl:campaignbay-w-auto campaignbay-flex campaignbay-items-center campaignbay-gap-[10px]">
+              {/* @ts-ignore */}
+              <ToggleGroupControl
+                className={`cb-toggle-group-control campaignbay-br-2 campaignbay-mt-[-8px]`}
+                __next40pxDefaultSize
+                __nextHasNoMarginBottom
+                isBlock
+                value={view as string}
+                onChange={(value: any) => setView(value as ViewType)}
+              >
+                <ToggleGroupControlOption
+                  // @ts-ignore
+                  label={<Table2 size={16} />}
+                  value="table"
+                />
+                <ToggleGroupControlOption
+                  // @ts-ignore
+                  label={<LayoutGrid size={16} />}
+                  value="grid"
+                />
+              </ToggleGroupControl>
               <input
                 type="search"
                 value={searchQuery}
