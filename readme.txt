@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,10 +121,14 @@ You're all set! Look for the new **CampaignBay** menu item in your admin sidebar
 
 == Changelog ==
 
+= 1.0.8 =
+*   **New Feature: Campaign Templates!** Get started faster with pre-built campaign templates. The new "Add Campaign" modal now features ready-to-use templates for Flash Sales, BOGO deals, Bulk Discounts, Early Bird offers, and more. Simply select a template and customize it to your needs.
+*   **Enhancement:** Improved campaign creation workflow with a visual template selector and example previews.
+*   **Enhancement:** Updated all campaign templates to use "active" status by default for a smoother onboarding experience.
+
 = 1.0.7 =
 *   **New Feature: Introducing Conditional Discounts!** A new "Conditions" section has been added to the campaign editor. This lays the foundation for a powerful rule engine, allowing you to create smarter, more targeted campaigns. More conditions will be added in future updates.
 *   **Enhancement:** The campaign editor and settings pages have received a significant UI upgrade for a cleaner, faster, and more intuitive user experience.
-*   **DEV:** Added new developer hooks to improve extensibility and integration capabilities for developers.
 
 = 1.0.6 =
 *   New Feature: Added options to turn off promotional messages on the cart and product pages.
@@ -151,6 +155,9 @@ You're all set! Look for the new **CampaignBay** menu item in your admin sidebar
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.0.8 =
+*   Exciting update! We've added pre-built Campaign Templates to make creating campaigns faster and easier than ever. Simply select a template, customize it, and you're ready to go. The upgrade is seamless and requires no action from you.
 
 = 1.0.7 =
 *   This is a great update! We've introduced a powerful new 'Conditions' feature for creating smarter campaigns and have given the entire admin interface a fresh, modern upgrade. The update is seamless and no action is required.

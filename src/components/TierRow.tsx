@@ -67,7 +67,7 @@ const TierRow: FC<TierRowProps> = ({
         <div className="wpab-grid-2">
           <div className="wpab-tier-input-grid-child">
             <span className="wpab-input-label">Buy from</span>
-            <BuyProTooltip>
+            {/* <BuyProTooltip> */}
               <input
                 type="number"
                 name="min"
@@ -75,7 +75,7 @@ const TierRow: FC<TierRowProps> = ({
                 readOnly
                 className={`min-input wpab-input ${errors?.min ? 'wpab-input-error' : ''}`}
               />
-            </BuyProTooltip>
+            {/* </BuyProTooltip> */}
             <span className="wpab-input-label">to</span>
             <input
               ref={isFirst ? qtyRangeInputRef : null}
