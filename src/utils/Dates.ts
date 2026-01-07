@@ -14,11 +14,11 @@ import { useCbStore } from "../store/cbStore";
  * @param {string|number} dateTimeString - The date-time string or timestamp to format.
  * @returns {string} The formatted date and time, or "—" if invalid.
  */
-export default function formatDateTime(dateTimeString: string | number | null | undefined) : string {
+export default function formatDateTime(dateTimeString: string | number | null | undefined): string {
   const { wpSettings } = useCbStore();
   const { timezone } = getDateSettings();
 
-  
+
 
   if (
     !dateTimeString ||
@@ -27,9 +27,10 @@ export default function formatDateTime(dateTimeString: string | number | null | 
     return "—";
   }
 
-  
-  const format : string = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
-  const dateTime : Date = getDate(dateTimeString * 1000);
+
+  const format: string = `${wpSettings.dateFormat} ${wpSettings.timeFormat}`;
+  // @ts-ignore
+  const dateTime: Date = getDate(dateTimeString * 1000);
   return date(format, dateTime, timezone?.offset);
 }
 
@@ -42,7 +43,7 @@ export default function formatDateTime(dateTimeString: string | number | null | 
  * @param {string|number} dateTimeString - The date-time string or timestamp to compare.
  * @returns {string} Human-readable time difference or formatted date-time, or "—" if invalid.
  */
-export function timeDiff(dateTimeString: string | number | null | undefined) : string {
+export function timeDiff(dateTimeString: string | number | null | undefined): string {
   if (
     !dateTimeString ||
     new Date(dateTimeString).toString() === "Invalid Date"
@@ -51,13 +52,27 @@ export function timeDiff(dateTimeString: string | number | null | undefined) : s
   }
 
   const { timezone } = getDateSettings();
+  // @ts-ignore
   const dateTime = getDate(dateTimeString * 1000, timezone?.offset);
   const currentTime = new Date();
   const diffDays = Math.abs(
     (currentTime.getTime() - dateTime.getTime()) / (1000 * 60 * 60 * 24)
   ).toFixed(2);
+  // @ts-ignore
   if (diffDays > 10) {
     return formatDateTime(dateTimeString);
   }
   return humanTimeDiff(dateTime, currentTime.getTime());
 }
+
+
+export function currentDateTime() {
+  const { timezone } = getDateSettings();
+  const { wpSettings } = useCbStore();
+  const localTime = new Date(new Date().setDate(new Date().getDate() + 1));
+  const format = `${wpSettings?.dateFormat} ${wpSettings?.timeFormat}`;
+  // @ts-ignore
+  const formatedDate = date(format, localTime, timezone?.offset);
+  // @ts-ignore
+  return new Date(formatedDate);
+};

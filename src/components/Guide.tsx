@@ -74,11 +74,13 @@ const Guide: FC = () => {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-
         const stepConfig = config[tourStep];
         if (stepConfig.onNext) {
           stepConfig.onNext({
-            next: () => { console.log("Next"); setTourStep(tourStep + 1); },
+            next: () => {
+              console.log("Next");
+              setTourStep(tourStep + 1);
+            },
             setStep: setTourStep,
             navigate: navigate,
           });
@@ -220,8 +222,6 @@ const Guide: FC = () => {
           left = tRect.left;
       }
 
-
-
       if (top + tooltipHeight > viewportHeight - margin) {
         top = tRect.top - tooltipRect.height - offset;
       }
@@ -230,7 +230,10 @@ const Guide: FC = () => {
       }
 
       let effectiveLeft = left;
-      if (transform === "translateX(-50%)" || transform === "translate(-50%,-50%)") {
+      if (
+        transform === "translateX(-50%)" ||
+        transform === "translate(-50%,-50%)"
+      ) {
         effectiveLeft -= tooltipWidth / 2;
       }
 
@@ -283,7 +286,6 @@ const Guide: FC = () => {
 
   const [dontShowAgain, setDontShowAgain] = useState(true);
 
-
   const [isClosing, setIsClosing] = useState(false);
   const { addToast } = useToast();
   const handleClose = async () => {
@@ -310,6 +312,7 @@ const Guide: FC = () => {
       //   // addToast(__("Error dismissing tour.", "campaignbay"), "error");
       // }
     }
+    console.log("Tour closed");
     setTourStep(0);
   };
 
@@ -377,7 +380,7 @@ const Guide: FC = () => {
           className="campaignbay-bg-white campaignbay-rounded-sm campaignbay-shadow-2xl campaignbay-p-4 campaignbay-animate-fade-in-up"
           style={{
             maxWidth: "300px",
-            minWidth: 'min(300px , 80vw)',
+            minWidth: "min(300px , 80vw)",
             borderRadius: "6px",
           }}
         >
@@ -386,7 +389,7 @@ const Guide: FC = () => {
               {stepConfig.text}
             </p>
             <button
-              disabled={isClosing}
+              // disabled={isClosing}
               onClick={handleClose}
               className="campaignbay-p-1 campaignbay-rounded-full hover:campaignbay-bg-gray-200"
               aria-label="Close tour"
@@ -397,8 +400,6 @@ const Guide: FC = () => {
 
           {/* Footer Actions */}
           <div className="campaignbay-mt-4">
-
-
             <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center">
               {/* Don't show again checkbox */}
               {/* <div className="campaignbay-flex campaignbay-items-center">
@@ -431,7 +432,9 @@ const Guide: FC = () => {
                 >
                   Previous
                 </button>
-              ) : <span></span>}
+              ) : (
+                <span></span>
+              )}
               {stepConfig.showNext && (
                 <button
                   onClick={() => {

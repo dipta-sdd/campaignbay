@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import templates, { getTemplate } from "../../utils/templates";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGuideStep } from "../../store/GuideContext";
+import { useGuide, useGuideStep } from "../../store/GuideContext";
 import { TOUR_STEPS } from "../../utils/tourSteps";
 
 interface AddCampaignModalProps {
@@ -22,6 +22,7 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
     TOUR_STEPS.BLANK_CAMPAIGN
   );
   const createRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.CREATE);
+    const { tourStep, setTourStep } = useGuide();
 
   const handleSelect = (templateId: string) => {
     if (selectedTemplateId === templateId) {
@@ -59,7 +60,12 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
                 ? "!campaignbay-bg-[#183ad6] campaignbay-text-white"
                 : "campaignbay-bg-white "
             }`}
-            onClick={() => handleSelect("blank")}
+            onClick={() => {
+              handleSelect("blank");
+              if(tourStep === TOUR_STEPS.BLANK_CAMPAIGN) {
+                setTourStep(TOUR_STEPS.CREATE);
+              }
+            }}
             onMouseEnter={() => setHoveredTemplateId("blank")}
             onMouseLeave={() => setHoveredTemplateId(null)}
           >

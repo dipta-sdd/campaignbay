@@ -26,7 +26,7 @@ const templates: Template[] = [
       list: [
         "20% Storewide Discount.",
         "Scheduled (User sets the short timeframe).",
-        "Countdown timer ready (if enabled in settings).",
+        // "Countdown timer ready (if enabled in settings).",
       ],
     },
     svg: (
@@ -71,13 +71,13 @@ const templates: Template[] = [
   {
     id: "bogo_standard",
     title: "Buy One Get One Free (BOGO)",
-    description: "Buy 1, Get 1 Free on specific products.",
+    description: "Buy 1, Get 1 Free",
     best_for: "Moving stock and increasing order value.",
     example: {
-      text: "Buy 1, Get 1 Free on specific products.",
+      text: "Buy 1, Get 1 Free",
       list: [
         "Buy 1, Get 1 logic.",
-        "Applies to Specific Products.",
+        "Applies to Entire Store.",
         "Great for high-margin items.",
       ],
     },
@@ -143,8 +143,8 @@ const templates: Template[] = [
       text: "Buy 5+ items, get 10% off. Bulk savings.",
       list: [
         "Quantity Based.",
-        "Tier: Buy 5-10, Get 10% Off.",
-        "Applies to Specific Categories or Storewide.",
+        "Tier: Buy 1-10, Get 10% Off.",
+        "Applies Storewide.",
       ],
     },
     svg: (
@@ -252,7 +252,7 @@ const templates: Template[] = [
           total: 50,
         },
       ],
-      target_type: "entire_store",
+      target_type: "product",
       target_ids: [],
       is_exclude: false,
       exclude_sale_items: false,
@@ -275,10 +275,10 @@ const templates: Template[] = [
     description: "Get $5.00 off specific items this weekend.",
     best_for: "Boosting sales during slow weekends.",
     example: {
-      text: "Get $5.00 off specific items this weekend.",
+      text: "Get $5.00 off storewide this weekend.",
       list: [
         "Fixed Amount ($5.00) discount.",
-        "Category based target.",
+        // "Category based target.",
         "Encourages small impulse buys.",
       ],
     },
@@ -324,13 +324,13 @@ const templates: Template[] = [
   {
     id: "clearance_sale_30_off",
     title: "Stock Clearance Sale",
-    description: "Clear stocks with 30% off specific categories.",
+    description: "Clear stocks with 30% off storewide.",
     best_for: "Clearing out old inventory anytime.",
     example: {
-      text: "Clear stocks with 30% off specific categories.",
+      text: "Clear stocks with 30% off storewide.",
       list: [
         "30% Percentage Discount.",
-        "Applies to Specific Categories.",
+        "Applies Storewide.",
         "Scheduled for immediate activation.",
       ],
     },
@@ -450,7 +450,7 @@ const templates: Template[] = [
       text: "Buy 3 items, get the 4th one free.",
       list: [
         "Buy 3, Get 1 Free.",
-        "Applies to Specific Products.",
+        "Applies to Entire Store.",
         "Auto-adds the free product to the cart.",
       ],
     },

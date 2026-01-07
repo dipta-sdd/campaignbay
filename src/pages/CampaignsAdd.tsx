@@ -1,6 +1,6 @@
 import { useState } from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
-import { check, Icon } from "@wordpress/icons";
+import { check, Icon, next } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
 import { FC, useEffect } from "react";
@@ -13,6 +13,7 @@ import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
 import { FloatingHelpButton } from "./Campaigns";
 import { getTemplate } from "../utils/templates";
+import { currentDateTime } from "../utils/Dates";
 
 const CampaignsAdd: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -49,22 +50,34 @@ const CampaignsAdd: FC = () => {
   const [searchParams] = useSearchParams();
 
   const [errors, setErrors] = useState<CampaignErrorsType>({});
+  const currentDate = currentDateTime();
 
   // Load template data if templateId is in URL
   useEffect(() => {
     const templateId = searchParams.get("templateId");
+
     if (templateId && templateId !== "blank") {
       const template = getTemplate(templateId);
+
       if (template) {
-        setCampaign({
-          ...campaign,
-          ...template.campaign_data,
-        });
+        if (templateId === "flash_sale_20") {
+          setCampaign({
+            ...campaign,
+            ...template.campaign_data,
+            schedule_enabled: true,
+            // @ts-ignore
+            end_datetime: currentDate,
+          });
+        } else {
+          setCampaign({
+            ...campaign,
+            ...template.campaign_data,
+          });
+        }
       }
     }
     setIsLoading(false);
   }, [searchParams]);
-
   const handleSaveCampaign = async () => {
     setTourStep(0);
     const campaignData = {

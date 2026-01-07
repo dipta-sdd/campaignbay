@@ -19,7 +19,6 @@ const TourGuard = () => {
   //   }
   // }, [has_seen_guide]);
 
-
   useEffect(() => {
     if (tourStep === 0) return;
 
@@ -33,14 +32,14 @@ const TourGuard = () => {
 
       switch (normalizedPath) {
         case "/":
+        case "/settings":
         case "/dashboard":
         case "/campaigns":
-          return range(TOUR_STEPS.START, TOUR_STEPS.TITLE - 1);
+          return range(TOUR_STEPS.START, TOUR_STEPS.TITLE);
 
         case "/campaigns/add":
-          return range(TOUR_STEPS.TITLE, 100);
+          return range(TOUR_STEPS.CREATE, 100);
 
-        case "/settings":
         default:
           return [1];
       }

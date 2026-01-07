@@ -413,7 +413,7 @@ class Campaign
 			'usage_limit' => 'nullable|integer'
 		];
 		if ($args['schedule_enabled'] === true) {
-			if (($args['start_datetime'] === null || $args['start_datetime'] === '') || ($args['end_datetime'] === null || $args['end_datetime'] === '')) {
+			if (($args['start_datetime'] === null || $args['start_datetime'] === '') && ($args['end_datetime'] === null || $args['end_datetime'] === '')) {
 				$rules['start_datetime'] = 'required|datetime';
 				// $rules['end_datetime'] = 'required|datetime';
 			}
