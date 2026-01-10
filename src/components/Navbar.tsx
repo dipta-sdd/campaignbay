@@ -18,10 +18,9 @@ interface MenuLink {
 const Navbar: FC = () => {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const addCampaignBtnRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.START);
-  const { setTourStep, tourStep } = useGuide();
+  const { setTourStep, tourStep , isModalOpen, setIsModalOpen} = useGuide();
 
   const menus: MenuLink[] = [
     {

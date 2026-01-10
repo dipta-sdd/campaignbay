@@ -292,5 +292,7 @@ export interface GuideContextType {
   getRef: (step: number) => RefObject<HTMLElement> | undefined;
   config: TourConfig;
   setConfig: Dispatch<SetStateAction<TourConfig>>;
+  isModalOpen: boolean;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 

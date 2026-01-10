@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,6 +121,9 @@ You're all set! Look for the new **CampaignBay** menu item in your admin sidebar
 
 == Changelog ==
 
+= 1.0.9 =
+*   **Enhancement:** UI Tweaks: refined the user interface for a smoother experience.
+
 = 1.0.8 =
 *   **New Feature: Campaign Templates!** Get started faster with pre-built campaign templates. The new "Add Campaign" modal now features ready-to-use templates for Flash Sales, BOGO deals, Bulk Discounts, Early Bird offers, and more. Simply select a template and customize it to your needs.
 *   **Enhancement:** Improved campaign creation workflow with a visual template selector and example previews.
@@ -155,6 +158,9 @@ You're all set! Look for the new **CampaignBay** menu item in your admin sidebar
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.0.9 =
+*   This update includes minor UI refinements. The upgrade is seamless.
 
 = 1.0.8 =
 *   Exciting update! We've added pre-built Campaign Templates to make creating campaigns faster and easier than ever. Simply select a template, customize it, and you're ready to go. The upgrade is seamless and requires no action from you.

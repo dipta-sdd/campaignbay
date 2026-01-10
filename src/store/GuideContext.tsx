@@ -18,6 +18,7 @@ export const GuideProvider: React.FC<{ children: React.ReactNode }> = ({
   const [tourStep, setTourStep] = useState<number>(0);
   const [config, setConfig] = useState<TourConfig>(campaignTourConfig);
   const refs = useRef<Record<number, RefObject<HTMLElement>>>({});
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   
   const registerRef = useCallback(
@@ -38,6 +39,8 @@ export const GuideProvider: React.FC<{ children: React.ReactNode }> = ({
     getRef,
     config,
     setConfig,
+    isModalOpen,
+    setIsModalOpen,
   };
 
   return (

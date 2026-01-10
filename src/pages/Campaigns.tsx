@@ -1246,7 +1246,7 @@ export const FloatingHelpButton: React.FC<{ step?: number }> = ({
 };
 
 export const EmptyStateCampaigns = () => {
-  const { setTourStep } = useGuide();
+  const { setIsModalOpen } = useGuide();
   return (
     <div className="campaignbay-w-full campaignbay-p-8 md:campaignbay-p-16">
       <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-text-center campaignbay-bg-gray-50 campaignbay-border-2 campaignbay-border-dashed campaignbay-border-gray-200 campaignbay-rounded-lg campaignbay-p-10">
@@ -1276,7 +1276,7 @@ export const EmptyStateCampaigns = () => {
           {/* Call to Action Button */}
           <button
             type="button"
-            onClick={() => setTourStep(TOUR_STEPS.START)}
+            onClick={() => setIsModalOpen(true)}
             className="campaignbay-inline-flex campaignbay-items-center campaignbay-justify-center campaignbay-px-5 campaignbay-py-2.5 campaignbay-text-sm campaignbay-font-medium campaignbay-text-white campaignbay-bg-blue-600 campaignbay-rounded-md hover:campaignbay-bg-blue-700 focus:campaignbay-outline-none focus:campaignbay-ring-2 focus:campaignbay-ring-offset-2 focus:campaignbay-ring-blue-500 campaignbay-transition-colors campaignbay-shadow-sm"
           >
             <Plus size={16} className="campaignbay-mr-2" />
