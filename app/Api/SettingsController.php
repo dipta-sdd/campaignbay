@@ -186,8 +186,9 @@ class SettingsController extends ApiController
 
 		$sanitized_options = $this->prepare_value($params, $schema);
 		Common::get_instance()->update_settings($sanitized_options);
+		$response = $this->prepare_value($sanitized_options, $schema);
 
-		return $this->get_item($request);
+		return $response;
 	}
 
 	/**

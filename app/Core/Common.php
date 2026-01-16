@@ -150,7 +150,6 @@ class Common
 		if (!empty($key)) {
 			return isset($this->settings[$key]) ? $this->settings[$key] : false;
 		}
-
 		return $this->settings;
 	}
 
@@ -182,6 +181,7 @@ class Common
 		$default_settings = $this->get_default_settings();
 		$settings = array_merge($default_settings, $options);
 		$this->settings = $settings;
+
 	}
 
 	/**
