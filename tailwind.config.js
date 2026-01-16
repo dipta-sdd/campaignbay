@@ -2,5 +2,7 @@
 module.exports = {
   prefix: "campaignbay-",
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  plugins: [],
+
+  plugins: [
+  ],
 };

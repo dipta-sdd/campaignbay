@@ -1,6 +1,5 @@
 import { HashRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
-import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Campaigns from "./pages/Campaigns";
 import { ToastContainer } from "./components/ToastContainer";
@@ -9,6 +8,7 @@ import { CbStore } from "./types";
 import { ToastProvider } from "./store/toast/use-toast";
 import CampaignsAdd from "./pages/CampaignsAdd";
 import CampaignsEdit from "./pages/CampaignsEdit";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   

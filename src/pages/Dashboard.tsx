@@ -1,5 +1,6 @@
+import { FC, useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
 import { __, _n, sprintf } from "@wordpress/i18n";
-import { useState, useEffect, useCallback, FC, ReactNode } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { addQueryArgs } from "@wordpress/url";
 import {
@@ -16,17 +17,12 @@ import {
   ChartOptions,
 } from "chart.js";
 import { Line, Doughnut, Bar } from "react-chartjs-2";
-
-// @ts-ignore
-import chart_placeholder from "./../../assets/img/top_p_c.svg";
-// @ts-ignore
-import table_placeholder from "./../../assets/img/top_p_t.svg";
-
-import Navbar from "../components/Navbar";
-import ActivityLogModal from "../components/ActivityLogModal";
 import { useNavigate } from "react-router-dom";
-import { FloatingHelpButton } from "./Campaigns";
 import { useGuide } from "../store/GuideContext";
+import Skeleton from "../components/new/common/Skeleton";
+import HeaderContainer from "../components/new/common/HeaderContainer";
+import Header from "../components/new/common/Header";
+import CustomSelect from "../components/new/common/CustomSelect";
 
 interface KpiValue {
   value: number;
@@ -97,13 +93,6 @@ ChartJS.register(
   ArcElement
 );
 
-interface PlaceholderProps {
-  image: string;
-  mainText: string;
-  seconderyText: ReactNode;
-  opacity?: number;
-}
-
 const Dashboard: FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
@@ -114,8 +103,7 @@ const Dashboard: FC = () => {
   const [isActivityModalOpen, setIsActivityModalOpen] =
     useState<boolean>(false);
   const navigate = useNavigate();
-    const { setIsModalOpen} = useGuide();
-  
+  const { setIsModalOpen } = useGuide();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,29 +124,6 @@ const Dashboard: FC = () => {
     };
     fetchData();
   }, [selectedPeriod]);
-
-  if (loading) {
-    return (
-      <div className="cb-page">
-        <div className="cb-dashboard-skeleton">
-          <div className="cb-skeleton-header"></div>
-          <div className="cb-skeleton-kpis">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="cb-skeleton-kpi-card"></div>
-            ))}
-          </div>
-          <div className="cb-skeleton-charts">
-            <div className="cb-skeleton-chart-left"></div>
-            <div className="cb-skeleton-chart-right"></div>
-          </div>
-          <div className="cb-skeleton-insights">
-            <div className="cb-skeleton-insight-left"></div>
-            <div className="cb-skeleton-insight-right"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat("en-US", {
@@ -509,472 +474,266 @@ const Dashboard: FC = () => {
   };
 
   return (
-    <div className="cb-page campaignbay-dashboard">
-      {/* Header Section */}
+    <div>
       <Navbar />
-      <div className="cb-page-header-container">
-        <div className="cb-page-header-title">
-          {__("Dashboard", "campaignbay")}
-        </div>
-        <div className="cb-page-header-actions">
-          <select
-            className="wpab-select"
-            value={selectedPeriod}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setSelectedPeriod(e.target.value as ChartPeriod)
-            }
-          >
-            <option value="7days">{__("Last 7 Days", "campaignbay")}</option>
-            <option value="30days">{__("Last 30 Days", "campaignbay")}</option>
-            <option value="1year">{__("Last 1 Year", "campaignbay")}</option>
-          </select>
-        </div>
-      </div>
+      {loading ? (
+        <>
+          <div className="campaignbay-p-x-page-default">
+            <HeaderContainer className="campaignbay-py-[12px]">
+              <Skeleton className="campaignbay-max-w-[300px] campaignbay-w-full">
+                <Header>Dashboard</Header>
+              </Skeleton>
+              <Skeleton className="campaignbay-max-w-[150px] campaignbay-w-full">
+                <Header>Dashboard</Header>
+              </Skeleton>
+            </HeaderContainer>
+            {/* body content */}
+            <div className="campaignbay-flex campaignbay-justify-start campaignbay-flex-col xl:campaignbay-flex-row campaignbay-gap-default-big">
+              {/* left content */}
+              <div className="campaignbay-flex-1 campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-stretch campaignbay-gap-default">
+                {/* kpi card container */}
+                <div className="campaignbay-grid campaignbay-grid-cols-2 sm:campaignbay-grid-cols-4 campaignbay-gap-default">
+                  {/* kpi */}
+                  <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center campaignbay-gap-[6px]">
+                    {/* icon */}
+                    <Skeleton className="campaignbay-w-[34px] campaignbay-h-[34px] !campaignbay-rounded-[8px]"></Skeleton>
 
-      <div className="cb-page-container">
-        {/* KPIs Section */}
-        <div className="cb-kpis-grid">
-          <div className="cb-kpi-card">
-            <div className="cb-kpi-value">
-              {dashboardData?.kpis?.active_campaigns?.value || 0}
-            </div>
-            <div className="cb-kpi-label">
-              {__("Active Campaigns", "campaignbay")}
-            </div>
-            <div className="cb-kpi-action">
-              <a href="#/campaigns">
-                {__("View All Campaigns", "campaignbay")}
-              </a>
-            </div>
-          </div>
+                    {/* value */}
+                    <Skeleton className="campaignbay-w-[80px] campaignbay-h-[20px]" />
+                    {/* title */}
+                    <Skeleton className="campaignbay-w-[100px] campaignbay-h-[16px]" />
+                  </div>
+                </div>
 
-          <div className="cb-kpi-card">
-            <div className="cb-kpi-value">
-              {formatCurrency(
-                dashboardData?.kpis?.total_discount_value?.value || 0
-              )}
-            </div>
-            <div className="cb-kpi-label">
-              {__("Total Discounted Amount", "campaignbay")}
-            </div>
-            {dashboardData?.kpis?.total_discount_value?.change !== 0 && (
-              <div
-                className={`cb-kpi-change ${dashboardData?.kpis?.total_discount_value?.change &&
-                    dashboardData?.kpis?.total_discount_value?.change > 0
-                    ? "positive"
-                    : "negative"
-                  }`}
-              >
-                {dashboardData?.kpis?.total_discount_value?.change &&
-                  dashboardData?.kpis?.total_discount_value?.change > 0
-                  ? "+"
-                  : ""}
-                {dashboardData?.kpis?.total_discount_value?.change}% vs. prev
-                period
-              </div>
-            )}
-          </div>
-
-          <div className="cb-kpi-card">
-            <div className="cb-kpi-value">
-              {formatNumber(dashboardData?.kpis?.discounted_orders?.value || 0)}
-            </div>
-            <div className="cb-kpi-label">
-              {__("Discounted Orders", "campaignbay")}
-            </div>
-            {dashboardData?.kpis?.discounted_orders?.change !== 0 && (
-              <div
-                className={`cb-kpi-change ${dashboardData?.kpis?.discounted_orders?.change &&
-                    dashboardData?.kpis?.discounted_orders?.change > 0
-                    ? "positive"
-                    : "negative"
-                  }`}
-              >
-                {dashboardData?.kpis?.discounted_orders?.change &&
-                  dashboardData?.kpis?.discounted_orders?.change > 0
-                  ? "+"
-                  : ""}
-                {dashboardData?.kpis?.discounted_orders?.change}% vs. prev
-                period
-              </div>
-            )}
-          </div>
-
-          <div className="cb-kpi-card">
-            <div className="cb-kpi-value">
-              {formatCurrency(
-                dashboardData?.kpis?.sales_from_campaigns?.value || 0
-              )}
-            </div>
-            <div className="cb-kpi-label">
-              {__("Sales from Campaigns", "campaignbay")}
-            </div>
-            {dashboardData?.kpis?.sales_from_campaigns?.change !== 0 && (
-              <div
-                className={`cb-kpi-change ${dashboardData?.kpis?.sales_from_campaigns?.change &&
-                    dashboardData?.kpis?.sales_from_campaigns?.change > 0
-                    ? "positive"
-                    : "negative"
-                  }`}
-              >
-                {dashboardData?.kpis?.sales_from_campaigns?.change &&
-                  dashboardData?.kpis?.sales_from_campaigns?.change > 0
-                  ? "+"
-                  : ""}
-                {dashboardData?.kpis?.sales_from_campaigns?.change}% vs. prev
-                period
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="campaignbay-grid campaignbay-grid-cols-12 campaignbay-gap-4 cb-charts-grid">
-          <div className="cb-chart-card campaignbay-col-span-12">
-            <div className="cb-chart-header">
-              <h3>{__("Daily Discount Value Trends", "campaignbay")}</h3>
-
-              <div className="cb-chart-header-actions">
-                <div className="cb-chart-type-toggle">
-                  <button
-                    className={`cb-toggle-btn ${chartType === "line" ? "active" : ""
-                      }`}
-                    onClick={() => setChartType("line")}
-                    title={__("Line Chart", "campaignbay")}
-                  >
-                    {__("Line", "campaignbay")}
-                  </button>
-                  <button
-                    className={`cb-toggle-btn ${chartType === "bar" ? "active" : ""
-                      }`}
-                    onClick={() => setChartType("bar")}
-                    title={__("Bar Chart", "campaignbay")}
-                  >
-                    {__("Bar", "campaignbay")}
-                  </button>
+                {/* chart */}
+                <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-default">
+                  {/* line chart */}
+                  <div className="campaignbay-bg-white campaignbay-col-span-2 campaignbay-p-[24px] campaignbay-rounded-[8px]">
+                    <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-pb-[8px] campaignbay-border-b campaignbay-border-default">
+                      <Skeleton>
+                        <CardHeader>Daily Discount Value Trends</CardHeader>
+                      </Skeleton>
+                    </div>
+                    <div>
+                      {dashboardData?.charts?.discount_trends?.length &&
+                      dashboardData?.charts?.discount_trends?.length > 0 ? (
+                        chartType === "line" ? (
+                          <Line
+                            data={getDiscountTrendsData()}
+                            options={lineChartOptions}
+                            height={220}
+                          />
+                        ) : (
+                          <Bar
+                            data={getDiscountTrendsData()}
+                            options={barChartOptions}
+                            height={220}
+                          />
+                        )
+                      ) : (
+                        <div className="cb-chart-placeholder">
+                          <div className="cb-chart-message">
+                            {__(
+                              "No discount data available for the selected period",
+                              "campaignbay"
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
+              {/* right content */}
+              <div className="campaignbay-w-full xl:campaignbay-w-[373px] campaignbay-bg-[#F9F9F9]">
+                gfjhgjgh
+              </div>
             </div>
-            <div className="cb-chart-container">
-              {dashboardData?.charts?.discount_trends?.length &&
-                dashboardData?.charts?.discount_trends?.length > 0 ? (
-                chartType === "line" ? (
-                  <Line
-                    data={getDiscountTrendsData()}
-                    options={lineChartOptions}
-                    height={220}
-                  />
-                ) : (
-                  <Bar
-                    data={getDiscountTrendsData()}
-                    options={barChartOptions}
-                    height={220}
-                  />
-                )
-              ) : (
-                <div className="cb-chart-placeholder">
-                  <div className="cb-chart-message">
-                    {__(
-                      "No discount data available for the selected period",
-                      "campaignbay"
+          </div>
+        </>
+      ) : (
+        <div className="campaignbay-p-x-page-default">
+          <HeaderContainer className="campaignbay-py-[12px]">
+            <Header>Dashboard</Header>
+            <CustomSelect
+              className="campaignbay-w-min"
+              options={[
+                { value: "7days", label: "Last 7 Days" },
+                { value: "30days", label: "30 Days" },
+                { value: "60days", label: "60 Days" },
+              ]}
+              onChange={(value) => setSelectedPeriod(value as ChartPeriod)}
+            />
+          </HeaderContainer>
+          {/* body content */}
+          <div className="campaignbay-flex campaignbay-justify-start campaignbay-flex-col xl:campaignbay-flex-row campaignbay-gap-default-big">
+            {/* left content */}
+            <div className="campaignbay-flex-1 campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-stretch campaignbay-gap-default">
+              {/* kpi card container */}
+              <div className="campaignbay-grid campaignbay-grid-cols-2 sm:campaignbay-grid-cols-4 campaignbay-gap-default">
+                {/* kpi */}
+                <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
+                  {/* icon */}
+                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px]">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect width="24" height="24" rx="4" fill="#C2FFC9" />
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M6.863 13.644L5 13.25H4.5C4.36739 13.25 4.24021 13.1973 4.14645 13.1036C4.05268 13.0098 4 12.8826 4 12.75V9.75C4 9.61739 4.05268 9.49021 4.14645 9.39645C4.24021 9.30268 4.36739 9.25 4.5 9.25H5L18 6.5H20V16H18L14.146 15.185L14.172 15.193C13.8993 16.0913 13.2995 16.8547 12.4912 17.3322C11.6828 17.8098 10.7248 17.9667 9.80636 17.7721C8.88792 17.5775 8.07589 17.0455 7.53073 16.2811C6.98557 15.5168 6.74794 14.5758 6.863 13.644ZM8.34 13.957C8.30786 14.4952 8.47 15.0271 8.79692 15.4559C9.12384 15.8847 9.59382 16.1819 10.1214 16.2935C10.6489 16.405 11.199 16.3235 11.6715 16.0637C12.144 15.8039 12.5075 15.3832 12.696 14.878L8.34 13.957ZM5.5 10.677L18.157 8H18.5V14.5H18.157L5.5 11.823V10.677Z"
+                        fill="#1E1E1E"
+                      />
+                    </svg>
+                  </div>
+                  {/* value */}
+                  <Header className="campaignbay-pt-1">10</Header>
+                  {/* title */}
+                  <span className="campaignbay-text-default">
+                    Active Campaigns
+                  </span>
+                </div>
+
+                {/* kpi */}
+                <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
+                  {/* icon */}
+                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px]">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect width="24" height="24" rx="4" fill="#FFEDC6" />
+                      <path
+                        d="M4.75 4C4.55109 4 4.36032 4.07902 4.21967 4.21967C4.07902 4.36032 4 4.55109 4 4.75V12.576C4 12.776 4.08 12.966 4.22 13.106L10.94 19.822C11.1549 20.0375 11.4103 20.2084 11.6914 20.325C11.9725 20.4416 12.2739 20.5015 12.5782 20.5014C12.8825 20.5013 13.1839 20.4412 13.4649 20.3244C13.746 20.2077 14.0012 20.0366 14.216 19.821L19.826 14.21L19.295 13.68L19.827 14.208C20.2581 13.7743 20.5001 13.1876 20.5001 12.576C20.5001 11.9644 20.2581 11.3777 19.827 10.944L13.104 4.22C12.9635 4.07931 12.7728 4.00018 12.574 4H4.75ZM19 12.576C19.0001 12.791 18.9153 12.9973 18.764 13.15L13.154 18.761C13.0784 18.8369 12.9885 18.8971 12.8896 18.9381C12.7907 18.9792 12.6846 19.0003 12.5775 19.0003C12.4704 19.0003 12.3643 18.9792 12.2654 18.9381C12.1665 18.8971 12.0766 18.8369 12.001 18.761L5.5 12.264V5.5H12.263L18.763 12.002C18.9146 12.1546 18.9997 12.3609 19 12.576ZM8.75 9.75C9.01522 9.75 9.26957 9.64464 9.45711 9.45711C9.64464 9.26957 9.75 9.01522 9.75 8.75C9.75 8.48478 9.64464 8.23043 9.45711 8.04289C9.26957 7.85536 9.01522 7.75 8.75 7.75C8.48478 7.75 8.23043 7.85536 8.04289 8.04289C7.85536 8.23043 7.75 8.48478 7.75 8.75C7.75 9.01522 7.85536 9.26957 8.04289 9.45711C8.23043 9.64464 8.48478 9.75 8.75 9.75Z"
+                        fill="#1E1E1E"
+                      />
+                    </svg>
+                  </div>
+                  {/* value */}
+                  <Header className="campaignbay-pt-1">$1000</Header>
+                  {/* title */}
+                  <span className="campaignbay-text-default">
+                    Total Discounts
+                  </span>
+                </div>
+
+                {/* kpi */}
+                <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
+                  {/* icon */}
+                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px]">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect width="24" height="24" rx="4" fill="#C6F7FF" />
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M5.5 9.5V7.5H18.5V9.5H5.5ZM5.5 12.5V16.5H18.5V12.5H5.5ZM4 7C4 6.73478 4.10536 6.48043 4.29289 6.29289C4.48043 6.10536 4.73478 6 5 6H19C19.2652 6 19.5196 6.10536 19.7071 6.29289C19.8946 6.48043 20 6.73478 20 7V17C20 17.2652 19.8946 17.5196 19.7071 17.7071C19.5196 17.8946 19.2652 18 19 18H5C4.73478 18 4.48043 17.8946 4.29289 17.7071C4.10536 17.5196 4 17.2652 4 17V7Z"
+                        fill="#1E1E1E"
+                      />
+                    </svg>
+                  </div>
+                  {/* value */}
+                  <Header className="campaignbay-pt-1">10</Header>
+                  {/* title */}
+                  <span className="campaignbay-text-default">
+                    Discounted Orders
+                  </span>
+                </div>
+
+                {/* kpi */}
+                <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
+                  {/* icon */}
+                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px]">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect width="24" height="24" rx="4" fill="#EFC6FF" />
+                      <path
+                        d="M3.25 12C3.25 9.67936 4.17187 7.45376 5.81282 5.81282C7.45376 4.17187 9.67936 3.25 12 3.25C14.3206 3.25 16.5462 4.17187 18.1872 5.81282C19.8281 7.45376 20.75 9.67936 20.75 12C20.75 14.3206 19.8281 16.5462 18.1872 18.1872C16.5462 19.8281 14.3206 20.75 12 20.75C9.67936 20.75 7.45376 19.8281 5.81282 18.1872C4.17187 16.5462 3.25 14.3206 3.25 12ZM12 4.75C11.0479 4.75 10.1052 4.93753 9.22554 5.30187C8.34593 5.66622 7.5467 6.20025 6.87348 6.87348C6.20025 7.5467 5.66622 8.34593 5.30187 9.22554C4.93753 10.1052 4.75 11.0479 4.75 12C4.75 12.9521 4.93753 13.8948 5.30187 14.7745C5.66622 15.6541 6.20025 16.4533 6.87348 17.1265C7.5467 17.7997 8.34593 18.3338 9.22554 18.6981C10.1052 19.0625 11.0479 19.25 12 19.25C13.9228 19.25 15.7669 18.4862 17.1265 17.1265C18.4862 15.7669 19.25 13.9228 19.25 12C19.25 10.0772 18.4862 8.23311 17.1265 6.87348C15.7669 5.51384 13.9228 4.75 12 4.75ZM10.662 9.627C10.348 9.847 10.25 10.079 10.25 10.25C10.25 10.421 10.348 10.653 10.662 10.873C10.974 11.091 11.445 11.25 12 11.25C12.825 11.25 13.605 11.483 14.198 11.898C14.788 12.312 15.25 12.955 15.25 13.75C15.25 14.545 14.789 15.188 14.198 15.602C13.788 15.888 13.291 16.088 12.75 16.184V16.5C12.75 16.6989 12.671 16.8897 12.5303 17.0303C12.3897 17.171 12.1989 17.25 12 17.25C11.8011 17.25 11.6103 17.171 11.4697 17.0303C11.329 16.8897 11.25 16.6989 11.25 16.5V16.184C10.7309 16.097 10.2369 15.8984 9.802 15.602C9.212 15.188 8.75 14.545 8.75 13.75C8.75 13.5511 8.82902 13.3603 8.96967 13.2197C9.11032 13.079 9.30109 13 9.5 13C9.69891 13 9.88968 13.079 10.0303 13.2197C10.171 13.3603 10.25 13.5511 10.25 13.75C10.25 13.921 10.348 14.153 10.662 14.373C10.974 14.591 11.445 14.75 12 14.75C12.555 14.75 13.026 14.591 13.338 14.373C13.652 14.153 13.75 13.921 13.75 13.75C13.75 13.579 13.652 13.347 13.338 13.127C13.026 12.909 12.555 12.75 12 12.75C11.175 12.75 10.395 12.517 9.802 12.102C9.212 11.688 8.75 11.045 8.75 10.25C8.75 9.455 9.211 8.812 9.802 8.398C10.2369 8.1016 10.7309 7.90303 11.25 7.816V7.5C11.25 7.30109 11.329 7.11032 11.4697 6.96967C11.6103 6.82902 11.8011 6.75 12 6.75C12.1989 6.75 12.3897 6.82902 12.5303 6.96967C12.671 7.11032 12.75 7.30109 12.75 7.5V7.816C13.29 7.912 13.789 8.112 14.198 8.398C14.788 8.812 15.25 9.455 15.25 10.25C15.25 10.4489 15.171 10.6397 15.0303 10.7803C14.8897 10.921 14.6989 11 14.5 11C14.3011 11 14.1103 10.921 13.9697 10.7803C13.829 10.6397 13.75 10.4489 13.75 10.25C13.75 10.079 13.652 9.847 13.338 9.627C13.026 9.409 12.555 9.25 12 9.25C11.445 9.25 10.974 9.409 10.662 9.627Z"
+                        fill="#1E1E1E"
+                      />
+                    </svg>
+                  </div>
+                  {/* value */}
+                  <Header className="campaignbay-pt-1">$10000</Header>
+                  {/* title */}
+                  <span className="campaignbay-text-default">
+                    Total Campaign Sales
+                  </span>
+                </div>
+              </div>
+
+              {/* chart */}
+              <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-default">
+                {/* line chart */}
+                <div className="campaignbay-bg-white campaignbay-col-span-2 campaignbay-p-[24px] campaignbay-rounded-[8px]">
+                  <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-pb-[8px] campaignbay-border-b campaignbay-border-default">
+                    <CardHeader>Daily Discount Value Trends</CardHeader>
+                  </div>
+                  <div>
+                    {dashboardData?.charts?.discount_trends?.length &&
+                    dashboardData?.charts?.discount_trends?.length > 0 ? (
+                      chartType === "line" ? (
+                        <Line
+                          data={getDiscountTrendsData()}
+                          options={lineChartOptions}
+                          height={220}
+                        />
+                      ) : (
+                        <Bar
+                          data={getDiscountTrendsData()}
+                          options={barChartOptions}
+                          height={220}
+                        />
+                      )
+                    ) : (
+                      <div className="cb-chart-placeholder">
+                        <div className="cb-chart-message">
+                          {__(
+                            "No discount data available for the selected period",
+                            "campaignbay"
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-
-          <div className="cb-chart-card campaignbay-col-span-12 lg:campaignbay-col-span-6">
-            <div className="cb-chart-header">
-              <h3>{__("Top Performing Campaigns", "campaignbay")}</h3>
-            </div>
-            <div className="cb-chart-container">
-              {dashboardData?.charts?.top_campaigns?.length &&
-                dashboardData?.charts?.top_campaigns?.length > 0 ? (
-                <Doughnut
-                  data={getTopCampaignsData()}
-                  options={doughnutChartOptions}
-                  height={220}
-                />
-              ) : (
-                <Placeholder
-                  image={chart_placeholder}
-                  mainText={__("No Data Available", "campaignbay")}
-                  seconderyText={__(
-                    "Run a campaign to see performance data.",
-                    "campaignbay"
-                  )}
-                />
-              )}
-            </div>
-          </div>
-
-          <div className="cb-chart-card campaignbay-col-span-12 lg:campaignbay-col-span-6">
-            <div className="cb-chart-header">
-              <h3>{__("Top Performing Types", "campaignbay")}</h3>
-            </div>
-            <div className="cb-chart-container">
-              {dashboardData?.charts?.most_impactful_types?.length &&
-                dashboardData?.charts?.most_impactful_types?.length > 0 ? (
-                <Doughnut
-                  data={getTopCampaignTypesData()}
-                  options={doughnutChartOptions}
-                  height={220}
-                />
-              ) : (
-                <Placeholder
-                  image={chart_placeholder}
-                  mainText={__("No Data Available", "campaignbay")}
-                  seconderyText={__(
-                    "Run a campaign to see performance data.",
-                    "campaignbay"
-                  )}
-                />
-              )}
+            {/* right content */}
+            <div className="campaignbay-w-full xl:campaignbay-w-[373px] campaignbay-bg-[#F9F9F9]">
+              gfjhgjgh
             </div>
           </div>
         </div>
-
-        <div className="cb-insights-flex">
-          {/* Live Campaigns Section */}
-          <div className="cb-insight-card">
-            <h3>{__("Live Campaigns", "campaignbay")}</h3>
-
-            <div className="cb-campaigns-section">
-              <div className="cb-campaigns-table-container">
-                <table className="campaignbay-table">
-                  <thead>
-                    <tr>
-                      <th>{__("Campaign Name", "campaignbay")}</th>
-                      <th>{__("Type", "campaignbay")}</th>
-                      <th>{__("Ending Time", "campaignbay")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dashboardData?.live_and_upcoming?.active?.length &&
-                      dashboardData?.live_and_upcoming?.active?.length > 0 ? (
-                      dashboardData.live_and_upcoming.active.map((campaign) => (
-                        <tr key={campaign.id}>
-                          <td className="">
-                            <a
-                              href={`#/campaigns/${campaign.id}`}
-                              className="campaignbay-dashboard-campaigns-link"
-                            >
-                              {campaign.title}
-                            </a>
-                          </td>
-                          <td>
-                            <span className="campaignbay-capitalize campaignbay-text-secondary">
-                              {campaign.type || __("Standard", "campaignbay")}
-                            </span>
-                          </td>
-                          <td>
-                            {campaign.end_date ? (
-                              <span className="cb-dashboard-timestamp campaignbay-capitalize">
-                                {formatTimeDifference(campaign.end_date)}
-                              </span>
-                            ) : (
-                              <span className="cb-dashboard-timestamp campaignbay-capitalize">
-                                {__("No end date", "campaignbay")}
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr className="cb-campaign-row empty">
-                        <td colSpan={3} className="cb-no-campaigns">
-                          <Placeholder
-                            image={table_placeholder}
-                            mainText={__("No Live Campaigns", "campaignbay")}
-                            seconderyText={
-                              <button className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
-                              onClick={() => setIsModalOpen(true)}>
-                                Add New Campaign
-                              </button>
-                            }
-                            opacity={70}
-                          />
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          {/* Upcoming Campaigns Section */}
-          <div className="cb-insight-card">
-            <h3>{__("Upcoming Campaigns", "campaignbay")}</h3>
-
-            <div className="cb-campaigns-section">
-              <div className="cb-campaigns-table-container">
-                <table className="campaignbay-table">
-                  <thead>
-                    <tr>
-                      <th>{__("Campaign Name", "campaignbay")}</th>
-                      <th>{__("Type", "campaignbay")}</th>
-                      <th>{__("Starting Time", "campaignbay")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dashboardData?.live_and_upcoming?.scheduled?.length &&
-                      dashboardData?.live_and_upcoming?.scheduled?.length > 0 ? (
-                      dashboardData.live_and_upcoming.scheduled.map(
-                        (campaign) => (
-                          <tr
-                            key={campaign.id}
-                            className="cb-campaign-row scheduled"
-                          >
-                            <td>
-                              <a
-                                href={`#/campaigns/${campaign.id}`}
-                                className="campaignbay-dashboard-campaigns-link"
-                              >
-                                {campaign.title}
-                              </a>
-                            </td>
-                            <td>
-                              <span className="campaignbay-capitalize campaignbay-text-secondary">
-                                {campaign.type || __("Standard", "campaignbay")}
-                              </span>
-                            </td>
-                            <td>
-                              {campaign.start_date ? (
-                                <span className="cb-dashboard-timestamp campaignbay-capitalize">
-                                  {formatTimeDifference(campaign.start_date)}
-                                </span>
-                              ) : (
-                                <span className="cb-dashboard-timestamp campaignbay-capitalize">
-                                  {__("No start date", "campaignbay")}
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        )
-                      )
-                    ) : (
-                      <tr className="cb-campaign-row empty">
-                        <td colSpan={3} className="cb-no-campaigns">
-                          <Placeholder
-                            image={table_placeholder}
-                            mainText={__(
-                              "No Upcoming Campaigns",
-                              "campaignbay"
-                            )}
-                            seconderyText={
-                              <button
-                                className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
-                                onClick={() => setIsModalOpen(true)}
-                              >
-                                Add New Campaign
-                              </button>
-                            }
-                            opacity={40}
-                          />
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Activity Section */}
-          <div className="cb-insight-card">
-            <h3>{__("Recent Activity", "campaignbay")}</h3>
-            <div className="cb-activity-list">
-              {dashboardData?.recent_activity?.length &&
-                dashboardData?.recent_activity?.length > 0 ? (
-                dashboardData?.recent_activity
-                  ?.slice(0, 5)
-                  .map((activity, index) => (
-                    <div key={index} className="cb-activity-item">
-                      <div className="cb-dashboard-timestamp">
-                        {formatTimeDifference(activity.timestamp)}
-                      </div>
-                      <div className="cb-activity-content">
-                        <span className="cb-activity-campaign">
-                          <a
-                            href={`#/campaigns/${activity.campaign_id}`}
-                            className="campaignbay-dashboard-campaigns-link"
-                          >
-                            {activity.campaign_title}
-                          </a>
-                        </span>
-                        <span className="cb-activity-action">
-                          {activity.action + " by " + activity.user}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-              ) : (
-                <p className="campaignbay-text-slate-700 campaignbay-mt-[2px]">
-                  {__("No Recent Activity", "campaignbay")}
-                </p>
-              )}
-            </div>
-            <div className="cb-activity-footer">
-              <button
-                onClick={() => setIsActivityModalOpen(true)}
-                className="cb-view-all-link"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "inherit",
-                  textDecoration: "underline",
-                }}
-                disabled={
-                  dashboardData?.recent_activity?.length
-                    ? dashboardData?.recent_activity?.length < 5
-                    : true
-                }
-              >
-                {__("View Full Activity Log", "campaignbay")}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Floating Help Button */}
-        <FloatingHelpButton />
-      </div>
-
-      {/* Activity Log Modal */}
-      <ActivityLogModal
-        isActivityModalOpen={isActivityModalOpen}
-        setIsActivityModalOpen={setIsActivityModalOpen}
-      />
+      )}
     </div>
   );
 };
 
 export default Dashboard;
 
-const Placeholder: FC<PlaceholderProps> = ({
-  image,
-  mainText,
-  seconderyText,
-  opacity = 40,
-}) => {
+const CardHeader = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="campaignbay-relative campaignbay-h-full campaignbay-w-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-overflow-hidden">
-      <img
-        src={image}
-        alt="top Perfprming chart"
-        className={`campaignbay-object-contain campaignbay-h-full campaignbay-w-full `}
-        style={{ opacity: opacity / 100 }}
-      />
-      <div className="campaignbay-absolute campaignbay-m-[4px] campaignbay-top-1/2 campaignbay-left-1/2 campaignbay--translate-x-1/2 campaignbay--translate-y-1/2 campaignbay-w-3/4 campaignbay-text-center campaignbay-bg-white !campaignbay-border-0">
-        <h2 className="campaignbay-text-gray-500 campaignbay-text-2xl campaignbay-font-bold campaignbay-text-wrap">
-          {mainText}
-        </h2>
-
-        <p className="campaignbay-text-slate-700 campaignbay-mt-[2px]">
-          {seconderyText || " "}
-        </p>
-      </div>
-    </div>
+    <span className="campaignbay-font-[700] campaignbay-text-[16px] campaignbay-leading-[40px]">
+      {children}
+    </span>
   );
 };
