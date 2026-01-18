@@ -1,7 +1,7 @@
 // src/admin/utils/api.js
 
 import apiFetch from "@wordpress/api-fetch";
-import { CbStore } from "../types";
+import { CbStore } from "../old/types";
 
 declare global {
   interface Window {

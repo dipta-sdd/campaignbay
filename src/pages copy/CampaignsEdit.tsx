@@ -8,7 +8,10 @@ import { useToast } from "../store/toast/use-toast";
 import { FC, useEffect } from "react";
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
-import { Campaign as CampaignInterface, CampaignErrorsType } from "../types";
+import {
+  Campaign as CampaignInterface,
+  CampaignErrorsType,
+} from "../old/types";
 import Campaign from "../components/Campaign";
 import getBool from "../utils/getBool";
 

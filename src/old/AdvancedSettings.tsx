@@ -2,7 +2,7 @@ import { FC, Dispatch, SetStateAction } from "react";
 import SettingCard from "./SettingCard";
 import Checkbox from "./Checkbox";
 import { __ } from "@wordpress/i18n";
-import { AdvancedSettingsType } from "../types";
+import { AdvancedSettingsType } from "./types";
 
 interface AdvancedSettingsProps {
   advancedSettings: AdvancedSettingsType;

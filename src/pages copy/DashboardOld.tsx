@@ -97,12 +97,6 @@ ChartJS.register(
   ArcElement
 );
 
-interface PlaceholderProps {
-  image: string;
-  mainText: string;
-  seconderyText: ReactNode;
-  opacity?: number;
-}
 
 const Dashboard: FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(

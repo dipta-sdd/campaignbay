@@ -17,6 +17,6 @@
     "allowJs": true,
     "checkJs": false
   },
-  "include": ["src/admin/**/*", "src/utils", "src/App.tsx", "src/index.tsx", "src/types.ts", "src/components", "src/pages", "src/store"],
+  "include": ["src/admin/**/*", "src/utils", "src/App.tsx", "src/index.tsx", "src/old/types.ts", "src/components", "src/pages", "src/store", "src/components"],
   "exclude": ["node_modules", "build", "vendor"]
 }

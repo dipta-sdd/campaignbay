@@ -33,6 +33,30 @@ export default function formatDateTime(dateTimeString: string | number | null | 
   const dateTime: Date = getDate(dateTimeString * 1000);
   return date(format, dateTime, timezone?.offset);
 }
+/**
+ * Formats a given date string according to WordPress settings.
+ *
+ * @since 1.0.0
+ *
+ * @param {string|number} dateTimeString - The date-time string or timestamp to format.
+ * @returns {string} The formatted date, or "—" if invalid.
+ */
+export function formatDate(dateTimeString: string | number | null | undefined): string {
+  const { wpSettings } = useCbStore();
+  const { timezone } = getDateSettings();
+  if (
+    !dateTimeString ||
+    new Date(dateTimeString).toString() === "Invalid Date"
+  ) {
+    return "—";
+  }
+
+
+  const format: string = `${wpSettings.dateFormat}`;
+  // @ts-ignore
+  const dateTime: Date = getDate(dateTimeString * 1000);
+  return date(format, dateTime, timezone?.offset);
+}
 
 /**
  * Returns a human-readable difference between the given date-time and the current time.

@@ -10,7 +10,7 @@ import {
   CartSettingsType,
   GlobalSettingsType,
   ProductSettingsType,
-} from "../types";
+} from "../old/types";
 
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";

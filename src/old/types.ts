@@ -1,5 +1,5 @@
 import { Dispatch, RefObject, SetStateAction } from "react";
-import { ConditionsInterface } from "./components/conditions/type";
+import { ConditionsInterface } from "./conditions/type";
 
 export interface DiscountTableOptionsType {
   show_header: boolean;

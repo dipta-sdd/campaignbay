@@ -1,6 +1,7 @@
 import { Children, FC, ReactNode, useEffect, useState } from "react";
 // @ts-ignore
 import chart_placeholder from "./../../assets/img/top_p_c.svg";
+import Navbar from "../components/Navbar";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
 import { addQueryArgs } from "@wordpress/url";
@@ -25,6 +26,7 @@ import HeaderContainer from "../components/common/HeaderContainer";
 import Header from "../components/common/Header";
 import CustomSelect from "../components/common/CustomSelect";
 import { formatDate } from "../utils/Dates";
+import { getCampaignTypeText } from "./Campaigns";
 import { CampaignType } from "../old/types";
 
 interface KpiValue {
@@ -476,9 +478,9 @@ const Dashboard: FC = () => {
     },
   };
 
-
   return (
-    <>
+    <div>
+      <Navbar />
       {loading ? (
         <>
           <div className="campaignbay-p-x-page-default">
@@ -635,17 +637,13 @@ const Dashboard: FC = () => {
           <HeaderContainer className="campaignbay-py-[12px]">
             <Header>Dashboard</Header>
             <CustomSelect
-              value={selectedPeriod}
-              isCompact
-              className="campaignbay-w-max !campaignbay-radius-[8px]"
+              className="campaignbay-w-min"
               options={[
                 { value: "7days", label: "Last 7 Days" },
                 { value: "30days", label: "30 Days" },
-                { value: "1year", label: "1 Year" },
+                { value: "60days", label: "60 Days" },
               ]}
-              onChange={(value) => {
-                setSelectedPeriod(value as ChartPeriod);
-              }}
+              onChange={(value) => setSelectedPeriod(value as ChartPeriod)}
             />
           </HeaderContainer>
           {/* body content */}
@@ -959,7 +957,7 @@ const Dashboard: FC = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
@@ -1025,21 +1023,4 @@ const Card = ({
       <div className="campaignbay-pt-[8px]">{children}</div>
     </div>
   );
-};
-
-export const getCampaignTypeText = (type: CampaignType) => {
-  switch (type) {
-    case "bogo_pro":
-      return "BOGO Advanced";
-    case "quantity":
-      return "Quantity";
-    case "earlybird":
-      return "Earlybird";
-    case "scheduled":
-      return "Scheduled";
-    case "bogo":
-      return "BOGO";
-    default:
-      return type;
-  }
 };

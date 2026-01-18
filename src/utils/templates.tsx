@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Campaign } from "../types";
+import { Campaign } from "../old/types";
 
 export interface Template {
   id: string;
@@ -513,5 +513,5 @@ const templates: Template[] = [
 
 export default templates;
 
-
-export const getTemplate = (id: string) => templates.find((template) => template.id === id);
+export const getTemplate = (id: string) =>
+  templates.find((template) => template.id === id);

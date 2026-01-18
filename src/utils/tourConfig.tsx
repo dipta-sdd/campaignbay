@@ -1,4 +1,4 @@
-import { TourConfig } from "../types";
+import { TourConfig } from "../old/types";
 import { TOUR_STEPS } from "./tourSteps";
 
 export const campaignTourConfig: TourConfig = {
@@ -6,27 +6,38 @@ export const campaignTourConfig: TourConfig = {
   // BASE STEPS
   // ===========================================================================
   [TOUR_STEPS.START]: {
-    text: <span className="">Click <b>Add Campaign</b> to create a new promotion.</span>,
+    text: (
+      <span className="">
+        Click <b>Add Campaign</b> to create a new promotion.
+      </span>
+    ),
     position: "bottom-left",
     showNext: false,
     showPrev: false,
     autoFocus: true,
   },
-  [TOUR_STEPS.BLANK_CAMPAIGN]:{
-    text: <span className="">Select <b>Blank Campaign</b> to create your custom campaign.</span>,
+  [TOUR_STEPS.BLANK_CAMPAIGN]: {
+    text: (
+      <span className="">
+        Select <b>Blank Campaign</b> to create your custom campaign.
+      </span>
+    ),
     position: "bottom",
     showNext: true,
     showPrev: false,
     autoFocus: true,
   },
-  [TOUR_STEPS.CREATE]:{
-    text: <span className="">Click <b>Create</b> to start creating.</span>,
+  [TOUR_STEPS.CREATE]: {
+    text: (
+      <span className="">
+        Click <b>Create</b> to start creating.
+      </span>
+    ),
     position: "bottom",
     showNext: false,
     showPrev: true,
     autoFocus: true,
   },
-
 
   [TOUR_STEPS.TITLE]: {
     text: "Start by giving your campaign a descriptive title (e.g., 'Summer Flash Sale').",
@@ -36,14 +47,18 @@ export const campaignTourConfig: TourConfig = {
     autoFocus: true,
   },
   [TOUR_STEPS.TYPE]: {
-    text: <span>Choose your campaign strategy here. Options include
-      <br />
-      <ul className="campaignbay-list-disc campaignbay-list-inside">
-        <li>'Buy X Get X' (BOGO)</li>
-        <li>'Quantity' (Bulk discounts)</li>
-        <li>'Scheduled' (Time-based sales)</li>
-        <li>'Early Bird' (Limited offers for first buyers)</li>
-      </ul></span>,
+    text: (
+      <span>
+        Choose your campaign strategy here. Options include
+        <br />
+        <ul className="campaignbay-list-disc campaignbay-list-inside">
+          <li>'Buy X Get X' (BOGO)</li>
+          <li>'Quantity' (Bulk discounts)</li>
+          <li>'Scheduled' (Time-based sales)</li>
+          <li>'Early Bird' (Limited offers for first buyers)</li>
+        </ul>
+      </span>
+    ),
     position: "bottom",
     showNext: true,
     showPrev: true,

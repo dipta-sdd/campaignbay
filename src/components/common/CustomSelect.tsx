@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import { useClickOutside } from "./hooks/useClickOutside";
 import { ChevronDown, Hourglass, LockKeyhole } from "lucide-react";
 import { __ } from "@wordpress/i18n";
+import { borderClasses, hoverBorderClasses } from "./classes";
 export interface SelectOption {
   value: string | number;
   label: string;
@@ -31,7 +32,7 @@ export interface SelectProps {
   /**
    * The current selected value(s)
    */
-  value?: SelectOption["value"] | null;
+  value: SelectOption["value"] | null;
   /**
    * Callback when an option is selected
    */
@@ -93,6 +94,19 @@ export interface SelectProps {
   errorClassName?: string;
 
   differentDropdownWidth?: boolean;
+
+  isCompact?: boolean;
+
+  classNames?: {
+    wrapper?: string;
+    container?: string;
+    label?: string;
+    select?: string;
+    option?: string;
+    dropdown?: string;
+    search?: string;
+    error?: string;
+  };
 }
 
 const CustomSelect: React.FC<SelectProps> = ({
@@ -108,12 +122,14 @@ const CustomSelect: React.FC<SelectProps> = ({
   fontWeight = 500,
   label,
   enableSearch = false,
-  border = "campaignbay-border-gray-300",
-  hoverBorder = "!campaignbay-border-[#183ad6]",
+  border = borderClasses,
+  hoverBorder = hoverBorderClasses,
   color = "campaignbay-text-gray-[#0a4b78]",
   isError = false,
   errorClassName = "wpab-input-error",
   differentDropdownWidth = false,
+  isCompact = false,
+  classNames = {},
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -213,6 +229,7 @@ const CustomSelect: React.FC<SelectProps> = ({
   }, [highlightedIndex, isOpen]);
 
   const handleSelect = (option: SelectOption) => {
+    console.log(option);
     if (
       option.disabled ||
       option.variant === "buy_pro" ||
@@ -372,7 +389,6 @@ const CustomSelect: React.FC<SelectProps> = ({
       setTooltipState(null);
     }, 150);
   };
-
   return (
     <div
       className={`campaignbay-relative campaignbay-w-full ${className}`}
@@ -397,8 +413,9 @@ const CustomSelect: React.FC<SelectProps> = ({
         onClick={() => !disabled && setIsOpen((prev) => !prev)}
         onKeyDown={handleTriggerKeyDown}
         className={`
-          campaignbay-relative campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-w-full campaignbay-gap-0 campaignbay-px-4 campaignbay-py-[9px] campaignbay-text-left !campaignbay-cursor-pointer 
-          campaignbay-transition-all campaignbay-duration-200 campaignbay-ease-in-out wpab-multiselect-input campaignbay-border ${border} 
+          campaignbay-relative campaignbay-flex campaignbay-flex-wrap  campaignbay-items-center campaignbay-justify-between campaignbay-w-full campaignbay-gap-0 campaignbay-px-4  campaignbay-text-left !campaignbay-cursor-pointer 
+          campaignbay-transition-all campaignbay-duration-200 campaignbay-ease-in-out campaignbay-border ${border} 
+          ${isCompact ? "campaignbay-py-[5px]" : "campaignbay-py-[9px]"}
           ${!disabled && !isOpen ? ` ${color} ` : ""}
           ${
             disabled

@@ -1,4 +1,4 @@
-import { CampaignSettingsType, CampaignType } from "../types";
+import { CampaignSettingsType, CampaignType } from "../old/types";
 
 export const getSettings = (type: CampaignType, settings: CampaignSettingsType) => {
     let defaultSettings: CampaignSettingsType = {}

@@ -7,7 +7,10 @@ import { FC, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
-import { Campaign as CampaignInterface, CampaignErrorsType } from "../types";
+import {
+  Campaign as CampaignInterface,
+  CampaignErrorsType,
+} from "../old/types";
 import Campaign from "../components/Campaign";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";

@@ -1,14 +1,13 @@
 import { Icon, plus } from "@wordpress/icons";
 // @ts-ignore
-import logo_32px from "./../../assets/img/campaign_bay.svg";
+import logo_32px from "./../../../assets/img/campaign_bay.svg";
 import { useState, useEffect, FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
-import { useGuide, useGuideStep } from "../store/GuideContext";
-import { TOUR_STEPS } from "../utils/tourSteps";
-import CustomModal from "./ui/CustomModal";
-import { Plus, Tag } from "lucide-react";
-import AddCampaignModal from "./Onboarding/AddCampaignModal";
+import { useGuide, useGuideStep } from "../../store/GuideContext";
+import { TOUR_STEPS } from "../../utils/tourSteps";
+import AddCampaignModal from "../Onboarding/AddCampaignModal";
+import CustomModal from "./CustomModal";
 
 interface MenuLink {
   label: string;

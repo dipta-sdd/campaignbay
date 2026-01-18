@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { GuideContextType, TourConfig } from "../types";
+import { GuideContextType, TourConfig } from "../old/types";
 import { campaignTourConfig } from "../utils/tourConfig";
 
 const GuideContext = createContext<GuideContextType | undefined>(undefined);
@@ -20,7 +20,6 @@ export const GuideProvider: React.FC<{ children: React.ReactNode }> = ({
   const refs = useRef<Record<number, RefObject<HTMLElement>>>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  
   const registerRef = useCallback(
     (step: number, ref: RefObject<HTMLElement>) => {
       refs.current[step] = ref;
