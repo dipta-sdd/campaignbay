@@ -229,7 +229,6 @@ const CustomSelect: React.FC<SelectProps> = ({
   }, [highlightedIndex, isOpen]);
 
   const handleSelect = (option: SelectOption) => {
-    console.log(option);
     if (
       option.disabled ||
       option.variant === "buy_pro" ||
@@ -391,11 +390,17 @@ const CustomSelect: React.FC<SelectProps> = ({
   };
   return (
     <div
-      className={`campaignbay-relative campaignbay-w-full ${className}`}
+      className={`campaignbay-relative campaignbay-w-full ${className} ${
+        classNames.wrapper || ""
+      }`}
       ref={containerRef}
     >
       {label && (
-        <label className="campaignbay-block campaignbay-text-sm campaignbay-font-medium campaignbay-text-gray-700 campaignbay-mb-1">
+        <label
+          className={`campaignbay-block campaignbay-text-sm campaignbay-font-medium campaignbay-text-gray-700 campaignbay-mb-1 ${
+            classNames.label || ""
+          }`}
+        >
           {label}
         </label>
       )}
@@ -423,7 +428,8 @@ const CustomSelect: React.FC<SelectProps> = ({
               : "hover:!campaignbay-border-[#183ad6]"
           }
           ${isOpen ? `${hoverBorder}` : ""}
-          ${isError ? `${errorClassName}` : ""}
+          ${isError ? `${errorClassName} ${classNames.error || ""}` : ""}
+          ${classNames.select || ""} ${classNames.container || ""}
         `}
       >
         <div className="campaignbay-flex-1 campaignbay-min-w-0">
@@ -431,7 +437,9 @@ const CustomSelect: React.FC<SelectProps> = ({
             <input
               ref={searchInputRef}
               type="text"
-              className={`campaignbay-w-full !campaignbay-bg-transparent !campaignbay-border-none !campaignbay-shadow-none !campaignbay-outline-none !campaignbay-p-0 !campaignbay-font-[${fontWeight}] !campaignbay-text-[${fontSize}px] !campaignbay-min-h-[unset]`}
+              className={`campaignbay-w-full !campaignbay-bg-transparent !campaignbay-border-none !campaignbay-shadow-none !campaignbay-outline-none !campaignbay-p-0 !campaignbay-font-[${fontWeight}] !campaignbay-text-[${fontSize}px] !campaignbay-min-h-[unset] ${
+                classNames.search || ""
+              }`}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -486,7 +494,7 @@ const CustomSelect: React.FC<SelectProps> = ({
         <div
           className={`campaignbay-absolute campaignbay-z-50  campaignbay-bg-white campaignbay-border campaignbay-border-gray-200 ${
             differentDropdownWidth ? "" : "campaignbay-w-full"
-          }`}
+          } ${classNames.dropdown || ""}`}
           style={{
             zIndex: 50000,
             boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.3)",
@@ -556,6 +564,7 @@ const CustomSelect: React.FC<SelectProps> = ({
                           ? option.className || ""
                           : ""
                       }
+                      ${classNames.option || ""}
                     `}
                   >
                     <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-min-h-[36px]">

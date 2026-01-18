@@ -1,4 +1,5 @@
-import { Children, FC, ReactNode, useEffect, useState } from "react";
+//todo make $ sign dynamic
+import {  FC, ReactNode, useEffect, useState } from "react";
 // @ts-ignore
 import chart_placeholder from "./../../assets/img/top_p_c.svg";
 import { __, _n, sprintf } from "@wordpress/i18n";
@@ -120,9 +121,10 @@ const Dashboard: FC = () => {
           path: addQueryArgs("/campaignbay/v1/dashboard", params),
         });
         setDashboardData(response);
+
+        setLoading(false);
       } catch (error) {
       } finally {
-        setLoading(false);
       }
     };
     fetchData();
@@ -476,7 +478,6 @@ const Dashboard: FC = () => {
     },
   };
 
-
   return (
     <>
       {loading ? (
@@ -638,6 +639,9 @@ const Dashboard: FC = () => {
               value={selectedPeriod}
               isCompact
               className="campaignbay-w-max !campaignbay-radius-[8px]"
+              classNames={{
+                container: "!campaignbay-rounded-[8px]",
+              }}
               options={[
                 { value: "7days", label: "Last 7 Days" },
                 { value: "30days", label: "30 Days" },
@@ -675,7 +679,7 @@ const Dashboard: FC = () => {
                     </svg>
                   </div>
                   {/* value */}
-                  <Header className="campaignbay-pt-1">10</Header>
+                  <Header className="campaignbay-pt-1">{dashboardData?.kpis?.active_campaigns?.value}</Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
                     Active Campaigns
@@ -701,7 +705,7 @@ const Dashboard: FC = () => {
                     </svg>
                   </div>
                   {/* value */}
-                  <Header className="campaignbay-pt-1">$1000</Header>
+                  <Header className="campaignbay-pt-1">${dashboardData?.kpis?.total_discount_value?.value}</Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
                     Total Discounts
@@ -729,7 +733,7 @@ const Dashboard: FC = () => {
                     </svg>
                   </div>
                   {/* value */}
-                  <Header className="campaignbay-pt-1">10</Header>
+                  <Header className="campaignbay-pt-1">{dashboardData?.kpis?.discounted_orders?.value}</Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
                     Discounted Orders
@@ -755,7 +759,7 @@ const Dashboard: FC = () => {
                     </svg>
                   </div>
                   {/* value */}
-                  <Header className="campaignbay-pt-1">$10000</Header>
+                  <Header className="campaignbay-pt-1">${dashboardData?.kpis?.sales_from_campaigns?.value}</Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
                     Total Campaign Sales
@@ -1017,7 +1021,7 @@ const Card = ({
 }) => {
   return (
     <div
-      className={`campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] ${className}`}
+      className={`campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-shadow-sm ${className}`}
     >
       <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-pb-[8px] campaignbay-border-b campaignbay-border-default">
         {header}
