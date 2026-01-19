@@ -641,7 +641,7 @@ const Campaigns: FC = () => {
               {/* ==================================================================== */}
               {/* TABLE CONTAINER                                                    */}
               {/* ==================================================================== */}
-              <div className="campaignbay-table-container">
+              <div className="campaignbay-table-container"> 
                 <table className="campaignbay-table">
                   <thead>
                     <tr>

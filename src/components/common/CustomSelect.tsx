@@ -587,7 +587,7 @@ const CustomSelect: React.FC<SelectProps> = ({
                     {/* Checkmark for selected item */}
                     {isSelected ? (
                       <span
-                        className={`campaignbay-px-3 campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4 ${
+                        className={`campaignbay-px-3 !campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4 ${
                           isHighlighted && !isDisabled
                             ? "campaignbay-text-white"
                             : "campaignbay-text-blue-600"
@@ -609,13 +609,13 @@ const CustomSelect: React.FC<SelectProps> = ({
                       </span>
                     ) : isPro ? (
                       <span
-                        className={`campaignbay-px-3 campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
+                        className={`campaignbay-px-3 !campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
                       >
                         <LockKeyhole className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-[#f02a74] " />
                       </span>
                     ) : isComingSoon ? (
                       <span
-                        className={`campaignbay-px-3 campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
+                        className={`campaignbay-px-3 !campaignbay-pr-0 campaignbay-flex-nowrap campaignbay-flex campaignbay-items-center campaignbay-pr-4`}
                       >
                         <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded campaignbay-rounded-full campaignbay-text-xs campaignbay-flex campaignbay-items-center campaignbay-gap-1 campaignbay-flex-nowrap">
                           <Hourglass className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-white" />

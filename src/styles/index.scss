@@ -6,10 +6,19 @@
   .campaignbay-p-x-page-default {
     @apply campaignbay-px-[12px] md:campaignbay-px-[24px];
   }
+  .campaignbay-bg-secondary{
+    @apply campaignbay-bg-[#f1f5f9];
+  }
   .campaignbay-bg-primary{
     @apply campaignbay-bg-[#3858e9];
   }
+  .campaignbay-bg-primary-hovered{
+    @apply campaignbay-bg-[#3858ff];
+  }
   .campaignbay-text-primary{
+    @apply campaignbay-text-[#3858e9];
+  }
+  .campaignbay-text-primary-hovered{
     @apply campaignbay-text-[#3858e9];
   }
   .campaignbay-gap-default {
@@ -28,9 +37,17 @@
     @apply campaignbay-text-[12px] campaignbay-leading-[16px];
   }
   .campaignbay-border-default {
-    @apply campaignbay-border-[#e0e0e0] campaignbay-font-[400];
+    @apply campaignbay-border-[#e0e0e0];
+  }
+  .campaignbay-border-primary {
+    @apply campaignbay-border-[#3858e9];
+  }
+  .campaignbay-border-secondary{
+    @apply campaignbay-border-[#f1f5f9];
   }
 }
+
+
 .toplevel_page_campaignbay #wpcontent {
   padding-left: 0;
   background: #f1f5f9;
