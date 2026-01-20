@@ -6,6 +6,8 @@ import { useToast } from "../../store/toast/use-toast";
 import { exportDataToCsv } from "./exportDataToCsv";
 import ImportModal from "./ImportModal";
 import { Campaign } from "../../utils/types";
+import Button from "../common/Button";
+import { arrowDown, arrowUp, Icon } from "@wordpress/icons";
 
 interface ImportExportProps {
   refresh: () => void;
@@ -74,24 +76,26 @@ const ImportExport: FC<ImportExportProps> = ({ refresh }) => {
   return (
     <>
       <div className="campaignbay-flex campaignbay-gap-1">
-        <button
-          className="campaignbay-font-medium campaignbay-br-2 campaignbay-border campaignbay-border-gray-500 campaignbay-text-gray-600 hover:campaignbay-border-blue-600 hover:campaignbay-text-blue-600 campaignbay-p-[6px] campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-flex-nowrap"
+        <Button
+          size="small"
+          variant="outline"
+          color="primary"
           onClick={() => {
             setIsImportModalOpen(true);
           }}
         >
-          <HardDriveDownload size={16} />
-          {__("Import", "campaignbay")}
-        </button>
-        <button
-          className="campaignbay-font-medium campaignbay-br-2 campaignbay-border campaignbay-border-gray-500 campaignbay-text-gray-600 hover:campaignbay-border-blue-600 hover:campaignbay-text-blue-600 campaignbay-p-[6px] campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-flex-nowrap"
+          Import <Icon icon={arrowDown} size={20} fill="currentColor" />
+        </Button>
+        <Button
+          size="small"
+          variant="outline"
+          color="primary"
           onClick={() => {
             exportCampaigns();
           }}
         >
-          <HardDriveUpload size={16} />
-          {__("Export", "campaignbay")}
-        </button>
+          Export <Icon icon={arrowUp} size={20} fill="currentColor" />
+        </Button>
       </div>
       <ImportModal
         isOpen={isImportModalOpen}

@@ -1,8 +1,8 @@
 import { useState, useCallback, FC } from "react";
 import { Icon, upload } from "@wordpress/icons";
 import { csvToJson } from "./csvToJson";
-import Modal from "../../old/Modal";
 import { __ } from "@wordpress/i18n";
+import CustomModal from "../common/CustomModal";
 
 type JsonDataRow = Record<string, string | number | boolean>;
 interface ImportModalProps {
@@ -174,19 +174,33 @@ const ImportModal: FC<ImportModalProps> = ({ isOpen, onClose, onImport }) => {
     onClose();
   };
 
-  if (!isOpen) {
-    return null;
-  }
-
   const dropzoneClass = isDraggingOver
     ? "campaignbay-border-blue-500 campaignbay-bg-blue-50"
     : "campaignbay-border-gray-300 campaignbay-bg-gray-50 hover:campaignbay-bg-gray-100";
 
   return (
-    <Modal
-      size="large"
+    <CustomModal
+      maxWidth="campaignbay-max-w-4xl"
       title={__("Import Campaigns from CSV", "campaignbay")}
-      onRequestClose={handleClose}
+      isOpen={isOpen}
+      onClose={handleClose}
+      footer={
+        <>
+          <button
+            className="campaignbay-text-blue-600 hover:campaignbay-bg-blue-100 campaignbay-p-[8px] campaignbay-rounded-sm"
+            onClick={handleClose}
+          >
+            {__("Cancel", "campaignbay")}
+          </button>
+          <button
+            className="campaignbay-bg-blue-600 hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-p-[8px] campaignbay-rounded-sm campaignbay-transition-colors disabled:campaignbay-text-blue-400 disabled:campaignbay-bg-gray-200"
+            onClick={handleConfirmImport}
+            disabled={!jsonData || !!error}
+          >
+            {__("Import Campaigns", "campaignbay")}
+          </button>
+        </>
+      }
     >
       <div className="campaignbay-p-[2px]">
         {jsonData ? (
@@ -272,24 +286,8 @@ const ImportModal: FC<ImportModalProps> = ({ isOpen, onClose, onImport }) => {
             <strong>{__("Error:", "campaignbay")}</strong> {error}
           </div>
         )}
-
-        <div className="campaignbay-flex campaignbay-justify-end campaignbay-gap-4 campaignbay-mt-[24px]">
-          <button
-            className="campaignbay-text-blue-600 hover:campaignbay-bg-blue-100 campaignbay-p-[8px] campaignbay-rounded-sm"
-            onClick={handleClose}
-          >
-            {__("Cancel", "campaignbay")}
-          </button>
-          <button
-            className="campaignbay-bg-blue-600 hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-p-[8px] campaignbay-rounded-sm campaignbay-transition-colors disabled:campaignbay-text-blue-400 "
-            onClick={handleConfirmImport}
-            disabled={!jsonData || !!error}
-          >
-            {__("Import Campaigns", "campaignbay")}
-          </button>
-        </div>
       </div>
-    </Modal>
+    </CustomModal>
   );
 };
 
