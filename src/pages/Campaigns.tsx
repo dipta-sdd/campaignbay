@@ -188,7 +188,7 @@ const Campaigns: FC = () => {
       {/* main body */}
       <div className="campaignbay-bg-white campaignbay-rounded-[8px] campaignbay-shadow-sm">
         {/* serach and filter */}
-        <div className="campaignbay-p-[24px] campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-between campaignbay-px-[48px]">
+        <div className="campaignbay-p-[24px] campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-between campaignbay-px-[48px] campaignbay-gap-[16px]">
           <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-[12px]  campaignbay-w-full">
             {/* right */}
             <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
@@ -387,7 +387,8 @@ const PopoverContent = ({
             classNames={{
               root: "campaignbay-w-full",
               item: "campaignbay-p-1",
-              label: "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
+              label:
+                "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
             }}
             items={headers.map((header) => ({
               value: header.key,
@@ -409,9 +410,185 @@ const FiltersAccordion = ({
   filters: Filters;
   setFilters: Dispatch<SetStateAction<Filters>>;
 }) => {
+  const statusOptions = [
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
+    { label: "Scheduled", value: "scheduled" },
+    { label: "Expired", value: "expired" },
+  ];
+
+  const typeOptions = [
+    { label: "BOGO", value: "bogo" },
+    { label: "BOGO Advanced", value: "bogo_pro" },
+    { label: "Quantity", value: "quantity" },
+    { label: "Earlybird", value: "earlybird" },
+    { label: "Scheduled", value: "scheduled" },
+  ];
+
+  const removeFilter = (key: "status" | "types", value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: prev[key].filter((item) => item !== value),
+    }));
+  };
+
+  const addFilter = (key: "status" | "types", value: string) => {
+    setFilters((prev) => {
+      if (prev[key].includes(value)) return prev;
+      return {
+        ...prev,
+        [key]: [...prev[key], value],
+      };
+    });
+  };
+
+  const resetFilters = () => {
+    setFilters((prev) => ({
+      ...prev,
+      status: [],
+      types: [],
+    }));
+  };
+
+  const hasActiveFilters =
+    filters.status.length > 0 || filters.types.length > 0;
+
+  // Add Filter Menu Content Component
+  const AddFilterMenu = () => {
+    const [view, setView] = useState<"root" | "status" | "types">("root");
+
+    if (view === "status") {
+      return (
+        <div className="campaignbay-p-2 campaignbay-w-[200px]">
+          <div
+            className="campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-px-3 campaignbay-py-2 campaignbay-mb-1 campaignbay-text-xs campaignbay-font-semibold campaignbay-text-gray-500 campaignbay-uppercase campaignbay-cursor-pointer hover:campaignbay-text-primary"
+            onClick={() => setView("root")}
+          >
+            <Icon icon={previous} size={12} /> Back
+          </div>
+          {statusOptions.map((option) => (
+            <div
+              key={option.value}
+              className={`campaignbay-px-3 campaignbay-py-2 campaignbay-rounded-md campaignbay-cursor-pointer campaignbay-text-sm ${
+                filters.status.includes(option.value)
+                  ? "campaignbay-bg-primary/5 campaignbay-text-primary"
+                  : "hover:campaignbay-bg-gray-50 campaignbay-text-gray-700"
+              }`}
+              onClick={() => addFilter("status", option.value)}
+            >
+              {option.label}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (view === "types") {
+      return (
+        <div className="campaignbay-p-2 campaignbay-w-[200px]">
+          <div
+            className="campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-px-3 campaignbay-py-2 campaignbay-mb-1 campaignbay-text-xs campaignbay-font-semibold campaignbay-text-gray-500 campaignbay-uppercase campaignbay-cursor-pointer hover:campaignbay-text-primary"
+            onClick={() => setView("root")}
+          >
+            <Icon icon={previous} size={12} /> Back
+          </div>
+          {typeOptions.map((option) => (
+            <div
+              key={option.value}
+              className={`campaignbay-px-3 campaignbay-py-2 campaignbay-rounded-md campaignbay-cursor-pointer campaignbay-text-sm ${
+                filters.types.includes(option.value)
+                  ? "campaignbay-bg-primary/5 campaignbay-text-primary"
+                  : "hover:campaignbay-bg-gray-50 campaignbay-text-gray-700"
+              }`}
+              onClick={() => addFilter("types", option.value)}
+            >
+              {option.label}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div className="campaignbay-p-2 campaignbay-w-[200px]">
+        <div className="campaignbay-px-3 campaignbay-py-2 campaignbay-text-xs campaignbay-font-semibold campaignbay-text-gray-400 campaignbay-uppercase">
+          Filter by
+        </div>
+        <div
+          className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-px-3 campaignbay-py-2 hover:campaignbay-bg-gray-50 campaignbay-cursor-pointer campaignbay-text-sm campaignbay-text-gray-700 campaignbay-rounded-md"
+          onClick={() => setView("status")}
+        >
+          Status
+          <Icon icon={next} size={16} className="campaignbay-text-gray-400" />
+        </div>
+        <div
+          className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-px-3 campaignbay-py-2 hover:campaignbay-bg-gray-50 campaignbay-cursor-pointer campaignbay-text-sm campaignbay-text-gray-700 campaignbay-rounded-md"
+          onClick={() => setView("types")}
+        >
+          Type
+          <Icon icon={next} size={16} className="campaignbay-text-gray-400" />
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="campaignbay-w-full">
-      <h2>Filters</h2>
+    <div className="campaignbay-w-full campaignbay-flex campaignbay-flex-wrap campaignbay-items-center campaignbay-gap-[8px]">
+      {/* Active Filters: Status */}
+      {filters.status.map((status) => (
+        <span
+          key={`status-${status}`}
+          className="campaignbay-inline-flex campaignbay-items-center campaignbay-gap-[6px] campaignbay-bg-blue-50 campaignbay-text-primary campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-full campaignbay-text-[13px] campaignbay-font-medium campaignbay-transition-colors"
+        >
+          Status is{" "}
+          {statusOptions.find((o) => o.value === status)?.label || status}
+          <button
+            onClick={() => removeFilter("status", status)}
+            className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-[16px] campaignbay-h-[16px] campaignbay-rounded-full hover:campaignbay-bg-primary/20 campaignbay-transition-colors"
+          >
+            <Icon icon={closeSmall} size={16} fill="currentColor" />
+          </button>
+        </span>
+      ))}
+
+      {/* Active Filters: Type */}
+      {filters.types.map((type) => (
+        <span
+          key={`type-${type}`}
+          className="campaignbay-inline-flex campaignbay-items-center campaignbay-gap-[6px] campaignbay-bg-blue-50 campaignbay-text-primary campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-full campaignbay-text-[13px] campaignbay-font-medium campaignbay-transition-colors"
+        >
+          Type is {typeOptions.find((o) => o.value === type)?.label || type}
+          <button
+            onClick={() => removeFilter("types", type)}
+            className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-[16px] campaignbay-h-[16px] campaignbay-rounded-full hover:campaignbay-bg-primary/20 campaignbay-transition-colors"
+          >
+            <Icon icon={closeSmall} size={16} fill="currentColor" />
+          </button>
+        </span>
+      ))}
+
+      {/* Add Filter */}
+      <Popover
+        classNames={{
+          content: 'campaignbay-w-[200px]',
+        }}
+        trigger={
+          <button className="campaignbay-inline-flex campaignbay-items-center campaignbay-gap-1 campaignbay-text-gray-600 hover:campaignbay-text-primary campaignbay-text-[13px] campaignbay-font-medium campaignbay-px-[8px] campaignbay-py-[4px] hover:campaignbay-bg-gray-50 campaignbay-rounded-full campaignbay-transition-colors">
+            Add filter
+          </button>
+        }
+        content={<AddFilterMenu />}
+      />
+
+      {/* Reset Text */}
+      {hasActiveFilters && (
+        <button
+          onClick={resetFilters}
+          className="campaignbay-text-primary campaignbay-text-[13px] campaignbay-font-medium hover:campaignbay-underline campaignbay-px-[8px]"
+        >
+          Reset
+        </button>
+      )}
     </div>
   );
 };
