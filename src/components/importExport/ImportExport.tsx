@@ -2,10 +2,10 @@ import { useState, FC } from "react";
 import { __ } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
 import { HardDriveDownload, HardDriveUpload } from "lucide-react";
-import { useToast } from "../store/toast/use-toast";
+import { useToast } from "../../store/toast/use-toast";
 import { exportDataToCsv } from "./exportDataToCsv";
 import ImportModal from "./ImportModal";
-import { Campaign } from "../utils/types";
+import { Campaign } from "../../utils/types";
 
 interface ImportExportProps {
   refresh: () => void;

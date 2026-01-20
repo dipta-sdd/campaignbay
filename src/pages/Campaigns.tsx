@@ -32,6 +32,7 @@ import { formatDate } from "../utils/Dates";
 import CustomSelect from "../components/common/CustomSelect";
 import { Toggler } from "../components/common/Toggler";
 import { ListSelect } from "../components/common/ListSelect";
+import ImportExport from "../components/importExport/ImportExport";
 
 interface TableHeader {
   key: string;
@@ -177,12 +178,13 @@ const Campaigns: FC = () => {
       <HeaderContainer className="campaignbay-py-[12px]">
         <Header> Campaigns </Header>
         <div className="campaignbay-flex campaignbay-gap-2 campaignbay-justify-end campaignbay-items-center">
-          <Button size="small" variant="outline" color="primary">
+          {/* <Button size="small" variant="outline" color="primary">
             Import <Icon icon={arrowDown} size={20} fill="currentColor" />
           </Button>
           <Button size="small" variant="outline" color="primary">
             Export <Icon icon={arrowUp} size={20} fill="currentColor" />
-          </Button>
+          </Button> */}
+          <ImportExport refresh={fetchCampaigns} />
         </div>
       </HeaderContainer>
       {/* main body */}
