@@ -26,11 +26,12 @@ import { Checkbox } from "../components/common/Checkbox";
 import apiFetch from "@wordpress/api-fetch";
 import { addQueryArgs } from "@wordpress/url";
 import { useToast } from "../store/toast/use-toast";
-import { __ } from "@wordpress/i18n";
+import { __, _n } from "@wordpress/i18n";
 import { getCampaignTypeText } from "./Dashboard";
 import { formatDate } from "../utils/Dates";
 import CustomSelect from "../components/common/CustomSelect";
 import { Toggler } from "../components/common/Toggler";
+import { ListSelect } from "../components/common/ListSelect";
 
 interface TableHeader {
   key: string;
@@ -45,7 +46,6 @@ interface Filters {
   page: number;
   limit: number;
 }
-
 
 const headers: TableHeader[] = [
   { key: "title", label: "Title", sortable: true },
@@ -121,6 +121,57 @@ const Campaigns: FC = () => {
     fetchCampaigns();
   }, [filters, searchQuery]);
 
+  const deleteCampaigns = async (ids: number[]) => {
+    setLoading(true);
+    try {
+      await apiFetch({
+        path: `/campaignbay/v1/campaigns/bulk`,
+        method: "DELETE",
+        data: {
+          ids: ids,
+        },
+      });
+      addToast(
+        _n(
+          "Campaign deleted successfully",
+          "Campaigns deleted successfully",
+          ids.length,
+          "campaignbay"
+        ),
+        "success"
+      );
+      setSelectedCampaigns([]);
+      fetchCampaigns();
+    } catch (error) {
+      addToast(
+        _n(
+          "Error deleting campaign",
+          "Error deleting campaigns",
+          ids.length,
+          "campaignbay"
+        ),
+        "error"
+      );
+    }
+  };
+
+  const duplicateCampaign = async (id: number) => {
+    setLoading(true);
+    try {
+      await apiFetch({
+        path: `/campaignbay/v1/campaigns/${id}/duplicate`,
+        method: "POST",
+      });
+      addToast(
+        __("Campaign duplicated successfully", "campaignbay"),
+        "success"
+      );
+      fetchCampaigns();
+    } catch (error) {
+      addToast(__("Error duplicating campaign", "campaignbay"), "error");
+    }
+  };
+
   return (
     <Page>
       <HeaderContainer className="campaignbay-py-[12px]">
@@ -174,7 +225,7 @@ const Campaigns: FC = () => {
                 size="small"
                 variant="ghost"
                 color="primary"
-                className="!campaignbay-px-[4px]"
+                className="!campaignbay-px-[4px] campaignbay-text-[#1e1e1e]"
               >
                 <Icon icon={blockTable} size={20} fill="currentColor" />
               </Button>
@@ -186,13 +237,13 @@ const Campaigns: FC = () => {
                     size="small"
                     variant="ghost"
                     color="primary"
-                    className="!campaignbay-px-[4px]"
+                    className="!campaignbay-px-[4px] campaignbay-text-[#1e1e1e]"
                   >
                     <Icon icon={cog} size={20} fill="currentColor" />
                   </Button>
                 }
                 content={
-                  <PopoverContent 
+                  <PopoverContent
                     filters={filters}
                     setFilters={setFilters}
                     visibleColumns={visibleColumns}
@@ -217,6 +268,8 @@ const Campaigns: FC = () => {
             handleSelectAll={handleSelectAll}
             filters={filters}
             setFilters={setFilters}
+            handleDelete={deleteCampaigns}
+            handleDuplicate={duplicateCampaign}
           />
         </div>
         <Pagination
@@ -225,7 +278,9 @@ const Campaigns: FC = () => {
           filters={filters}
           setFilters={setFilters}
           selectedCampaigns={selectedCampaigns}
+          setSelectedCampaigns={setSelectedCampaigns}
           handleSelectAll={handleSelectAll}
+          handleDelete={deleteCampaigns}
         />
       </div>
     </Page>
@@ -240,7 +295,21 @@ interface PopoverContentProps {
   visibleColumns: string[];
   setVisibleColumns: Dispatch<SetStateAction<string[]>>;
 }
-const PopoverContent = ({ filters, setFilters, visibleColumns, setVisibleColumns }: PopoverContentProps) => {
+const PopoverContent = ({
+  filters,
+  setFilters,
+  visibleColumns,
+  setVisibleColumns,
+}: PopoverContentProps) => {
+  const handleVisibleColumnsChange = (value: string) => {
+    setVisibleColumns((prev) => {
+      if (prev.includes(value)) {
+        return prev.filter((item) => item !== value);
+      } else {
+        return [...prev, value];
+      }
+    });
+  };
   return (
     <div className="campaignbay-w-full campaignbay-p-3">
       <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-2">
@@ -252,36 +321,49 @@ const PopoverContent = ({ filters, setFilters, visibleColumns, setVisibleColumns
             border="campaignbay-border-[#e0e0e0]"
             classNames={{
               container: "!campaignbay-rounded-[8px]",
-              label: "campaignbay-uppercase campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e]",
+              label:
+                "campaignbay-uppercase campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e]",
             }}
-            options={headers.filter((header) => header.sortable).map((header) => ({ value: header.key, label: header.label }))}
+            options={headers
+              .filter((header) => header.sortable)
+              .map((header) => ({ value: header.key, label: header.label }))}
             value={filters.sort}
-            onChange={(value) => setFilters({ ...filters, sort: value as string })}
+            onChange={(value) =>
+              setFilters({ ...filters, sort: value as string })
+            }
           />
         </div>
         {/* order */}
         <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col">
-          <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">Order</span>
+          <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
+            Order
+          </span>
           <Toggler
             classNames={{
-              button: "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
+              button:
+                "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
             }}
             options={[
               { value: "asc", label: "Ascending" },
               { value: "desc", label: "Descending" },
             ]}
             value={filters.order}
-            onChange={(value) => setFilters({ ...filters, order: value as 'asc' | 'desc' })}
+            onChange={(value) =>
+              setFilters({ ...filters, order: value as "asc" | "desc" })
+            }
           />
         </div>
         {/* row 2 */}
         {/* item per page */}
         <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col campaignbay-col-span-2">
-          <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">Item per page</span>
+          <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
+            Item per page
+          </span>
           <Toggler
             classNames={{
               root: "campaignbay-w-full",
-              button: "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
+              button:
+                "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
             }}
             options={[
               { value: "10", label: "10" },
@@ -290,7 +372,29 @@ const PopoverContent = ({ filters, setFilters, visibleColumns, setVisibleColumns
               { value: "100", label: "100" },
             ]}
             value={filters.limit}
-            onChange={(value) => setFilters({ ...filters, limit: value as number })}
+            onChange={(value) =>
+              setFilters({ ...filters, limit: value as number })
+            }
+          />
+        </div>
+        {/* row 3 */}
+        {/* visible columns */}
+        <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col campaignbay-col-span-2">
+          <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
+            Properties
+          </span>
+          <ListSelect
+            classNames={{
+              root: "campaignbay-w-full",
+              item: "campaignbay-p-1",
+              label: "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
+            }}
+            items={headers.map((header) => ({
+              value: header.key,
+              label: header.label,
+            }))}
+            selectedValues={visibleColumns}
+            onChange={(value) => handleVisibleColumnsChange(value)}
           />
         </div>
       </div>
@@ -320,6 +424,8 @@ interface TableProps {
   filters: Filters;
   setFilters: Dispatch<SetStateAction<Filters>>;
   handleSelectAll: (checked: boolean) => void;
+  handleDuplicate: (id: number) => void;
+  handleDelete: (ids: number[]) => void;
 }
 const Table = ({
   campaigns,
@@ -329,6 +435,8 @@ const Table = ({
   filters,
   setFilters,
   handleSelectAll,
+  handleDuplicate,
+  handleDelete,
 }: TableProps) => {
   const handleSortChange = (header: string) => {
     if (filters.sort === header) {
@@ -399,7 +507,11 @@ const Table = ({
           return renderColumn(campaign, header);
         })}
         <td className="campaignbay-text-right campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pr-[32px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
-          <ActionMenu />
+          <ActionMenu
+            id={campaign.id}
+            handleDuplicate={handleDuplicate}
+            handleDelete={handleDelete}
+          />
         </td>
       </tr>
     );
@@ -409,13 +521,13 @@ const Table = ({
     switch (header) {
       case "title":
         return (
-          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] ">
             {campaign.title}
           </td>
         );
       case "status":
         return (
-          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
             <span
               className={`campaignbay-inline-block campaignbay-py-[5px] campaignbay-px-[10px] campaignbay-rounded-full campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-uppercase ${
                 campaign.status === "active" || campaign.status === "scheduled"
@@ -431,19 +543,19 @@ const Table = ({
         );
       case "type":
         return (
-          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
             {getCampaignTypeText(campaign.type)}
           </td>
         );
       case "target":
         return (
-          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
             {getTargetType(campaign.target_type)}
           </td>
         );
       case "duration":
         return (
-          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
             {campaign.schedule_enabled
               ? `${formatDate(
                   campaign?.start_datetime_unix ?? campaign.date_created_unix
@@ -453,13 +565,13 @@ const Table = ({
         );
       case "usage":
         return (
-          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
             {campaign.usage_count || 0} / {campaign.usage_limit ?? "∞"}
           </td>
         );
       default:
         return (
-          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
             {" "}
             --{" "}
           </td>
@@ -494,23 +606,52 @@ const Table = ({
   );
 };
 
-const ActionMenu = () => {
+const ActionMenu = ({
+  id,
+  handleDuplicate,
+  handleDelete,
+}: {
+  id: number;
+  handleDuplicate: (id: number) => void;
+  handleDelete: (ids: number[]) => void;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-end campaignbay-gap-[4px] campaignbay-min-w-[141px]">
-      <div className={`campaignbay-gap-[4px] campaignbay-transition-all campaignbay-duration-200 ${isOpen ? "campaignbay-flex campaignbay-items-center" : "campaignbay-hidden"}`}>
+      <div
+        className={`campaignbay-gap-[4px] campaignbay-transition-all campaignbay-duration-200 ${
+          isOpen
+            ? "campaignbay-flex campaignbay-items-center"
+            : "campaignbay-hidden"
+        }`}
+      >
         <Button variant="ghost" size="small" className="!campaignbay-p-[4px]">
           <Icon icon={edit} />
         </Button>
-        <Button variant="ghost" size="small" className="!campaignbay-p-[4px]">
+        <Button
+          variant="ghost"
+          size="small"
+          className="!campaignbay-p-[4px]"
+          onClick={() => handleDelete([id])}
+        >
           <Icon icon={trash} />
         </Button>
 
-        <Button variant="ghost" size="small" className="!campaignbay-p-[4px]">
+        <Button
+          variant="ghost"
+          size="small"
+          className="!campaignbay-p-[4px]"
+          onClick={() => handleDuplicate(id)}
+        >
           <Icon icon={copy} />
         </Button>
       </div>
-      <Button variant="ghost" size="small" className="!campaignbay-p-[4px]" onClick={() => setIsOpen(!isOpen)}>
+      <Button
+        variant="ghost"
+        size="small"
+        className="!campaignbay-p-[4px]"
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <Icon icon={moreVertical} />
       </Button>
     </div>
@@ -536,7 +677,9 @@ interface PaginationProps {
   totalPages: number;
   totalItems: number;
   selectedCampaigns: number[];
+  setSelectedCampaigns: Dispatch<SetStateAction<number[]>>;
   handleSelectAll: (checked: boolean) => void;
+  handleDelete: (ids: number[]) => void;
 }
 const Pagination = ({
   totalPages,
@@ -544,9 +687,10 @@ const Pagination = ({
   filters,
   setFilters,
   selectedCampaigns,
+  setSelectedCampaigns,
   handleSelectAll,
+  handleDelete,
 }: PaginationProps) => {
-
   return (
     // pagination container
     <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-px-[40px] campaignbay-py-[12px]">
@@ -565,6 +709,7 @@ const Pagination = ({
             size="small"
             className="!campaignbay-p-[4px]"
             disabled={selectedCampaigns.length === 0}
+            onClick={() => handleDelete(selectedCampaigns)}
           >
             <Icon icon={trash} />
           </Button>
@@ -580,6 +725,7 @@ const Pagination = ({
             variant="ghost"
             size="small"
             className="!campaignbay-p-[4px]"
+            onClick={() => setSelectedCampaigns([])}
             disabled={selectedCampaigns.length === 0}
           >
             <Icon icon={closeSmall} />
@@ -618,9 +764,7 @@ const Pagination = ({
             size="small"
             className="!campaignbay-p-[4px]"
             disabled={filters.page === 1}
-            onClick={() =>
-              setFilters({ ...filters, page: filters.page - 1 })
-            }
+            onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
           >
             <Icon icon={previous} />
           </Button>
@@ -630,9 +774,7 @@ const Pagination = ({
             className="!campaignbay-p-[4px]"
             // @ts-ignore
             disabled={filters.page === parseInt(totalPages)}
-            onClick={() =>
-              setFilters({ ...filters, page: filters.page + 1 })
-            }
+            onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
           >
             <Icon icon={next} />
           </Button>
