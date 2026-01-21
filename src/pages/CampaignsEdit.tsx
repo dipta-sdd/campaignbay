@@ -17,6 +17,7 @@ import Page from "../components/common/Page";
 import Loader from "../components/common/Loader";
 import Campaign from "../components/campaign/Campaign";
 import getBool from "../utils/getBool";
+import CampaignLoading from "../components/campaign/CampaignLoading";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
@@ -136,7 +137,7 @@ const CampaignsEdit: FC = () => {
           ...response.conditions,
         },
       });
-      setIsLoading(false);
+      // setIsLoading(false);
     } catch (error) {
       console.error("Error fetching campaign:", error);
       addToast(
@@ -149,9 +150,8 @@ const CampaignsEdit: FC = () => {
 
   return (
     <>
-      {" "}
       {isLoading ? (
-        <Loader />
+        <CampaignLoading />
       ) : (
         <>
           <Page>

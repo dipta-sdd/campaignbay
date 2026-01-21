@@ -15,6 +15,7 @@ import { currentDateTime } from "../utils/Dates";
 import Page from "../components/common/Page";
 import Loader from "../components/common/Loader";
 import Campaign from "../components/campaign/Campaign";
+import CampaignLoading from "../components/campaign/CampaignLoading";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
@@ -263,7 +264,7 @@ const CampaignsAdd: FC = () => {
     <>
       {" "}
       {isLoading ? (
-        <Loader />
+        <CampaignLoading />
       ) : (
         <>
           <Page>
