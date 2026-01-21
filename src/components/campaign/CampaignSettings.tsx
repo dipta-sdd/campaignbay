@@ -47,20 +47,18 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
     }));
   };
 
-  // console.table(getSettings(type, settings));
-
   return (
     <>
       {type === "earlybird" || type === "scheduled" ? (
         <>
-          <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-start campaignbay-gap-2">
+          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
             <Checkbox
               checked={
                 settings?.display_as_regular_price === undefined
                   ? false
                   : settings?.display_as_regular_price
               }
-              aria-label={__("Display as Regular Price", "campaignbay")}
+              label={__("Display as Regular Price", "campaignbay")}
               onChange={(checked) =>
                 setSettings((prev: CampaignSettingsType) => ({
                   ...settings,
@@ -68,22 +66,18 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 }))
               }
             />
-            <label htmlFor="display-as-regular-price">
-              {__("Display as Regular Price", "campaignbay")}
-            </label>
-
             {renderError(errors?.display_as_regular_price)}
           </div>
           {settings?.display_as_regular_price !== true ? (
             <>
-              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2 ">
+              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
                 <Checkbox
                   checked={
                     settings?.show_product_message === undefined
                       ? true
                       : settings?.show_product_message
                   }
-                  aria-label={__(
+                  label={__(
                     "Show Product Page Promotional Message",
                     "campaignbay",
                   )}
@@ -94,21 +88,13 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     }))
                   }
                 />
-                <label htmlFor="auto-add-free-product">
-                  {__("Show Product Page Promotional Message", "campaignbay")}
-                </label>
                 {renderError(errors?.show_product_message)}
               </div>
               {settings?.show_product_message === true ||
               settings?.show_product_message === undefined ? (
-                <div className="cb-form-input-con !campaignbay-p-0 campaignbay-col-span-1 md:campaignbay-col-span-2">
-                  <label
-                    htmlFor="message-format"
-                    className="campaignbay-whitespace-nowrap"
-                  >
-                    {__("Discount Message Format", "campaignbay")}
-                  </label>
-                  <input
+                <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-start campaignbay-gap-[4px]">
+                  <Label>{__("Discount Message Format", "campaignbay")}</Label>
+                  <Input
                     type="text"
                     id="message-format"
                     aria-label={__("Discount Message Format", "campaignbay")}
@@ -116,9 +102,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                       "Leave it blank for default message.",
                       "campaignbay",
                     )}
-                    className={`wpab-input w-100  ${
-                      errors?.message_format ? "wpab-input-error" : ""
-                    }`}
+                    error={errors?.message_format?.message || ""}
                     value={settings?.message_format}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setSettings((prev: CampaignSettingsType) => ({
@@ -128,14 +112,13 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     }
                     disabled={settings?.display_as_regular_price}
                   />
-                  <span className="wpab-input-help">
+                  <HelpText>
                     {__(
                       "Product Page Discount Message Format. Leave Blank for default message.",
                       "campaignbay",
                     )}
                     <Placeholders options={["percentage_off", "amount_off"]} />
-                  </span>
-                  {renderError(errors?.message_format)}
+                  </HelpText>
                 </div>
               ) : null}
             </>
@@ -145,10 +128,10 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
 
       {type === "quantity" ? (
         <>
-          <div className="cb-form-input-con !campaignbay-p-0">
-            <label htmlFor="apply_as">
+          <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-start campaignbay-gap-[4px]">
+            <Label>
               {__("Apply Discount As", "campaignbay")} <Required />
-            </label>
+            </Label>
             <Select
               id="apply_as"
               isError={!!errors?.apply_as}
@@ -166,12 +149,12 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
             {renderError(errors?.apply_as)}
           </div>
 
-          {/* cart page message location , line items name or notice or dont show*/}
-          <div className="cb-form-input-con !campaignbay-p-0">
-            <label htmlFor="cart-message-location">
+          {/* cart page message location */}
+          <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-start campaignbay-gap-[4px]">
+            <Label>
               {__("Cart Page Next Discount Message Location", "campaignbay")}{" "}
               <Required />
-            </label>
+            </Label>
             <Select
               id="cart-message-location"
               isError={!!errors?.cart_quantity_message_location}
@@ -207,24 +190,20 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 },
               ]}
             />
-            <span className="wpab-input-help">
+            <HelpText>
               {__(
                 "Choose where the next quantity discount message will be displayed on the cart page.",
                 "campaignbay",
               )}
-            </span>
+            </HelpText>
             {renderError(errors?.cart_quantity_message_location)}
           </div>
+
           {/* quantity message format */}
           {settings?.cart_quantity_message_location !== "dont_show" ? (
-            <div className="cb-form-input-con !campaignbay-p-0 campaignbay-col-span-1 md:campaignbay-col-span-2">
-              <label
-                htmlFor="message-format"
-                className="campaignbay-whitespace-nowrap"
-              >
-                {__("Next Discount Message Format", "campaignbay")}
-              </label>
-              <input
+            <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-start campaignbay-gap-[4px]">
+              <Label>{__("Next Discount Message Format", "campaignbay")}</Label>
+              <Input
                 type="text"
                 id="message-format"
                 placeholder={__(
@@ -235,9 +214,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   "Cart Page Next Discount Message Format",
                   "campaignbay",
                 )}
-                className={`wpab-input w-100  ${
-                  errors?.cart_quantity_message_format ? "wpab-input-error" : ""
-                }`}
+                error={errors?.cart_quantity_message_format?.message || ""}
                 value={settings?.cart_quantity_message_format}
                 onChange={(e) =>
                   setSettings((prev) => ({
@@ -246,7 +223,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   }))
                 }
               />
-              <span className="wpab-input-help">
+              <HelpText>
                 {__(
                   "This message will be displayed on the cart item name. Leave blank for the default message.",
                   "campaignbay",
@@ -258,8 +235,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                     "amount_off",
                   ]}
                 />
-              </span>
-              {renderError(errors?.cart_quantity_message_format)}
+              </HelpText>
             </div>
           ) : null}
         </>
@@ -267,14 +243,14 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
 
       {type === "bogo" ? (
         <>
-          {/* cart page message format when a bogo applyed then only show */}
+          {/* cart page message format when a bogo applied */}
           <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-start campaignbay-gap-[4px]">
             <Label>
               {__("Cart Page Discount Message Format", "campaignbay")}
             </Label>
             <Input
               type="text"
-              id="message-format"
+              id="cart-bogo-message-format"
               placeholder={__(
                 "Leave it blank for default message.",
                 "campaignbay",
@@ -292,19 +268,20 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 }))
               }
             />
-            <span className="campaignbay-text-[13px] campaignbay-font-[400] campaignbay-text-[#1e1e1e] campaignbay-leading-[16px] ">
+            <HelpText>
               {__(
                 "This message will be displayed on the cart page. Leave blank for the default message.",
                 "campaignbay",
               )}
               <Placeholders options={["title", "buy_product_name"]} />
-            </span>
+            </HelpText>
           </div>
-          {/* cart page message location , line items name or notice or dont show*/}
-          <div className="cb-form-input-con !campaignbay-p-0">
-            <label htmlFor="bogo-cart-message-location">
+
+          {/* cart page message location */}
+          <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-start campaignbay-gap-[4px]">
+            <Label>
               {__("Cart Page Message Location", "campaignbay")} <Required />
-            </label>
+            </Label>
             <Select
               id="bogo-cart-message-location"
               isError={!!errors?.bogo_cart_message_location}
@@ -335,22 +312,23 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 },
               ]}
             />
-            <span className="wpab-input-help">
+            <HelpText>
               {__(
                 "Choose where the BOGO discount message will be displayed on the cart page.",
                 "campaignbay",
               )}
-            </span>
+            </HelpText>
             {renderError(errors?.bogo_cart_message_location)}
           </div>
-          <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2">
+
+          <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
             <Checkbox
               checked={
                 settings?.show_bogo_message === undefined
                   ? true
                   : settings?.show_bogo_message
               }
-              aria-label={__(
+              label={__(
                 "Show BOGO Promotional Message at product page",
                 "campaignbay",
               )}
@@ -361,40 +339,28 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                 }))
               }
             />
-            <label htmlFor="auto-add-free-product">
-              {__(
-                "Show BOGO Promotional Message at product page",
-                "campaignbay",
-              )}
-            </label>
             {renderError(errors?.show_bogo_message)}
           </div>
 
-          {/* prduct page message format */}
+          {/* product page message format */}
           {settings?.show_bogo_message === true ||
           settings?.show_bogo_message === undefined ? (
-            <div className="cb-form-input-con !campaignbay-p-0">
-              <label
-                htmlFor="message-format"
-                className="campaignbay-whitespace-nowrap"
-              >
+            <div className="campaignbay-flex campaignbay-flex-col campaignbay-items-start campaignbay-gap-[4px]">
+              <Label>
                 {__("Product Page Discount Message Format", "campaignbay")}
-              </label>
-
-              <input
+              </Label>
+              <Input
                 type="text"
                 placeholder={__(
                   "Leave it blank for default message.",
                   "campaignbay",
                 )}
-                id="message-format"
+                id="bogo-banner-message-format"
                 aria-label={__(
                   "Product Page Discount Message Format",
                   "campaignbay",
                 )}
-                className={`wpab-input w-100  ${
-                  errors?.bogo_banner_message_format ? "wpab-input-error" : ""
-                }`}
+                error={errors?.bogo_banner_message_format?.message || ""}
                 value={settings?.bogo_banner_message_format}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSettings((prev: CampaignSettingsType) => ({
@@ -403,16 +369,13 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   }))
                 }
               />
-
-              <span className="wpab-input-help">
+              <HelpText>
                 {__(
                   "This message will be displayed on the product page. Leave blank for the default message.",
                   "campaignbay",
                 )}
-
                 <Placeholders options={["buy_quantity", "get_quantity"]} />
-              </span>
-              {renderError(errors?.bogo_banner_message_format)}
+              </HelpText>
             </div>
           ) : null}
         </>
@@ -458,5 +421,13 @@ const Label = ({ children }: { children: React.ReactNode }) => {
     <label className="campaignbay-text-[11px] campaignbay-font-[400] campaignbay-text-[#1e1e1e] campaignbay-leading-[16px] campaignbay-uppercase">
       {children}
     </label>
+  );
+};
+
+const HelpText = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <span className="campaignbay-text-[13px] campaignbay-font-[400] campaignbay-text-[#1e1e1e] campaignbay-leading-[16px]">
+      {children}
+    </span>
   );
 };
