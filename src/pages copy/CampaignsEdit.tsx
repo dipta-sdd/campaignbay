@@ -57,8 +57,6 @@ const CampaignsEdit: FC = () => {
   // extra state to handle editing
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
 
-  useState<boolean>(false);
-
   useEffect(() => {
     fetchCampaign();
   }, [id]);

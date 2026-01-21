@@ -86,6 +86,8 @@ interface CampaignProps {
   buttonText: string;
   isSaving: boolean;
   isLoading: boolean;
+  showDeleteButton? : boolean;
+  onDelete?: () => void;
 }
 const Campaign: FC<CampaignProps> = ({
   campaign,
@@ -95,6 +97,8 @@ const Campaign: FC<CampaignProps> = ({
   buttonText,
   isSaving,
   isLoading,
+  showDeleteButton = false,
+  onDelete,
 }) => {
   const [enableUsageLimit, setEnableUsageLimit] = useState(false);
   const [categories, setCategories] = useState<SelectOption[]>([]);
@@ -220,6 +224,18 @@ const Campaign: FC<CampaignProps> = ({
           <Button size="small" color="primary" variant="solid" className="campaignbay-w-max" disabled={isSaving || isLoading || campaign?.type === null} onClick={handleSave}>
             {buttonText}
           </Button>
+          {showDeleteButton && (
+            <Button
+              size="small"
+              color="danger"
+              variant="outline"
+              className="campaignbay-w-max"
+              disabled={isSaving || isLoading || campaign?.type === null}
+              onClick={onDelete}
+            >
+              {__("Delete Campaign", "campaignbay")}
+            </Button>
+          )}
         </div>
       </HeaderContainer>
       <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-default">

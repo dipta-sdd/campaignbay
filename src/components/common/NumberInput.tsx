@@ -59,7 +59,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const handleIncrement = useCallback(() => {
     if (!disabled) {
       const currentValue = value === null || value === undefined ? 0 : value;
-      let newValue = currentValue + step;
+      let newValue = Number(currentValue) + Number(step);
 
       if (newValue < min) newValue = min;
       if (newValue > max) newValue = max;
@@ -71,7 +71,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const handleDecrement = useCallback(() => {
     if (!disabled) {
       const currentValue = value === null || value === undefined ? 0 : value;
-      let newValue = currentValue - step;
+      let newValue = Number(currentValue) - Number(step);
 
       if (newValue < min) newValue = min;
       if (newValue > max) newValue = max;

@@ -33,6 +33,7 @@ import CustomSelect from "../components/common/CustomSelect";
 import { Toggler } from "../components/common/Toggler";
 import { ListSelect } from "../components/common/ListSelect";
 import ImportExport from "../components/importExport/ImportExport";
+import { useNavigate } from "react-router-dom";
 
 interface TableHeader {
   key: string;
@@ -137,9 +138,9 @@ const Campaigns: FC = () => {
           "Campaign deleted successfully",
           "Campaigns deleted successfully",
           ids.length,
-          "campaignbay"
+          "campaignbay",
         ),
-        "success"
+        "success",
       );
       setSelectedCampaigns([]);
       fetchCampaigns();
@@ -149,9 +150,9 @@ const Campaigns: FC = () => {
           "Error deleting campaign",
           "Error deleting campaigns",
           ids.length,
-          "campaignbay"
+          "campaignbay",
         ),
-        "error"
+        "error",
       );
     }
   };
@@ -165,7 +166,7 @@ const Campaigns: FC = () => {
       });
       addToast(
         __("Campaign duplicated successfully", "campaignbay"),
-        "success"
+        "success",
       );
       fetchCampaigns();
     } catch (error) {
@@ -645,7 +646,7 @@ const Table = ({
   const renderHeaderRow = () => {
     return visibleColumns.map((header) => {
       const head: TableHeader | undefined = headers.find(
-        (h: TableHeader) => h.key === header
+        (h: TableHeader) => h.key === header,
       );
       return (
         <th
@@ -679,7 +680,7 @@ const Table = ({
       setSelectedCampaigns([...selectedCampaigns, id]);
     } else {
       setSelectedCampaigns(
-        selectedCampaigns.filter((campaignId) => campaignId !== id)
+        selectedCampaigns.filter((campaignId) => campaignId !== id),
       );
     }
   };
@@ -748,7 +749,7 @@ const Table = ({
           <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
             {campaign.schedule_enabled
               ? `${formatDate(
-                  campaign?.start_datetime_unix ?? campaign.date_created_unix
+                  campaign?.start_datetime_unix ?? campaign.date_created_unix,
                 )} - ${formatDate(campaign?.end_datetime_unix)}`
               : "--"}
           </td>
@@ -805,36 +806,45 @@ const ActionMenu = ({
   handleDuplicate: (id: number) => void;
   handleDelete: (ids: number[]) => void;
 }) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-end campaignbay-gap-[4px] campaignbay-min-w-[141px]">
-      <div
-        className={`campaignbay-gap-[4px] campaignbay-transition-all campaignbay-duration-200 ${
-          isOpen
-            ? "campaignbay-flex campaignbay-items-center"
-            : "campaignbay-hidden"
-        }`}
-      >
-        <Button variant="ghost" size="small" className="!campaignbay-p-[4px]">
-          <Icon icon={edit} />
-        </Button>
-        <Button
-          variant="ghost"
-          size="small"
-          className="!campaignbay-p-[4px]"
-          onClick={() => handleDelete([id])}
+    <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-end campaignbay-gap-[4px] campaignbay-min-w-[141px] campaignbay-group">
+      <div className={`campaignbay-overflow-hidden campaignbay-transition-all campaignbay-duration-200 ${
+        isOpen ? "campaignbay-w-[104px]" : "campaignbay-w-[0] group-hover:campaignbay-w-[104px]"
+      }`}>
+        <div
+          className={`campaignbay-gap-[4px] campaignbay-transition-all campaignbay-duration-200 campaignbay-flex campaignbay-flex-nowrap`}
         >
-          <Icon icon={trash} />
-        </Button>
+          <Button
+            variant="ghost"
+            color="secondary"
+            size="small"
+            className="!campaignbay-p-[4px]"
+            onClick={() => navigate(`/campaigns/${id}`)}
+          >
+            <Icon icon={edit} fill="currentColor" />
+          </Button>
+          <Button
+            variant="ghost"
+            color="secondary"
+            size="small"
+            className="!campaignbay-p-[4px]"
+            onClick={() => handleDelete([id])}
+          >
+            <Icon icon={trash} fill="currentColor" />
+          </Button>
 
-        <Button
-          variant="ghost"
-          size="small"
-          className="!campaignbay-p-[4px]"
-          onClick={() => handleDuplicate(id)}
-        >
-          <Icon icon={copy} />
-        </Button>
+          <Button
+            variant="ghost"
+            color="secondary"
+            size="small"
+            className="!campaignbay-p-[4px]"
+            onClick={() => handleDuplicate(id)}
+          >
+            <Icon icon={copy} fill="currentColor" />
+          </Button>
+        </div>
       </div>
       <Button
         variant="ghost"
@@ -937,7 +947,7 @@ const Pagination = ({
             (page) => ({
               value: page,
               label: page.toString(),
-            })
+            }),
           )}
           value={filters.page}
           onChange={(value) =>

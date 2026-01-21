@@ -37,7 +37,7 @@ const Button = ({
       outline:
         "campaignbay-bg-transparent campaignbay-border campaignbay-border-secondary campaignbay-text-secondary hover:campaignbay-bg-secondary hover:campaignbay-text-white",
       ghost:
-        "campaignbay-bg-transparent campaignbay-text-secondary hover:campaignbay-text-secondary-hovered hover:campaignbay-bg-secondary/10",
+        "campaignbay-bg-transparent campaignbay-text-[#1e1e1e] hover:!campaignbay-text-primary",
     },
     danger: {
       solid:

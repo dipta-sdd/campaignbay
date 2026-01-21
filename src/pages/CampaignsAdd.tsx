@@ -1,9 +1,8 @@
 import { useState } from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
-import { check, Icon, next } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
-import { FC, ReactNode, useEffect } from "react";
+import { FC, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Campaign as CampaignInterfaceBase,
@@ -14,12 +13,8 @@ import { TOUR_STEPS } from "../utils/tourSteps";
 import { getTemplate } from "../utils/templates";
 import { currentDateTime } from "../utils/Dates";
 import Page from "../components/common/Page";
-import HeaderContainer from "../components/common/HeaderContainer";
 import Loader from "../components/common/Loader";
-import { Switch } from "../components/common/Switch";
-import Button from "../components/common/Button";
 import Campaign from "../components/campaign/Campaign";
-import { errorClasses, hoverClasses } from "../components/common/classes";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
@@ -123,7 +118,6 @@ const CampaignsAdd: FC = () => {
   //=================================================================================
   //============================     Guide    =======================================
   //=================================================================================
-  const saveBtnRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.SAVE_BTN);
   const { tourStep, setConfig, setTourStep } = useGuide();
   const TYPE_TO_STEP_MAP: Record<string, number> = {
     bogo: TOUR_STEPS.BOGO_BUY,

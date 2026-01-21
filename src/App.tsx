@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import { ToastContainer } from "./components/common/ToastContainer";
 import AppLayout from "./components/common/AppLayout";
 import CampaignsAdd from "./pages/CampaignsAdd";
+import CampaignsEdit from "./pages/CampaignsEdit";
 
 const App = () => {
   return (
@@ -21,7 +22,7 @@ const App = () => {
               {/* <Route path="settings" element={<Settings />} /> */}
               <Route path="campaigns" element={<Campaigns />} />
               <Route path="campaigns/add" element={<CampaignsAdd />} />
-              {/* <Route path="campaigns/:id" element={<CampaignsEdit />} /> */}
+              <Route path="campaigns/:id" element={<CampaignsEdit />} />
 
               {/* <Route path="rules/new" element={<AddNewRulePage />} /> */}
               {/* <Route path="rules/edit/:ruleId" element={<AddNewRulePage />} />  */}
