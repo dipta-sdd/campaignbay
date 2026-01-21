@@ -5,18 +5,25 @@ interface CheckboxProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
+  classNames?: {
+    root?: string;
+    box?: string;
+    icon?: string;
+    label?: string;
+  };
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ label, checked, onChange, disabled }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ label, checked, onChange, disabled, classNames }) => {
   return (
-    <label className={`campaignbay-flex campaignbay-items-center campaignbay-gap-3 campaignbay-cursor-pointer ${disabled ? 'campaignbay-opacity-50 campaignbay-cursor-not-allowed' : ''}`}>
+    <label className={`campaignbay-flex campaignbay-items-center campaignbay-gap-3 campaignbay-cursor-pointer ${disabled ? 'campaignbay-opacity-50 campaignbay-cursor-not-allowed' : ''} ${classNames?.root || ''}`}>
       <div className={`
         campaignbay-flex campaignbay-items-center campaignbay-justify-center
-        campaignbay-w-4 campaignbay-h-4 campaignbay-rounded campaignbay-border-[1px] campaignbay-transition-all campaignbay-duration-200
-        ${checked ? 'campaignbay-border-primary campaignbay-bg-primary' : 'campaignbay-border-[#949494] campaignbay-bg-white hover:campaignbay-border-primary'}
+        campaignbay-w-4 campaignbay-h-4 campaignbay-rounded campaignbay-border-2 campaignbay-transition-all campaignbay-duration-200
+        ${checked ? 'campaignbay-border-primary campaignbay-bg-primary' : 'campaignbay-border-[#949494] campaignbay-bg-transparent hover:campaignbay-border-primary'}
+        ${classNames?.box || ''}
       `}>
         <svg 
-            className={`campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-white campaignbay-transform campaignbay-transition-transform campaignbay-duration-200 ${checked ? 'campaignbay-scale-100' : 'campaignbay-scale-0'}`} 
+            className={`campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-white campaignbay-transform campaignbay-transition-transform campaignbay-duration-200 ${checked ? 'campaignbay-scale-100' : 'campaignbay-scale-0'} ${classNames?.icon || ''}`} 
             viewBox="0 0 24 24" 
             fill="none" 
             stroke="currentColor" 
@@ -34,7 +41,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ label, checked, onChange, di
           disabled={disabled}
         />
       </div>
-      {label && <span className="campaignbay-text-[15px] campaignbay-font-medium campaignbay-text-gray-700">{label}</span>}
+      {label && <span className={`campaignbay-text-[13px] campaignbay-font-[400] campaignbay-leading-[20px] campaignbay-text-[#1e1e1e] ${classNames?.label || ''}`}>{label}</span>}
     </label>
   );
 };

@@ -88,27 +88,6 @@ export interface CampaignBaySettingsType {
 export type ApplyAsType = "line_total" | "coupon" | "fee";
 export type BogoMessageLocationType = "line_item_name" | "notice" | "dont_show";
 
-export interface CampaignSettingsType {
-    // scheduled & earlybird
-    display_as_regular_price?: boolean;
-    message_format?: string;
-    show_product_message?: boolean;
-
-    // quantity
-    enable_quantity_table?: boolean;
-    apply_as?: ApplyAsType;
-    cart_quantity_message_location?: BogoMessageLocationType;
-    cart_quantity_message_format?: string;
-
-    // bogo
-    auto_add_free_product?: boolean;
-    show_bogo_message?: boolean;
-    bogo_banner_message_format?: string;
-    cart_bogo_message_format?: string;
-    bogo_cart_message_location?: BogoMessageLocationType;// dont show added here , no need boolean
-}
-
-
 export type CampaignStatusType =
     | "active"
     | "inactive"
@@ -195,3 +174,43 @@ export interface Campaign {
 
     settings: CampaignSettingsType;
 }
+
+export interface CampaignSettingsType {
+  // scheduled & earlybird
+  display_as_regular_price?: boolean;
+  message_format?: string;
+  show_product_message?: boolean;
+
+  // quantity
+  enable_quantity_table?: boolean;
+  apply_as?: ApplyAsType;
+  cart_quantity_message_location?: BogoMessageLocationType;
+  cart_quantity_message_format?: string;
+
+  // bogo
+  auto_add_free_product?: boolean;
+  show_bogo_message?: boolean;
+  bogo_banner_message_format?: string;
+  cart_bogo_message_format?: string;
+  bogo_cart_message_location?: BogoMessageLocationType;// dont show added here , no need boolean
+}
+export type CampaignSettingsErrorsType = Partial<
+  Record<keyof CampaignSettingsType, { message: string }>
+>;
+export type CampaignErrorsType = {
+  title?: { message: string };
+  status?: { message: string };
+  type?: { message: string };
+  discount_type?: { message: string };
+  discount_value?: { message: string };
+  target_type?: { message: string };
+  target_ids?: { message: string };
+  isExclude?: { message: string };
+  exclude_sale_items?: { message: string };
+  usage_limit?: { message: string };
+  schedule_enabled?: { message: string };
+  start_datetime?: { message: string };
+  end_datetime?: { message: string };
+  tiers?: QuantityTierError[] | EBTierError[] | BogoTierError[];
+  settings?: CampaignSettingsErrorsType;
+};

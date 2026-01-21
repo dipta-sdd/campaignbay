@@ -209,16 +209,18 @@ const Campaigns: FC = () => {
               {/* filter triger */}
               <Button
                 size="small"
-                variant="outline"
+                variant={filterOpen ? "solid" : "outline"}
                 color="primary"
                 className="!campaignbay-px-[4px] campaignbay-relative"
                 onClick={() => setFilterOpen(!filterOpen)}
               >
                 <Icon icon={funnel} size={20} fill="currentColor" />
                 {/* badge */}
-                <span className="campaignbay-block campaignbay-w-[12px] campaignbay-h-[12px] campaignbay-bg-primary campaignbay-text-white campaignbay-rounded-full campaignbay-absolute campaignbay-top-0 campaignbay-right-0 campaignbay-transform campaignbay-translate-y-[-30%] campaignbay-translate-x-[25%] campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-[9px]">
-                  1
-                </span>
+                {filters.status.length + filters.types.length > 0 ? (
+                  <span className="campaignbay-block campaignbay-w-[12px] campaignbay-h-[12px] campaignbay-bg-primary campaignbay-text-white campaignbay-rounded-full campaignbay-absolute campaignbay-top-0 campaignbay-right-0 campaignbay-transform campaignbay-translate-y-[-30%] campaignbay-translate-x-[25%] campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-[9px]">
+                    {filters.status.length + filters.types.length}
+                  </span>
+                ) : null}
               </Button>
             </div>
             <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-end campaignbay-gap-[4px]">
@@ -233,7 +235,10 @@ const Campaigns: FC = () => {
               </Button>
 
               <Popover
-                align="right"
+                align="bottom-right"
+                classNames={{
+                  content: "campaignbay-w-[300px]",
+                }}
                 trigger={
                   <Button
                     size="small"
@@ -317,7 +322,7 @@ const PopoverContent = ({
       <div className="campaignbay-grid campaignbay-grid-cols-2 campaignbay-gap-2">
         {/* row 1 */}
         {/* sort by */}
-        <div>
+        <div className="campaignbay-col-span-2">
           <CustomSelect
             label="Sort by"
             border="campaignbay-border-[#e0e0e0]"
@@ -336,12 +341,13 @@ const PopoverContent = ({
           />
         </div>
         {/* order */}
-        <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col">
+        <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col campaignbay-col-span-2">
           <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
             Order
           </span>
           <Toggler
             classNames={{
+              root: "campaignbay-w-full",
               button:
                 "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
             }}
@@ -572,25 +578,30 @@ const FiltersAccordion = ({
       {/* Add Filter */}
       <Popover
         classNames={{
-          content: 'campaignbay-w-[200px]',
+          content: "campaignbay-w-[200px]",
         }}
         trigger={
-          <button className="campaignbay-inline-flex campaignbay-items-center campaignbay-gap-1 campaignbay-text-gray-600 hover:campaignbay-text-primary campaignbay-text-[13px] campaignbay-font-medium campaignbay-px-[8px] campaignbay-py-[4px] hover:campaignbay-bg-gray-50 campaignbay-rounded-full campaignbay-transition-colors">
+          <Button
+            variant="ghost"
+            size="small"
+            className="campaignbay-text-[13px] campaignbay-font-medium campaignbay-px-[8px] campaignbay-py-[4px] campaignbay-rounded-full campaignbay-transition-colors"
+          >
             Add filter
-          </button>
+          </Button>
         }
         content={<AddFilterMenu />}
       />
 
       {/* Reset Text */}
-      {hasActiveFilters && (
-        <button
-          onClick={resetFilters}
-          className="campaignbay-text-primary campaignbay-text-[13px] campaignbay-font-medium hover:campaignbay-underline campaignbay-px-[8px]"
-        >
-          Reset
-        </button>
-      )}
+
+      <Button
+        variant="ghost"
+        size="small"
+        disabled={!hasActiveFilters}
+        className="campaignbay-text-[13px] campaignbay-font-medium campaignbay-px-[8px] campaignbay-py-[4px] campaignbay-rounded-full campaignbay-transition-colors"
+      >
+        Reset
+      </Button>
     </div>
   );
 };

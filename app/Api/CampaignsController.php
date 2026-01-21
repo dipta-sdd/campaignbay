@@ -331,19 +331,19 @@ class CampaignsController extends ApiController
 
 		// Handle Status Filtering
 		$status = $request->get_param('status');
-		if (!empty($status) && 'all' !== $status) {
+		if (!empty($status) && 'all' !== $status && is_array($status)) {
 			// CORRECTED: Add a leading space for valid SQL.
-			$sql .= " AND status = %s";
-			$count_sql .= " AND status = %s";
-			$query_params[] = sanitize_key($status);
+			$sql .= " AND status IN (" . implode(',', array_fill(0, count($status), '%s')) . ")";
+			$count_sql .= " AND status IN (" . implode(',', array_fill(0, count($status), '%s')) . ")";
+			$query_params = array_merge($query_params, array_map('sanitize_key', $status));
 		}
 
 		// Handle campaign type filtering
 		$type_filter = $request->get_param('type');
-		if (!empty($type_filter)) {
-			$sql .= " AND type = %s";
-			$count_sql .= " AND type = %s";
-			$query_params[] = sanitize_key($type_filter);
+		if (!empty($type_filter) && is_array($type_filter)) {
+			$sql .= " AND type IN (" . implode(',', array_fill(0, count($type_filter), '%s')) . ")";
+			$count_sql .= " AND type IN (" . implode(',', array_fill(0, count($type_filter), '%s')) . ")";
+			$query_params = array_merge($query_params, array_map('sanitize_key', $type_filter));
 		}
 
 		// Handle search

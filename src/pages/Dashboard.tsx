@@ -1011,7 +1011,7 @@ const Placeholder: FC<PlaceholderProps> = ({
   );
 };
 
-const Card = ({
+export const Card = ({
   children,
   header,
   className,

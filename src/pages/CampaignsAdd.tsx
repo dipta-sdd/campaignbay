@@ -3,20 +3,23 @@ import apiFetch from "@wordpress/api-fetch";
 import { check, Icon, next } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
-import { FC, useEffect } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Loader from "../old/Loader";
-import Navbar from "../old/Navbar";
-import {
-  Campaign as CampaignInterface,
-  CampaignErrorsType,
-} from "../old/types";
-import Campaign from "../old/Campaign";
+import { Campaign as CampaignInterfaceBase, CampaignType } from "../utils/types";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
-import { FloatingHelpButton } from "./Campaigns";
 import { getTemplate } from "../utils/templates";
 import { currentDateTime } from "../utils/Dates";
+import Page from "../components/common/Page";
+import HeaderContainer from "../components/common/HeaderContainer";
+import Loader from "../components/common/Loader";
+import { Switch } from "../components/common/Switch";
+import Button from "../components/common/Button";
+import Campaign from "../components/campaign/Campaign";
+// @ts-ignore
+interface CampaignInterface extends CampaignInterfaceBase {
+    type: CampaignType | null;
+}
 
 const CampaignsAdd: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +27,7 @@ const CampaignsAdd: FC = () => {
     id: 0,
     title: "",
     status: "active",
-    type: "bogo",
+    type: null,
     discount_type: "percentage",
     discount_value: "",
     target_type: "entire_store",
@@ -52,7 +55,7 @@ const CampaignsAdd: FC = () => {
   const { addToast } = useToast();
   const [searchParams] = useSearchParams();
 
-  const [errors, setErrors] = useState<CampaignErrorsType>({});
+  const [errors, setErrors] = useState<any>({});
   const currentDate = currentDateTime();
 
   // Load template data if templateId is in URL
@@ -261,42 +264,39 @@ const CampaignsAdd: FC = () => {
         <Loader />
       ) : (
         <>
-          <div className="cb-page">
-            <Navbar />
-            <div className="cb-page-header-container">
-              <div className="cb-page-header-title">
-                {__("Add Campaign", "campaignbay")}
-              </div>
-              <div className="cb-page-header-actions">
-                <button
-                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary "
-                  onClick={handleSaveCampaign}
-                >
-                  <Icon icon={check} fill="currentColor" />
-                  {__("Save Campaign", "campaignbay")}
-                </button>
-              </div>
-            </div>
-            <div className="cb-page-container">
-              <Campaign
-                campaign={campaign}
-                setCampaign={setCampaign}
-                errors={errors}
+          <Page>
+            <HeaderContainer className="campaignbay-py-[12px]">
+              <input
+                type="text"
+                placeholder="Campaign Title"
+                value={campaign.title}
+                onChange={(e) =>
+                  setCampaign({ ...campaign, title: e.target.value })
+                }
               />
-              {/* buttons */}
-              <div className="wpab-btn-bottom-con">
-                <button
-                  ref={saveBtnRef}
-                  className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-gap-1 campaignbay-pt-2 campaignbay-pr-3 campaignbay-pb-2 campaignbay-pl-2 campaignbay-cursor-pointer campaignbay-rounded-sm campaignbay-text-[13px] campaignbay-leading-[18px] campaignbay-font-medium campaignbay-border-0 wpab-cb-btn wpab-cb-btn-primary"
-                  onClick={handleSaveCampaign}
-                >
-                  <Icon icon={check} fill="currentColor" />
-                  {__("Save Changes", "campaignbay")}
-                </button>
+              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
+                <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-uppercase">
+                  {campaign.status === "active" ? "Active" : "Inactive"}
+                </span>
+
+                <Switch
+                  size="small"
+                  checked={campaign.status === "active"}
+                  onChange={(checked) =>
+                    setCampaign({
+                      ...campaign,
+                      status: checked ? "active" : "inactive",
+                    })
+                  }
+                />
+                <Button size="small" color="primary" variant="solid">
+                  {" "}
+                  Save Campaign
+                </Button>
               </div>
-            </div>
-            <FloatingHelpButton step={TOUR_STEPS.TITLE} />
-          </div>
+            </HeaderContainer>
+            <Campaign campaign={campaign} setCampaign={setCampaign} errors={errors} />
+          </Page>
         </>
       )}
     </>
