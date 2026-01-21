@@ -24,11 +24,11 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const sizeClasses = {
     small:
-      "campaignbay-px-[8px] campaignbay-py-[7px] campaignbay-text-[13px] campaignbay-leading-[20px]",
+      "campaignbay-px-[8px] !campaignbay-py-[7px] campaignbay-text-[13px] campaignbay-leading-[20px]",
     medium:
-      "campaignbay-px-[12px] campaignbay-py-[9px] campaignbay-text-[13px] campaignbay-leading-[20px]",
+      "campaignbay-px-[12px] !campaignbay-py-[6px] campaignbay-text-[13px] campaignbay-leading-[20px]",
     large:
-      "campaignbay-px-[12px] campaignbay-py-[11px] campaignbay-text-[13px] campaignbay-leading-[20px]",
+      "campaignbay-px-[12px] !campaignbay-py-[11px] campaignbay-text-[13px] campaignbay-leading-[20px]",
   };
 
   return (

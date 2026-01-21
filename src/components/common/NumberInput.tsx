@@ -154,7 +154,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       <div
         className={`
           campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-overflow-hidden
-          campaignbay-rounded-[8px] campaignbay-bg-white
+          campaignbay-rounded-[8px] campaignbay-bg-white campaignbay-min-w-min
           ${borderClasses}
           ${transitionClasses}
           ${

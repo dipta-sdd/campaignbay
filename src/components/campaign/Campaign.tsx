@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import {
+  CampaignErrorsType,
   Campaign as CampaignInerfaceBase,
   CampaignSettingsType,
   CampaignType,
@@ -26,6 +27,9 @@ import MultiSelect from "../common/MultiSelect";
 import Conditions from "../conditions/Conditions";
 import { ConditionsInterface } from "../conditions/type";
 import CampaignTiers from "./CampaignTiers";
+import { NumberInput } from "../common/NumberInput";
+import CustomDateTimePicker from "./CustomDateTimePicker";
+import CampaignSettings from "./CampaignSettings";
 // @ts-ignore
 interface CampaignInerface extends CampaignInerfaceBase {
   type: CampaignType | null;
@@ -72,7 +76,7 @@ export interface DependentResponseType {
 interface CampaignProps {
   campaign: CampaignInerface;
   setCampaign: React.Dispatch<React.SetStateAction<CampaignInerface>>;
-  errors: any;
+  errors: CampaignErrorsType;
 }
 const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   const [enableUsageLimit, setEnableUsageLimit] = useState(false);
@@ -195,7 +199,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         />
       </Card>
 
-      <div className="campaignbay-flex campaignbay-gap-default">
+      <div className="campaignbay-flex campaignbay-flex-nowrap campaignbay-flex-col xl:campaignbay-flex-row campaignbay-gap-default">
         {/* left */}
         <div className="campaignbay-w-full">
           <Card
@@ -285,16 +289,14 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
                   </>
                 ) : null}
               </Section>
-                <CampaignTiers
-                  campaign={campaign as CampaignInerfaceBase}
-                  setCampaign={
-                    setCampaign as Dispatch<
-                      SetStateAction<CampaignInerfaceBase>
-                    >
-                  }
-                  errors={errors}
-                  products={products}
-                />
+              <CampaignTiers
+                campaign={campaign as CampaignInerfaceBase}
+                setCampaign={
+                  setCampaign as Dispatch<SetStateAction<CampaignInerfaceBase>>
+                }
+                errors={errors}
+                products={products}
+              />
               <Section header="Conditions">
                 <Conditions
                   type={campaign?.type || "bogo"}
@@ -310,15 +312,24 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         </div>
         {/* right */}
         <Card
-          className="campaignbay-w-[400px]"
+          className="campaignbay-w-full xl:campaignbay-w-[min(70%,900px)]"
           header={
-            <h2 className="campaignbay-text-[15px] campaignbay-leading-[24px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold">
-              Select Discount Type{" "}
-              <span className="campaignbay-text-red-500">*</span>
+            <h2 className="campaignbay-text-[20px] campaignbay-leading-[20px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[24px] campaignbay-border-b campaignbay-border-[#dddddd] campaignbay-w-full">
+              Configurations
             </h2>
           }
         >
-          left
+          <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[15px] campaignbay-pt-[15px] ">
+            <OtherSettings
+              campaign={campaign}
+              setCampaign={setCampaign}
+              settings={settings}
+              setSettings={setSettings}
+              errors={errors}
+              enableUsageLimit={enableUsageLimit}
+              setEnableUsageLimit={setEnableUsageLimit}
+            />
+          </div>
         </Card>
       </div>
     </div>
@@ -387,10 +398,7 @@ export const Card = ({
 interface ErrorObject {
   message: string;
 }
-interface RenderErrorProps {
-  error?: ErrorObject;
-  negativeMargin?: boolean;
-}
+
 export const renderError = (
   error?: ErrorObject,
   negativeMargin = true,
@@ -405,4 +413,100 @@ export const renderError = (
   const className = `campaignbay-text-red-600 ${marginClass} campaignbay-text-xs`;
 
   return <span className={className}>{error.message}</span>;
+};
+
+const OtherSettings = ({
+  campaign,
+  setCampaign,
+  settings,
+  setSettings,
+  errors,
+  enableUsageLimit,
+  setEnableUsageLimit,
+}: {
+  campaign: CampaignInerface;
+  setCampaign: Dispatch<SetStateAction<CampaignInerface>>;
+  settings: CampaignSettingsType;
+  setSettings: Dispatch<SetStateAction<CampaignSettingsType>>;
+  errors: CampaignErrorsType;
+  enableUsageLimit: boolean;
+  setEnableUsageLimit: Dispatch<SetStateAction<boolean>>;
+}) => {
+  return (
+    <>
+      <Section header="Others">
+        <Checkbox
+          label={__("Exclude Sale Item", "campaignbay")}
+          checked={!!campaign.exclude_sale_items}
+          onChange={(checked) =>
+            setCampaign((prev) => ({ ...prev, exclude_sale_items: checked }))
+          }
+        />
+        <div className="campaignbay-flex campaignbay-gap-[15px]">
+          <Checkbox
+            classNames={{
+              label: "campaignbay-text-nowrap",
+            }}
+            label={__("Enable Usage Limit", "campaignbay")}
+            checked={!!enableUsageLimit}
+            onChange={(checked) => setEnableUsageLimit(checked)}
+          />
+
+          <NumberInput
+            disabled={!enableUsageLimit}
+            classNames={{
+              wrapper: "campaignbay-w-full",
+            }}
+            value={campaign.usage_limit}
+            onChange={(value) =>
+              setCampaign((prev) => ({ ...prev, usage_limit: value }))
+            }
+          />
+        </div>
+
+        <Checkbox
+          label={__("Enable Schedule", "campaignbay")}
+          checked={!!campaign.schedule_enabled}
+          onChange={(checked) =>
+            setCampaign((prev) => ({ ...prev, schedule_enabled: checked }))
+          }
+        />
+
+        <CustomDateTimePicker
+          // inputRef={endTimeInputRef}
+          label={__("START DATE", "campaignbay")}
+          value={campaign.start_datetime}
+          onChange={(date: Date | string) => {
+            setCampaign((prev) => ({
+              ...prev,
+              start_datetime: date,
+            }));
+          }}
+          disabled={!campaign.schedule_enabled}
+        />
+        {renderError(errors?.start_datetime, false)}
+        <CustomDateTimePicker
+          // inputRef={endTimeInputRef}
+          label={__("END DATE", "campaignbay")}
+          value={campaign.end_datetime}
+          onChange={(date: Date | string) => {
+            setCampaign((prev) => ({
+              ...prev,
+              end_datetime: date,
+            }));
+          }}
+          disabled={!campaign.schedule_enabled}
+        />
+        {renderError(errors?.end_datetime, false)}
+      </Section>
+      <Section header="Settings">
+        <CampaignSettings
+          settings={settings}
+          setSettings={setSettings}
+          errors={errors.settings}
+          type={campaign.type || "bogo"}
+        />
+      </Section>
+    </>
+  );
 };
