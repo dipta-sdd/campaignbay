@@ -19,7 +19,7 @@ const Button = ({
   const sizeClasses = {
     small: "campaignbay-px-[8px] campaignbay-py-[5px]",
     medium: "campaignbay-px-[12px] campaignbay-py-[6px]",
-    large: "campaignbay-px-[16px] campaignbay-py-[8px]",
+    large: "campaignbay-px-[16px] campaignbay-py-[10px]",
   };
 
   const colorClasses = {

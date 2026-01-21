@@ -5,7 +5,10 @@ import { __ } from "@wordpress/i18n";
 import { useToast } from "../store/toast/use-toast";
 import { FC, ReactNode, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Campaign as CampaignInterfaceBase, CampaignType } from "../utils/types";
+import {
+  Campaign as CampaignInterfaceBase,
+  CampaignType,
+} from "../utils/types";
 import { useGuide, useGuideStep } from "../store/GuideContext";
 import { TOUR_STEPS } from "../utils/tourSteps";
 import { getTemplate } from "../utils/templates";
@@ -16,13 +19,15 @@ import Loader from "../components/common/Loader";
 import { Switch } from "../components/common/Switch";
 import Button from "../components/common/Button";
 import Campaign from "../components/campaign/Campaign";
+import { errorClasses, hoverClasses } from "../components/common/classes";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
-    type: CampaignType | null;
+  type: CampaignType | null;
 }
 
 const CampaignsAdd: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [campaign, setCampaign] = useState<CampaignInterface>({
     id: 0,
     title: "",
@@ -85,6 +90,7 @@ const CampaignsAdd: FC = () => {
     setIsLoading(false);
   }, [searchParams]);
   const handleSaveCampaign = async () => {
+    setIsSaving(true);
     setTourStep(0);
     const campaignData = {
       ...campaign,
@@ -108,9 +114,10 @@ const CampaignsAdd: FC = () => {
       } else
         addToast(
           __("Something went wrong, Please reload the page.", "campaignbay"),
-          "error"
+          "error",
         );
     }
+    setIsSaving(false);
   };
 
   //=================================================================================
@@ -133,9 +140,10 @@ const CampaignsAdd: FC = () => {
 
   useEffect(() => {
     if (!tourStep) return;
-    const nextStepId = TYPE_TO_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
+    const nextStepId =
+      TYPE_TO_STEP_MAP[campaign?.type || "bogo"] || TOUR_STEPS.BOGO_BUY;
     const prevStepId =
-      TYPE_TO_PREV_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
+      TYPE_TO_PREV_STEP_MAP[campaign?.type || "bogo"] || TOUR_STEPS.BOGO_BUY;
 
     if (campaign.target_type === "entire_store") {
       setConfig((prevConfig) => ({
@@ -236,7 +244,7 @@ const CampaignsAdd: FC = () => {
           setStep(
             campaign.schedule_enabled
               ? TOUR_STEPS.START_TIME
-              : TOUR_STEPS.SAVE_BTN
+              : TOUR_STEPS.SAVE_BTN,
           );
         },
       },
@@ -246,7 +254,7 @@ const CampaignsAdd: FC = () => {
           setStep(
             campaign.schedule_enabled
               ? TOUR_STEPS.END_TIME
-              : TOUR_STEPS.SCHED_TOGGLE
+              : TOUR_STEPS.SCHED_TOGGLE,
           );
         },
       },
@@ -265,37 +273,16 @@ const CampaignsAdd: FC = () => {
       ) : (
         <>
           <Page>
-            <HeaderContainer className="campaignbay-py-[12px]">
-              <input
-                type="text"
-                placeholder="Campaign Title"
-                value={campaign.title}
-                onChange={(e) =>
-                  setCampaign({ ...campaign, title: e.target.value })
-                }
-              />
-              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
-                <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-uppercase">
-                  {campaign.status === "active" ? "Active" : "Inactive"}
-                </span>
-
-                <Switch
-                  size="small"
-                  checked={campaign.status === "active"}
-                  onChange={(checked) =>
-                    setCampaign({
-                      ...campaign,
-                      status: checked ? "active" : "inactive",
-                    })
-                  }
-                />
-                <Button size="small" color="primary" variant="solid">
-                  {" "}
-                  Save Campaign
-                </Button>
-              </div>
-            </HeaderContainer>
-            <Campaign campaign={campaign} setCampaign={setCampaign} errors={errors} />
+            
+            <Campaign
+              campaign={campaign}
+              setCampaign={setCampaign}
+              errors={errors}
+              buttonText="Save Campaign"
+              handleSave={handleSaveCampaign}
+              isLoading={isLoading}
+              isSaving={isSaving}
+            />
           </Page>
         </>
       )}

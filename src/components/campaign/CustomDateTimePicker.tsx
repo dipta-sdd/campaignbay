@@ -776,7 +776,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
         className={`campaignbay-flex campaignbay-items-center campaignbay-w-full campaignbay-border campaignbay-border-[#bdc4d1]  campaignbay-px-[4px] campaignbay-py-[1px] campaignbay-rounded-[8px] campaignbay-shadow-none campaignbay-transition-all ${
           disabled
             ? "campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-opacity-60"
-            : hoverWithInClasses
+            : hoverWithInClasses + " campaignbay-bg-white"
         } ${error ? errorWithInClasses : ""}`}
         onClick={(e) => {
           if (disabled) return;

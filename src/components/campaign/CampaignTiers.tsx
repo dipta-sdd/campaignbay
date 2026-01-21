@@ -167,7 +167,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
       )}
 
       {/* Bogo */}
-      {campaign.type === "bogo" ? (
+      {campaign.type === "bogo" || campaign.type === null ? (
         <Section header={__("BOGO", "campaignbay")}>
             <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-wrap">
               <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
@@ -189,7 +189,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
                   }
                 />
 
-                <Label>
+                <Label className="campaignbay-text-nowrap">
                   {_n(
                     "piece ,",
                     "pieces ,",
@@ -216,7 +216,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
                     }))
                   }
                 />
-                <Label>
+                <Label className="campaignbay-text-nowrap">
                   {_n(
                     "piece",
                     "pieces",

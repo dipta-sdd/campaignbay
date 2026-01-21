@@ -30,6 +30,11 @@ import CampaignTiers from "./CampaignTiers";
 import { NumberInput } from "../common/NumberInput";
 import CustomDateTimePicker from "./CustomDateTimePicker";
 import CampaignSettings from "./CampaignSettings";
+import Button from "../common/Button";
+import { check, Icon } from "@wordpress/icons";
+import { Switch } from "../common/Switch";
+import HeaderContainer from "../common/HeaderContainer";
+import { EditableText } from "../common/EditableText";
 // @ts-ignore
 interface CampaignInerface extends CampaignInerfaceBase {
   type: CampaignType | null;
@@ -77,8 +82,20 @@ interface CampaignProps {
   campaign: CampaignInerface;
   setCampaign: React.Dispatch<React.SetStateAction<CampaignInerface>>;
   errors: CampaignErrorsType;
+  handleSave: () => void;
+  buttonText: string;
+  isSaving: boolean;
+  isLoading: boolean;
 }
-const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
+const Campaign: FC<CampaignProps> = ({
+  campaign,
+  setCampaign,
+  errors,
+  handleSave,
+  buttonText,
+  isSaving,
+  isLoading,
+}) => {
   const [enableUsageLimit, setEnableUsageLimit] = useState(false);
   const [categories, setCategories] = useState<SelectOption[]>([]);
   const [products, setProducts] = useState<SelectOption[]>([]);
@@ -176,163 +193,211 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   };
   // console.log(campaign.target_ids);
   return (
-    <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-default">
-      <Card
-        header={
-          <h2 className="campaignbay-text-[15px] campaignbay-leading-[24px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[15px]">
-            Select Discount Type{" "}
-            <span className="campaignbay-text-red-500">*</span>
-          </h2>
-        }
-      >
-        <CardRadioGroup
-          classNames={{
-            root: "campaignbay-w-full campaignbay-grid campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4",
-          }}
-          layout="horizontal"
-          options={DISCOUNT_TYPES}
-          // @ts-ignore
-          value={campaign?.type}
-          onChange={(value) =>
-            setCampaign({ ...campaign, type: value as CampaignType })
-          }
+    <>
+      <HeaderContainer className="campaignbay-py-[12px]">
+        <EditableText
+          value={campaign.title}
+          onChange={(value) => setCampaign({ ...campaign, title: value })}
+          placeholder="Campaign Title"
+          className="campaignbay-w-full"
+          error={errors?.title?.message}
         />
-      </Card>
+        <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
+          <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-uppercase">
+            {campaign.status === "active" ? "Active" : "Inactive"}
+          </span>
 
-      <div className="campaignbay-flex campaignbay-flex-nowrap campaignbay-flex-col xl:campaignbay-flex-row campaignbay-gap-default">
-        {/* left */}
-        <div className="campaignbay-w-full">
-          <Card
-            className="campaignbay-w-full"
-            header={
-              <h2 className="campaignbay-text-[20px] campaignbay-leading-[20px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[24px] campaignbay-border-b campaignbay-border-[#dddddd] campaignbay-w-full">
-                Discount
-                <span className="campaignbay-text-red-500 campaignbay-ml-[5px]">
-                  *
-                </span>
-              </h2>
+          <Switch
+            size="small"
+            checked={campaign.status === "active"}
+            onChange={(checked) =>
+              setCampaign({
+                ...campaign,
+                status: checked ? "active" : "inactive",
+              })
             }
-          >
-            <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[30px] campaignbay-pt-[30px] ">
-              <Section header="Target" required>
-                <Select
-                  id="selection-type"
-                  con_ref={targetTypeInputRef}
-                  options={[
-                    {
-                      label: __("Entire Store", "campaignbay"),
-                      value: "entire_store",
-                    },
-                    {
-                      label: __("By Product Category", "campaignbay"),
-                      value: "category",
-                    },
-                    {
-                      label: __("By Product", "campaignbay"),
-                      value: "product",
-                    },
-                  ]}
-                  value={campaign.target_type}
-                  onChange={(value) =>
-                    setCampaign((prev) => ({
-                      ...prev,
-                      target_type: value as TargetType,
-                    }))
-                  }
-                />
-                {/* {renderError(errors?.target_type)} */}
-
-                {campaign.target_type !== "entire_store" ? (
-                  <>
-                    <div
-                      style={{ background: "#ffffff" }}
-                      className={`${
-                        errors?.target_ids ? "wpab-input-error" : ""
-                      }`}
-                    >
-                      <MultiSelect
-                        ref={targetIdsInputRef}
-                        label={
-                          campaign.target_type === "product"
-                            ? __("Select Products *", "campaignbay")
-                            : campaign.target_type === "category"
-                            ? __("Select Categories *", "campaignbay")
-                            : ""
-                        }
-                        options={
-                          campaign.target_type === "product"
-                            ? products
-                            : campaign.target_type === "category"
-                            ? categories
-                            : []
-                        }
-                        value={campaign.target_ids}
-                        onChange={(value: (string | number)[]) =>
-                          setCampaign((prev) => ({
-                            ...prev,
-                            target_ids: [...(value as number[])],
-                          }))
-                        }
-                      />
-                      {/* {renderError(errors?.target_ids, false)} */}
-                    </div>
-                    <Checkbox
-                      label={__("Exclude Items", "campaignbay")}
-                      checked={!!campaign.is_exclude}
-                      onChange={(checked) =>
-                        setCampaign((prev) => ({
-                          ...prev,
-                          is_exclude: checked,
-                        }))
-                      }
-                    />
-                  </>
-                ) : null}
-              </Section>
-              <CampaignTiers
-                campaign={campaign as CampaignInerfaceBase}
-                setCampaign={
-                  setCampaign as Dispatch<SetStateAction<CampaignInerfaceBase>>
-                }
-                errors={errors}
-                products={products}
-              />
-              <Section header="Conditions">
-                <Conditions
-                  type={campaign?.type || "bogo"}
-                  errors={errors}
-                  conditions={campaign.conditions}
-                  setConditions={(conditions: ConditionsInterface) =>
-                    setCampaign((prev) => ({ ...prev, conditions }))
-                  }
-                />
-              </Section>
-            </div>
-          </Card>
+          />
+          <Button size="small" color="primary" variant="solid" className="campaignbay-w-max" disabled={isSaving || isLoading || campaign?.type === null} onClick={handleSave}>
+            {buttonText}
+          </Button>
         </div>
-        {/* right */}
+      </HeaderContainer>
+      <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-default">
         <Card
-          className="campaignbay-w-full xl:campaignbay-w-[min(70%,900px)]"
           header={
-            <h2 className="campaignbay-text-[20px] campaignbay-leading-[20px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[24px] campaignbay-border-b campaignbay-border-[#dddddd] campaignbay-w-full">
-              Configurations
+            <h2 className="campaignbay-text-[15px] campaignbay-leading-[24px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[15px]">
+              Select Discount Type{" "}
+              <span className="campaignbay-text-red-500">*</span>
             </h2>
           }
         >
-          <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[15px] campaignbay-pt-[15px] ">
-            <OtherSettings
-              campaign={campaign}
-              setCampaign={setCampaign}
-              settings={settings}
-              setSettings={setSettings}
-              errors={errors}
-              enableUsageLimit={enableUsageLimit}
-              setEnableUsageLimit={setEnableUsageLimit}
-            />
-          </div>
+          <CardRadioGroup
+            classNames={{
+              root: "campaignbay-w-full campaignbay-grid campaignbay-grid-cols-2 lg:campaignbay-grid-cols-4",
+            }}
+            layout="horizontal"
+            options={DISCOUNT_TYPES}
+            // @ts-ignore
+            value={campaign?.type}
+            onChange={(value) =>
+              setCampaign({ ...campaign, type: value as CampaignType })
+            }
+          />
         </Card>
+
+        <div className="campaignbay-flex campaignbay-flex-nowrap campaignbay-flex-col xl:campaignbay-flex-row campaignbay-gap-default">
+          {/* left */}
+          <div className="campaignbay-w-full">
+            <Card
+              disabled={campaign.type === null}
+              className="campaignbay-w-full"
+              header={
+                <h2 className="campaignbay-text-[20px] campaignbay-leading-[20px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[24px] campaignbay-border-b campaignbay-border-[#dddddd] campaignbay-w-full">
+                  Discount
+                  <span className="campaignbay-text-red-500 campaignbay-ml-[5px]">
+                    *
+                  </span>
+                </h2>
+              }
+            >
+              <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[30px] campaignbay-pt-[30px] ">
+                <Section header="Target" required>
+                  <Select
+                    id="selection-type"
+                    con_ref={targetTypeInputRef}
+                    options={[
+                      {
+                        label: __("Entire Store", "campaignbay"),
+                        value: "entire_store",
+                      },
+                      {
+                        label: __("By Product Category", "campaignbay"),
+                        value: "category",
+                      },
+                      {
+                        label: __("By Product", "campaignbay"),
+                        value: "product",
+                      },
+                    ]}
+                    value={campaign.target_type}
+                    onChange={(value) =>
+                      setCampaign((prev) => ({
+                        ...prev,
+                        target_type: value as TargetType,
+                      }))
+                    }
+                  />
+                  {/* {renderError(errors?.target_type)} */}
+
+                  {campaign.target_type !== "entire_store" ? (
+                    <>
+                      <div
+                        style={{ background: "#ffffff" }}
+                        className={`${
+                          errors?.target_ids ? "wpab-input-error" : ""
+                        }`}
+                      >
+                        <MultiSelect
+                          ref={targetIdsInputRef}
+                          label={
+                            campaign.target_type === "product"
+                              ? __("Select Products *", "campaignbay")
+                              : campaign.target_type === "category"
+                              ? __("Select Categories *", "campaignbay")
+                              : ""
+                          }
+                          options={
+                            campaign.target_type === "product"
+                              ? products
+                              : campaign.target_type === "category"
+                              ? categories
+                              : []
+                          }
+                          value={campaign.target_ids}
+                          onChange={(value: (string | number)[]) =>
+                            setCampaign((prev) => ({
+                              ...prev,
+                              target_ids: [...(value as number[])],
+                            }))
+                          }
+                        />
+                        {/* {renderError(errors?.target_ids, false)} */}
+                      </div>
+                      <Checkbox
+                        label={__("Exclude Items", "campaignbay")}
+                        checked={!!campaign.is_exclude}
+                        onChange={(checked) =>
+                          setCampaign((prev) => ({
+                            ...prev,
+                            is_exclude: checked,
+                          }))
+                        }
+                      />
+                    </>
+                  ) : null}
+                </Section>
+                <CampaignTiers
+                  campaign={campaign as CampaignInerfaceBase}
+                  setCampaign={
+                    setCampaign as Dispatch<
+                      SetStateAction<CampaignInerfaceBase>
+                    >
+                  }
+                  errors={errors}
+                  products={products}
+                />
+                <Section header="Conditions">
+                  <Conditions
+                    type={campaign?.type || "bogo"}
+                    errors={errors}
+                    conditions={campaign.conditions}
+                    setConditions={(conditions: ConditionsInterface) =>
+                      setCampaign((prev) => ({ ...prev, conditions }))
+                    }
+                  />
+                </Section>
+              </div>
+            </Card>
+
+            <div className="campaignbay-py-[15px]">
+              <Button
+                size="large"
+                color="primary"
+                variant="solid"
+                className="campaignbay-text-[15px] campaignbay-leading-[20px] campaignbay-font-[700] "
+                onClick={handleSave}
+                disabled={isSaving || isLoading || campaign?.type === null}
+                
+              >
+                {buttonText} <Icon icon={check} fill="currentColor" />
+              </Button>
+            </div>
+          </div>
+          {/* right */}
+          <Card
+            disabled={campaign.type === null}
+            className="campaignbay-w-full xl:campaignbay-w-[min(70%,900px)] !campaignbay-bg-[#f9fbfd]"
+            header={
+              <h2 className="campaignbay-text-[20px] campaignbay-leading-[20px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[24px] campaignbay-border-b campaignbay-border-[#dddddd] campaignbay-w-full">
+                Configurations
+              </h2>
+            }
+          >
+            <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[15px] campaignbay-pt-[15px] ">
+              <OtherSettings
+                campaign={campaign}
+                setCampaign={setCampaign}
+                settings={settings}
+                setSettings={setSettings}
+                errors={errors}
+                enableUsageLimit={enableUsageLimit}
+                setEnableUsageLimit={setEnableUsageLimit}
+              />
+            </div>
+          </Card>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -367,6 +432,7 @@ export const Card = ({
   header,
   className,
   classNames,
+  disabled = false,
 }: {
   children: ReactNode;
   header: ReactNode;
@@ -376,12 +442,15 @@ export const Card = ({
     body?: string;
     children?: string;
   };
+  disabled?: boolean;
 }) => {
   return (
     <div
-      className={`campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-shadow-sm ${className} ${
-        classNames?.body || ""
-      }`}
+      className={`campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px]  ${
+        disabled
+          ? "campaignbay-opacity-25 campaignbay-pointer-events-none "
+          : "campaignbay-shadow-sm"
+      } ${className} ${classNames?.body || ""}`}
     >
       <div
         className={`campaignbay-flex campaignbay-justify-between campaignbay-items-center ${
