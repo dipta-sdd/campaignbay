@@ -1,19 +1,18 @@
-// src/components/TierRow.jsx
+// FILE: EBTierRow.tsx
 import { useState, FC } from "react";
-import {
-  __experimentalToggleGroupControl as ToggleGroupControl,
-  __experimentalToggleGroupControlOption as ToggleGroupControlOption,
-} from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useCbStore } from "../../store/cbStore";
 import { EBTier, EBTierError } from "../../utils/types";
 import { useGuideStep } from "../../store/GuideContext";
 import { TOUR_STEPS } from "../../utils/tourSteps";
+import { Toggler } from "../common/Toggler";
+import { NumberInput } from "../common/NumberInput";
+import { Label } from "./CampaignTiers";
 
 interface EBTierRowProps {
   tierData: EBTier;
   onUpdate: (updatedTier: EBTier) => void;
-  onRemove: (id: number) => void;
+  onRemove: (id: number | string) => void;
   onAdd: (setError: React.Dispatch<React.SetStateAction<string>>) => void;
   isLast: boolean;
   isFirst: boolean;
@@ -32,126 +31,149 @@ const EBTierRow: FC<EBTierRowProps> = ({
   const [error, setError] = useState<string>("");
   const { woocommerce_currency_symbol } = useCbStore();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const tmpValue = name === "value" ? Number(value) : value;
-    const updatedTier: EBTier = { ...tierData, [name]: tmpValue };
+  const handleQuantityChange = (value: number | null) => {
+    const updatedTier: EBTier = {
+      ...tierData,
+      quantity: value === null ? "" : value,
+    };
     setError("");
     onUpdate(updatedTier);
   };
 
-  const handleTypeToggle = (newType: string | number | undefined) => {
+  const handleValueChange = (value: number | null) => {
+    const updatedTier: EBTier = {
+      ...tierData,
+      value: value === null ? "" : value,
+    };
+    setError("");
+    onUpdate(updatedTier);
+  };
+
+  const handleTypeToggle = (newType: string) => {
     if (newType !== "percentage" && newType !== "currency") return;
     onUpdate({ ...tierData, type: newType });
   };
 
-
   //=================================================================================
   //============================     Guide    =======================================
   //=================================================================================
-  const ebQuantityInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.EB_QUANTITY);
+  const ebQuantityInputRef = useGuideStep<HTMLInputElement>(
+    TOUR_STEPS.EB_QUANTITY,
+  );
   const ebValueInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.EB_VALUE);
   const ebToggleInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.EB_TOGGLE);
-  const ebAddBtnInputRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.EB_ADD_BTN);
+  const ebAddBtnInputRef = useGuideStep<HTMLButtonElement>(
+    TOUR_STEPS.EB_ADD_BTN,
+  );
   //=================================================================================
   //============================     Guide    =======================================
   //=================================================================================
 
-  return (
-    <div className={`cb-quantity-tier-row ${error ? "has-error" : ""}`}>
-      <div className="tier-inputs">
-        <div className="wpab-grid-2">
-          <div className="wpab-tier-input-grid-child">
-            <span className="wpab-input-label">
-              {isFirst
-                ? __("For First", "campaignbay")
-                : __("For Next", "campaignbay")}
-            </span>
-            <input
-              ref={isFirst ? ebQuantityInputRef : null}
-              type="number"
-              name="quantity"
-              value={tierData.quantity}
-              className={`min-input wpab-input ${errors?.quantity ? "wpab-input-error" : ""
-                }`}
-              onChange={handleChange}
-              min="1"
-              placeholder="e.g., 10"
-            />
-            <span className="wpab-input-label">
-              {__("Orders ", "campaignbay")}
+  const orderRangeStart = Number(tierData.total) + 1;
+  const orderRangeEnd = tierData.quantity
+    ? Number(tierData.total) + Number(tierData.quantity)
+    : "";
 
-              {"( " + (Number(tierData.total) + 1) + " - "}
-              {tierData.quantity
-                ? Number(tierData.total) + Number(tierData.quantity)
-                : ""}
-              {" ),"}
+  return (
+    <div
+      className={`campaignbay-rounded-[8px] campaignbay-p-[10px] ${
+        error
+          ? "campaignbay-border-red-200 campaignbay-bg-red-50"
+          : "campaignbay-border-[#dddddd] campaignbay-bg-[#f0f0f0]"
+      }`}
+    >
+      <div className="campaignbay-flex campaignbay-flex-wrap campaignbay-gap-4 campaignbay-items-start">
+        {/* First part: For First/Next X Orders */}
+        <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-nowrap">
+          <Label className="campaignbay-text-nowrap">
+            {isFirst
+              ? __("For First", "campaignbay")
+              : __("For Next", "campaignbay")}
+          </Label>
+          <NumberInput
+            value={tierData.quantity === "" ? undefined : tierData.quantity}
+            onChange={handleQuantityChange}
+            min={1}
+            placeholder="e.g., 10"
+            error={errors?.quantity?.message}
+            classNames={{
+              root: "campaignbay-min-w-min campaignbay-w-min",
+            }}
+          />
+          <Label className="campaignbay-text-nowrap">
+            {__("Orders", "campaignbay")}{" "}
+            <span className="campaignbay-text-gray-500">
+              ({orderRangeStart} - {orderRangeEnd}),
             </span>
-          </div>
-          <div className="wpab-tier-input-grid-child">
-            <span className="wpab-input-label">
-              {__("give ", "campaignbay")}
-            </span>
-            <input
-              ref={isFirst ? ebValueInputRef : null}
-              type="number"
-              name="value"
-              value={tierData.value}
-              onChange={handleChange}
-              placeholder="e.g., 10"
-              className={`value-input wpab-input ${errors?.value ? "wpab-input-error" : ""
-                }`}
-              min="0"
-            />
-            <div className="type-toggle">
-              {/* @ts-ignore */}
-              <ToggleGroupControl
-                ref={isFirst ? ebToggleInputRef : null}
-                className="cb-toggle-group-control"
-                __next40pxDefaultSize
-                __nextHasNoMarginBottom
-                isBlock
-                value={tierData.type}
-                onChange={(value) => handleTypeToggle(value)}
-              >
-                <ToggleGroupControlOption label={"%"} value="percentage" />
-                <ToggleGroupControlOption
-                  label={woocommerce_currency_symbol || "$"}
-                  value="currency"
-                />
-              </ToggleGroupControl>
-            </div>
-          </div>
+          </Label>
+        </div>
+
+        {/* Second part: give X % or $ */}
+        <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-nowrap">
+          <Label className="campaignbay-text-nowrap">
+            {__("Get", "campaignbay")}
+          </Label>
+          <NumberInput
+            value={tierData.value === "" ? undefined : tierData.value}
+            onChange={handleValueChange}
+            min={0}
+            placeholder="e.g., 10"
+            error={errors?.value?.message}
+            classNames={{
+              root: "campaignbay-min-w-min campaignbay-w-min",
+            }}
+          />
+          <Toggler
+            options={[
+              { label: "%", value: "percentage" },
+              { label: woocommerce_currency_symbol || "$", value: "currency" },
+            ]}
+            value={tierData.type || "percentage"}
+            onChange={handleTypeToggle}
+          />
+          <Label className="campaignbay-text-nowrap">
+            {tierData.type === "percentage" ? "Off." : "Off per Piece."}
+          </Label>
         </div>
       </div>
 
-      {isFirst || isLast ? (
-        <div className="tier-actions">
+      {/* Actions: Add / Remove tier */}
+      {(!isFirst || isLast) && (
+        <div
+          className={`campaignbay-flex campaignbay-gap-3 campaignbay-mt-[10px] campaignbay-pt-1.5 campaignbay-border-t ${
+            error
+              ? "campaignbay-border-red-200"
+              : "campaignbay-border-[#dddddd]"
+          }`}
+        >
           {!isFirst && (
             <button
               type="button"
-              className="remove-tier"
-              // @ts-ignore
               onClick={() => onRemove(tierData.id)}
+              className="campaignbay-text-[13px] campaignbay-text-red-600 hover:campaignbay-text-red-800 campaignbay-font-[500] campaignbay-transition-colors campaignbay-cursor-pointer campaignbay-bg-transparent campaignbay-border-none"
             >
-              – Remove this tier
+              {__("– Remove this tier", "campaignbay")}
             </button>
           )}
           {isLast && (
             <button
               ref={isFirst ? ebAddBtnInputRef : null}
               type="button"
-              className="add-tier"
-              onClick={() => {
-                onAdd(setError);
-              }}
+              onClick={() => onAdd(setError)}
+              className="campaignbay-text-[13px] campaignbay-text-[#3858e9] hover:campaignbay-text-[#2a45b8] campaignbay-font-[500] campaignbay-transition-colors campaignbay-cursor-pointer campaignbay-bg-transparent campaignbay-border-none"
             >
-              + Add another tier
+              {__("+ Add another tier", "campaignbay")}
             </button>
           )}
         </div>
-      ) : null}
-      {error && <p className="error-message m-0">{error}</p>}
+      )}
+
+      {/* Error message */}
+      {error && (
+        <p className="campaignbay-text-[11px] campaignbay-text-red-600 campaignbay-mt-2 campaignbay-mb-0">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

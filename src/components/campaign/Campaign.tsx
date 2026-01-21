@@ -209,7 +209,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
               </h2>
             }
           >
-            <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[30px] campaignbay-py-[30px] ">
+            <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[30px] campaignbay-pt-[30px] ">
               <Section header="Target" required>
                 <Select
                   id="selection-type"

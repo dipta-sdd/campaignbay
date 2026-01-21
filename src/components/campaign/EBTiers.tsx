@@ -2,7 +2,8 @@ import { FC } from "react";
 import { __ } from "@wordpress/i18n";
 import Required from "./Required";
 import EBTierRow from "./EBTierRow";
-import { EBTier, EBTierError } from "../types";
+import { EBTier, EBTierError } from "../../utils/types";
+import { Section } from "./Campaign";
 
 interface EBTiersProps {
   tiers: EBTier[];
@@ -12,18 +13,18 @@ interface EBTiersProps {
 
 const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
   const handleAddTier = (
-    setError: React.Dispatch<React.SetStateAction<string>>
+    setError: React.Dispatch<React.SetStateAction<string>>,
   ) => {
     const lastTier = tiers[tiers.length - 1];
     if (!lastTier.quantity) {
       setError(
-        __("Please fill in the previous tier's quantity first.", "campaignbay")
+        __("Please fill in the previous tier's quantity first.", "campaignbay"),
       );
       return;
     }
     if (!lastTier.value) {
       setError(
-        __("Please fill in the previous tier's value first.", "campaignbay")
+        __("Please fill in the previous tier's value first.", "campaignbay"),
       );
       return;
     }
@@ -32,19 +33,18 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
       quantity: "",
       value: "",
       type: lastTier.type,
-      // @ts-ignore
-      total: parseInt(lastTier.total) + parseInt(lastTier.quantity),
+      total: Number(lastTier.total) + Number(lastTier.quantity),
     };
     setTiers([...tiers, newTier]);
   };
 
-  const handleRemoveTier = (idToRemove: number) => {
+  const handleRemoveTier = (idToRemove: number | string) => {
     if (tiers.length <= 1) return;
     setTiers(tiers.filter((tier: EBTier) => tier.id !== idToRemove));
   };
 
   const handleTierUpdate = (updatedTier: EBTier) => {
-    const newTiers = tiers.map((tier: EBTier, index) => {
+    const newTiers = tiers.map((tier: EBTier) => {
       if (tier.id === updatedTier.id) {
         return updatedTier;
       }
@@ -58,8 +58,7 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
     let total = 0;
     return tiers.map((tier, index) => {
       if (index !== 0) {
-        // @ts-ignore
-        total = parseInt(total) + parseInt(tiers[index - 1].quantity);
+        total = total + Number(tiers[index - 1].quantity);
       }
       return {
         ...tier,
@@ -67,17 +66,9 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
       };
     });
   };
+
   return (
-    <div className="cb-form-input-con">
-      <label htmlFor="quantity-discount">
-        {__("DISCOUNT TIERS FOR FIRST SALES", "campaignbay")} <Required />
-      </label>
-      <span className="wpab-input-help">
-        {__(
-          "Define discount tiers based on the number of sales of the selected products",
-          "campaignbay"
-        )}
-      </span>
+    <Section header={__("Early Bird Tiers", "campaignbay")}>
       {tiers.map((tier, index) => (
         <EBTierRow
           key={tier.id}
@@ -87,11 +78,10 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
           onAdd={handleAddTier}
           isLast={index === tiers.length - 1}
           isFirst={index === 0}
-          // @ts-ignore
-          errors={errors?.[tier.id]}
+          errors={errors?.[tier.id as number]}
         />
       ))}
-    </div>
+    </Section>
   );
 };
 

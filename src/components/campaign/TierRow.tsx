@@ -1,14 +1,14 @@
 // FILE: TierRow.tsx
-import React, { useState, FC } from 'react';
-import {
-  __experimentalToggleGroupControl as ToggleGroupControl,
-  __experimentalToggleGroupControlOption as ToggleGroupControlOption,
-} from '@wordpress/components';
-import { useCbStore } from '../../store/cbStore';
-import { QuantityTier, QuantityTierError } from '../../utils/types';
-import { useGuideStep } from '../../store/GuideContext';
-import { TOUR_STEPS } from '../../utils/tourSteps';
-import { BuyProTooltip } from '../common/BuyProTooltip';
+import React, { useState, FC } from "react";
+import { __ } from "@wordpress/i18n";
+import { useCbStore } from "../../store/cbStore";
+import { QuantityTier, QuantityTierError } from "../../utils/types";
+import { useGuideStep } from "../../store/GuideContext";
+import { TOUR_STEPS } from "../../utils/tourSteps";
+import { Toggler } from "../common/Toggler";
+import { NumberInput } from "../common/NumberInput";
+import { Label } from "./CampaignTiers";
+
 interface TierRowProps {
   tierData: QuantityTier;
   onUpdate: (updatedTier: QuantityTier) => void;
@@ -28,7 +28,7 @@ const TierRow: FC<TierRowProps> = ({
   isFirst,
   errors,
 }) => {
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const { woocommerce_currency_symbol } = useCbStore();
 
   //=================================================================================
@@ -36,115 +36,137 @@ const TierRow: FC<TierRowProps> = ({
   //=================================================================================
   const qtyRangeInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.QTY_RANGE);
   const qtyValueInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.QTY_VALUE);
-  const qtyToggleInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.QTY_TOGGLE);
-  const qtyAddBtnInputRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.QTY_ADD_BTN);
+  const qtyToggleInputRef = useGuideStep<HTMLInputElement>(
+    TOUR_STEPS.QTY_TOGGLE,
+  );
+  const qtyAddBtnInputRef = useGuideStep<HTMLButtonElement>(
+    TOUR_STEPS.QTY_ADD_BTN,
+  );
   //=================================================================================
   //============================     Guide    =======================================
-  //=================================================================================  
+  //=================================================================================
 
-  const handleChange = (name: 'max' | 'value', rawValue: string) => {
-    // Keep value as a string for empty input, otherwise convert to number for calculations
-    const value = rawValue === '' ? '' : Number(rawValue);
+  const handleChange = (name: "max" | "value", rawValue: number | null) => {
+    const value = rawValue === null ? "" : rawValue;
     const updatedTier = { ...tierData, [name]: value };
 
-    if (name === 'max' && value !== '' && value < tierData.min) {
-      setError('Max quantity must be greater than min quantity.');
+    if (name === "max" && value !== "" && value < tierData.min) {
+      setError(
+        __("Max quantity must be greater than min quantity.", "campaignbay"),
+      );
     } else {
-      setError('');
+      setError("");
     }
 
     onUpdate(updatedTier);
   };
 
-  const handleTypeToggle = (newType: 'percentage' | 'currency') => {
-    if (newType !== 'percentage' && newType !== 'currency') return;
+  const handleTypeToggle = (newType: string) => {
+    if (newType !== "percentage" && newType !== "currency") return;
     onUpdate({ ...tierData, type: newType });
   };
 
   return (
-    <div className={`cb-quantity-tier-row ${error ? 'has-error' : ''}`}>
-      <div className="tier-inputs">
-        <div className="wpab-grid-2">
-          <div className="wpab-tier-input-grid-child">
-            <span className="wpab-input-label">Buy from</span>
-            {/* <BuyProTooltip> */}
-              <input
-                type="number"
-                name="min"
-                value={tierData.min}
-                readOnly
-                className={`min-input wpab-input ${errors?.min ? 'wpab-input-error' : ''}`}
-              />
-            {/* </BuyProTooltip> */}
-            <span className="wpab-input-label">to</span>
-            <input
-              ref={isFirst ? qtyRangeInputRef : null}
-              type="number"
-              name="max"
-              value={tierData.max}
-              min={tierData.min}
-              onChange={(e) => handleChange('max', e.target.value)}
-              placeholder="e.g., 5"
-              className={`max-input wpab-input ${errors?.max ? 'wpab-input-error' : ''}`}
-            />
-          </div>
-          <div className="wpab-tier-input-grid-child">
-            <span className="wpab-input-label">items, get</span>
-            <input
-              ref={isFirst ? qtyValueInputRef : null}
-              type="number"
-              name="value"
-              min="0"
-              value={tierData.value}
-              onChange={(e) => handleChange('value', e.target.value)}
-              placeholder="e.g., 10"
-              className={`value-input wpab-input ${errors?.value ? 'wpab-input-error' : ''}`}
-            />
-            <div className="type-toggle">
-              <ToggleGroupControl
-                ref={isFirst ? qtyToggleInputRef : null}
-                className="cb-toggle-group-control"
-                __next40pxDefaultSize
-                __nextHasNoMarginBottom
-                isBlock
-                value={tierData.type}
-                // @ts-ignore
-                onChange={(value: 'percentage' | 'currency') => handleTypeToggle(value)}
-              >
-                <ToggleGroupControlOption label={'%'} value="percentage" />
-                <ToggleGroupControlOption
-                  label={woocommerce_currency_symbol || '$'}
-                  value="currency"
-                />
-              </ToggleGroupControl>
-            </div>
-          </div>
+    <div
+      className={`campaignbay-rounded-[8px] campaignbay-p-[10px] ${
+        error
+          ? "campaignbay-border-red-100 campaignbay-bg-red-50"
+          : "campaignbay-border-[#dddddd] campaignbay-bg-[#f0f0f0]"
+      }`}
+    >
+      <div className="campaignbay-flex campaignbay-flex-wrap campaignbay-gap-4 campaignbay-items-start">
+        {/* First row: Buy from X to Y */}
+        <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-nowrap">
+          <Label className="campaignbay-text-nowrap">
+            {__("Buy from", "campaignbay")}
+          </Label>
+          <NumberInput
+            value={tierData.min}
+            onChange={() => {}}
+            disabled
+            classNames={{
+              root: "campaignbay-min-w-min campaignbay-w-min",
+            }}
+          />
+          <Label>{__("to", "campaignbay")}</Label>
+          <NumberInput
+            value={tierData.max === "" ? undefined : tierData.max}
+            onChange={(val) => handleChange("max", val)}
+            placeholder="e.g., 5"
+            error={errors?.max?.message}
+            classNames={{
+              root: "campaignbay-min-w-min campaignbay-w-min",
+            }}
+          />
+        </div>
+
+        {/* Second row: items, get X % or $ */}
+        <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-nowrap">
+          <Label className="campaignbay-text-nowrap">
+            {__("Items, Get", "campaignbay")}
+          </Label>
+          <NumberInput
+            value={tierData.value === "" ? undefined : tierData.value}
+            onChange={(val) => handleChange("value", val)}
+            placeholder="e.g., 10"
+            min={0}
+            error={errors?.value?.message}
+            classNames={{
+              root: "campaignbay-min-w-min campaignbay-w-min",
+            }}
+          />
+          <Toggler
+            options={[
+              { label: "%", value: "percentage" },
+              { label: woocommerce_currency_symbol || "$", value: "currency" },
+            ]}
+            value={tierData.type || "percentage"}
+            onChange={handleTypeToggle}
+          />
+
+          <Label className="campaignbay-text-nowrap">
+            {tierData.type === "percentage" ? "Off." : "Off per Piece."}
+          </Label>
         </div>
       </div>
-      {(isFirst || isLast) && (
-        <div className="tier-actions">
+
+      {/* Actions: Add / Remove tier */}
+      {(!isFirst || isLast) && (
+        <div
+          className={`campaignbay-flex campaignbay-gap-3 campaignbay-mt-[10px] campaignbay-pt-1.5 campaignbay-border-t ${
+            error
+              ? "campaignbay-border-red-200"
+              : "campaignbay-border-[#dddddd]"
+          }`}
+        >
           {!isFirst && (
             <button
               type="button"
-              className="remove-tier"
               onClick={() => onRemove(tierData.id)}
+              className="campaignbay-text-[13px] campaignbay-text-red-600 hover:campaignbay-text-red-800 campaignbay-font-[500] campaignbay-transition-colors campaignbay-cursor-pointer campaignbay-bg-transparent campaignbay-border-none"
             >
-              – Remove this tier
+              {__("– Remove this tier", "campaignbay")}
             </button>
           )}
           {isLast && (
             <button
               ref={isFirst ? qtyAddBtnInputRef : null}
               type="button"
-              className="add-tier"
               onClick={() => onAdd(setError)}
+              className="campaignbay-text-[13px] campaignbay-text-[#3858e9] hover:campaignbay-text-[#2a45b8] campaignbay-font-[500] campaignbay-transition-colors campaignbay-cursor-pointer campaignbay-bg-transparent campaignbay-border-none"
             >
-              + Add another tier
+              {__("+ Add another tier", "campaignbay")}
             </button>
           )}
         </div>
       )}
-      {error && <p className="error-message m-0">{error}</p>}
+
+      {/* Error message */}
+      {error && (
+        <p className="campaignbay-text-[11px] campaignbay-text-red-600 campaignbay-mt-2 campaignbay-mb-0">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

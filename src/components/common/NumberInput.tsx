@@ -153,7 +153,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
       <div
         className={`
-          campaignbay-flex campaignbay-items-center campaignbay-justify-between
+          campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-overflow-hidden
           campaignbay-rounded-[8px] campaignbay-bg-white
           ${borderClasses}
           ${transitionClasses}
@@ -181,6 +181,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
             !campaignbay-border-none !campaignbay-outline-none focus:!campaignbay-outline-none focus:!campaignbay-border-none focus:!campaignbay-shadow-none
             campaignbay-px-[12px] campaignbay-py-[9px] campaignbay-text-[13px] campaignbay-leading-[20px] 
             campaignbay-text-[#1e1e1e] campaignbay-font-[400] 
+            campaignbay-min-w-[60px]
             campaignbay-w-full campaignbay-bg-transparent campaignbay-border-none campaignbay-outline-none campaignbay-placeholder-gray-400
             hide-spin-button
             ${disabled ? "campaignbay-cursor-not-allowed" : ""}
@@ -190,16 +191,16 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         />
 
         <div
-          className={`campaignbay-flex campaignbay-items-center campaignbay-px-2 campaignbay-space-x-1 campaignbay-select-none ${
+          className={`campaignbay-flex campaignbay-items-center campaignbay-px-2 !campaignbay-pl-0.5 campaignbay-space-x-1 campaignbay-select-none ${
             classNames?.buttonContainer || ""
           }`}
         >
           <button
             type="button"
             onClick={handleIncrement}
-            disabled={disabled || (value ?? 0) >= max}
+            disabled={disabled || (value !== null && value !== undefined && value >= max)}
             className={`
-              campaignbay-p-2 campaignbay-text-gray-500 campaignbay-transition-colors campaignbay-duration-150
+              campaignbay-p-2 !campaignbay-pr-0.5 campaignbay-text-gray-500 campaignbay-transition-colors campaignbay-duration-150
               hover:campaignbay-text-gray-900 focus:campaignbay-outline-none active:campaignbay-scale-95
               disabled:campaignbay-opacity-30 disabled:hover:campaignbay-text-gray-500
               ${classNames?.incrementButton || ""}
@@ -224,7 +225,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           <button
             type="button"
             onClick={handleDecrement}
-            disabled={disabled || (value ?? 0) <= min}
+            disabled={disabled || (value !== null && value !== undefined && value <= min)}
             className={`
               campaignbay-p-2 campaignbay-text-gray-500 campaignbay-transition-colors campaignbay-duration-150
               hover:campaignbay-text-gray-900 focus:campaignbay-outline-none active:campaignbay-scale-95

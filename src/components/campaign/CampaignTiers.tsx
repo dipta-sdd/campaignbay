@@ -20,6 +20,8 @@ import { Toggler } from "../common/Toggler";
 import Required from "./Required";
 import { Input } from "../common/Input";
 import { NumberInput } from "../common/NumberInput";
+import QuantityTiers from "./QuantityTiers";
+import EBTiers from "./EBTiers";
 
 interface CampaignTiersProps {
   campaign: CampaignInerface;
@@ -117,7 +119,12 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
             <Label>{__("Discount will be applied", "campaignbay")}</Label>
             <div>
               <NumberInput
-                value={campaign.discount_value || ""}
+                value={
+                  campaign.discount_value === "" ||
+                  campaign.discount_value === null
+                    ? undefined
+                    : (campaign.discount_value as number)
+                }
                 onChange={(value) => {
                   setCampaign((prev: CampaignInerface) => ({
                     ...prev,
@@ -162,48 +169,63 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
       {/* Bogo */}
       {campaign.type === "bogo" ? (
         <Section header={__("BOGO", "campaignbay")}>
-          <div className="cb-form-input-con">
-
-            <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-overflow-hidden campaignbay-flex-wrap">
+            <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-wrap">
               <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
                 <Label>{__("Buy", "campaignbay")}</Label>
                 <NumberInput
-                  value={bogoTiers.buy_quantity}
+                  value={
+                    bogoTiers.buy_quantity === ""
+                      ? undefined
+                      : bogoTiers.buy_quantity
+                  }
+                  classNames={{
+                    root: "campaignbay-w-min",
+                  }}
                   onChange={(value) =>
                     setBogoTiers((prev) => ({
                       ...prev,
-                      buy_quantity: value,
+                      buy_quantity: value === null ? "" : value,
                     }))
                   }
                 />
 
-                <Label>{_n("piece ,", "pieces ,", bogoTiers.buy_quantity || 1, "campaignbay")}</Label>
-                
+                <Label>
+                  {_n(
+                    "piece ,",
+                    "pieces ,",
+                    bogoTiers.buy_quantity || 1,
+                    "campaignbay",
+                  )}
+                </Label>
               </div>
               <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
                 <Label>{__("Get", "campaignbay")}</Label>
                 <NumberInput
-                  value={bogoTiers.get_quantity}
+                classNames={{
+                  root: "campaignbay-w-min",
+                }}
+                  value={
+                    bogoTiers.get_quantity === ""
+                      ? undefined
+                      : bogoTiers.get_quantity
+                  }
                   onChange={(value) =>
                     setBogoTiers((prev) => ({
                       ...prev,
-                      get_quantity: value,
+                      get_quantity: value === null ? "" : value,
                     }))
                   }
                 />
-                <Label>{_n("piece", "pieces", bogoTiers.get_quantity || 1, "campaignbay")}</Label>
-                 <NumberInput
-                  value={bogoTiers.get_quantity}
-                  onChange={(value) =>
-                    setBogoTiers((prev) => ({
-                      ...prev,
-                      get_quantity: value,
-                    }))
-                  }
-                />
+                <Label>
+                  {_n(
+                    "piece",
+                    "pieces",
+                    bogoTiers.get_quantity || 1,
+                    "campaignbay",
+                  )}
+                </Label>
               </div>
             </div>
-          </div>
         </Section>
       ) : null}
     </>
@@ -212,9 +234,9 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
 
 export default CampaignTiers;
 
-const Label = ({ children }: { children: React.ReactNode }) => {
+export const Label = ({ children , className}: { children: React.ReactNode , className?: string}) => {
   return (
-    <label className="campaignbay-text-[13px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#1e1e1e] campaignbay-py-[12px]">
+    <label className={`campaignbay-text-[13px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#1e1e1e] campaignbay-py-[12px] ${className}`}>
       {children}
     </label>
   );
