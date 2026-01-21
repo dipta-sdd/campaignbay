@@ -4,11 +4,11 @@ import {
   __experimentalToggleGroupControl as ToggleGroupControl,
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import { useCbStore } from '../store/cbStore';
-import { QuantityTier, QuantityTierError } from '../types';
-import { useGuideStep } from '../store/GuideContext';
-import { TOUR_STEPS } from '../utils/tourSteps';
-import { BuyProTooltip } from './ui/BuyProTooltip';
+import { useCbStore } from '../../store/cbStore';
+import { QuantityTier, QuantityTierError } from '../../utils/types';
+import { useGuideStep } from '../../store/GuideContext';
+import { TOUR_STEPS } from '../../utils/tourSteps';
+import { BuyProTooltip } from '../common/BuyProTooltip';
 interface TierRowProps {
   tierData: QuantityTier;
   onUpdate: (updatedTier: QuantityTier) => void;

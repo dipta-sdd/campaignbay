@@ -5,10 +5,10 @@ import {
   __experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useCbStore } from "../store/cbStore";
-import { EBTier, EBTierError } from "../types";
-import { useGuideStep } from "../store/GuideContext";
-import { TOUR_STEPS } from "../utils/tourSteps";
+import { useCbStore } from "../../store/cbStore";
+import { EBTier, EBTierError } from "../../utils/types";
+import { useGuideStep } from "../../store/GuideContext";
+import { TOUR_STEPS } from "../../utils/tourSteps";
 
 interface EBTierRowProps {
   tierData: EBTier;
