@@ -121,3 +121,19 @@
   }
 
 
+/* Chrome, Safari, Edge, Opera */
+.hide-spin-button::-webkit-outer-spin-button,
+.hide-spin-button::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.hide-spin-button[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* General (optional, for cross-browser consistency) */
+.hide-spin-button[type=number] {
+  appearance: none;
+}

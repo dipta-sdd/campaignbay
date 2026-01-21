@@ -1,9 +1,11 @@
-import React from 'react';
+import React from "react";
+import { borderClasses, errorClasses, hoverClasses, transitionClasses } from "./classes";
 
-interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+interface InputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   label?: string;
   error?: string;
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
   classNames?: {
     root?: string;
     label?: string;
@@ -12,44 +14,61 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   };
 }
 
-export const Input: React.FC<InputProps> = ({ 
-  label, 
-  error, 
-  size = 'medium',
-  className = '', 
-  classNames, 
-  ...props 
+export const Input: React.FC<InputProps> = ({
+  label,
+  error,
+  size = "medium",
+  className = "",
+  classNames,
+  ...props
 }) => {
   const sizeClasses = {
-    small: 'campaignbay-px-3 campaignbay-py-2 campaignbay-text-xs',
-    medium: 'campaignbay-px-4 campaignbay-py-3 campaignbay-text-sm',
-    large: 'campaignbay-px-5 campaignbay-py-4 campaignbay-text-base',
+    small:
+      "campaignbay-px-[8px] campaignbay-py-[7px] campaignbay-text-[13px] campaignbay-leading-[20px]",
+    medium:
+      "campaignbay-px-[12px] campaignbay-py-[9px] campaignbay-text-[13px] campaignbay-leading-[20px]",
+    large:
+      "campaignbay-px-[12px] campaignbay-py-[11px] campaignbay-text-[13px] campaignbay-leading-[20px]",
   };
 
   return (
-    <div className={`campaignbay-w-full ${classNames?.root || ''}`}>
+    <div className={`campaignbay-w-full ${classNames?.root || ""}`}>
       {label && (
-        <label className={`campaignbay-block campaignbay-text-sm campaignbay-font-bold campaignbay-text-gray-900 campaignbay-mb-2 ${classNames?.label || ''}`}>
+        <label
+          className={`campaignbay-block campaignbay-text-sm campaignbay-font-bold campaignbay-text-gray-900 campaignbay-mb-2 ${
+            classNames?.label || ""
+          }`}
+        >
           {label}
         </label>
       )}
       <input
         className={`
           campaignbay-w-full 
-          campaignbay-bg-white campaignbay-border campaignbay-rounded-lg
-          campaignbay-text-gray-900 campaignbay-placeholder-gray-400
-          focus:campaignbay-outline-none focus:campaignbay-ring-2 focus:campaignbay-ring-primary focus:campaignbay-border-transparent
-          campaignbay-transition-all campaignbay-duration-200
+          campaignbay-bg-white campaignbay-border campaignbay-rounded-[8px]
+          campaignbay-text-[#1e1e1e] campaignbay-placeholder-gray-400
           ${sizeClasses[size]}
-          ${error ? 'campaignbay-border-danger focus:campaignbay-ring-danger' : 'campaignbay-border-gray-300'}
-          ${props.disabled ? 'campaignbay-bg-gray-50 campaignbay-cursor-not-allowed' : ''}
+          ${borderClasses}
+          ${transitionClasses}
+          ${error ? errorClasses : hoverClasses}
+          ${
+            props.disabled
+              ? "campaignbay-opacity-50 campaignbay-cursor-not-allowed"
+              : ""
+          }
           ${className}
-          ${classNames?.input || ''}
+          ${classNames?.input || ""}
         `}
         {...props}
       />
       {error && (
-        <p className={`campaignbay-mt-1 campaignbay-text-xs campaignbay-text-danger ${classNames?.error || ''}`}>{error}</p>
+        <span
+          className={`campaignbay-mt-1 campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-red-500 ${
+            classNames?.error || ""
+          }`}
+        >
+          {error}
+        </span>
       )}
     </div>
   );

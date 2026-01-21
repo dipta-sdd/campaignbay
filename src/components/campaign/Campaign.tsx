@@ -1,4 +1,11 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import {
   Campaign as CampaignInerfaceBase,
   CampaignSettingsType,
@@ -18,6 +25,7 @@ import { __ } from "@wordpress/i18n";
 import MultiSelect from "../common/MultiSelect";
 import Conditions from "../conditions/Conditions";
 import { ConditionsInterface } from "../conditions/type";
+import CampaignTiers from "./CampaignTiers";
 // @ts-ignore
 interface CampaignInerface extends CampaignInerfaceBase {
   type: CampaignType | null;
@@ -79,20 +87,20 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
   //=================================================================================
   const { tourStep, setConfig } = useGuide();
   const campaignTitleInputRef = useGuideStep<HTMLInputElement>(
-    TOUR_STEPS.TITLE
+    TOUR_STEPS.TITLE,
   );
   const campaignTypeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TYPE);
   const campaignStatusInputRef = useGuideStep<HTMLDivElement>(
-    TOUR_STEPS.STATUS
+    TOUR_STEPS.STATUS,
   );
   const targetTypeInputRef = useGuideStep<HTMLDivElement>(
-    TOUR_STEPS.TARGET_TYPE
+    TOUR_STEPS.TARGET_TYPE,
   );
   const targetIdsInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.TARGET_IDS);
   const usageToggleRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.USAGE_TOGGLE);
   const usageInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.USAGE_INPUT);
   const scheduleToggleRef = useGuideStep<HTMLDivElement>(
-    TOUR_STEPS.SCHED_TOGGLE
+    TOUR_STEPS.SCHED_TOGGLE,
   );
   const startTimeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.START_TIME);
   const endTimeInputRef = useGuideStep<HTMLDivElement>(TOUR_STEPS.END_TIME);
@@ -105,7 +113,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         ...prevConfig[TOUR_STEPS.USAGE_TOGGLE],
         onNext: ({ setStep }) => {
           setStep(
-            enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.SCHED_TOGGLE
+            enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.SCHED_TOGGLE,
           );
         },
       },
@@ -113,7 +121,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         ...prevConfig[TOUR_STEPS.SCHED_TOGGLE],
         onPrev: ({ setStep }) => {
           setStep(
-            enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.USAGE_TOGGLE
+            enableUsageLimit ? TOUR_STEPS.USAGE_INPUT : TOUR_STEPS.USAGE_TOGGLE,
           );
         },
       },
@@ -147,18 +155,18 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
         response.products.map((item: DependentType) => ({
           label: item.name,
           value: item.id,
-        })) || []
+        })) || [],
       );
       setCategories(
         response?.categories?.map((item: DependentType) => ({
           label: item.name,
           value: item.id,
-        }))
+        })),
       );
     } catch (error: any) {
       addToast(
         __("Something went wrong, Please reload the page.", "campaignbay"),
-        "error"
+        "error",
       );
     }
   };
@@ -179,6 +187,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
           }}
           layout="horizontal"
           options={DISCOUNT_TYPES}
+          // @ts-ignore
           value={campaign?.type}
           onChange={(value) =>
             setCampaign({ ...campaign, type: value as CampaignType })
@@ -276,17 +285,26 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
                   </>
                 ) : null}
               </Section>
-
-              <Section header="Conditions" >
-              <Conditions
-                type={campaign?.type || "bogo" }
-                errors={errors}
-                conditions={campaign.conditions}
-                setConditions={(conditions: ConditionsInterface) =>
-                  setCampaign((prev) => ({ ...prev, conditions }))
-                }
-              />
-            </Section>
+                <CampaignTiers
+                  campaign={campaign as CampaignInerfaceBase}
+                  setCampaign={
+                    setCampaign as Dispatch<
+                      SetStateAction<CampaignInerfaceBase>
+                    >
+                  }
+                  errors={errors}
+                  products={products}
+                />
+              <Section header="Conditions">
+                <Conditions
+                  type={campaign?.type || "bogo"}
+                  errors={errors}
+                  conditions={campaign.conditions}
+                  setConditions={(conditions: ConditionsInterface) =>
+                    setCampaign((prev) => ({ ...prev, conditions }))
+                  }
+                />
+              </Section>
             </div>
           </Card>
         </div>
@@ -309,7 +327,7 @@ const Campaign: FC<CampaignProps> = ({ campaign, setCampaign, errors }) => {
 
 export default Campaign;
 
-const Section = ({
+export const Section = ({
   children,
   header,
   className,
@@ -375,7 +393,7 @@ interface RenderErrorProps {
 }
 export const renderError = (
   error?: ErrorObject,
-  negativeMargin = true
+  negativeMargin = true,
 ): React.ReactNode => {
   if (!error) {
     return null;
@@ -386,5 +404,5 @@ export const renderError = (
     : "campaignbay-mt-[1px]";
   const className = `campaignbay-text-red-600 ${marginClass} campaignbay-text-xs`;
 
-  return <p className={className}>{error.message}</p>;
+  return <span className={className}>{error.message}</span>;
 };

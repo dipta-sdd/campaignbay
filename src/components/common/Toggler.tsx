@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { borderClasses } from './classes';
 
 export interface TogglerOption {
   label: React.ReactNode;
@@ -36,8 +37,8 @@ export const Toggler: React.FC<TogglerProps> = ({
   // Size configuration
   const sizeClasses = {
     small: 'campaignbay-px-[16px] campaignbay-py-[4px] campaignbay-text-small',
-    medium: 'campaignbay-px-[24px] campaignbay-py-[8px] campaignbay-text-default',
-    large: 'campaignbay-px-[32px] campaignbay-py-[12px] campaignbay-text-[15px]',
+    medium: 'campaignbay-px-[18px] campaignbay-py-[5px] campaignbay-text-default',
+    large: 'campaignbay-px-[20px] campaignbay-py-[12px] campaignbay-text-[15px]',
   };
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export const Toggler: React.FC<TogglerProps> = ({
     <div
       className={`
         campaignbay-relative campaignbay-inline-flex campaignbay-items-center
-        campaignbay-bg-white campaignbay-border campaignbay-border-default campaignbay-rounded-lg
+        campaignbay-bg-white campaignbay-border ${borderClasses} campaignbay-rounded-[8px]
         campaignbay-p-[4px] campaignbay-select-none
         ${fullWidth ? 'campaignbay-flex campaignbay-w-full' : ''}
         ${disabled ? 'campaignbay-opacity-50 campaignbay-cursor-not-allowed campaignbay-pointer-events-none' : ''}
