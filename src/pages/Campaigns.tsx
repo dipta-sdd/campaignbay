@@ -395,9 +395,9 @@ const PopoverContent = ({
           <ListSelect
             classNames={{
               root: "campaignbay-w-full",
-              item: "campaignbay-p-1",
+              item: "campaignbay-p-0",
               label:
-                "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
+                "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[2px]",
             }}
             items={headers.map((header) => ({
               value: header.key,
