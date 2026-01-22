@@ -23,7 +23,7 @@ export interface WpSettings {
 }
 
 export interface CbStore {
-    version: string;
+    version: string; 
     root_id: string;
     nonce: string;
     store: string;

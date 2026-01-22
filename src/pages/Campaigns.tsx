@@ -59,6 +59,8 @@ const headers: TableHeader[] = [
 const Campaigns: FC = () => {
   const { addToast } = useToast();
 
+  const [view, setView] = useState<"table" | "grid">("grid");
+
   const [filters, setFilters] = useState<Filters>({
     types: [],
     status: [],
@@ -268,17 +270,27 @@ const Campaigns: FC = () => {
         </div>
         {/* table */}
         <div className="campaignbay-w-full">
-          <Table
-            campaigns={campaigns}
-            visibleColumns={visibleColumns}
-            selectedCampaigns={selectedCampaigns}
-            setSelectedCampaigns={setSelectedCampaigns}
-            handleSelectAll={handleSelectAll}
-            filters={filters}
-            setFilters={setFilters}
-            handleDelete={deleteCampaigns}
-            handleDuplicate={duplicateCampaign}
-          />
+          {view === "table" ? (
+            <Table
+              campaigns={campaigns}
+              visibleColumns={visibleColumns}
+              selectedCampaigns={selectedCampaigns}
+              setSelectedCampaigns={setSelectedCampaigns}
+              handleSelectAll={handleSelectAll}
+              filters={filters}
+              setFilters={setFilters}
+              handleDelete={deleteCampaigns}
+              handleDuplicate={duplicateCampaign}
+            />
+          ) : (
+            <CampaignsGrid
+              campaigns={campaigns}
+              selectedCampaigns={selectedCampaigns}
+              setSelectedCampaigns={setSelectedCampaigns}
+              handleDelete={deleteCampaigns}
+              handleDuplicate={duplicateCampaign}
+            />
+          )}
         </div>
         <Pagination
           totalPages={totalPages}
@@ -810,9 +822,13 @@ const ActionMenu = ({
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-end campaignbay-gap-[4px] campaignbay-min-w-[141px] campaignbay-group">
-      <div className={`campaignbay-overflow-hidden campaignbay-transition-all campaignbay-duration-200 ${
-        isOpen ? "campaignbay-w-[104px]" : "campaignbay-w-[0] group-hover:campaignbay-w-[104px]"
-      }`}>
+      <div
+        className={`campaignbay-overflow-hidden campaignbay-transition-all campaignbay-duration-200 ${
+          isOpen
+            ? "campaignbay-w-[104px]"
+            : "campaignbay-w-[0] group-hover:campaignbay-w-[104px]"
+        }`}
+      >
         <div
           className={`campaignbay-gap-[4px] campaignbay-transition-all campaignbay-duration-200 campaignbay-flex campaignbay-flex-nowrap`}
         >
@@ -980,6 +996,163 @@ const Pagination = ({
           </Button>
         </div>
       </div>
+    </div>
+  );
+};
+
+interface CampaignsGridProps {
+  campaigns: Campaign[];
+  selectedCampaigns: number[];
+  setSelectedCampaigns: Dispatch<SetStateAction<number[]>>;
+  handleDelete: (ids: number[]) => void;
+  handleDuplicate: (id: number) => void;
+}
+
+const CampaignsGrid = ({
+  campaigns,
+  selectedCampaigns,
+  setSelectedCampaigns,
+  handleDelete,
+  handleDuplicate,
+}: CampaignsGridProps) => {
+  const handleCheckboxChange = (checked: boolean, id: number) => {
+    if (checked) {
+      setSelectedCampaigns([...selectedCampaigns, id]);
+    } else {
+      setSelectedCampaigns(
+        selectedCampaigns.filter((campaignId) => campaignId !== id),
+      );
+    }
+  };
+
+  return (
+    <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 xl:campaignbay-grid-cols-5 campaignbay-gap-[16px] ">
+      {campaigns.map((campaign) => (
+        <CampaignCard
+          key={campaign.id}
+          campaign={campaign}
+          isSelected={selectedCampaigns.includes(campaign.id)}
+          onSelect={handleCheckboxChange}
+          handleDelete={handleDelete}
+          handleDuplicate={handleDuplicate}
+        />
+      ))}
+    </div>
+  );
+};
+
+interface CampaignCardProps {
+  campaign: Campaign;
+  isSelected: boolean;
+  onSelect: (checked: boolean, id: number) => void;
+  handleDelete: (ids: number[]) => void;
+  handleDuplicate: (id: number) => void;
+}
+
+const CampaignCard = ({
+  campaign,
+  isSelected,
+  onSelect,
+  handleDelete,
+  handleDuplicate,
+}: CampaignCardProps) => {
+  return (
+    <div
+      className={`campaignbay-bg-white campaignbay-border campaignbay-rounded-[8px] campaignbay-p-[20px] campaignbay-flex campaignbay-flex-col campaignbay-transition-all hover:campaignbay-shadow-md ${
+        isSelected
+          ? "campaignbay-border-primary/50 campaignbay-bg-blue-50/10"
+          : "campaignbay-border-[#e0e0e0]"
+      }`}
+    >
+      {/* Header - Checkbox, Status, Actions */}
+      <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-mb-[12px]">
+        <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[12px]">
+          <Checkbox
+            checked={isSelected}
+            onChange={(checked) => onSelect(checked, campaign.id)}
+          />
+          <span
+            className={`campaignbay-inline-block campaignbay-py-[4px] campaignbay-px-[8px] campaignbay-rounded-full campaignbay-text-[10px] campaignbay-font-bold campaignbay-uppercase campaignbay-leading-none ${
+              campaign.status === "active" || campaign.status === "scheduled"
+                ? "campaignbay-bg-[#4ab866]/10 campaignbay-text-[#4ab866]"
+                : "campaignbay-bg-gray-100 campaignbay-text-gray-500"
+            }`}
+          >
+            {campaign.status === "active" || campaign.status === "scheduled"
+              ? "Active"
+              : "Inactive"}
+          </span>
+        </div>
+        <ActionMenu
+          id={campaign.id}
+          handleDuplicate={handleDuplicate}
+          handleDelete={handleDelete}
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="campaignbay-mb-[20px]">
+        <h3
+          className="campaignbay-text-[16px] campaignbay-font-semibold campaignbay-text-[#1e1e1e] campaignbay-mb-[8px] campaignbay-leading-tight"
+          title={campaign.title}
+        >
+          {campaign.title}
+        </h3>
+        <p className="campaignbay-text-[13px] campaignbay-text-[#4a4a4a] campaignbay-leading-[20px] campaignbay-line-clamp-2">
+          {getCampaignTypeText(campaign.type)} campaign targeting{" "}
+          {getTargetType(campaign.target_type).toLowerCase()}.
+        </p>
+      </div>
+
+      {/* Properties List */}
+      <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[8px] campaignbay-mt-auto">
+        <PropertyRow
+          label="Target"
+          value={
+            <span
+              className="campaignbay-truncate campaignbay-block"
+              title={getTargetType(campaign.target_type)}
+            >
+              {getTargetType(campaign.target_type)}
+            </span>
+          }
+        />
+        <PropertyRow
+          label="Usage"
+          value={`${campaign.usage_count || 0} / ${
+            campaign.usage_limit ?? "∞"
+          }`}
+        />
+        <PropertyRow
+          label="Date"
+          value={
+            campaign.schedule_enabled
+              ? `${formatDate(
+                  campaign?.start_datetime_unix ?? campaign.date_created_unix,
+                )} - ${formatDate(campaign?.end_datetime_unix)}`
+              : "Always Active"
+          }
+        />
+      </div>
+    </div>
+  );
+};
+
+const PropertyRow = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) => {
+  return (
+    <div className="campaignbay-grid campaignbay-grid-cols-[100px_1fr] campaignbay-gap-[8px] campaignbay-items-baseline">
+      <span className="campaignbay-text-[13px] campaignbay-text-[#9e9e9e] campaignbay-font-medium">
+        {label}
+      </span>
+      <span className="campaignbay-text-[13px] campaignbay-text-[#1e1e1e] campaignbay-font-normal">
+        {value}
+      </span>
     </div>
   );
 };
