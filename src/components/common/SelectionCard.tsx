@@ -61,14 +61,14 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={`
-        campaignbay-relative campaignbay-p-6 campaignbay-rounded-lg campaignbay-transition-all campaignbay-duration-200
-        campaignbay-flex campaignbay-items-start campaignbay-gap-4
+        campaignbay-relative campaignbay-p-[20px] campaignbay-rounded-[8px] campaignbay-transition-all campaignbay-duration-200
+        campaignbay-flex campaignbay-items-start campaignbay-gap-[10px]
         ${isDisabled 
             ? 'campaignbay-bg-gray-50 campaignbay-border campaignbay-border-gray-200 campaignbay-cursor-not-allowed' 
             : 'campaignbay-cursor-pointer'
         }
         ${!isDisabled && selected 
-          ? 'campaignbay-bg-primary campaignbay-border campaignbay-border-primary campaignbay-shadow-lg campaignbay-shadow-primary/20' 
+          ? 'campaignbay-bg-primary campaignbay-border campaignbay-border-primary campaignbay-shadow-sm campaignbay-shadow-primary/20' 
           : !isDisabled 
             ? 'campaignbay-bg-white campaignbay-border campaignbay-border-gray-100 hover:campaignbay-border-gray-300'
             : ''
@@ -102,10 +102,10 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
         </div>
       </div>
       <div className={classNames?.textWrapper || ''}>
-        <h3 className={`campaignbay-text-base campaignbay-font-bold campaignbay-mb-1 ${!isDisabled && selected ? 'campaignbay-text-white' : 'campaignbay-text-gray-900'} ${isDisabled ? '!campaignbay-text-gray-400' : ''} ${classNames?.title || ''}`}>
+        <h3 className={`campaignbay-text-[15px] campaignbay-leading-[24px] campaignbay-font-[700] campaignbay-mb-1 ${!isDisabled && selected ? 'campaignbay-text-white' : 'campaignbay-text-gray-900'} ${isDisabled ? '!campaignbay-text-gray-400' : ''} ${classNames?.title || ''}`}>
           {title}
         </h3>
-        <p className={`campaignbay-text-xs ${!isDisabled && selected ? 'campaignbay-text-blue-100' : 'campaignbay-text-gray-500'} ${isDisabled ? '!campaignbay-text-gray-400' : ''} ${classNames?.description || ''}`}>
+        <p className={`campaignbay-text-[13px] campaignbay-leading-[20px] ${!isDisabled && selected ? 'campaignbay-text-blue-100' : 'campaignbay-text-gray-500'} ${isDisabled ? '!campaignbay-text-gray-400' : ''} ${classNames?.description || ''}`}>
           {description}
         </p>
       </div>

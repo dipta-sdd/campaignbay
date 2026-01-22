@@ -82,7 +82,7 @@ const QuantityTiers: FC<QuantityTiersProps> = ({ tiers, setTiers, errors }) => {
   };
 
   return (
-    <Section header={__("Quantity Tiers", "campaignbay")}>
+    <Section header={__("Quantity Tiers", "campaignbay")} required>
       {tiers.map((tier, index) => (
         <TierRow
           key={tier.id}

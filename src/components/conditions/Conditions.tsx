@@ -118,11 +118,11 @@ const Conditions: FC<ConditionsProps> = ({
               }
               options={[
                 {
-                  label: __("Any", "campaignbay"),
+                  label: __("Match Any", "campaignbay"),
                   value: "any",
                 },
                 {
-                  label: __("All", "campaignbay"),
+                  label: __("Match All", "campaignbay"),
                   value: "all",
                 },
               ]}
@@ -169,7 +169,7 @@ const Conditions: FC<ConditionsProps> = ({
               )
             )
           ) : (
-            <span className="cb-quantity-tier-row !campaignbay-border-red-200">
+            <span className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-full campaignbay-bg-gray-100 campaignbay-py-2 campaignbay-rounded-[4px]">
               <span className="campaignbay-text-red-500 campaignbay-text-center campaignbay-w-full">
                 {__("No conditions added", "campaignbay")}
               </span>

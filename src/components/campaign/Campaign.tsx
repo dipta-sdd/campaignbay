@@ -44,22 +44,24 @@ const DISCOUNT_TYPES: CardOption[] = [
   {
     value: "bogo",
     title: "Buy X Get X Discount",
-    description: "This is some help text to describe the input",
+    description: "Offer free items when customers buy a specific quantity",
   },
   {
     value: "earlybird",
     title: "EarlyBird Discount",
-    description: "This is some help text to describe the input",
+    description:
+      "Offer exclusive discounts for the first X orders of a product",
   },
   {
     value: "quantity",
     title: "Quantity Based Discount",
-    description: "This is some help text to describe the input",
+    description:
+      "Encourage bulk purchases with tiered discounts based on quantity",
   },
   {
     value: "scheduled",
     title: "Scheduled Discount",
-    description: "This is some help text to describe the input",
+    description: "Set up time-limited discounts that run during specific dates",
   },
 ];
 
@@ -86,7 +88,7 @@ interface CampaignProps {
   buttonText: string;
   isSaving: boolean;
   isLoading: boolean;
-  showDeleteButton? : boolean;
+  showDeleteButton?: boolean;
   onDelete?: () => void;
 }
 const Campaign: FC<CampaignProps> = ({
@@ -221,7 +223,14 @@ const Campaign: FC<CampaignProps> = ({
               })
             }
           />
-          <Button size="small" color="primary" variant="solid" className="campaignbay-w-max" disabled={isSaving || isLoading || campaign?.type === null} onClick={handleSave}>
+          <Button
+            size="small"
+            color="primary"
+            variant="solid"
+            className="campaignbay-w-max"
+            disabled={isSaving || isLoading || campaign?.type === null}
+            onClick={handleSave}
+          >
             {buttonText}
           </Button>
           {showDeleteButton && (
@@ -383,7 +392,6 @@ const Campaign: FC<CampaignProps> = ({
                 className="campaignbay-text-[15px] campaignbay-leading-[20px] campaignbay-font-[700] "
                 onClick={handleSave}
                 disabled={isSaving || isLoading || campaign?.type === null}
-                
               >
                 {buttonText} <Icon icon={check} fill="currentColor" />
               </Button>
@@ -434,7 +442,11 @@ export const Section = ({
     <div className={`campaignbay-p-0 ${className || ""}`}>
       <div className="campaignbay-flex campaignbay-justify-start campaignbay-items-center campaignbay-text-[15px] campaignbay-leading-[24px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold">
         {header}{" "}
-        {required && <span className="campaignbay-text-red-500">*</span>}
+        {required && (
+          <span className="campaignbay-text-red-500 campaignbay-ml-[2px]">
+            *
+          </span>
+        )}
       </div>
       <div className="campaignbay-pt-[15px] campaignbay-w-full campaignbay-space-y-[15px]">
         {children}

@@ -41,11 +41,11 @@ const Button = ({
     },
     danger: {
       solid:
-        "campaignbay-bg-danger campaignbay-text-white campaignbay-border campaignbay-border-danger hover:campaignbay-bg-danger-hovered",
+        "campaignbay-bg-danger campaignbay-text-white campaignbay-border campaignbay-border-red-500 hover:campaignbay-bg-red-500 hover:campaignbay-border-red-500",
       outline:
-        "campaignbay-bg-transparent campaignbay-border campaignbay-border-danger campaignbay-text-danger hover:campaignbay-bg-danger hover:campaignbay-text-white",
+        "campaignbay-bg-transparent campaignbay-border campaignbay-border-red-500 campaignbay-text-red-500 hover:campaignbay-bg-red-500 hover:campaignbay-text-white",
       ghost:
-        "campaignbay-bg-transparent campaignbay-text-danger hover:campaignbay-bg-danger/10",
+        "campaignbay-bg-transparent campaignbay-text-red-500 hover:campaignbay-bg-red-500/10",
     },
   };
 

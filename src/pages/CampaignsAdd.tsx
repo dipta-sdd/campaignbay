@@ -262,25 +262,21 @@ const CampaignsAdd: FC = () => {
 
   return (
     <>
-      {" "}
-      {isLoading ? (
-        <CampaignLoading />
-      ) : (
-        <>
-          <Page>
-            
-            <Campaign
-              campaign={campaign}
-              setCampaign={setCampaign}
-              errors={errors}
-              buttonText="Save Campaign"
-              handleSave={handleSaveCampaign}
-              isLoading={isLoading}
-              isSaving={isSaving}
-            />
-          </Page>
-        </>
-      )}
+      <Page>
+        {isLoading ? (
+          <CampaignLoading />
+        ) : (
+          <Campaign
+            campaign={campaign}
+            setCampaign={setCampaign}
+            errors={errors}
+            buttonText="Save Campaign"
+            handleSave={handleSaveCampaign}
+            isLoading={isLoading}
+            isSaving={isSaving}
+          />
+        )}
+      </Page>
     </>
   );
 };

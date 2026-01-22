@@ -68,7 +68,7 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
   };
 
   return (
-    <Section header={__("Early Bird Tiers", "campaignbay")}>
+    <Section header={__("Early Bird Tiers", "campaignbay")} required>
       {tiers.map((tier, index) => (
         <EBTierRow
           key={tier.id}

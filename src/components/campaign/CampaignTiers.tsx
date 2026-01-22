@@ -114,7 +114,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
       )}
 
       {campaign.type === "scheduled" && (
-        <Section header={__("Discount", "campaignbay")}>
+        <Section header={__("Discount", "campaignbay")} required>
           <div className="campaignbay-flex campaignbay-gap-2 campaignbay-justify-start campaignbay-items-start">
             <Label>{__("Discount will be applied", "campaignbay")}</Label>
             <div>
@@ -168,7 +168,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
 
       {/* Bogo */}
       {campaign.type === "bogo" || campaign.type === null ? (
-        <Section header={__("BOGO", "campaignbay")}>
+        <Section header={__("BOGO", "campaignbay")} required>
             <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-wrap">
               <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
                 <Label>{__("Buy", "campaignbay")}</Label>

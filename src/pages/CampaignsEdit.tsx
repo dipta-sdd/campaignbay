@@ -9,12 +9,8 @@ import {
   Campaign as CampaignInterfaceBase,
   CampaignType,
 } from "../utils/types";
-import { useGuide, useGuideStep } from "../store/GuideContext";
-import { TOUR_STEPS } from "../utils/tourSteps";
-import { getTemplate } from "../utils/templates";
 import { currentDateTime } from "../utils/Dates";
 import Page from "../components/common/Page";
-import Loader from "../components/common/Loader";
 import Campaign from "../components/campaign/Campaign";
 import getBool from "../utils/getBool";
 import CampaignLoading from "../components/campaign/CampaignLoading";
@@ -137,7 +133,7 @@ const CampaignsEdit: FC = () => {
           ...response.conditions,
         },
       });
-      // setIsLoading(false);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching campaign:", error);
       addToast(
@@ -150,25 +146,23 @@ const CampaignsEdit: FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <CampaignLoading />
-      ) : (
-        <>
-          <Page>
-            <Campaign
-              campaign={campaign}
-              setCampaign={setCampaign}
-              errors={errors}
-              buttonText="Update Campaign"
-              handleSave={handleSaveCampaign}
-              isLoading={isLoading}
-              isSaving={isSaving}
-              showDeleteButton={true}
-              onDelete={handleDeleteCampaign}
-            />
-          </Page>
-        </>
-      )}
+      <Page>
+        {isLoading ? (
+          <CampaignLoading />
+        ) : (
+          <Campaign
+            campaign={campaign}
+            setCampaign={setCampaign}
+            errors={errors}
+            buttonText="Update Campaign"
+            handleSave={handleSaveCampaign}
+            isLoading={isLoading}
+            isSaving={isSaving}
+            showDeleteButton={true}
+            onDelete={handleDeleteCampaign}
+          />
+        )}
+      </Page>
     </>
   );
 };
