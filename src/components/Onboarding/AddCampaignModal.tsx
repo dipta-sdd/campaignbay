@@ -137,6 +137,7 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
       </div>
       <div className="campaignbay-add-campaigns-modal-example campaignbay-bg-[#f7f8fe]">
         <Example
+          title={selectedTemplate?.title}
           example={selectedTemplate?.example}
           isBlank={selectedTemplateId === "blank" ? true : false}
         />
@@ -150,8 +151,9 @@ export default AddCampaignModal;
 interface ExampleProps {
   example?: { text: string; list: string[] };
   isBlank?: boolean;
+  title: string | undefined;
 }
-const Example = ({ example, isBlank }: ExampleProps) => {
+const Example = ({ example, isBlank, title }: ExampleProps) => {
   if (isBlank) {
     return (
       <div className="campaignbay-p-[15px] campaignbay-h-full campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-text-center">
@@ -205,7 +207,7 @@ const Example = ({ example, isBlank }: ExampleProps) => {
   return (
     <div className="campaignbay-p-0 campaignbay-bg-white campaignbay-h-full campaignbay-overflow-y-auto">
       <span className="campaignbay-block campaignbay-p-[10px] campaignbay-text-[16px] campaignbay-font-bold">
-        Example
+        {title}
       </span>
       <div className="campaignbay-p-[15px] campaignbay-pt-0 campaignbay-flex campaignbay-flex-col campaignbay-gap-[10px] campaignbay-text-[13px] campaignbay-font-normal campaignbay-leading-[20px] campaignbay-text-gray-500">
         <span>{example?.text}</span>

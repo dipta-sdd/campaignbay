@@ -28,7 +28,7 @@ import { addQueryArgs } from "@wordpress/url";
 import { useToast } from "../store/toast/use-toast";
 import { __, _n } from "@wordpress/i18n";
 import { getCampaignTypeText } from "./Dashboard";
-import { formatDate } from "../utils/Dates";
+import formatDateTime, { formatDate } from "../utils/Dates";
 import CustomSelect from "../components/common/CustomSelect";
 import { Toggler } from "../components/common/Toggler";
 import { ListSelect } from "../components/common/ListSelect";
@@ -55,6 +55,8 @@ const headers: TableHeader[] = [
   { key: "type", label: "Type", sortable: true },
   { key: "target", label: "Target", sortable: false },
   { key: "duration", label: "Duration", sortable: false },
+  { key: "usage", label: "Usage", sortable: true },
+  { key: "last_modified", label: "Last Modified", sortable: true },
 ];
 const Campaigns: FC = () => {
   const { addToast } = useToast();
@@ -228,15 +230,43 @@ const Campaigns: FC = () => {
             </div>
             <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-end campaignbay-gap-[4px]">
               {/* left */}
-              <Button
-                size="small"
-                variant="ghost"
-                color="primary"
-                className="!campaignbay-px-[4px] campaignbay-text-[#1e1e1e]"
-              >
-                <Icon icon={blockTable} size={20} fill="currentColor" />
-              </Button>
 
+              <Popover
+                align="bottom-right"
+                classNames={{
+                  content: "campaignbay-w-[300px]",
+                }}
+                trigger={
+                  <Button
+                    size="small"
+                    variant="ghost"
+                    color="primary"
+                    className="!campaignbay-px-[4px] campaignbay-text-[#1e1e1e]"
+                  >
+                    <Icon icon={blockTable} size={20} fill="currentColor" />
+                  </Button>
+                }
+                content={
+                  <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col campaignbay-p-[12px]">
+                    <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
+                      View Style
+                    </span>
+                    <Toggler
+                      classNames={{
+                        root: "campaignbay-w-full",
+                        button:
+                          "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
+                      }}
+                      value={view}
+                      onChange={(value) => setView(value)}
+                      options={[
+                        { label: "Table", value: "table" },
+                        { label: "Grid", value: "grid" },
+                      ]}
+                    />
+                  </div>
+                }
+              />
               <Popover
                 align="bottom-right"
                 classNames={{
@@ -336,8 +366,10 @@ const PopoverContent = ({
         {/* row 1 */}
         {/* sort by */}
         <div className="campaignbay-col-span-2">
+          <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
+            Sort by
+          </span>
           <CustomSelect
-            label="Sort by"
             border="campaignbay-border-[#e0e0e0]"
             classNames={{
               container: "!campaignbay-rounded-[8px]",
@@ -731,17 +763,7 @@ const Table = ({
       case "status":
         return (
           <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
-            <span
-              className={`campaignbay-inline-block campaignbay-py-[5px] campaignbay-px-[10px] campaignbay-rounded-full campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-uppercase ${
-                campaign.status === "active" || campaign.status === "scheduled"
-                  ? "campaignbay-bg-[#4ab866] campaignbay-text-white"
-                  : "campaignbay-bg-[#060606] campaignbay-text-[#fff]"
-              }`}
-            >
-              {campaign.status === "active" || campaign.status === "scheduled"
-                ? "Active"
-                : "Inactive"}
-            </span>
+            <StatusBadge status={campaign.status} />
           </td>
         );
       case "type":
@@ -763,13 +785,19 @@ const Table = ({
               ? `${formatDate(
                   campaign?.start_datetime_unix ?? campaign.date_created_unix,
                 )} - ${formatDate(campaign?.end_datetime_unix)}`
-              : "--"}
+              : "Always Active"}
           </td>
         );
       case "usage":
         return (
           <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
             {campaign.usage_count || 0} / {campaign.usage_limit ?? "∞"}
+          </td>
+        );
+      case "last_modified":
+        return (
+          <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
+            {formatDateTime(campaign.date_modified_unix)}
           </td>
         );
       default:
@@ -1026,7 +1054,7 @@ const CampaignsGrid = ({
   };
 
   return (
-    <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 xl:campaignbay-grid-cols-5 campaignbay-gap-[16px] ">
+    <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 2xl:campaignbay-grid-cols-5 campaignbay-gap-[16px] ">
       {campaigns.map((campaign) => (
         <CampaignCard
           key={campaign.id}
@@ -1065,23 +1093,13 @@ const CampaignCard = ({
       }`}
     >
       {/* Header - Checkbox, Status, Actions */}
-      <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-mb-[12px]">
+      <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-[12px]">
         <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[12px]">
           <Checkbox
             checked={isSelected}
             onChange={(checked) => onSelect(checked, campaign.id)}
           />
-          <span
-            className={`campaignbay-inline-block campaignbay-py-[4px] campaignbay-px-[8px] campaignbay-rounded-full campaignbay-text-[10px] campaignbay-font-bold campaignbay-uppercase campaignbay-leading-none ${
-              campaign.status === "active" || campaign.status === "scheduled"
-                ? "campaignbay-bg-[#4ab866]/10 campaignbay-text-[#4ab866]"
-                : "campaignbay-bg-gray-100 campaignbay-text-gray-500"
-            }`}
-          >
-            {campaign.status === "active" || campaign.status === "scheduled"
-              ? "Active"
-              : "Inactive"}
-          </span>
+          <StatusBadge status={campaign.status} />
         </div>
         <ActionMenu
           id={campaign.id}
@@ -1106,6 +1124,7 @@ const CampaignCard = ({
 
       {/* Properties List */}
       <div className="campaignbay-flex campaignbay-flex-col campaignbay-gap-[8px] campaignbay-mt-auto">
+        <PropertyRow label="Type" value={getCampaignTypeText(campaign.type)} />
         <PropertyRow
           label="Target"
           value={
@@ -1124,7 +1143,7 @@ const CampaignCard = ({
           }`}
         />
         <PropertyRow
-          label="Date"
+          label="Duration"
           value={
             campaign.schedule_enabled
               ? `${formatDate(
@@ -1132,6 +1151,10 @@ const CampaignCard = ({
                 )} - ${formatDate(campaign?.end_datetime_unix)}`
               : "Always Active"
           }
+        />
+        <PropertyRow
+          label="Last Updated"
+          value={formatDate(campaign.date_modified_unix)}
         />
       </div>
     </div>
@@ -1154,5 +1177,26 @@ const PropertyRow = ({
         {value}
       </span>
     </div>
+  );
+};
+
+const StatusBadge: FC<{ status: string }> = ({ status }) => {
+  const classes = {
+    scheduled: "campaignbay-bg-[#4ab866] campaignbay-text-white",
+    active: "campaignbay-bg-[#4ab866] campaignbay-text-white",
+    inactive: "campaignbay-bg-gray-300 campaignbay-text-gray-500",
+    expired: "campaignbay-bg-gray-300 campaignbay-text-gray-500",
+  };
+
+  return (
+    <span
+      className={`campaignbay-inline-block campaignbay-py-[5px] campaignbay-px-[10px] campaignbay-rounded-full campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-font-bold campaignbay-uppercase campaignbay-leading-none ${classes[status as keyof typeof classes]}`}
+    >
+      {status === "active" || status === "scheduled"
+        ? "Active"
+        : status === "expired"
+        ? "Expired"
+        : "Inactive"}
+    </span>
   );
 };

@@ -137,3 +137,75 @@
 .hide-spin-button[type=number] {
   appearance: none;
 }
+
+
+
+.campaignbay-add-campaigns-modal{
+  min-height: 90vh;
+}
+.campaignbay-add-campaigns-modal-example{
+  width: 50%;
+  display: none; // Hide on small devices
+}
+
+.campaignbay-add-campaigns-modal-grid-cols{
+  overflow-y: auto;
+  // scrollbar-width: none;
+}
+
+.campaignbay-add-campaigns-modal-overlay {
+  display: block; // Show overlay on small devices
+}
+
+.campaignbay-add-campaigns-modal-grid-item{
+    min-height: 170px;
+    width: 250px;
+    padding-top: 40px;
+    border: 1px solid #bdc4d1;
+    &:hover{
+      transform: translateY(-1px);
+    }
+  }
+
+
+@media (min-width: 600px) {
+  .campaignbay-add-campaigns-modal{
+    min-width: 560px;
+    min-height: 400px;
+  }
+  
+  .campaignbay-add-campaigns-modal-grid-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 850px) {
+  .campaignbay-add-campaigns-modal{
+    min-width: 835px;
+  }
+  
+  .campaignbay-add-campaigns-modal-example{
+    display: block; // Show example panel on larger devices
+    width: 270px;
+  }
+  
+  .campaignbay-add-campaigns-modal-overlay {
+    display: none !important; // Hide overlay on larger devices
+  }
+  
+  .campaignbay-add-campaigns-modal-grid-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .campaignbay-add-campaigns-modal-grid-item{
+    min-height: 136px;
+    padding-top: 28px;
+  }
+}
+@media (min-width: 1100px) {
+  .campaignbay-add-campaigns-modal{
+    min-width: 1080px;
+  }
+  
+  .campaignbay-add-campaigns-modal-grid-cols {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
