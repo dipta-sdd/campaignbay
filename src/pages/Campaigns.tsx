@@ -97,13 +97,17 @@ const Campaigns: FC = () => {
   const fetchCampaigns = async () => {
     try {
       setLoading(true);
+      let status = filters.status;
+      if (status.includes("active")) {
+        status = [...status, "scheduled"];
+      }
       const queryParams = {
         page: filters.page,
         per_page: filters.limit,
         orderby: filters.sort,
         order: filters.order,
         search: searchQuery,
-        status: filters.status,
+        status,
         type: filters.types,
         _timestamp: Date.now(),
       };
@@ -193,14 +197,28 @@ const Campaigns: FC = () => {
         </div>
       </HeaderContainer>
       {/* main body */}
-      <div className="campaignbay-bg-white campaignbay-rounded-[8px] campaignbay-shadow-sm">
+      <div
+        className={
+          view === "table"
+            ? "campaignbay-bg-white campaignbay-rounded-[8px] campaignbay-shadow-sm campaignbay-w-full"
+            : "campaignbay-w-full campaignbay-flex campaignbay-flex-col campaignbay-gap-default"
+        }
+      >
         {/* serach and filter */}
-        <div className="campaignbay-p-[24px] campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-between campaignbay-px-[48px] campaignbay-gap-[16px]">
+        <div
+          className={`campaignbay-p-[24px] campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-between campaignbay-px-[48px] campaignbay-gap-[16px] ${
+            view === "grid"
+              ? "campaignbay-bg-white campaignbay-rounded-[8px] campaignbay-shadow-sm"
+              : ""
+          }`}
+        >
           <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-[12px]  campaignbay-w-full">
             {/* right */}
             <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
               <label className="campaignbay-relative">
                 <input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="search"
                   className="campaignbay-w-[200px] campaignbay-text-default campaignbay-py-[5px] campaignbay-px-[8px] campaignbay-pr-[24px] campaignbay-border campaignbay-rounded-[0] campaignbay-bg-secondary campaignbay-border-1 campaignbay-border-secondary hover:campaignbay-border-primary focus:campaignbay-border-primary focus:campaignbay-outline-none"
                 ></input>
@@ -216,7 +234,7 @@ const Campaigns: FC = () => {
                 size="small"
                 variant={filterOpen ? "solid" : "outline"}
                 color="primary"
-                className="!campaignbay-px-[4px] campaignbay-relative"
+                className="!campaignbay-px-[5px] campaignbay-relative"
                 onClick={() => setFilterOpen(!filterOpen)}
               >
                 <Icon icon={funnel} size={20} fill="currentColor" />
@@ -322,16 +340,24 @@ const Campaigns: FC = () => {
             />
           )}
         </div>
-        <Pagination
-          totalPages={totalPages}
-          totalItems={campaigns.length || 0}
-          filters={filters}
-          setFilters={setFilters}
-          selectedCampaigns={selectedCampaigns}
-          setSelectedCampaigns={setSelectedCampaigns}
-          handleSelectAll={handleSelectAll}
-          handleDelete={deleteCampaigns}
-        />
+        <div
+          className={`${
+            view === "grid"
+              ? "campaignbay-bg-white campaignbay-rounded-[8px] campaignbay-shadow-sm"
+              : ""
+          }`}
+        >
+          <Pagination
+            totalPages={totalPages}
+            totalItems={campaigns.length || 0}
+            filters={filters}
+            setFilters={setFilters}
+            selectedCampaigns={selectedCampaigns}
+            setSelectedCampaigns={setSelectedCampaigns}
+            handleSelectAll={handleSelectAll}
+            handleDelete={deleteCampaigns}
+          />
+        </div>
       </div>
     </Page>
   );
@@ -466,7 +492,7 @@ const FiltersAccordion = ({
   const statusOptions = [
     { label: "Active", value: "active" },
     { label: "Inactive", value: "inactive" },
-    { label: "Scheduled", value: "scheduled" },
+    // { label: "Scheduled", value: "scheduled" },
     { label: "Expired", value: "expired" },
   ];
 
@@ -1054,7 +1080,7 @@ const CampaignsGrid = ({
   };
 
   return (
-    <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 2xl:campaignbay-grid-cols-5 campaignbay-gap-[16px] ">
+    <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 2xl:campaignbay-grid-cols-5 campaignbay-gap-default ">
       {campaigns.map((campaign) => (
         <CampaignCard
           key={campaign.id}
@@ -1086,10 +1112,10 @@ const CampaignCard = ({
 }: CampaignCardProps) => {
   return (
     <div
-      className={`campaignbay-bg-white campaignbay-border campaignbay-rounded-[8px] campaignbay-p-[20px] campaignbay-flex campaignbay-flex-col campaignbay-transition-all hover:campaignbay-shadow-md ${
+      className={`campaignbay-border campaignbay-rounded-[8px] campaignbay-p-[20px] campaignbay-flex campaignbay-flex-col campaignbay-transition-all hover:campaignbay-shadow-md ${
         isSelected
-          ? "campaignbay-border-primary/50 campaignbay-bg-blue-50/10"
-          : "campaignbay-border-[#e0e0e0]"
+          ? "campaignbay-border-blue-200 campaignbay-bg-blue-50/10"
+          : "campaignbay-border-[#e0e0e0] campaignbay-bg-white "
       }`}
     >
       {/* Header - Checkbox, Status, Actions */}
@@ -1190,7 +1216,9 @@ const StatusBadge: FC<{ status: string }> = ({ status }) => {
 
   return (
     <span
-      className={`campaignbay-inline-block campaignbay-py-[5px] campaignbay-px-[10px] campaignbay-rounded-full campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-font-bold campaignbay-uppercase campaignbay-leading-none ${classes[status as keyof typeof classes]}`}
+      className={`campaignbay-inline-block campaignbay-py-[5px] campaignbay-px-[10px] campaignbay-rounded-full campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-font-bold campaignbay-uppercase campaignbay-leading-none ${
+        classes[status as keyof typeof classes]
+      }`}
     >
       {status === "active" || status === "scheduled"
         ? "Active"
