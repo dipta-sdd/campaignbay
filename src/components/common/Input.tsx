@@ -26,7 +26,7 @@ export const Input: React.FC<InputProps> = ({
     small:
       "campaignbay-px-[8px] !campaignbay-py-[7px] campaignbay-text-[13px] campaignbay-leading-[20px]",
     medium:
-      "campaignbay-px-[12px] !campaignbay-py-[6px] campaignbay-text-[13px] campaignbay-leading-[20px]",
+      "campaignbay-px-[12px] !campaignbay-py-[9px] !campaignbay-text-[13px] !campaignbay-leading-[20px]",
     large:
       "campaignbay-px-[12px] !campaignbay-py-[11px] campaignbay-text-[13px] campaignbay-leading-[20px]",
   };
@@ -44,7 +44,7 @@ export const Input: React.FC<InputProps> = ({
       )}
       <input
         className={`
-          campaignbay-w-full 
+          campaignbay-w-full campaignbay-outline-none
           campaignbay-bg-white campaignbay-border campaignbay-rounded-[8px]
           campaignbay-text-[#1e1e1e] campaignbay-placeholder-gray-400
           ${sizeClasses[size]}

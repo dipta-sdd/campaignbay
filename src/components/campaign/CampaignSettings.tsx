@@ -388,12 +388,16 @@ export default CampaignSettings;
 
 interface PlaceholderProps {
   text: string;
+  classNames?: {
+    root?: string;
+    copy?: string;
+  };
 }
 
-export const Placeholder: FC<PlaceholderProps> = ({ text }) => {
+export const Placeholder: FC<PlaceholderProps> = ({ text , classNames}) => {
   return (
-    <span className="campaignbay-bg-gray-200 campaignbay-my-[2px] campaignbay-mx-[4px] campaignbay-p-[2px] campaignbay-px-[4px] campaignbay-rounded-md campaignbay-inline-flex campaignbay-items-center campaignbay-justify-center campaignbay-gap-[4px]">
-      <span className="campaignbay-mr-[2px] campaignbay-text-gray-600">{`{${text}}`}</span>
+    <span className={classNames?.root || "campaignbay-bg-gray-200 campaignbay-my-[2px] campaignbay-mx-[4px] campaignbay-p-[2px] campaignbay-px-[4px] campaignbay-rounded-md campaignbay-inline-flex campaignbay-items-center campaignbay-justify-center campaignbay-gap-[4px]"}>
+      <span className={classNames?.copy || "campaignbay-mr-[2px] campaignbay-text-gray-600"}>{`{${text}}`}</span>
       <CopyToClipboard text={`{${text}}`} />
     </span>
   );
@@ -401,15 +405,19 @@ export const Placeholder: FC<PlaceholderProps> = ({ text }) => {
 
 interface PlaceholdersProps {
   options: string[];
+  classNames?: {
+    root?: string;
+    placeholder?: string;
+  };
 }
 
-export const Placeholders: FC<PlaceholdersProps> = ({ options }) => {
+export const Placeholders: FC<PlaceholdersProps> = ({ options , classNames}) => {
   return (
-    <span className="campaignbay-inline campaignbay-text-wrap">
+    <span className={classNames?.root || "campaignbay-inline campaignbay-text-wrap"}>
       {" "}
       Use placeholder like
       {options.map((option, index) => {
-        return <Placeholder key={index} text={option} />;
+        return <Placeholder key={index} text={option} classNames={{ copy: classNames?.placeholder }} />;
       })}
       .
     </span>

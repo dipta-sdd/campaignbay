@@ -24,10 +24,10 @@ import { useGuide } from "../store/GuideContext";
 import Skeleton from "../components/common/Skeleton";
 import HeaderContainer from "../components/common/HeaderContainer";
 import Header from "../components/common/Header";
-import CustomSelect from "../components/common/CustomSelect";
 import { formatDate } from "../utils/Dates";
 import { CampaignType } from "../old/types";
 import Page from "../components/common/Page";
+import Select from "../components/common/Select";
 
 interface KpiValue {
   value: number;
@@ -636,7 +636,7 @@ const Dashboard: FC = () => {
         <Page>
           <HeaderContainer className="campaignbay-py-[12px]">
             <Header>Dashboard</Header>
-            <CustomSelect
+            <Select
               value={selectedPeriod}
               isCompact
               className="campaignbay-w-max !campaignbay-radius-[8px]"

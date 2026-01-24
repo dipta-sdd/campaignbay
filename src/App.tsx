@@ -8,6 +8,7 @@ import { ToastContainer } from "./components/common/ToastContainer";
 import AppLayout from "./components/common/AppLayout";
 import CampaignsAdd from "./pages/CampaignsAdd";
 import CampaignsEdit from "./pages/CampaignsEdit";
+import Settings from "./pages/Settings";
 
 const App = () => {
   return (
@@ -19,7 +20,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<AppLayout />}>
               <Route index element={<Dashboard />} />
-              {/* <Route path="settings" element={<Settings />} /> */}
+              <Route path="settings" element={<Settings />} />
               <Route path="campaigns" element={<Campaigns />} />
               <Route path="campaigns/add" element={<CampaignsAdd />} />
               <Route path="campaigns/:id" element={<CampaignsEdit />} />

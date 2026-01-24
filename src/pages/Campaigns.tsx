@@ -29,11 +29,11 @@ import { useToast } from "../store/toast/use-toast";
 import { __, _n } from "@wordpress/i18n";
 import { getCampaignTypeText } from "./Dashboard";
 import formatDateTime, { formatDate } from "../utils/Dates";
-import CustomSelect from "../components/common/CustomSelect";
 import { Toggler } from "../components/common/Toggler";
 import { ListSelect } from "../components/common/ListSelect";
 import ImportExport from "../components/importExport/ImportExport";
 import { useNavigate } from "react-router-dom";
+import Select from "../components/common/Select";
 
 interface TableHeader {
   key: string;
@@ -395,7 +395,7 @@ const PopoverContent = ({
           <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
             Sort by
           </span>
-          <CustomSelect
+          <Select
             border="campaignbay-border-[#e0e0e0]"
             classNames={{
               container: "!campaignbay-rounded-[8px]",
@@ -1007,7 +1007,7 @@ const Pagination = ({
         <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-uppercase">
           page{" "}
         </span>
-        <CustomSelect
+        <Select
           classNames={{
             container: "!campaignbay-px-0",
           }}
