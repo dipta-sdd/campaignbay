@@ -1,4 +1,4 @@
-export const borderClasses = "campaignbay-border-[#949494] campaignbay-border-[1px]";
+export const borderClasses = "campaignbay-border-[#949494] campaignbay-border-[1px] disabled:campaignbay-border-[#f8f8f8]";
 export const hoverBorderClasses = "campaignbay-border-[#3858e9] ";
 
 export const hoverClasses = "focus:!campaignbay-ring-[#3858e9] focus:!campaignbay-ring-1 hover:!campaignbay-border-[#3858e9] focus:!campaignbay-border-[#3858e9]";

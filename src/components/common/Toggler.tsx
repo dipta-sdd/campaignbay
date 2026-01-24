@@ -96,7 +96,7 @@ export const Toggler: React.FC<TogglerProps> = ({
             onClick={() => !disabled && onChange(option.value)}
             className={`
               campaignbay-relative campaignbay-z-10 campaignbay-flex-1
-              campaignbay-font-medium campaignbay-rounded-[6px]
+              campaignbay-font-medium campaignbay-text-nowrap campaignbay-rounded-[6px]
               campaignbay-transition-colors campaignbay-duration-300
               focus:campaignbay-outline-none focus-visible:campaignbay-ring-2 focus-visible:campaignbay-ring-primary/20
               ${sizeClasses[size]}
