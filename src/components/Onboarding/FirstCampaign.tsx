@@ -3,7 +3,7 @@ import apiFetch from "@wordpress/api-fetch";
 import { __ } from "@wordpress/i18n";
 import { useToast } from "../../store/toast/use-toast";
 import { FC, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   BogoTier,
   CampaignErrorsType,
@@ -13,10 +13,8 @@ import {
   QuantityTier,
   TargetType,
 } from "../../utils/types";
-import { useGuide, useGuideStep } from "../../store/GuideContext";
-import { TOUR_STEPS } from "../../utils/tourSteps";
 import { currentDateTime } from "../../utils/Dates";
-import Campaign, {
+import {
   Card,
   DependentResponseType,
   DependentType,
@@ -39,6 +37,7 @@ import { ConditionsInterface } from "../conditions/type";
 import { scheduled } from "@wordpress/icons";
 import { Tier } from "../../old/types";
 import { getSettings } from "../../utils/settings";
+import { ConfirmationModal } from "../common/ConfirmationModal";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
@@ -46,6 +45,8 @@ interface CampaignInterface extends CampaignInterfaceBase {
 }
 
 const FirstCampaign: FC = () => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [showConfirmation , setShowConfirmation] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const [categories, setCategories] = useState<SelectOption[]>([]);
@@ -83,6 +84,7 @@ const FirstCampaign: FC = () => {
 
   useEffect(() => {
     fetchDependency();
+    updateOnboardingStatus();
   }, []);
   useEffect(() => {
     setCampaign((prev) => ({
@@ -340,10 +342,26 @@ const FirstCampaign: FC = () => {
   };
   const handleBack = () => {
     if(currentStep === 1){
-      navigate("/campaigns");
+      setShowConfirmation(true);
     } else {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const updateOnboardingStatus = async () => {
+    try {
+        const response = await apiFetch({
+          path: "/campaignbay/v1/settings/onboarding",
+          method: "POST",
+          data: {
+            first_campaign: true
+          }
+        });
+        // addToast(__("Tour dismissed successfully.", "campaignbay"), "success");
+      } catch (error) {
+        console.error("Failed to dismiss tour:", error);
+        addToast(__("Error connecting server, Please try again.", "campaignbay"), "error");
+      }
   };
   return (
     <>
@@ -351,10 +369,10 @@ const FirstCampaign: FC = () => {
         maxWidth="campaignbay-max-w-[min(960px,90vw)]"
         title="Campaign"
         classNames={{
-          body: "campaignbay-bg-[#f1f5f9] campaignbay-p-6",
+          body: "campaignbay-bg-[#f1f5f9] campaignbay-p-6 campaignbay-rounded-[8px]",
         }}
         showHeader={false}
-        isOpen={true}
+        isOpen={isOpen}
         onClose={() => {}}
       >
         <Header className="campaignbay-text-center">
@@ -606,6 +624,19 @@ const FirstCampaign: FC = () => {
             </Button>
           </div>
         </div>
+        <ConfirmationModal
+        isOpen={showConfirmation}
+          onConfirm={() => {
+            setShowConfirmation(false);
+            setIsOpen(false);
+            navigate("/campaigns");
+          }}
+          onCancel={() => setShowConfirmation(false)}
+          title="Are you sure you want to go back ?"
+          message="You will lose all the data you have entered."
+          cancelLabel="No"
+          confirmLabel="Yes"
+        />
       </CustomModal>
     </>
   );

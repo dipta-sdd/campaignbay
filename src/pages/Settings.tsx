@@ -887,7 +887,6 @@ const Settings = () => {
               Save Changes
             </Button>
           </div>
-          <FirstCampaign/>
         </div>
       )}
     </Page>

@@ -100,12 +100,12 @@ class SettingsController extends ApiController
 		);
 
 		register_rest_route(
-            $namespace,
-			'/' . $this->rest_base . '/guide',
+            $namespace, 
+			'/' . $this->rest_base . '/onboarding',
             array(
                 array(
                     'methods'             => WP_REST_Server::CREATABLE, // POST
-                    'callback'            => array( $this, 'mark_guide_as_seen' ),
+                    'callback'            => array( $this, 'update_onboarding_status' ),
                     'permission_callback' => array( $this, 'update_item_permissions_check' ),
                 ),
             )
@@ -199,15 +199,18 @@ class SettingsController extends ApiController
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function mark_guide_as_seen( $request ) {
+	public function update_onboarding_status( $request ) {
         $user_id = get_current_user_id();
-
+		$params = $request->get_params();
+		$onboarding = $params['first_campaign'];
         if ( ! $user_id ) {
             return new \WP_Error( 'no_user', 'Invalid user', array( 'status' => 401 ) );
         }
 
-        // Update the meta key. true means they have seen it.
-        update_user_meta( $user_id, '_campaignbay_has_seen_guide', true );
+        if ( $onboarding ) {
+            update_user_meta( $user_id, '_campaignbay_onboarding_first_campaign', true );
+			return new WP_REST_Response( array( 'success' => true , 'message' => 'Onboarding status updated successfully'), 200 );
+        }
 
         return new WP_REST_Response( array( 'success' => true ), 200 );
     }

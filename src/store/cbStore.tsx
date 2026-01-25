@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import apiFetch from "@wordpress/api-fetch";
-import { CbStore } from "../old/types";
+import { CbStore } from "../utils/types";
 
 type CbStoreContextType = CbStore | null;
 const CbStoreContext = createContext<CbStoreContextType>(null);

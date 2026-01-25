@@ -32,7 +32,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           {message}
         </p>
         <div className="campaignbay-flex campaignbay-justify-end campaignbay-gap-3">
-          <Button variant="outline" color="secondary" onClick={onCancel}>
+          <Button variant="ghost" color="secondary" onClick={onCancel}>
             {cancelLabel}
           </Button>
           <Button variant="solid" color="primary" onClick={onConfirm}>
