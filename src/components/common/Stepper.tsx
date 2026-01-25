@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 
 interface StepperProps {
   steps: string[];
   currentStep: number;
+  setStep: (step: number) => void | Dispatch<SetStateAction<number>>;
   classNames?: {
     root?: string;
     container?: string;
@@ -14,7 +15,7 @@ interface StepperProps {
   };
 }
 
-export const Stepper: React.FC<StepperProps> = ({ steps, currentStep, classNames }) => {
+export const Stepper: React.FC<StepperProps> = ({ steps, currentStep, setStep, classNames }) => {
   // Calculate width percentage for the green progress line
   // Total segments = steps.length - 1
   // If currentStep is 1, progress is 0%
@@ -41,11 +42,13 @@ export const Stepper: React.FC<StepperProps> = ({ steps, currentStep, classNames
           const isActive = stepNum === currentStep;
 
           return (
-            <div key={step} className={`campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-relative campaignbay-z-10 campaignbay-w-32 ${classNames?.stepContainer || ''}`}>
+            <div key={step} className={`campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-relative campaignbay-z-10 campaignbay-w-32  ${classNames?.stepContainer || ''}`}>
               <div 
+              onClick={isCompleted ? () => setStep(stepNum) : undefined}
                 className={`
                   campaignbay-w-10 campaignbay-h-10 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center
                   campaignbay-transition-colors campaignbay-duration-300 campaignbay-border-2
+                  ${isCompleted ? 'campaignbay-cursor-pointer' : 'campaignbay-cursor-not-allowed'}
                   ${isCompleted || isActive 
                     ? 'campaignbay-bg-green-500 campaignbay-border-green-500 campaignbay-text-white' 
                     : 'campaignbay-bg-gray-300 campaignbay-border-gray-300 campaignbay-text-white'}

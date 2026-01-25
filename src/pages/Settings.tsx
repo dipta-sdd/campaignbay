@@ -16,6 +16,7 @@ import Skeleton from "../components/common/Skeleton";
 import Page from "../components/common/Page";
 import Header from "../components/common/Header";
 import HeaderContainer from "../components/common/HeaderContainer";
+import FirstCampaign from "../components/Onboarding/FirstCampaign";
 
 type TabType = "global" | "product" | "cart" | "advanced";
 
@@ -886,6 +887,7 @@ const Settings = () => {
               Save Changes
             </Button>
           </div>
+          <FirstCampaign/>
         </div>
       )}
     </Page>

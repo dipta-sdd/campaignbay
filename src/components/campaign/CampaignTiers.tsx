@@ -3,13 +3,14 @@ import { __, _n } from "@wordpress/i18n";
 import { FC, useEffect } from "react";
 import {
   BogoTier,
-  Campaign as CampaignInerface,
+  Campaign as CampaignInterfaceBase,
   CampaignErrorsType,
   DiscountType,
   EBTier,
   EBTierError,
   QuantityTier,
   QuantityTierError,
+  CampaignType,
 } from "../../utils/types";
 import { useGuideStep } from "../../store/GuideContext";
 import { TOUR_STEPS } from "../../utils/tourSteps";
@@ -22,10 +23,13 @@ import { Input } from "../common/Input";
 import { NumberInput } from "../common/NumberInput";
 import QuantityTiers from "./QuantityTiers";
 import EBTiers from "./EBTiers";
-
+// @ts-ignore
+interface CampaignInterface extends CampaignInterfaceBase {
+  type: CampaignType | null;
+}
 interface CampaignTiersProps {
-  campaign: CampaignInerface;
-  setCampaign: React.Dispatch<React.SetStateAction<CampaignInerface>>;
+  campaign: CampaignInterface;
+  setCampaign: React.Dispatch<React.SetStateAction<CampaignInterface>>;
   errors: CampaignErrorsType;
   products: SelectOption[];
 }
@@ -77,21 +81,27 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
   //=================================================================================
 
   useEffect(() => {
-    if (campaign.type === "quantity" && campaign?.tiers?.length > 0)
+    if (campaign.type === "quantity" && campaign?.tiers?.length > 0){
       setQuantityTiers([...(campaign.tiers as QuantityTier[])]);
-    else if (campaign.type === "earlybird" && campaign?.tiers?.length > 0)
+    }
+    else if (campaign.type === "earlybird" && campaign?.tiers?.length > 0){
       setEBTiers([...(campaign.tiers as EBTier[])]);
-    else if (campaign.type === "bogo" && campaign?.tiers?.length > 0)
+    }
+    else if (campaign.type === "bogo" && campaign?.tiers?.length > 0){
       setBogoTiers({ ...(campaign.tiers[0] as BogoTier) });
+    }
   }, []);
 
   useEffect(() => {
-    if (campaign.type === "quantity")
+    if (campaign.type === "quantity"){
       setCampaign((prev) => ({ ...prev, tiers: [...quantityTiers] }));
-    else if (campaign.type === "earlybird")
+    }
+    else if (campaign.type === "earlybird"){
       setCampaign((prev) => ({ ...prev, tiers: [...ebTiers] }));
-    else if (campaign.type === "bogo")
+    }
+    else if (campaign.type === "bogo"){
       setCampaign((prev) => ({ ...prev, tiers: [{ ...bogoTiers }] }));
+    }
     else setCampaign((prev) => ({ ...prev, tiers: [] }));
   }, [quantityTiers, ebTiers, bogoTiers]);
 
@@ -126,7 +136,7 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
                     : (campaign.discount_value as number)
                 }
                 onChange={(value) => {
-                  setCampaign((prev: CampaignInerface) => ({
+                  setCampaign((prev: CampaignInterface) => ({
                     ...prev,
                     discount_value: value,
                   }));

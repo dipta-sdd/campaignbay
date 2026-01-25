@@ -65,7 +65,6 @@ const TierRow: FC<TierRowProps> = ({
     if (newType !== "percentage" && newType !== "currency") return;
     onUpdate({ ...tierData, type: newType });
   };
-
   return (
     <div
       className={`campaignbay-rounded-[8px] campaignbay-p-[10px] ${
@@ -87,6 +86,7 @@ const TierRow: FC<TierRowProps> = ({
             classNames={{
               root: "campaignbay-min-w-min campaignbay-w-min",
             }}
+            error={errors?.min?.message}
           />
           <Label>{__("to", "campaignbay")}</Label>
           <NumberInput
@@ -97,6 +97,7 @@ const TierRow: FC<TierRowProps> = ({
             classNames={{
               root: "campaignbay-min-w-min campaignbay-w-min",
             }}
+
           />
         </div>
 

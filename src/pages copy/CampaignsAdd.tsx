@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Loader from "../old/Loader";
 import Navbar from "../old/Navbar";
 import {
-  Campaign as CampaignInterface,
+  Campaign as CampaignInterfaceBase,
   CampaignErrorsType,
 } from "../old/types";
 import Campaign from "../old/Campaign";
@@ -17,14 +17,18 @@ import { TOUR_STEPS } from "../utils/tourSteps";
 import { FloatingHelpButton } from "./Campaigns";
 import { getTemplate } from "../utils/templates";
 import { currentDateTime } from "../utils/Dates";
-
+import { CampaignType } from "../utils/types";
+// @ts-ignore
+interface CampaignInterface extends CampaignInterfaceBase {
+  type: CampaignType | null;
+}
 const CampaignsAdd: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [campaign, setCampaign] = useState<CampaignInterface>({
     id: 0,
     title: "",
     status: "active",
-    type: "bogo",
+    type: null,
     discount_type: "percentage",
     discount_value: "",
     target_type: "entire_store",
@@ -130,9 +134,9 @@ const CampaignsAdd: FC = () => {
 
   useEffect(() => {
     if (!tourStep) return;
-    const nextStepId = TYPE_TO_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
+    const nextStepId = TYPE_TO_STEP_MAP[campaign?.type || "bogo"] || TOUR_STEPS.BOGO_BUY;
     const prevStepId =
-      TYPE_TO_PREV_STEP_MAP[campaign.type] || TOUR_STEPS.BOGO_BUY;
+      TYPE_TO_PREV_STEP_MAP[campaign?.type || "bogo"] || TOUR_STEPS.BOGO_BUY;
 
     if (campaign.target_type === "entire_store") {
       setConfig((prevConfig) => ({
@@ -256,7 +260,6 @@ const CampaignsAdd: FC = () => {
 
   return (
     <>
-      {" "}
       {isLoading ? (
         <Loader />
       ) : (

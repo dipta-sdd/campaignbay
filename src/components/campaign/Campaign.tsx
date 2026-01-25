@@ -36,11 +36,11 @@ import { Switch } from "../common/Switch";
 import HeaderContainer from "../common/HeaderContainer";
 import { EditableText } from "../common/EditableText";
 // @ts-ignore
-interface CampaignInerface extends CampaignInerfaceBase {
+interface CampaignInterface extends CampaignInerfaceBase {
   type: CampaignType | null;
 }
 
-const DISCOUNT_TYPES: CardOption[] = [
+export const DISCOUNT_TYPES: CardOption[] = [
   {
     value: "bogo",
     title: "Buy X Get X Discount",
@@ -81,8 +81,8 @@ export interface DependentResponseType {
 }
 
 interface CampaignProps {
-  campaign: CampaignInerface;
-  setCampaign: React.Dispatch<React.SetStateAction<CampaignInerface>>;
+  campaign: CampaignInterface;
+  setCampaign: React.Dispatch<React.SetStateAction<CampaignInterface>>;
   errors: CampaignErrorsType;
   handleSave: () => void;
   buttonText: string;
@@ -362,11 +362,9 @@ const Campaign: FC<CampaignProps> = ({
                   ) : null}
                 </Section>
                 <CampaignTiers
-                  campaign={campaign as CampaignInerfaceBase}
+                  campaign={campaign as CampaignInterface}
                   setCampaign={
-                    setCampaign as Dispatch<
-                      SetStateAction<CampaignInerfaceBase>
-                    >
+                    setCampaign as Dispatch<SetStateAction<CampaignInterface>>
                   }
                   errors={errors}
                   products={products}
@@ -474,7 +472,7 @@ export const Card = ({
 }) => {
   return (
     <div
-      className={`campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px]  ${
+      className={`campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-w-full ${
         disabled
           ? "campaignbay-opacity-25 campaignbay-pointer-events-none "
           : "campaignbay-shadow-sm"
@@ -512,7 +510,7 @@ export const renderError = (
   return <span className={className}>{error.message}</span>;
 };
 
-const OtherSettings = ({
+export const OtherSettings = ({
   campaign,
   setCampaign,
   settings,
@@ -521,8 +519,8 @@ const OtherSettings = ({
   enableUsageLimit,
   setEnableUsageLimit,
 }: {
-  campaign: CampaignInerface;
-  setCampaign: Dispatch<SetStateAction<CampaignInerface>>;
+  campaign: CampaignInterface;
+  setCampaign: Dispatch<SetStateAction<CampaignInterface>>;
   settings: CampaignSettingsType;
   setSettings: Dispatch<SetStateAction<CampaignSettingsType>>;
   errors: CampaignErrorsType;
@@ -546,7 +544,12 @@ const OtherSettings = ({
             }}
             label={__("Enable Usage Limit", "campaignbay")}
             checked={!!enableUsageLimit}
-            onChange={(checked) => setEnableUsageLimit(checked)}
+            onChange={(checked) => {
+              setEnableUsageLimit(checked);
+              if (!checked) {
+                setCampaign((prev) => ({ ...prev, usage_limit: null }));
+              }
+            }}
           />
 
           <NumberInput

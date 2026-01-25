@@ -50,7 +50,7 @@ export const CardRadioGroup: React.FC<CardRadioGroupProps> = ({
       break;
     case 'responsive':
     default:
-      containerClass = 'campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 campaignbay-gap-4';
+      containerClass = 'campaignbay-grid campaignbay-grid-cols-1 md:!campaignbay-grid-cols-2 campaignbay-gap-4';
       break;
   }
 
