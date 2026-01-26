@@ -29,6 +29,7 @@ import { CampaignType } from "../old/types";
 import Page from "../components/common/Page";
 import Select from "../components/common/Select";
 import { Toggler } from "../components/common/Toggler";
+import ActivityLogModal from "../components/dashboard/ActivityLogModal";
 
 interface KpiValue {
   value: number;
@@ -916,7 +917,10 @@ const Dashboard: FC = () => {
                           ))}
                       </tbody>
                     </table>
-                    <button className="campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858ff] campaignbay-underline campaignbay-underline-offset-4 campaignbay-text-default campaignbay-py-[8px] campaignbay-cursor-pointer">
+                    <button
+                      className="campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858ff] campaignbay-underline campaignbay-underline-offset-4 campaignbay-text-default campaignbay-py-[8px] campaignbay-cursor-pointer"
+                      onClick={() => setIsActivityModalOpen(true)}
+                    >
                       View Full Activity Log
                     </button>
                   </>
@@ -937,7 +941,12 @@ const Dashboard: FC = () => {
                           .map((campaign, index) => (
                             <tr key={index}>
                               <td className="campaignbay-w-full campaignbay-text-default campaignbay-align-top campaignbay-capitalize">
-                                {campaign.title}
+                                <a
+                                  href={`#/campaigns/${campaign.id}`}
+                                  className="campaignbay-text-default !campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858e9] campaignbay-cursor-pointer campaignbay-capitalize"
+                                >
+                                  {campaign.title}
+                                </a>
                               </td>
                               <td className="campaignbay-min-w-[100px] campaignbay-text-default campaignbay-align-top campaignbay-capitalize">
                                 {getCampaignTypeText(campaign.type)}
@@ -967,7 +976,12 @@ const Dashboard: FC = () => {
                           .map((campaign, index) => (
                             <tr key={index}>
                               <td className="campaignbay-w-full campaignbay-text-default campaignbay-align-top campaignbay-capitalize">
-                                {campaign.title}
+                                <a
+                                      href={`#/campaigns/${campaign.id}`}
+                                      className="campaignbay-text-default !campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858e9] campaignbay-cursor-pointer campaignbay-capitalize"
+                                    >
+                                      {campaign.title}
+                                    </a>
                               </td>
                               <td className="campaignbay-min-w-[100px] campaignbay-text-default campaignbay-align-top campaignbay-capitalize">
                                 {getCampaignTypeText(campaign.type)}
@@ -988,6 +1002,11 @@ const Dashboard: FC = () => {
               </Card>
             </div>
           </div>
+          {/* Activity Log Modal */}
+          <ActivityLogModal
+            isActivityModalOpen={isActivityModalOpen}
+            setIsActivityModalOpen={setIsActivityModalOpen}
+          />
         </Page>
       )}
     </>
