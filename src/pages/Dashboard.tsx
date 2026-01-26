@@ -1,5 +1,5 @@
 //todo make $ sign dynamic
-import {  FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 // @ts-ignore
 import chart_placeholder from "./../../assets/img/top_p_c.svg";
 import { __, _n, sprintf } from "@wordpress/i18n";
@@ -28,6 +28,7 @@ import { formatDate } from "../utils/Dates";
 import { CampaignType } from "../old/types";
 import Page from "../components/common/Page";
 import Select from "../components/common/Select";
+import { Toggler } from "../components/common/Toggler";
 
 interface KpiValue {
   value: number;
@@ -95,12 +96,12 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
 );
 
 const Dashboard: FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedPeriod, setSelectedPeriod] = useState<ChartPeriod>("7days");
@@ -145,7 +146,7 @@ const Dashboard: FC = () => {
   const formatTimeDifference = (
     dateString: string,
     futureTense = "in",
-    pastTense = "ago"
+    pastTense = "ago",
   ): string => {
     if (!dateString) {
       return "";
@@ -175,7 +176,7 @@ const Dashboard: FC = () => {
       const value = sprintf(
         /* translators: %d: number of minutes. */
         _n("%d minute", "%d minutes", diffInMinutes, "campaignbay"),
-        diffInMinutes
+        diffInMinutes,
       );
       return `${tenseStart} ${value} ${tenseEnd}`;
     }
@@ -186,7 +187,7 @@ const Dashboard: FC = () => {
       const value = sprintf(
         /* translators: %d: number of hours. */
         _n("%d hour", "%d hours", diffInHours, "campaignbay"),
-        diffInHours
+        diffInHours,
       );
       return `${tenseStart} ${value} ${tenseEnd}`;
     }
@@ -196,7 +197,7 @@ const Dashboard: FC = () => {
     const value = sprintf(
       /* translators: %d: number of days. */
       _n("%d day", "%d days", diffInDays, "campaignbay"),
-      diffInDays
+      diffInDays,
     );
     return `${tenseStart} ${value} ${tenseEnd}`;
   };
@@ -471,7 +472,7 @@ const Dashboard: FC = () => {
             const total = context.dataset.data.reduce((a, b) => a + b, 0);
             const percentage = ((context.parsed / total) * 100).toFixed(1);
             return `${context.label}: ${formatCurrency(
-              context.parsed
+              context.parsed,
             )} (${percentage}%)`;
           },
         },
@@ -680,7 +681,9 @@ const Dashboard: FC = () => {
                     </svg>
                   </div>
                   {/* value */}
-                  <Header className="campaignbay-pt-1">{dashboardData?.kpis?.active_campaigns?.value}</Header>
+                  <Header className="campaignbay-pt-1">
+                    {dashboardData?.kpis?.active_campaigns?.value}
+                  </Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
                     Active Campaigns
@@ -706,7 +709,9 @@ const Dashboard: FC = () => {
                     </svg>
                   </div>
                   {/* value */}
-                  <Header className="campaignbay-pt-1">${dashboardData?.kpis?.total_discount_value?.value}</Header>
+                  <Header className="campaignbay-pt-1">
+                    ${dashboardData?.kpis?.total_discount_value?.value}
+                  </Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
                     Total Discounts
@@ -734,7 +739,9 @@ const Dashboard: FC = () => {
                     </svg>
                   </div>
                   {/* value */}
-                  <Header className="campaignbay-pt-1">{dashboardData?.kpis?.discounted_orders?.value}</Header>
+                  <Header className="campaignbay-pt-1">
+                    {dashboardData?.kpis?.discounted_orders?.value}
+                  </Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
                     Discounted Orders
@@ -760,7 +767,9 @@ const Dashboard: FC = () => {
                     </svg>
                   </div>
                   {/* value */}
-                  <Header className="campaignbay-pt-1">${dashboardData?.kpis?.sales_from_campaigns?.value}</Header>
+                  <Header className="campaignbay-pt-1">
+                    ${dashboardData?.kpis?.sales_from_campaigns?.value}
+                  </Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
                     Total Campaign Sales
@@ -773,7 +782,24 @@ const Dashboard: FC = () => {
                 {/* line chart */}
                 <Card
                   className="campaignbay-col-span-2"
-                  header={<CardHeader>Daily Discount Value Trends</CardHeader>}
+                  header={
+                    <CardHeader className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-w-full campaignbay-text-nowrap">
+                      <span>Daily Discount Value Trends</span>
+                      <Toggler
+                        size="small"
+                        classNames={{
+                          button:
+                            "campaignbay-text-[11px] campaignbay-leading-[14px] campaignbay-text-[#1e1e1e] campaignbay-py-[4px] !campaignbay-rounded-[3px]",
+                        }}
+                        value={chartType}
+                        onChange={(value) => setChartType(value)}
+                        options={[
+                          { label: "Line", value: "line" },
+                          { label: "Bar", value: "bar" },
+                        ]}
+                      />
+                    </CardHeader>
+                  }
                 >
                   {dashboardData?.charts?.discount_trends?.length &&
                   dashboardData?.charts?.discount_trends?.length > 0 ? (
@@ -799,7 +825,7 @@ const Dashboard: FC = () => {
                       <div className="cb-chart-message">
                         {__(
                           "No discount data available for the selected period",
-                          "campaignbay"
+                          "campaignbay",
                         )}
                       </div>
                     </div>
@@ -823,7 +849,7 @@ const Dashboard: FC = () => {
                       mainText={__("No Data Available", "campaignbay")}
                       seconderyText={__(
                         "Run a campaign to see performance data.",
-                        "campaignbay"
+                        "campaignbay",
                       )}
                     />
                   )}
@@ -847,7 +873,7 @@ const Dashboard: FC = () => {
                       mainText={__("No Data Available", "campaignbay")}
                       seconderyText={__(
                         "Run a campaign to see performance data.",
-                        "campaignbay"
+                        "campaignbay",
                       )}
                     />
                   )}
@@ -970,9 +996,17 @@ const Dashboard: FC = () => {
 
 export default Dashboard;
 
-const CardHeader = ({ children }: { children: React.ReactNode }) => {
+const CardHeader = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
-    <span className="campaignbay-font-[700] campaignbay-text-[16px] campaignbay-leading-[40px]">
+    <span
+      className={`campaignbay-font-[700] campaignbay-text-[16px] campaignbay-leading-[40px] ${className}`}
+    >
       {children}
     </span>
   );

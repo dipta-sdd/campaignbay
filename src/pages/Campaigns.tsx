@@ -34,7 +34,9 @@ import { ListSelect } from "../components/common/ListSelect";
 import ImportExport from "../components/importExport/ImportExport";
 import { useNavigate } from "react-router-dom";
 import Select from "../components/common/Select";
+import Skeleton from "../components/common/Skeleton";
 
+type ViewType = "table" | "grid";
 interface TableHeader {
   key: string;
   label: string;
@@ -61,7 +63,7 @@ const headers: TableHeader[] = [
 const Campaigns: FC = () => {
   const { addToast } = useToast();
 
-  const [view, setView] = useState<"table" | "grid">("grid");
+  const [view, setView] = useState<ViewType>("table");
 
   const [filters, setFilters] = useState<Filters>({
     types: [],
@@ -127,6 +129,24 @@ const Campaigns: FC = () => {
     }
   };
 
+  useEffect(() => {
+    // @ts-ignore
+    const savedView: ViewType = localStorage.getItem(
+      "campaignbay_campaigns_view",
+    ) as ViewType;
+
+    if (savedView) {
+      setView(savedView);
+    } else {
+      setView("table");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (view) {
+      localStorage.setItem("campaignbay_campaigns_view", view);
+    }
+  }, [view]);
   useEffect(() => {
     fetchCampaigns();
   }, [filters, searchQuery]);
@@ -220,7 +240,7 @@ const Campaigns: FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="search"
-                  className="campaignbay-w-[200px] campaignbay-text-default campaignbay-py-[5px] campaignbay-px-[8px] campaignbay-pr-[24px] campaignbay-border campaignbay-rounded-[0] campaignbay-bg-secondary campaignbay-border-1 campaignbay-border-secondary hover:campaignbay-border-primary focus:campaignbay-border-primary focus:campaignbay-outline-none"
+                  className="campaignbay-w-[200px] campaignbay-text-default campaignbay-py-[5px] campaignbay-px-[8px] campaignbay-pr-[24px] campaignbay-border campaignbay-rounded-[0] campaignbay-bg-secondary campaignbay-border-1 campaignbay-border-secondary hover:campaignbay-border-primary focus:campaignbay-border-primary focus:campaignbay-outline-none campaignbay-rounded-[8px]"
                 ></input>
                 <Icon
                   icon={search}
@@ -249,41 +269,19 @@ const Campaigns: FC = () => {
             <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-end campaignbay-gap-[4px]">
               {/* left */}
 
-              <Popover
-                align="bottom-right"
+              <Toggler
+                size="small"
                 classNames={{
-                  content: "campaignbay-w-[300px]",
+                  root: "campaignbay-w-full",
+                  button:
+                    "campaignbay-text-[11px] campaignbay-leading-[14px] campaignbay-text-[#1e1e1e] campaignbay-py-[4px] !campaignbay-rounded-[3px]",
                 }}
-                trigger={
-                  <Button
-                    size="small"
-                    variant="ghost"
-                    color="primary"
-                    className="!campaignbay-px-[4px] campaignbay-text-[#1e1e1e]"
-                  >
-                    <Icon icon={blockTable} size={20} fill="currentColor" />
-                  </Button>
-                }
-                content={
-                  <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col campaignbay-p-[12px]">
-                    <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
-                      View Style
-                    </span>
-                    <Toggler
-                      classNames={{
-                        root: "campaignbay-w-full",
-                        button:
-                          "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[7px]",
-                      }}
-                      value={view}
-                      onChange={(value) => setView(value)}
-                      options={[
-                        { label: "Table", value: "table" },
-                        { label: "Grid", value: "grid" },
-                      ]}
-                    />
-                  </div>
-                }
+                value={view}
+                onChange={(value) => setView(value)}
+                options={[
+                  { label: "Table", value: "table" },
+                  { label: "Grid", value: "grid" },
+                ]}
               />
               <Popover
                 align="bottom-right"
@@ -306,6 +304,7 @@ const Campaigns: FC = () => {
                     setFilters={setFilters}
                     visibleColumns={visibleColumns}
                     setVisibleColumns={setVisibleColumns}
+                    view={view}
                   />
                 }
               />
@@ -318,7 +317,9 @@ const Campaigns: FC = () => {
         </div>
         {/* table */}
         <div className="campaignbay-w-full">
-          {view === "table" ? (
+          {loading ? (
+            <CampaignsSkeleton view={view} limit={filters.limit} />
+          ) : view === "table" ? (
             <Table
               campaigns={campaigns}
               visibleColumns={visibleColumns}
@@ -365,17 +366,131 @@ const Campaigns: FC = () => {
 
 export default Campaigns;
 
+const CampaignsSkeleton = ({
+  view,
+  limit = 10,
+  visibleColumnsLength = 5,
+}: {
+  view: "table" | "grid";
+  limit?: number;
+  visibleColumnsLength?: number;
+}) => {
+  return (
+    <div className="campaignbay-w-full">
+      {view === "table" ? (
+        <div className="campaignbay-w-full campaignbay-overflow-x-auto">
+          <table className="campaignbay-w-full">
+            <thead>
+              <tr>
+                <th className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pl-[40px]  campaignbay-text-[#1e1e1e] campaignbay-uppercase campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-w-[68px]">
+                  <Skeleton className="campaignbay-w-[16px] campaignbay-h-[16px]" />
+                </th>
+                {Array.from({ length: visibleColumnsLength }).map(
+                  (_, index) => (
+                    <th
+                      key={index}
+                      className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-uppercase campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]"
+                    >
+                      <Skeleton className="campaignbay-w-[75%] campaignbay-h-[20px]" />
+                    </th>
+                  ),
+                )}
+                <th className="campaignbay-text-right  campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pr-[32px] campaignbay-text-[#1e1e1e] campaignbay-uppercase campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-w-[182px]">
+                  <Skeleton className="campaignbay-ml-auto campaignbay-w-[75%] campaignbay-h-[16px]" />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...Array(limit)].map((_, index) => {
+                return (
+                  <tr key={index}>
+                    <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pl-[40px]  campaignbay-text-[#1e1e1e] campaignbay-uppercase campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+                      <Skeleton className="campaignbay-w-[16px] campaignbay-h-[16px]" />
+                    </td>
+                    {Array.from({ length: visibleColumnsLength }).map(
+                      (_, index) => (
+                        <td
+                          key={index}
+                          className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-uppercase campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]"
+                        >
+                          <Skeleton className="campaignbay-w-[75%] campaignbay-h-[20px]" />
+                        </td>
+                      ),
+                    )}
+                    <td className="campaignbay-text-right campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pr-[32px] campaignbay-text-[#1e1e1e] campaignbay-uppercase campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+                      <Skeleton className="campaignbay-ml-auto campaignbay-w-[32px] campaignbay-h-[32px]" />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 2xl:campaignbay-grid-cols-5 campaignbay-gap-default ">
+          {[...Array(limit)].map((_, index) => {
+            return (
+              <div
+                key={index}
+                className="campaignbay-flex campaignbay-flex-col campaignbay-items-stretch campaignbay-justify-between campaignbay-p-[12px] campaignbay-rounded-[8px] campaignbay-bg-white campaignbay-border campaignbay-border-[#e0e0e0] campaignbay-shadow-sm"
+              >
+                <Row>
+                  <Row>
+                    <Skeleton className="campaignbay-w-[16px] campaignbay-h-[16px]" />
+                    <Skeleton className="campaignbay-w-[60px] campaignbay-h-[24px] !campaignbay-rounded-full" />
+                  </Row>
+                  <Skeleton className="campaignbay-w-[32px] campaignbay-h-[32px]" />
+                </Row>
+                <Column className="campaignbay-pt-4">
+                  <Skeleton className="campaignbay-w-full campaignbay-h-[24px]" />
+                  <Skeleton className="campaignbay-w-full campaignbay-h-[16px]" />
+                  <Row>
+                    <Skeleton className="campaignbay-w-[30%] campaignbay-h-[16px]" />
+                    <Skeleton className="campaignbay-w-[70%] campaignbay-h-[16px]" />
+                  </Row>
+                  <Row>
+                    <Skeleton className="campaignbay-w-[30%] campaignbay-h-[16px]" />
+                    <Skeleton className="campaignbay-w-[70%] campaignbay-h-[16px]" />
+                  </Row>
+                  <Row>
+                    <Skeleton className="campaignbay-w-[30%] campaignbay-h-[16px]" />
+                    <Skeleton className="campaignbay-w-[70%] campaignbay-h-[16px]" />
+                  </Row>
+                  <Row>
+                    <Skeleton className="campaignbay-w-[30%] campaignbay-h-[16px]" />
+                    <Skeleton className="campaignbay-w-[70%] campaignbay-h-[16px]" />
+                  </Row>
+                  <Row>
+                    <Skeleton className="campaignbay-w-[30%] campaignbay-h-[16px]" />
+                    <Skeleton className="campaignbay-w-[70%] campaignbay-h-[16px]" />
+                  </Row>
+                  <Row>
+                    <Skeleton className="campaignbay-w-[30%] campaignbay-h-[16px]" />
+                    <Skeleton className="campaignbay-w-[70%] campaignbay-h-[16px]" />
+                  </Row>
+                </Column>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
 interface PopoverContentProps {
   filters: Filters;
   setFilters: Dispatch<SetStateAction<Filters>>;
   visibleColumns: string[];
   setVisibleColumns: Dispatch<SetStateAction<string[]>>;
+  view: ViewType;
 }
 const PopoverContent = ({
   filters,
   setFilters,
   visibleColumns,
   setVisibleColumns,
+  view,
 }: PopoverContentProps) => {
   const handleVisibleColumnsChange = (value: string) => {
     setVisibleColumns((prev) => {
@@ -407,7 +522,7 @@ const PopoverContent = ({
               .map((header) => ({ value: header.key, label: header.label }))}
             value={filters.sort}
             onChange={(value) =>
-              setFilters({ ...filters, sort: value as string })
+              setFilters({ ...filters, sort: value as string, page: 1 })
             }
           />
         </div>
@@ -428,7 +543,11 @@ const PopoverContent = ({
             ]}
             value={filters.order}
             onChange={(value) =>
-              setFilters({ ...filters, order: value as "asc" | "desc" })
+              setFilters({
+                ...filters,
+                order: value as "asc" | "desc",
+                page: 1,
+              })
             }
           />
         </div>
@@ -452,31 +571,33 @@ const PopoverContent = ({
             ]}
             value={filters.limit}
             onChange={(value) =>
-              setFilters({ ...filters, limit: value as number })
+              setFilters({ ...filters, limit: value as number, page: 1 })
             }
           />
         </div>
         {/* row 3 */}
         {/* visible columns */}
-        <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col campaignbay-col-span-2">
-          <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
-            Properties
-          </span>
-          <ListSelect
-            classNames={{
-              root: "campaignbay-w-full",
-              item: "campaignbay-p-0",
-              label:
-                "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[2px]",
-            }}
-            items={headers.map((header) => ({
-              value: header.key,
-              label: header.label,
-            }))}
-            selectedValues={visibleColumns}
-            onChange={(value) => handleVisibleColumnsChange(value)}
-          />
-        </div>
+        {view === "table" ? (
+          <div className="campaignbay-flex campaignbay-items-start campaignbay-justify-between campaignbay-flex-col campaignbay-col-span-2">
+            <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-pb-[4px] campaignbay-uppercase">
+              Properties
+            </span>
+            <ListSelect
+              classNames={{
+                root: "campaignbay-w-full",
+                item: "campaignbay-p-0",
+                label:
+                  "campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-py-[2px]",
+              }}
+              items={headers.map((header) => ({
+                value: header.key,
+                label: header.label,
+              }))}
+              selectedValues={visibleColumns}
+              onChange={(value) => handleVisibleColumnsChange(value)}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -517,6 +638,7 @@ const FiltersAccordion = ({
       return {
         ...prev,
         [key]: [...prev[key], value],
+        page: 1,
       };
     });
   };
@@ -526,6 +648,7 @@ const FiltersAccordion = ({
       ...prev,
       status: [],
       types: [],
+      page: 1,
     }));
   };
 
@@ -767,7 +890,7 @@ const Table = ({
         {visibleColumns.map((header) => {
           return renderColumn(campaign, header);
         })}
-        <td className="campaignbay-text-right campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pr-[32px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
+        <td className="campaignbay-text-right campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pr-[32px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-w-[180px]">
           <ActionMenu
             id={campaign.id}
             handleDuplicate={handleDuplicate}
@@ -1226,5 +1349,37 @@ const StatusBadge: FC<{ status: string }> = ({ status }) => {
         ? "Expired"
         : "Inactive"}
     </span>
+  );
+};
+
+export const Row = ({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div
+      className={`campaignbay-flex campaignbay-gap-[8px] campaignbay-justify-between campaignbay-items-center campaignbay-w-full ${className}`}
+    >
+      {children}
+    </div>
+  );
+};
+
+export const Column = ({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div
+      className={`campaignbay-flex campaignbay-flex-col campaignbay-gap-[8px] campaignbay-items-center campaignbay-w-full ${className}`}
+    >
+      {children}
+    </div>
   );
 };

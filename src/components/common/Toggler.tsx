@@ -36,7 +36,7 @@ export const Toggler: React.FC<TogglerProps> = ({
 
   // Size configuration
   const sizeClasses = {
-    small: 'campaignbay-px-[16px] campaignbay-py-[4px] campaignbay-text-small',
+    small: 'campaignbay-px-[8px] campaignbay-py-[2px] campaignbay-text-[11px]',
     medium: 'campaignbay-px-[18px] campaignbay-py-[5px] campaignbay-text-default',
     large: 'campaignbay-px-[20px] campaignbay-py-[12px] campaignbay-text-[15px]',
   };
