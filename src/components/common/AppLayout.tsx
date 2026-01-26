@@ -9,12 +9,11 @@ import FirstCampaign from "../Onboarding/FirstCampaign";
 
 const AppLayout: FC = () => {
   const { onboarding } = useCbStore();
-  console.log(onboarding);
   return (
     <div className="wpab-cb-container radius-large">
       <GuideProvider>
         <Navbar />
-        {!onboarding.first_campaign ? <FirstCampaign/> : null}
+        {onboarding.first_campaign ? <FirstCampaign /> : null}
         <Outlet />
         <TourGuard />
         <Guide />

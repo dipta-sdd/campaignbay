@@ -39,6 +39,8 @@ import { Tier } from "../../old/types";
 import { getSettings } from "../../utils/settings";
 import { ConfirmationModal } from "../common/ConfirmationModal";
 import ReactConfetti from "react-confetti";
+import { check, Icon } from "@wordpress/icons";
+import { Tooltip } from "../common/ToolTip";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
@@ -212,6 +214,9 @@ const FirstCampaign: FC = () => {
       return !!campaign.type;
     }
     if (currentStep === 3) {
+      if (campaign.target_type !== "entire_store") {
+        return !!campaign.target_ids?.length;
+      }
       if (campaign.type === "scheduled") {
         return !!campaign.discount_value;
       } else if (campaign.type === "bogo") {
@@ -388,6 +393,63 @@ const FirstCampaign: FC = () => {
           {showCongrets ? (
             <Congrets id={campaignId} setIsOpen={setIsOpen} />
           ) : null}
+          {/* upper controll buttons */}
+          <div className="campaignbay-absolute campaignbay-top-4 campaignbay-right-4 campaignbay-flex campaignbay-items-center campaignbay-gap-2" >
+            <Tooltip
+            disabled={isSaving}
+              position="top"
+              content="Back"
+              className="!campaignbay-z-[10000]"
+            >
+              <Button
+                variant="outline"
+                size="small"
+                color="secondary"
+                onClick={handleBack}
+                disabled={isSaving}
+                className="!campaignbay-rounded-full !campaignbay-px-[6px]  !campaignbay-border-[1px] !campaignbay-border-[#949494] 
+                hover:!campaignbay-bg-[#949494] hover:!campaignbay-text-white disabled:!campaignbay-opacity-50"
+              >
+                <svg
+                  width="14"
+                  height="16"
+                  viewBox="0 0 14 16"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M0.293945 7.29377C-0.0966797 7.6844 -0.0966797 8.31877 0.293945 8.7094L5.29395 13.7094C5.68457 14.1 6.31895 14.1 6.70957 13.7094C7.1002 13.3188 7.1002 12.6844 6.70957 12.2938L3.4127 9.00002H13.0002C13.5533 9.00002 14.0002 8.55315 14.0002 8.00002C14.0002 7.4469 13.5533 7.00002 13.0002 7.00002H3.41582L6.70645 3.70627C7.09707 3.31565 7.09707 2.68127 6.70645 2.29065C6.31582 1.90002 5.68145 1.90002 5.29082 2.29065L0.29082 7.29065L0.293945 7.29377Z" />
+                </svg>
+              </Button>
+            </Tooltip>
+            <Tooltip position="top" content={currentStep === 4 ? "Save" : "Next"} disabled={!isEnableNext() || isSaving} className="!campaignbay-z-[10000]">
+              <Button
+                size="small"
+                onClick={handleNextStep}
+                color="primary"
+                variant="outline"
+                disabled={!isEnableNext() || isSaving}
+                className="!campaignbay-rounded-full !campaignbay-p-0 !campaignbay-w-[28px] !campaignbay-h-[28px] "
+              >
+                {currentStep === 4 ? (
+                  <Icon icon={check} fill="currentColor" />
+                ) : (
+                  <svg
+                    className="campaignbay-ml-[-8px]"
+                    width="22"
+                    height="16"
+                    viewBox="0 0 22 16"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M21.7063 8.70627C22.0969 8.31565 22.0969 7.68127 21.7063 7.29065L16.7063 2.29065C16.3156 1.90002 15.6813 1.90002 15.2906 2.29065C14.9 2.68127 14.9 3.31565 15.2906 3.70627L18.5875 7.00002H9C8.44687 7.00002 8 7.4469 8 8.00002C8 8.55315 8.44687 9.00002 9 9.00002H18.5844L15.2937 12.2938C14.9031 12.6844 14.9031 13.3188 15.2937 13.7094C15.6844 14.1 16.3188 14.1 16.7094 13.7094L21.7094 8.7094L21.7063 8.70627Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                )}
+              </Button>
+            </Tooltip>
+          </div>
           <Header className="campaignbay-text-center">
             Create Your First Campaign
           </Header>
@@ -454,7 +516,6 @@ const FirstCampaign: FC = () => {
             ) : null}
             {currentStep === 3 ? (
               <Card
-                disabled={campaign.type === null}
                 className="!campaignbay-shadow-none !campaignbay-p-0"
                 header={
                   <h2 className="campaignbay-text-[20px] campaignbay-leading-[20px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[24px] campaignbay-border-b campaignbay-border-[#dddddd] campaignbay-w-full">
@@ -541,9 +602,10 @@ const FirstCampaign: FC = () => {
                       </>
                     ) : null}
                   </Section>
-                  {campaign?.type !== null &&
-                  campaign.tiers &&
-                  campaign?.tiers?.length > 0 ? (
+                  {(campaign?.type !== null &&
+                    campaign.tiers &&
+                    campaign?.tiers?.length > 0) ||
+                  campaign?.type === "scheduled" ? (
                     <CampaignTiers
                       // @ts-ignore
                       campaign={campaign as CampaignInterface}
@@ -568,7 +630,6 @@ const FirstCampaign: FC = () => {
             ) : null}
             {currentStep === 4 ? (
               <Card
-                disabled={campaign.type === null}
                 className="!campaignbay-shadow-none !campaignbay-p-0 campaignbay-w-full"
                 header={
                   <h2 className="campaignbay-text-[20px] campaignbay-leading-[20px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[24px] campaignbay-border-b campaignbay-border-[#dddddd] campaignbay-w-full">
@@ -621,19 +682,31 @@ const FirstCampaign: FC = () => {
                 disabled={!isEnableNext() || isSaving}
                 className=" campaignbay-text-[16px] campaignbay-leading-[24px] campaignbay-font-bold campaignbay-text-nowrap campaignbay-w-max"
               >
-                Next Step
-                <svg
-                  width="22"
-                  height="16"
-                  viewBox="0 0 22 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M21.7063 8.70627C22.0969 8.31565 22.0969 7.68127 21.7063 7.29065L16.7063 2.29065C16.3156 1.90002 15.6813 1.90002 15.2906 2.29065C14.9 2.68127 14.9 3.31565 15.2906 3.70627L18.5875 7.00002H9C8.44687 7.00002 8 7.4469 8 8.00002C8 8.55315 8.44687 9.00002 9 9.00002H18.5844L15.2937 12.2938C14.9031 12.6844 14.9031 13.3188 15.2937 13.7094C15.6844 14.1 16.3188 14.1 16.7094 13.7094L21.7094 8.7094L21.7063 8.70627Z"
-                    fill="white"
-                  />
-                </svg>
+                {currentStep === 4 ? (
+                  <>
+                    {" "}
+                    Create Campaign <Icon
+                      icon={check}
+                      fill="currentColor"
+                    />{" "}
+                  </>
+                ) : (
+                  <>
+                    Next Step
+                    <svg
+                      width="22"
+                      height="16"
+                      viewBox="0 0 22 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M21.7063 8.70627C22.0969 8.31565 22.0969 7.68127 21.7063 7.29065L16.7063 2.29065C16.3156 1.90002 15.6813 1.90002 15.2906 2.29065C14.9 2.68127 14.9 3.31565 15.2906 3.70627L18.5875 7.00002H9C8.44687 7.00002 8 7.4469 8 8.00002C8 8.55315 8.44687 9.00002 9 9.00002H18.5844L15.2937 12.2938C14.9031 12.6844 14.9031 13.3188 15.2937 13.7094C15.6844 14.1 16.3188 14.1 16.7094 13.7094L21.7094 8.7094L21.7063 8.70627Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </>
+                )}
               </Button>
             </div>
           </div>
