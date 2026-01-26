@@ -20,7 +20,7 @@ const Navbar: FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const addCampaignBtnRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.START);
-  const { setTourStep, tourStep , isModalOpen, setIsModalOpen} = useGuide();
+  const { setTourStep, tourStep, isModalOpen, setIsModalOpen } = useGuide();
 
   const menus: MenuLink[] = [
     {
@@ -85,21 +85,23 @@ const Navbar: FC = () => {
             </nav>
             <button
               ref={addCampaignBtnRef}
-              className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-0"
+              className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[8px] campaignbay-px-[12px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-[3858e9] campaignbay-text-[#`3858e9] !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-[#3858e9] hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-0"
               onClick={() => {
-                if(tourStep === 1){
-                    setTourStep(TOUR_STEPS.BLANK_CAMPAIGN);
+                if (tourStep === 1) {
+                  setTourStep(TOUR_STEPS.BLANK_CAMPAIGN);
                 }
                 setIsModalOpen(true);
               }}
             >
               {__("Add Campaign", "campaignbay")}
-              <Icon
-                icon={plus}
-                fill="currentColor"
-                size={20}
-                style={{ marginTop: "2px" }}
-              />
+              <span className="campaignbay-w-[20px] campaignbay-h-[20px] campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-bg-[#3858e9] campaignbay-rounded-full">
+                <Icon
+                  icon={plus}
+                  fill="currentColor"
+                  size={20}
+                  style={{ marginTop: "2px" }}
+                />
+              </span>
             </button>
           </div>
           <button

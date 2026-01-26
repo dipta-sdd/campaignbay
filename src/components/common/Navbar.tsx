@@ -19,7 +19,7 @@ const Navbar: FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const addCampaignBtnRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.START);
-  const { setTourStep, tourStep , isModalOpen, setIsModalOpen} = useGuide();
+  const { setTourStep, tourStep, isModalOpen, setIsModalOpen } = useGuide();
 
   const menus: MenuLink[] = [
     {
@@ -68,9 +68,10 @@ const Navbar: FC = () => {
               {menus.map((menu) => (
                 <span
                   key={menu.path}
-                  className={`campaignbay-text-base campaignbay-font-medium campaignbay-cursor-pointer campaignbay-p-[12px] campaignbay-py-[6px] campaignbay-pl-[8px] campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
+                  className={`campaignbay-text-default campaignbay-font-[700]
+                    campaignbay-cursor-pointer campaignbay-py-[8px] campaignbay-px-[16px] campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
                     activeTab === menu.path
-                      ? "campaignbay-text-blue-800 campaignbay-bg-gray-100 campaignbay-rounded-[8px]"
+                      ? "campaignbay-text-blue-800 campaignbay-bg-gray-100 campaignbay-rounded-[0] md:campaignbay-rounded-[8px]"
                       : "campaignbay-text-gray-800 hover:campaignbay-text-blue-800"
                   }`}
                   onClick={() => {
@@ -84,21 +85,27 @@ const Navbar: FC = () => {
             </nav>
             <button
               ref={addCampaignBtnRef}
-              className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[12px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 campaignbay-text-blue-900 !campaignbay-text-base campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-blue-800 hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-0"
+              className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-px-[16px] campaignbay-py-[8px] campaignbay-rounded-[8px] campaignbay-border campaignbay-border-[#3858e9] campaignbay-text-[#3858e9] !campaignbay-text-default campaignbay-font-[700] campaignbay-whitespace-nowrap !campaignbay-gap-2 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out hover:campaignbay-bg-[#3858e9] hover:campaignbay-text-white campaignbay-m-[12px] md:campaignbay-m-[0]"
               onClick={() => {
-                if(tourStep === 1){
-                    setTourStep(TOUR_STEPS.BLANK_CAMPAIGN);
+                if (tourStep === 1) {
+                  setTourStep(TOUR_STEPS.BLANK_CAMPAIGN);
                 }
                 setIsModalOpen(true);
               }}
             >
               {__("Add Campaign", "campaignbay")}
-              <Icon
-                icon={plus}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
                 fill="currentColor"
-                size={20}
-                style={{ marginTop: "2px" }}
-              />
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 10C0 4.44444 4.44444 0 10 0C15.5556 0 20 4.44444 20 10C20 15.5556 15.5556 20 10 20C4.44444 20 0 15.5556 0 10ZM11 9V5H9V9H5V11H9V15H11V11H15V9H11Z"
+                  
+                />
+              </svg>
             </button>
           </div>
           <button

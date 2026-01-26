@@ -39,15 +39,15 @@ export interface CbStore {
 
 export interface DiscountTableOptionsType {
     show_header: boolean;
-    title: {
+    title:{
         show: boolean;
         label: string;
     };
-    range: {
+    range:{
         show: boolean;
         label: string;
     };
-    discount: {
+    discount:{
         show: boolean;
         label: string;
         content: "price" | "value";

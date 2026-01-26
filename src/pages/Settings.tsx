@@ -5,7 +5,7 @@ import CustomSelect from "../components/common/Select";
 import { Checkbox } from "../components/common/Checkbox";
 import Button from "../components/common/Button";
 import { ConfirmationModal } from "../components/common/ConfirmationModal";
-import { CampaignBaySettingsType } from "../components/settings/types";
+import { CampaignBaySettingsType, DiscountTableOptionsType } from "../components/settings/types";
 import Select from "../components/common/Select";
 import { Placeholders } from "../components/campaign/CampaignSettings";
 import { useToast } from "../store/toast/use-toast";
@@ -16,7 +16,7 @@ import Skeleton from "../components/common/Skeleton";
 import Page from "../components/common/Page";
 import Header from "../components/common/Header";
 import HeaderContainer from "../components/common/HeaderContainer";
-import FirstCampaign from "../components/Onboarding/FirstCampaign";
+import QuantityTableEditModal from "../components/settings/QuantityTableEditModal";
 
 type TabType = "global" | "product" | "cart" | "advanced";
 
@@ -121,7 +121,7 @@ const GlobalContent: React.FC<ContentProps> = ({ settings, updateSetting }) => {
             />
           </div>
 
-          <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 campaignbay-gap-8">
+          <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-8">
             <Select
               label="Bulk Table Position"
               classNames={{
@@ -285,134 +285,158 @@ const GlobalContent: React.FC<ContentProps> = ({ settings, updateSetting }) => {
   );
 };
 
-const ProductContent: React.FC<ContentProps> = ({
+interface ProductContentProps extends ContentProps {
+  isSaving: boolean;
+  handleSave: () => void;
+}
+
+const ProductContent: React.FC<ProductContentProps> = ({
   settings,
   updateSetting,
-}) => (
-  <div className="campaignbay-space-y-6">
-    <SettingsCard>
-      <SectionHeader title="Product Page Display" />
+  isSaving,
+  handleSave,
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  return (
+    <div className="campaignbay-space-y-6">
+      <SettingsCard>
+        <SectionHeader title="Product Page Display" />
 
-      <div className="campaignbay-space-y-6">
-        <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 campaignbay-gap-8">
-          <div>
-            <label className="campaignbay-block campaignbay-mb-2 !campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
-              Product Page Percentage Schedule or Early Bird Discount Message
-              Format
-            </label>
-            <Input
-              value={settings.product_message_format_percentage}
-              onChange={(e) =>
-                updateSetting(
-                  "product_message_format_percentage",
-                  e.target.value,
-                )
-              }
-            />
-            <Placeholders
-              options={["percentage_off"]}
-              classNames={{ root: "campaignbay-mt-2" }}
-            />
-          </div>
-          <div>
-            <label className="campaignbay-block campaignbay-mb-2 !campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
-              Product Page Fixed Schedule or Early Bird Discount Message Format
-            </label>
-            <Input
-              value={settings.product_message_format_fixed}
-              onChange={(e) =>
-                updateSetting("product_message_format_fixed", e.target.value)
-              }
-            />
-            <Placeholders
-              options={["amount_off"]}
-              classNames={{ root: "campaignbay-mt-2" }}
-            />
-          </div>
-        </div>
-
-        <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 campaignbay-gap-8">
-          <div>
-            <label className="campaignbay-block campaignbay-mb-2 !campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
-              Product Page BOGO Discount Message Format
-            </label>
-            <Input
-              value={settings.bogo_banner_message_format}
-              onChange={(e) =>
-                updateSetting("bogo_banner_message_format", e.target.value)
-              }
-            />
-            <Placeholders
-              options={["buy_quantity", "get_quantity"]}
-              classNames={{ root: "campaignbay-mt-2" }}
-            />
+        <div className="campaignbay-space-y-6">
+          <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-8">
+            <div>
+              <label className="campaignbay-block campaignbay-mb-2 !campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
+                Product Page Percentage Schedule or Early Bird Discount Message
+                Format
+              </label>
+              <Input
+                value={settings.product_message_format_percentage}
+                onChange={(e) =>
+                  updateSetting(
+                    "product_message_format_percentage",
+                    e.target.value,
+                  )
+                }
+              />
+              <Placeholders
+                options={["percentage_off"]}
+                classNames={{ root: "campaignbay-mt-2" }}
+              />
+            </div>
+            <div>
+              <label className="campaignbay-block campaignbay-mb-2 !campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
+                Product Page Fixed Schedule or Early Bird Discount Message
+                Format
+              </label>
+              <Input
+                value={settings.product_message_format_fixed}
+                onChange={(e) =>
+                  updateSetting("product_message_format_fixed", e.target.value)
+                }
+              />
+              <Placeholders
+                options={["amount_off"]}
+                classNames={{ root: "campaignbay-mt-2" }}
+              />
+            </div>
           </div>
 
-          <div className="campaignbay-space-y-4">
-            <Checkbox
-              label="Enable Quantity Discounts Table on Product Page"
-              checked={settings.product_enableQuantityTable}
-              onChange={(v) => updateSetting("product_enableQuantityTable", v)}
-              classNames={{
-                label:
-                  "!campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase",
-              }}
-            />
-            <p className="campaignbay-text-xs campaignbay-text-gray-500 campaignbay-pl-8">
-              Show a table outlining tiered quantity based discounts
-            </p>
-            <div className="campaignbay-pl-8">
-              <Button
-                variant="outline"
-                size="medium"
-                className="campaignbay-flex campaignbay-gap-2"
-              >
-                <svg
-                  className="campaignbay-w-4 campaignbay-h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-8">
+            <div>
+              <label className="campaignbay-block campaignbay-mb-2 !campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
+                Product Page BOGO Discount Message Format
+              </label>
+              <Input
+                value={settings.bogo_banner_message_format}
+                onChange={(e) =>
+                  updateSetting("bogo_banner_message_format", e.target.value)
+                }
+              />
+              <Placeholders
+                options={["buy_quantity", "get_quantity"]}
+                classNames={{ root: "campaignbay-mt-2" }}
+              />
+            </div>
+
+            <div className="campaignbay-space-y-2">
+              <Checkbox
+                label="Enable Quantity Discounts Table on Product Page"
+                checked={settings.product_enableQuantityTable}
+                onChange={(v) =>
+                  updateSetting("product_enableQuantityTable", v)
+                }
+                classNames={{
+                  label:
+                    "!campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase",
+                }}
+              />
+              <span className="campaignbay-text-xs campaignbay-text-gray-500 campaignbay-pl-8">
+                Show a table outlining tiered quantity based discounts
+              </span>
+              <div className="campaignbay-pl-8">
+                <Button
+                  variant="outline"
+                  size="medium"
+                  className="campaignbay-flex campaignbay-gap-2"
+                  onClick={() => setIsModalOpen(true)}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-                Customize Table
-              </Button>
+                  <svg
+                    className="campaignbay-w-4 campaignbay-h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    />
+                  </svg>
+                  Customize Table
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </SettingsCard>
+      </SettingsCard>
 
-    <SettingsCard>
-      <SectionHeader title="Product Exclusion & Prioritization" />
+      <SettingsCard>
+        <SectionHeader title="Product Exclusion & Prioritization" />
 
-      <div className="campaignbay-max-w-md">
-        <CustomSelect
-          label="Product Page Discount Message Format"
-          classNames={{
-            label:
-              "!campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase",
-          }}
-          value={settings.product_priorityMethod}
-          onChange={(v) => updateSetting("product_priorityMethod", v)}
-          options={[
-            { label: "Apply Highest Discount", value: "apply_highest" },
-            { label: "Apply Lowest Discount", value: "apply_lowest" },
-            { label: "Apply First Match", value: "apply_first" },
-          ]}
-        />
-        <p className="campaignbay-text-xs campaignbay-text-gray-500 campaignbay-mt-2">
-          Defines how multiple product-level discounts are applied.
-        </p>
-      </div>
-    </SettingsCard>
-  </div>
-);
+        <div className="campaignbay-max-w-md">
+          <CustomSelect
+            label="Product Page Discount Message Format"
+            classNames={{
+              label:
+                "!campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase",
+            }}
+            value={settings.product_priorityMethod}
+            onChange={(v) => updateSetting("product_priorityMethod", v)}
+            options={[
+              { label: "Apply Highest Discount", value: "apply_highest" },
+              { label: "Apply Lowest Discount", value: "apply_lowest" },
+              { label: "Apply First Match", value: "apply_first" },
+            ]}
+          />
+          <p className="campaignbay-text-xs campaignbay-text-gray-500 campaignbay-mt-2">
+            Defines how multiple product-level discounts are applied.
+          </p>
+        </div>
+      </SettingsCard>
+      <QuantityTableEditModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        options={settings.discount_table_options}
+        setOptions={(value: DiscountTableOptionsType) => {
+          updateSetting("discount_table_options", value);
+        }}
+        isSaving={isSaving}
+        updateSettings={handleSave}
+      />
+    </div>
+  );
+};
 
 const CartContent: React.FC<ContentProps> = ({ settings, updateSetting }) => (
   <div className="campaignbay-space-y-6">
@@ -420,7 +444,7 @@ const CartContent: React.FC<ContentProps> = ({ settings, updateSetting }) => (
       <SectionHeader title="Cart Page Display" />
 
       <div className="campaignbay-space-y-6">
-        <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 campaignbay-gap-8">
+        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-8">
           <div>
             <label className="campaignbay-block campaignbay-mb-2 !campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
               Cart Page Quantity Discount Message Format (Percentage)
@@ -459,7 +483,7 @@ const CartContent: React.FC<ContentProps> = ({ settings, updateSetting }) => (
           </div>
         </div>
 
-        <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 campaignbay-gap-8">
+        <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-8">
           <div>
             <label className="campaignbay-block campaignbay-mb-2 !campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
               Cart Page BOGO Discount Message Format
@@ -481,7 +505,7 @@ const CartContent: React.FC<ContentProps> = ({ settings, updateSetting }) => (
 
     <SettingsCard>
       <SectionHeader title="Cart Discount Options" />
-      <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 campaignbay-gap-8">
+      <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-8">
         <div className="campaignbay-space-y-2">
           <Checkbox
             label="Allow Stacking with WooCommerce Coupons"
@@ -603,6 +627,7 @@ const Settings = () => {
         path: "/campaignbay/v1/settings?_timestamp=" + Date.now(),
       });
       setSettings(response);
+      setSavedSettings(response);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching settings:", error);
@@ -670,6 +695,7 @@ const Settings = () => {
         data: settings,
       });
       setSettings(response);
+      setSavedSettings(response);
       setIsSaving(false);
     } catch (error) {
       console.error("Error fetching settings:", error);
@@ -852,6 +878,8 @@ const Settings = () => {
               <ProductContent
                 settings={settings}
                 updateSetting={updateSetting}
+                isSaving={isSaving}
+                handleSave={handleSave}
               />
             )}
             {activeTab === "cart" && (
