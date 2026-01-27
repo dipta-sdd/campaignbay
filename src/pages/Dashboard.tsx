@@ -2,6 +2,8 @@
 import { FC, ReactNode, useEffect, useState } from "react";
 // @ts-ignore
 import chart_placeholder from "./../../assets/img/top_p_c.svg";
+// @ts-ignore
+import table_placeholder from "./../../assets/img/top_p_t.svg";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import apiFetch from "@wordpress/api-fetch";
 import { addQueryArgs } from "@wordpress/url";
@@ -30,6 +32,7 @@ import Page from "../components/common/Page";
 import Select from "../components/common/Select";
 import { Toggler } from "../components/common/Toggler";
 import ActivityLogModal from "../components/dashboard/ActivityLogModal";
+import { useCbStore } from "../store/cbStore";
 
 interface KpiValue {
   value: number;
@@ -111,6 +114,7 @@ const Dashboard: FC = () => {
     useState<boolean>(false);
   const navigate = useNavigate();
   const { setIsModalOpen } = useGuide();
+  const { woocommerce_currency_symbol } = useCbStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -223,7 +227,10 @@ const Dashboard: FC = () => {
       }),
       datasets: [
         {
-          label: __("Discount Value ($)", "campaignbay"),
+          label: __(
+            `Discount Value (${woocommerce_currency_symbol})`,
+            "campaignbay",
+          ),
           data: data.map((item) => parseFloat(item.total_discount_value)),
           borderColor: "#183ad6",
           backgroundColor: "rgba(24, 58, 214, 0.1)",
@@ -251,7 +258,10 @@ const Dashboard: FC = () => {
         //   pointHoverRadius: 8,
         // },
         {
-          label: __("Discounted Order Value ($)", "campaignbay"),
+          label: __(
+            `Discounted Order Value (${woocommerce_currency_symbol})`,
+            "campaignbay",
+          ),
           data: data.map((item) => parseFloat(item.total_sales)),
           borderColor: "#28a745",
           backgroundColor: "rgba(40, 167, 69, 0.1)",
@@ -664,7 +674,7 @@ const Dashboard: FC = () => {
                 {/* kpi */}
                 <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
                   {/* icon */}
-                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px]">
+                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px] campaignbay-bg-[#C2FFC9]">
                     <svg
                       width="24"
                       height="24"
@@ -694,7 +704,7 @@ const Dashboard: FC = () => {
                 {/* kpi */}
                 <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
                   {/* icon */}
-                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px]">
+                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px] campaignbay-bg-[#FFEDC6]">
                     <svg
                       width="24"
                       height="24"
@@ -711,7 +721,7 @@ const Dashboard: FC = () => {
                   </div>
                   {/* value */}
                   <Header className="campaignbay-pt-1">
-                    ${dashboardData?.kpis?.total_discount_value?.value}
+                    w{dashboardData?.kpis?.total_discount_value?.value}
                   </Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
@@ -722,7 +732,7 @@ const Dashboard: FC = () => {
                 {/* kpi */}
                 <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
                   {/* icon */}
-                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px]">
+                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px] campaignbay-bg-[#C6F7FF]">
                     <svg
                       width="24"
                       height="24"
@@ -752,7 +762,7 @@ const Dashboard: FC = () => {
                 {/* kpi */}
                 <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
                   {/* icon */}
-                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px]">
+                  <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px] campaignbay-bg-[#EFC6FF]">
                     <svg
                       width="24"
                       height="24"
@@ -769,7 +779,8 @@ const Dashboard: FC = () => {
                   </div>
                   {/* value */}
                   <Header className="campaignbay-pt-1">
-                    ${dashboardData?.kpis?.sales_from_campaigns?.value}
+                    {woocommerce_currency_symbol}
+                    {dashboardData?.kpis?.sales_from_campaigns?.value}
                   </Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
@@ -883,9 +894,7 @@ const Dashboard: FC = () => {
             </div>
             {/* right content */}
             <div className="campaignbay-w-full xl:campaignbay-w-[500px] campaignbay-h-max campaignbay-grid campaignbay-grid-cols-1 campaignbay-gap-default">
-              <Card
-                header={<CardHeader>Top Performing Campaign Types</CardHeader>}
-              >
+              <Card header={<CardHeader>Recent Activity</CardHeader>}>
                 {dashboardData?.recent_activity?.length &&
                 dashboardData?.recent_activity?.length > 0 ? (
                   <>
@@ -943,7 +952,7 @@ const Dashboard: FC = () => {
                               <td className="campaignbay-w-full campaignbay-text-default campaignbay-align-top campaignbay-capitalize">
                                 <a
                                   href={`#/campaigns/${campaign.id}`}
-                                  className="campaignbay-text-default !campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858e9] campaignbay-cursor-pointer campaignbay-capitalize"
+                                  className="campaignbay-text-default !campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858e9] campaignbay-cursor-pointer campaignbay-capitalize hover:campaignbay-underline campaignbay-underline-offset-4 hover:campaignbay-text-[#3858ff] focus:campaignbay-shadow-none focus:campaignbay-underline"
                                 >
                                   {campaign.title}
                                 </a>
@@ -960,9 +969,20 @@ const Dashboard: FC = () => {
                     </table>
                   </>
                 ) : (
-                  <div className="campaignbay-text-secondary campaignbay-text-center campaignbay-py-[20px]">
-                    No Live Campaigns
-                  </div>
+                  <Placeholder
+                    className="campaignbay-max-w-[400px] campaignbay-mx-auto"
+                    image={table_placeholder}
+                    mainText={__("No Live Campaigns", "campaignbay")}
+                    seconderyText={
+                      <button
+                        className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
+                        onClick={() => setIsModalOpen(true)}
+                      >
+                        Add New Campaign
+                      </button>
+                    }
+                    opacity={40}
+                  />
                 )}
               </Card>
               <Card header={<CardHeader>Upcoming Campaigns</CardHeader>}>
@@ -977,11 +997,11 @@ const Dashboard: FC = () => {
                             <tr key={index}>
                               <td className="campaignbay-w-full campaignbay-text-default campaignbay-align-top campaignbay-capitalize">
                                 <a
-                                      href={`#/campaigns/${campaign.id}`}
-                                      className="campaignbay-text-default !campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858e9] campaignbay-cursor-pointer campaignbay-capitalize"
-                                    >
-                                      {campaign.title}
-                                    </a>
+                                  href={`#/campaigns/${campaign.id}`}
+                                  className="campaignbay-text-default !campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858e9] campaignbay-cursor-pointer campaignbay-capitalize hover:campaignbay-underline campaignbay-underline-offset-4 hover:campaignbay-text-[#3858ff] focus:campaignbay-shadow-none focus:campaignbay-underline"
+                                >
+                                  {campaign.title}
+                                </a>
                               </td>
                               <td className="campaignbay-min-w-[100px] campaignbay-text-default campaignbay-align-top campaignbay-capitalize">
                                 {getCampaignTypeText(campaign.type)}
@@ -995,9 +1015,20 @@ const Dashboard: FC = () => {
                     </table>
                   </>
                 ) : (
-                  <div className="campaignbay-text-secondary campaignbay-text-center campaignbay-py-[20px]">
-                    No Upcoming Campaigns
-                  </div>
+                  <Placeholder
+                    className="campaignbay-max-w-[400px] campaignbay-mx-auto"
+                    image={table_placeholder}
+                    mainText={__("No Upcoming Campaigns", "campaignbay")}
+                    seconderyText={
+                      <button
+                        className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
+                        onClick={() => setIsModalOpen(true)}
+                      >
+                        Add New Campaign
+                      </button>
+                    }
+                    opacity={40}
+                  />
                 )}
               </Card>
             </div>
@@ -1036,15 +1067,19 @@ interface PlaceholderProps {
   mainText: string;
   seconderyText: ReactNode;
   opacity?: number;
+  className?: string;
 }
 const Placeholder: FC<PlaceholderProps> = ({
   image,
   mainText,
   seconderyText,
   opacity = 40,
+  className = "",
 }) => {
   return (
-    <div className="campaignbay-relative campaignbay-h-full campaignbay-w-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-overflow-hidden">
+    <div
+      className={`campaignbay-relative campaignbay-h-full campaignbay-w-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-overflow-hidden ${className}`}
+    >
       <img
         src={image}
         alt="top Perfprming chart"

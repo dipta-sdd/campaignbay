@@ -41,7 +41,7 @@ const Button = ({
     },
     danger: {
       solid:
-        "campaignbay-bg-danger campaignbay-text-white campaignbay-border campaignbay-border-red-500 hover:campaignbay-bg-red-500 hover:campaignbay-border-red-500",
+        "campaignbay-bg-red-500 campaignbay-text-white campaignbay-border campaignbay-border-red-500 hover:campaignbay-bg-red-600 hover:campaignbay-border-red-600",
       outline:
         "campaignbay-bg-transparent campaignbay-border campaignbay-border-red-500 campaignbay-text-red-500 hover:campaignbay-bg-red-500 hover:campaignbay-text-white",
       ghost:

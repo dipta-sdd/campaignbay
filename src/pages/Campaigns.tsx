@@ -35,6 +35,8 @@ import ImportExport from "../components/importExport/ImportExport";
 import { useNavigate } from "react-router-dom";
 import Select from "../components/common/Select";
 import Skeleton from "../components/common/Skeleton";
+import { Tooltip } from "../components/common/ToolTip";
+import { ConfirmationModal } from "../components/common/ConfirmationModal";
 
 type ViewType = "table" | "grid";
 interface TableHeader {
@@ -87,6 +89,8 @@ const Campaigns: FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>([]);
+  const [campaignsToDelete, setCampaignsToDelete] = useState<number[]>([]);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -151,21 +155,26 @@ const Campaigns: FC = () => {
     fetchCampaigns();
   }, [filters, searchQuery]);
 
-  const deleteCampaigns = async (ids: number[]) => {
+  const deleteCampaigns = (ids: number[]) => {
+    setCampaignsToDelete(ids);
+    setConfirmDelete(true);
+  };
+  const performDelete = async () => {
+    setConfirmDelete(false);
     setLoading(true);
     try {
       await apiFetch({
         path: `/campaignbay/v1/campaigns/bulk`,
         method: "DELETE",
         data: {
-          ids: ids,
+          ids: campaignsToDelete,
         },
       });
       addToast(
         _n(
           "Campaign deleted successfully",
           "Campaigns deleted successfully",
-          ids.length,
+          campaignsToDelete.length,
           "campaignbay",
         ),
         "success",
@@ -177,7 +186,7 @@ const Campaigns: FC = () => {
         _n(
           "Error deleting campaign",
           "Error deleting campaigns",
-          ids.length,
+          campaignsToDelete.length,
           "campaignbay",
         ),
         "error",
@@ -360,6 +369,24 @@ const Campaigns: FC = () => {
           />
         </div>
       </div>
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmDelete}
+        title="Delete Campaign"
+        message={`Are you sure you want to delete ${campaignsToDelete.length === 1 ? "this campaign" : "these campaigns"}?`}
+        confirmLabel="Yes, Delete"
+        cancelLabel="No, Cancel"
+        onConfirm={performDelete}
+        onCancel={() => {
+          setConfirmDelete(false);
+          setCampaignsToDelete([]);
+        }}
+        classNames={{
+          button: {
+            confirmColor: "danger",
+          }
+        }}
+      />
     </Page>
   );
 };
@@ -619,7 +646,6 @@ const FiltersAccordion = ({
 
   const typeOptions = [
     { label: "BOGO", value: "bogo" },
-    { label: "BOGO Advanced", value: "bogo_pro" },
     { label: "Quantity", value: "quantity" },
     { label: "Earlybird", value: "earlybird" },
     { label: "Scheduled", value: "scheduled" },
@@ -740,13 +766,13 @@ const FiltersAccordion = ({
       {filters.status.map((status) => (
         <span
           key={`status-${status}`}
-          className="campaignbay-inline-flex campaignbay-items-center campaignbay-gap-[6px] campaignbay-bg-blue-50 campaignbay-text-primary campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-full campaignbay-text-[13px] campaignbay-font-medium campaignbay-transition-colors"
+          className="campaignbay-inline-flex campaignbay-items-center campaignbay-gap-[6px] campaignbay-bg-blue-50 campaignbay-text-primary campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-full campaignbay-text-[13px] campaignbay-font-medium campaignbay-transition-colors group has-[button:hover]:!campaignbay-bg-red-100 has-[button:hover]:!campaignbay-text-red-700"
         >
           Status is{" "}
           {statusOptions.find((o) => o.value === status)?.label || status}
           <button
             onClick={() => removeFilter("status", status)}
-            className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-[16px] campaignbay-h-[16px] campaignbay-rounded-full hover:campaignbay-bg-primary/20 campaignbay-transition-colors"
+            className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-[16px] campaignbay-h-[16px] campaignbay-rounded-full  campaignbay-transition-colors"
           >
             <Icon icon={closeSmall} size={16} fill="currentColor" />
           </button>
@@ -757,12 +783,12 @@ const FiltersAccordion = ({
       {filters.types.map((type) => (
         <span
           key={`type-${type}`}
-          className="campaignbay-inline-flex campaignbay-items-center campaignbay-gap-[6px] campaignbay-bg-blue-50 campaignbay-text-primary campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-full campaignbay-text-[13px] campaignbay-font-medium campaignbay-transition-colors"
+          className="campaignbay-inline-flex campaignbay-items-center campaignbay-gap-[6px] campaignbay-bg-blue-50 campaignbay-text-primary campaignbay-px-[12px] campaignbay-py-[6px] campaignbay-rounded-full campaignbay-text-[13px] campaignbay-font-medium campaignbay-transition-colors group has-[button:hover]:!campaignbay-bg-red-100 has-[button:hover]:!campaignbay-text-red-700"
         >
           Type is {typeOptions.find((o) => o.value === type)?.label || type}
           <button
             onClick={() => removeFilter("types", type)}
-            className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-[16px] campaignbay-h-[16px] campaignbay-rounded-full hover:campaignbay-bg-primary/20 campaignbay-transition-colors"
+            className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-w-[16px] campaignbay-h-[16px] campaignbay-rounded-full  campaignbay-transition-colors"
           >
             <Icon icon={closeSmall} size={16} fill="currentColor" />
           </button>
@@ -778,7 +804,7 @@ const FiltersAccordion = ({
           <Button
             variant="ghost"
             size="small"
-            className="campaignbay-text-[13px] campaignbay-font-medium campaignbay-px-[8px] campaignbay-py-[4px] campaignbay-rounded-full campaignbay-transition-colors"
+            className="campaignbay-text-[13px] campaignbay-font-medium campaignbay-px-[8px] campaignbay-py-[4px] campaignbay-rounded-full campaignbay-transition-colors hover:campaignbay-bg-blue-100 hover:campaignbay-text-blue-700 disabled:hover:campaignbay-bg-white disabled:hover:campaignbay-text-primary"
           >
             Add filter
           </Button>
@@ -793,7 +819,7 @@ const FiltersAccordion = ({
         variant="ghost"
         size="small"
         disabled={!hasActiveFilters}
-        className="campaignbay-text-[13px] campaignbay-font-medium campaignbay-px-[8px] campaignbay-py-[4px] campaignbay-rounded-full campaignbay-transition-colors"
+        className="campaignbay-text-[13px] campaignbay-font-medium campaignbay-px-[8px] campaignbay-py-[4px] campaignbay-rounded-full campaignbay-transition-colors hover:campaignbay-bg-blue-100 hover:campaignbay-text-blue-700 disabled:hover:campaignbay-bg-white disabled:hover:campaignbay-text-primary"
       >
         Reset
       </Button>
@@ -907,7 +933,12 @@ const Table = ({
       case "title":
         return (
           <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#1e1e1e] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] ">
-            {campaign.title}
+            <a
+              href={`#/campaigns/${campaign.id}`}
+              className="campaignbay-font-[11px] campaignbay-leading-[16px]  !campaignbay-text-[#3858e9]  campaignbay-cursor-pointer campaignbay-capitalize hover:campaignbay-underline campaignbay-underline-offset-4 hover:!campaignbay-text-[#3858ff] focus:campaignbay-shadow-none focus:campaignbay-underline"
+            >
+              {campaign.title}
+            </a>
           </td>
         );
       case "status":
@@ -967,7 +998,10 @@ const Table = ({
           <tr>
             <th className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pl-[40px]  campaignbay-text-[#1e1e1e] campaignbay-uppercase campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
               <Checkbox
-                checked={selectedCampaigns.length === campaigns.length && selectedCampaigns.length > 0}
+                checked={
+                  selectedCampaigns.length === campaigns.length &&
+                  selectedCampaigns.length > 0
+                }
                 onChange={(checked) => handleSelectAll(checked)}
               />
             </th>
@@ -1010,34 +1044,39 @@ const ActionMenu = ({
         <div
           className={`campaignbay-gap-[4px] campaignbay-transition-all campaignbay-duration-200 campaignbay-flex campaignbay-flex-nowrap`}
         >
-          <Button
-            variant="ghost"
-            color="secondary"
-            size="small"
-            className="!campaignbay-p-[4px]"
-            onClick={() => navigate(`/campaigns/${id}`)}
-          >
-            <Icon icon={edit} fill="currentColor" />
-          </Button>
-          <Button
-            variant="ghost"
-            color="secondary"
-            size="small"
-            className="!campaignbay-p-[4px]"
-            onClick={() => handleDelete([id])}
-          >
-            <Icon icon={trash} fill="currentColor" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            color="secondary"
-            size="small"
-            className="!campaignbay-p-[4px]"
-            onClick={() => handleDuplicate(id)}
-          >
-            <Icon icon={copy} fill="currentColor" />
-          </Button>
+          <Tooltip content="Edit">
+            <Button
+              variant="ghost"
+              color="secondary"
+              size="small"
+              className="!campaignbay-p-[4px]"
+              onClick={() => navigate(`/campaigns/${id}`)}
+            >
+              <Icon icon={edit} fill="currentColor" />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Delete">
+            <Button
+              variant="ghost"
+              color="secondary"
+              size="small"
+              className="!campaignbay-p-[4px]"
+              onClick={() => handleDelete([id])}
+            >
+              <Icon icon={trash} fill="currentColor" />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Duplicate">
+            <Button
+              variant="ghost"
+              color="secondary"
+              size="small"
+              className="!campaignbay-p-[4px]"
+              onClick={() => handleDuplicate(id)}
+            >
+              <Icon icon={copy} fill="currentColor" />
+            </Button>
+          </Tooltip>
         </div>
       </div>
       <Button
@@ -1091,39 +1130,48 @@ const Pagination = ({
       {/* left -  */}
       <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
         <Checkbox
-          checked={selectedCampaigns.length === totalItems && selectedCampaigns.length > 0}
+          checked={
+            selectedCampaigns.length === totalItems &&
+            selectedCampaigns.length > 0
+          }
           onChange={(checked) => handleSelectAll(checked)}
         />
         <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-uppercase">
           {selectedCampaigns.length} Item Selected
         </span>
         <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[4px]">
-          <Button
-            variant="ghost"
-            size="small"
-            className="!campaignbay-p-[4px]"
-            disabled={selectedCampaigns.length === 0}
-            onClick={() => handleDelete(selectedCampaigns)}
-          >
-            <Icon icon={trash} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="small"
-            className="!campaignbay-p-[4px]"
-            disabled={selectedCampaigns.length === 0}
-          >
-            <Icon icon={download} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="small"
-            className="!campaignbay-p-[4px]"
-            onClick={() => setSelectedCampaigns([])}
-            disabled={selectedCampaigns.length === 0}
-          >
-            <Icon icon={closeSmall} />
-          </Button>
+          <Tooltip content="Delete Selected Campaign">
+            <Button
+              variant="ghost"
+              size="small"
+              className="!campaignbay-p-[4px]"
+              disabled={selectedCampaigns.length === 0}
+              onClick={() => handleDelete(selectedCampaigns)}
+            >
+              <Icon icon={trash} />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Export Selected Campaign">
+            <Button
+              variant="ghost"
+              size="small"
+              className="!campaignbay-p-[4px]"
+              disabled={selectedCampaigns.length === 0}
+            >
+              <Icon icon={download} />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Clear Selection">
+            <Button
+              variant="ghost"
+              size="small"
+              className="!campaignbay-p-[4px]"
+              onClick={() => setSelectedCampaigns([])}
+              disabled={selectedCampaigns.length === 0}
+            >
+              <Icon icon={closeSmall} />
+            </Button>
+          </Tooltip>
         </div>
       </div>
       {/* right -  */}
@@ -1264,7 +1312,12 @@ const CampaignCard = ({
           className="campaignbay-text-[16px] campaignbay-font-semibold campaignbay-text-[#1e1e1e] campaignbay-mb-[8px] campaignbay-leading-tight"
           title={campaign.title}
         >
-          {campaign.title}
+          <a
+            href={`#/campaigns/${campaign.id}`}
+            className="!campaignbay-text-[#3858e9]  campaignbay-cursor-pointer campaignbay-capitalize hover:campaignbay-underline campaignbay-underline-offset-4 hover:!campaignbay-text-[#3858ff] focus:campaignbay-shadow-none focus:campaignbay-underline"
+          >
+            {campaign.title}
+          </a>
         </h3>
         <p className="campaignbay-text-[13px] campaignbay-text-[#4a4a4a] campaignbay-leading-[20px] campaignbay-line-clamp-2">
           {getCampaignTypeText(campaign.type)} campaign targeting{" "}
