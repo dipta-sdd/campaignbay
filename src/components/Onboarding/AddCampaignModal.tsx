@@ -12,17 +12,17 @@ interface AddCampaignModalProps {
 const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
   const navigate = useNavigate();
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
-    null
+    null,
   );
   const [hoveredTemplateId, setHoveredTemplateId] = useState<string | null>(
-    null
+    null,
   );
 
   const blankCampaignRef = useGuideStep<HTMLDivElement>(
-    TOUR_STEPS.BLANK_CAMPAIGN
+    TOUR_STEPS.BLANK_CAMPAIGN,
   );
   const createRef = useGuideStep<HTMLButtonElement>(TOUR_STEPS.CREATE);
-    const { tourStep, setTourStep } = useGuide();
+  const { tourStep, setTourStep } = useGuide();
 
   const handleSelect = (templateId: string) => {
     if (selectedTemplateId === templateId) {
@@ -41,7 +41,7 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
             Choose a Campaign Template
           </span>
           <button
-          ref={createRef}
+            ref={createRef}
             className="campaignbay-bg-[#183ad6] campaignbay-text-white campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-text-[14px] campaignbay-font-bold campaignbay-leading-[16px] disabled:campaignbay-opacity-40 disabled:campaignbay-cursor-not-allowed"
             disabled={selectedTemplateId === "" || selectedTemplateId === null}
             onClick={() => {
@@ -62,9 +62,13 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
             }`}
             onClick={() => {
               handleSelect("blank");
-              if(tourStep === TOUR_STEPS.BLANK_CAMPAIGN) {
+              if (tourStep === TOUR_STEPS.BLANK_CAMPAIGN) {
                 setTourStep(TOUR_STEPS.CREATE);
               }
+            }}
+            onDoubleClick={() => {
+              navigate("/campaigns/add?templateId=blank");
+              onClose();
             }}
             onMouseEnter={() => setHoveredTemplateId("blank")}
             onMouseLeave={() => setHoveredTemplateId(null)}
@@ -81,6 +85,10 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
             <div
               key={index}
               onClick={() => handleSelect(template.id)}
+              onDoubleClick={() => {
+                navigate("/campaigns/add?templateId=" + template.id);
+                onClose();
+              }}
               onMouseEnter={() => setHoveredTemplateId(template.id)}
               onMouseLeave={() => setHoveredTemplateId(null)}
               className={`campaignbay-relative campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer hover:campaignbay-shadow-sm campaignbay-transition-all campaignbay-duration-[200ms] ${

@@ -31,7 +31,7 @@ import { NumberInput } from "../common/NumberInput";
 import CustomDateTimePicker from "./CustomDateTimePicker";
 import CampaignSettings from "./CampaignSettings";
 import Button from "../common/Button";
-import { check, Icon } from "@wordpress/icons";
+import { check, handle, Icon } from "@wordpress/icons";
 import { Switch } from "../common/Switch";
 import HeaderContainer from "../common/HeaderContainer";
 import { EditableText } from "../common/EditableText";
@@ -106,7 +106,6 @@ const Campaign: FC<CampaignProps> = ({
   const [categories, setCategories] = useState<SelectOption[]>([]);
   const [products, setProducts] = useState<SelectOption[]>([]);
   const [settings, setSettings] = useState<CampaignSettingsType>({});
-  const { wpSettings } = useCbStore();
   const { addToast } = useToast();
 
   //=================================================================================
@@ -197,7 +196,15 @@ const Campaign: FC<CampaignProps> = ({
       );
     }
   };
-  // console.log(campaign.target_ids);
+
+  const handleStatusChange = (checked: boolean) => {
+    if (checked && campaign.schedule_enabled && campaign.status === "expired") {
+      setCampaign({ ...campaign, status: "active", schedule_enabled: false });
+    } else {
+      setCampaign({ ...campaign, status: checked ? "active" : "inactive" });
+    }
+  };
+  console.log(campaign);
   return (
     <>
       <HeaderContainer className="campaignbay-py-[12px]">
@@ -210,18 +217,15 @@ const Campaign: FC<CampaignProps> = ({
         />
         <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
           <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-uppercase">
-            {campaign.status === "active" ? "Active" : "Inactive"}
+            {campaign.status === "active" || campaign.status === "scheduled"
+              ? "Active"
+              : campaign.status}
           </span>
 
           <Switch
             size="small"
-            checked={campaign.status === "active"}
-            onChange={(checked) =>
-              setCampaign({
-                ...campaign,
-                status: checked ? "active" : "inactive",
-              })
-            }
+            checked={campaign.status === "active" || campaign.status === "scheduled"}
+            onChange={(checked) => handleStatusChange(checked)}
           />
           <Button
             size="small"
@@ -527,6 +531,19 @@ export const OtherSettings = ({
   enableUsageLimit: boolean;
   setEnableUsageLimit: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const handleScheduleChange = (checked: boolean) => {
+    if (checked && campaign.status === "active") {
+      setCampaign({
+        ...campaign,
+        status: "scheduled",
+        schedule_enabled: checked,
+      });
+    } else if (!checked && campaign.status === "scheduled") {
+      setCampaign({ ...campaign, status: "active", schedule_enabled: checked });
+    } else {
+      setCampaign({ ...campaign, schedule_enabled: checked ? true : false });
+    }
+  };
   return (
     <>
       <Section header="Others">
@@ -567,9 +584,7 @@ export const OtherSettings = ({
         <Checkbox
           label={__("Enable Schedule", "campaignbay")}
           checked={!!campaign.schedule_enabled}
-          onChange={(checked) =>
-            setCampaign((prev) => ({ ...prev, schedule_enabled: checked }))
-          }
+          onChange={handleScheduleChange}
         />
 
         <CustomDateTimePicker

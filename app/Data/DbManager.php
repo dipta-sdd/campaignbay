@@ -85,8 +85,6 @@ class DbManager
      */
     public function create_tables()
     {
-        // moved to activation funtion
-        // require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $this->create_campaigns_table();
         $this->create_logs_table();
     }
@@ -192,6 +190,8 @@ class DbManager
         //phpcs:ignore
         $wpdb->query("CREATE INDEX `date_range` ON {$table_name} (`start_datetime`, `end_datetime`)");
     }
+
 }
+
 
 
