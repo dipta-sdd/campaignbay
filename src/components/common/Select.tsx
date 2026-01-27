@@ -508,9 +508,10 @@ const Select: React.FC<SelectProps> = ({
           } ${classNames.dropdown || ""}`}
           style={{
             zIndex: 50000,
-            boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.3)",
-            borderTop: "none",
-            marginTop: "-1px"
+            boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.3)",
+            marginTop: "-1px",
+            borderRadius: "12px",
+            padding: "4px"
           }}
         >
           {/* Options List */}
@@ -524,7 +525,7 @@ const Select: React.FC<SelectProps> = ({
             style={{ scrollbarWidth: "none" }}
           >
             {filteredOptions.length === 0 ? (
-              <li className="campaignbay-relative campaignbay-cursor-default campaignbay-select-none campaignbay-p-1  campaignbay-italic campaignbay-text-center ">
+              <li className="campaignbay-relative campaignbay-cursor-default campaignbay-select-none campaignbay-p-1  campaignbay-italic campaignbay-text-center campaignbay-rounded-[8px]">
                 {searchQuery ? "No results found" : "No options available"}
               </li>
             ) : (
@@ -553,7 +554,7 @@ const Select: React.FC<SelectProps> = ({
                       handleSelect(option);
                     }}
                     className={`
-                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-px-3  campaignbay-flex campaignbay-flex-nowrap campaignbay-justify-between campaignbay-min-h-[36px]campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 campaignbay-border-b-[1px] campaignbay-border-gray-100
+                      campaignbay-group campaignbay-relative campaignbay-cursor-pointer campaignbay-select-none campaignbay-px-3  campaignbay-flex campaignbay-flex-nowrap campaignbay-justify-between campaignbay-min-h-[36px]campaignbay-font-medium campaignbay-transition-colors campaignbay-duration-150 !campaignbay-mb-0 campaignbay-border-b-[1px] campaignbay-border-gray-100  campaignbay-rounded-[8px] 
                       ${
                         isDisabled
                           ? "campaignbay-opacity-100 !campaignbay-cursor-not-allowed campaignbay-text-gray-500 campaignbay-bg-gray-200"

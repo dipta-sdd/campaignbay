@@ -4,19 +4,20 @@ import Navbar from "./Navbar";
 import { useCbStore } from "../../store/cbStore";
 import FirstCampaign from "../Onboarding/FirstCampaign";
 import { __ } from "@wordpress/i18n";
+import { GuideProvider } from "../../store/GuideContext";
 
 const AppLayout: FC = () => {
   const { onboarding } = useCbStore();
   return (
     <div className="wpab-cb-container radius-large">
-      {/* <GuideProvider> */}
+      <GuideProvider>
         <Navbar />
         <Notifications />
         {!onboarding.first_campaign ? <FirstCampaign /> : null}
         <Outlet />
         {/* <TourGuard />
         <Guide /> */}
-      {/* </GuideProvider> */}
+      </GuideProvider>
     </div>
   );
 };

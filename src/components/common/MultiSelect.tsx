@@ -314,7 +314,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             <div
             ref={dropdownRef}
             className={`
-                campaignbay-fixed campaignbay-z-[50000] campaignbay-w-full campaignbay-bg-white campaignbay-border campaignbay-border-gray-200 campaignbay-rounded-none campaignbay-shadow-xl
+                campaignbay-fixed campaignbay-z-[50000] campaignbay-w-full campaignbay-bg-white campaignbay-border campaignbay-border-gray-200 campaignbay-rounded-[12px] campaignbay-p-[4px] campaignbay-shadow-xl
                 ${classNames.dropdown || ''}
             `}
             style={{
@@ -331,7 +331,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                 style={{ scrollbarWidth: "none" }}
             >
                 {filteredOptions.length === 0 ? (
-                <li className="campaignbay-px-3 campaignbay-py-2 campaignbay-text-gray-500 campaignbay-text-sm campaignbay-text-center campaignbay-italic !campaignbay-mb-0">
+                <li className="campaignbay-px-3 campaignbay-py-2 campaignbay-text-gray-500 campaignbay-text-sm campaignbay-text-center campaignbay-italic !campaignbay-mb-0 campaignbay-rounded-[8px]">
                     {searchQuery ? "No results found" : "No more options"}
                 </li>
                 ) : (
@@ -353,7 +353,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                         handleSelect(option);
                         }}
                         className={`
-                        campaignbay-px-4 campaignbay-py-2.5 campaignbay-cursor-pointer campaignbay-text-sm campaignbay-transition-colors campaignbay-border-b campaignbay-border-gray-50 last:campaignbay-border-0 !campaignbay-mb-0
+                        campaignbay-px-4 campaignbay-py-2.5 campaignbay-cursor-pointer campaignbay-text-sm campaignbay-transition-colors campaignbay-border-b campaignbay-border-gray-50 last:campaignbay-border-0 !campaignbay-mb-0  campaignbay-rounded-[8px]
                         ${
                             isDisabled
                             ? "campaignbay-opacity-50 !campaignbay-cursor-not-allowed campaignbay-text-gray-400"

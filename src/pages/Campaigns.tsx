@@ -967,7 +967,7 @@ const Table = ({
           <tr>
             <th className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-pl-[40px]  campaignbay-text-[#1e1e1e] campaignbay-uppercase campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0]">
               <Checkbox
-                checked={selectedCampaigns.length === campaigns.length}
+                checked={selectedCampaigns.length === campaigns.length && selectedCampaigns.length > 0}
                 onChange={(checked) => handleSelectAll(checked)}
               />
             </th>
@@ -1091,7 +1091,7 @@ const Pagination = ({
       {/* left -  */}
       <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
         <Checkbox
-          checked={selectedCampaigns.length === totalItems}
+          checked={selectedCampaigns.length === totalItems && selectedCampaigns.length > 0}
           onChange={(checked) => handleSelectAll(checked)}
         />
         <span className="campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-[#1e1e1e] campaignbay-uppercase">
