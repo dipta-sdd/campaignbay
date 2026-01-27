@@ -163,7 +163,7 @@ const templates: Template[] = [
     ),
     campaign_data: {
       id: 0,
-      title: "Bulk Saver - Buy Moar Save Moar",
+      title: "Bulk Saver - Buy More Save More",
       status: "active",
       type: "quantity",
       discount_type: "percentage",

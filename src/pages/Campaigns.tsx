@@ -37,6 +37,7 @@ import Select from "../components/common/Select";
 import Skeleton from "../components/common/Skeleton";
 import { Tooltip } from "../components/common/ToolTip";
 import { ConfirmationModal } from "../components/common/ConfirmationModal";
+import { exportDataToCsv } from "../components/importExport/exportDataToCsv";
 
 type ViewType = "table" | "grid";
 interface TableHeader {
@@ -211,6 +212,19 @@ const Campaigns: FC = () => {
     }
   };
 
+  const exportSelectedCampaigns = () => {
+    const campaignsToExport = campaigns.filter((campaign) =>
+      selectedCampaigns.includes(campaign.id),
+    );
+    const date = new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", "-")
+      .replace("_", "-");
+    const filename = `campaignbay-export-${date}.csv`;
+    exportDataToCsv(campaignsToExport, filename);
+    addToast(__("Campaigns exported successfully.", "campaignbay"), "success");
+  };
   return (
     <Page>
       <HeaderContainer className="campaignbay-py-[12px]">
@@ -366,6 +380,7 @@ const Campaigns: FC = () => {
             setSelectedCampaigns={setSelectedCampaigns}
             handleSelectAll={handleSelectAll}
             handleDelete={deleteCampaigns}
+            handleExport={exportSelectedCampaigns}
           />
         </div>
       </div>
@@ -373,7 +388,9 @@ const Campaigns: FC = () => {
       <ConfirmationModal
         isOpen={confirmDelete}
         title="Delete Campaign"
-        message={`Are you sure you want to delete ${campaignsToDelete.length === 1 ? "this campaign" : "these campaigns"}?`}
+        message={`Are you sure you want to delete ${
+          campaignsToDelete.length === 1 ? "this campaign" : "these campaigns"
+        }?`}
         confirmLabel="Yes, Delete"
         cancelLabel="No, Cancel"
         onConfirm={performDelete}
@@ -384,7 +401,7 @@ const Campaigns: FC = () => {
         classNames={{
           button: {
             confirmColor: "danger",
-          }
+          },
         }}
       />
     </Page>
@@ -1113,6 +1130,7 @@ interface PaginationProps {
   setSelectedCampaigns: Dispatch<SetStateAction<number[]>>;
   handleSelectAll: (checked: boolean) => void;
   handleDelete: (ids: number[]) => void;
+  handleExport: () => void;
 }
 const Pagination = ({
   totalPages,
@@ -1123,6 +1141,7 @@ const Pagination = ({
   setSelectedCampaigns,
   handleSelectAll,
   handleDelete,
+  handleExport,
 }: PaginationProps) => {
   return (
     // pagination container
@@ -1157,6 +1176,7 @@ const Pagination = ({
               size="small"
               className="!campaignbay-p-[4px]"
               disabled={selectedCampaigns.length === 0}
+              onClick={() => handleExport()}
             >
               <Icon icon={download} />
             </Button>
