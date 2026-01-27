@@ -15,6 +15,8 @@ import {
 import { useCbStore } from "../../store/cbStore";
 import { date, getSettings as getDateSettings } from "@wordpress/date";
 import { errorWithInClasses, hoverWithInClasses } from "../common/classes";
+import { Column, Row } from "../../pages/Campaigns";
+import formatDateTime from "../../utils/Dates";
 
 interface DateTimePickerProps {
   inputRef?: React.Ref<HTMLDivElement>;
@@ -529,10 +531,10 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
         onFocus={(e) => e.target.select()}
         className={`campaignbay-bg-transparent !campaignbay-bg-gray-200 !campaignbay-text-center 
           !campaignbay-outline-none !campaignbay-border-none !campaignbay-shadow-none focus:!campaignbay-bg-[#183ad6] focus:!campaignbay-text-white focus:!campaignbay-outline-none focus:!campaignbay-border-none focus:!campaignbay-shadow-none !campaignbay-rounded-none !campaignbay-px-0 !campaignbay-py-0 campaignbay-transition-colors campaignbay-w-[1.2ch] campaignbay-mx-[1px] campaignbay-text-[13px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#1e1e1e] ${
-          isAmPm
-            ? "campaignbay-cursor-pointer campaignbay-caret-transparent selection:campaignbay-bg-transparent"
-            : ""
-        } ${disabled ? "campaignbay-cursor-not-allowed" : ""}`}
+            isAmPm
+              ? "campaignbay-cursor-pointer campaignbay-caret-transparent selection:campaignbay-bg-transparent"
+              : ""
+          } ${disabled ? "campaignbay-cursor-not-allowed" : ""}`}
         onClick={(e) => {
           // For AM/PM, toggle immediately on click
           if (section === "ampm") {
@@ -856,69 +858,73 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
               : "campaignbay-top-full campaignbay-mt-1"
           }`}
         >
-          <div className="campaignbay-p-2 md:campaignbay-p-4 campaignbay-border-r campaignbay-border-[#bdc4d1] campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-rounded-l-lg">
-            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-2 md:campaignbay-mb-4">
-              {view === "dates" && (
-                <button
-                  onClick={handlePrevMonth}
-                  className="campaignbay-p-1 hover:campaignbay-bg-gray-100 campaignbay-rounded-full campaignbay-text-gray-600"
-                >
-                  <ChevronLeft className="campaignbay-w-5 campaignbay-h-5" />
-                </button>
-              )}
+          <Column className="!campaignbay-gap-0">
+            <Row className="!campaignbay-items-start">
+              <div className="campaignbay-p-2 md:campaignbay-p-4 campaignbay-border-r campaignbay-border-[#bdc4d1] campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-rounded-l-lg">
+                <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-2 md:campaignbay-mb-4">
+                  {view === "dates" && (
+                    <button
+                      onClick={handlePrevMonth}
+                      className="campaignbay-p-1 hover:campaignbay-bg-gray-100 campaignbay-rounded-full campaignbay-text-gray-600"
+                    >
+                      <ChevronLeft className="campaignbay-w-5 campaignbay-h-5" />
+                    </button>
+                  )}
 
-              <button
-                onClick={() => setView(view === "dates" ? "months" : "dates")}
-                className={`campaignbay-flex campaignbay-items-center campaignbay-gap-1 campaignbay-font-semibold campaignbay-text-gray-900 hover:campaignbay-bg-gray-100 campaignbay-px-2 campaignbay-py-1 campaignbay-rounded campaignbay-transition-colors ${
-                  view === "months" ? "campaignbay-mx-auto" : ""
-                }`}
-              >
-                <span className="campaignbay-text-sm md:campaignbay-text-base">
-                  {MONTHS[navMonth]} {navYear}
-                </span>
-                <ChevronDown
-                  className={`campaignbay-w-4 campaignbay-h-4 campaignbay-transition-transform campaignbay-duration-200 ${
-                    view === "months" ? "campaignbay-rotate-180" : ""
-                  }`}
-                />
-              </button>
-
-              {view === "dates" && (
-                <button
-                  onClick={handleNextMonth}
-                  className="campaignbay-p-1 hover:campaignbay-bg-gray-100 campaignbay-rounded-full campaignbay-text-gray-600"
-                >
-                  <ChevronRight className="campaignbay-w-5 campaignbay-h-5" />
-                </button>
-              )}
-            </div>
-
-            {/* Calendar / Selection Container */}
-            <div className="campaignbay-relative">
-              {/* Dates Grid View */}
-              <div
-                className={`campaignbay-grid campaignbay-grid-cols-7 campaignbay-gap-1 campaignbay-content-start campaignbay-transition-opacity campaignbay-duration-200 ${
-                  view === "dates"
-                    ? "campaignbay-opacity-100"
-                    : "campaignbay-opacity-0"
-                }`}
-              >
-                {DAYS.map((d) => (
-                  <div
-                    key={d}
-                    className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-400"
+                  <button
+                    onClick={() =>
+                      setView(view === "dates" ? "months" : "dates")
+                    }
+                    className={`campaignbay-flex campaignbay-items-center campaignbay-gap-1 campaignbay-font-semibold campaignbay-text-gray-900 hover:campaignbay-bg-gray-100 campaignbay-px-2 campaignbay-py-1 campaignbay-rounded campaignbay-transition-colors ${
+                      view === "months" ? "campaignbay-mx-auto" : ""
+                    }`}
                   >
-                    {d}
+                    <span className="campaignbay-text-sm md:campaignbay-text-base">
+                      {MONTHS[navMonth]} {navYear}
+                    </span>
+                    <ChevronDown
+                      className={`campaignbay-w-4 campaignbay-h-4 campaignbay-transition-transform campaignbay-duration-200 ${
+                        view === "months" ? "campaignbay-rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {view === "dates" && (
+                    <button
+                      onClick={handleNextMonth}
+                      className="campaignbay-p-1 hover:campaignbay-bg-gray-100 campaignbay-rounded-full campaignbay-text-gray-600"
+                    >
+                      <ChevronRight className="campaignbay-w-5 campaignbay-h-5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Calendar / Selection Container */}
+                <div className="campaignbay-relative">
+                  {/* Dates Grid View */}
+                  <div
+                    className={`campaignbay-grid campaignbay-grid-cols-7 campaignbay-gap-1 campaignbay-content-start campaignbay-transition-opacity campaignbay-duration-200 ${
+                      view === "dates"
+                        ? "campaignbay-opacity-100"
+                        : "campaignbay-opacity-0"
+                    }`}
+                  >
+                    {DAYS.map((d) => (
+                      <div
+                        key={d}
+                        className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-400"
+                      >
+                        {d}
+                      </div>
+                    ))}
+                    {renderCalendarGrid()}
                   </div>
-                ))}
-                {renderCalendarGrid()}
-              </div>
 
-              {/* Month/Year Selection Overlay */}
-              {view === "months" && renderMonthYearSelection()}
-            </div>
+                  {/* Month/Year Selection Overlay */}
+                  {view === "months" && renderMonthYearSelection()}
+                </div>
 
-            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mt-2 md:campaignbay-mt-4 campaignbay-pt-2 campaignbay-border-t campaignbay-border-[#bdc4d1]">
+                {/* <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mt-2 md:campaignbay-mt-4 campaignbay-pt-2 campaignbay-border-t campaignbay-border-[#bdc4d1]">
               <button
                 className="campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-500 hover:campaignbay-text-gray-700 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
                 onClick={() => {
@@ -940,49 +946,76 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
               >
                 Today
               </button>
-            </div>
-          </div>
+            </div> */}
+              </div>
 
-          <div className="campaignbay-bg-gray-50 campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-flex campaignbay-flex-col campaignbay-pt-2 md:campaignbay-pt-4 campaignbay-rounded-r-lg">
-            <div className="campaignbay-flex campaignbay-justify-center campaignbay-h-[200px] campaignbay-relative campaignbay-w-full campaignbay-px-2 md:campaignbay-px-4 campaignbay-mb-2 md:campaignbay-mb-4">
-              <div className="campaignbay-flex campaignbay-w-full campaignbay-items-start campaignbay-gap-1 md:campaignbay-gap-0">
-                <TimeColumn
-                  items={use24Hour ? HOURS_24 : HOURS_12}
-                  selectedValue={use24Hour ? currentHour24 : currentHour12}
-                  onChange={(v) => handleTimeColumnChange("hour", v)}
-                />
-                <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-font-bold campaignbay-text-gray-400 campaignbay-w-2 campaignbay-h-[200px] campaignbay-pb-0.5">
-                  :
-                </div>
-                <TimeColumn
-                  items={MINUTES}
-                  selectedValue={currentMinute}
-                  onChange={(v) => handleTimeColumnChange("minute", v)}
-                />
-                {!use24Hour && (
-                  <>
-                    <div className="campaignbay-w-2"></div>
+              <div className="campaignbay-bg-gray-50 campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-flex campaignbay-flex-col campaignbay-pt-2 md:campaignbay-pt-4 campaignbay-rounded-r-lg">
+                <div className="campaignbay-flex campaignbay-justify-center campaignbay-h-[200px] campaignbay-relative campaignbay-w-full campaignbay-px-2 md:campaignbay-px-4 campaignbay-mb-2 md:campaignbay-mb-4">
+                  <div className="campaignbay-flex campaignbay-w-full campaignbay-items-start campaignbay-gap-1 md:campaignbay-gap-0">
                     <TimeColumn
-                      items={AM_PM}
-                      selectedValue={isPm ? "PM" : "AM"}
-                      onChange={(v) => handleTimeColumnChange("ampm", v)}
-                      infiniteScroll={false}
+                      items={use24Hour ? HOURS_24 : HOURS_12}
+                      selectedValue={use24Hour ? currentHour24 : currentHour12}
+                      onChange={(v) => handleTimeColumnChange("hour", v)}
                     />
-                  </>
-                )}
+                    <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-font-bold campaignbay-text-gray-400 campaignbay-w-2 campaignbay-h-[200px] campaignbay-pb-0.5">
+                      :
+                    </div>
+                    <TimeColumn
+                      items={MINUTES}
+                      selectedValue={currentMinute}
+                      onChange={(v) => handleTimeColumnChange("minute", v)}
+                    />
+                    {!use24Hour && (
+                      <>
+                        <div className="campaignbay-w-2"></div>
+                        <TimeColumn
+                          items={AM_PM}
+                          selectedValue={isPm ? "PM" : "AM"}
+                          onChange={(v) => handleTimeColumnChange("ampm", v)}
+                          infiniteScroll={false}
+                        />
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Row>
+            <div className="campaignbay-w-full campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-p-[4px] campaignbay-border-t campaignbay-border-[#bdc4d1]">
+              <button
+                className="campaignbay-text-xs campaignbay-font-bold campaignbay-text-[#183ad6] hover:campaignbay-text-blue-800 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
+                onClick={() => {
+                  const now = getServerDate();
+                  onChange(formatDate(now));
+                  setNavMonth(now.getMonth());
+                  setNavYear(now.getFullYear());
+                  setView("dates");
+                }}
+              >
+                Today
+                <span className="campaignbay-text-[#1e1e1e] campaignbay-font-normal campaignbay-text-xs">
+                  {" (" + formatDateTime(getServerDate().toString()) + ")"}
+                </span>
+              </button>
+              <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-2">
+                <button
+                  className="campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-500 hover:campaignbay-text-gray-700 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
+                  onClick={() => {
+                    onChange("");
+                    setIsOpen(false);
+                  }}
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="campaignbay-w-max campaignbay-px-2 campaignbay-py-1 campaignbay-bg-[#183ad6] hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-text-sm campaignbay-font-medium campaignbay-rounded-md campaignbay-shadow-sm campaignbay-transition-colors campaignbay-flex campaignbay-items-center campaignbay-justify-center"
+                >
+                  <Check className="campaignbay-w-4 campaignbay-h-4 campaignbay-mr-1" />{" "}
+                  Done
+                </button>
               </div>
             </div>
-
-            <div className="campaignbay-p-2 campaignbay-mt-auto !campaignbay-border-0 campaignbay-bg-white campaignbay-rounded-br-lg">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="campaignbay-w-full campaignbay-px-2 campaignbay-py-2 campaignbay-bg-[#183ad6] hover:campaignbay-bg-blue-700 campaignbay-text-white campaignbay-text-sm campaignbay-font-medium campaignbay-rounded-md campaignbay-shadow-sm campaignbay-transition-colors campaignbay-flex campaignbay-items-center campaignbay-justify-center"
-              >
-                <Check className="campaignbay-w-4 campaignbay-h-4 campaignbay-mr-1" />{" "}
-                Done
-              </button>
-            </div>
-          </div>
+          </Column>
         </div>
       )}
 
