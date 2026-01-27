@@ -233,7 +233,7 @@ const Campaigns: FC = () => {
           }`}
         >
           <div className="campaignbay-flex campaignbay-justify-between campaignbay-items-center campaignbay-gap-[12px]  campaignbay-w-full">
-            {/* right */}
+            {/* left */}
             <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[8px]">
               <label className="campaignbay-relative">
                 <input
@@ -267,7 +267,7 @@ const Campaigns: FC = () => {
               </Button>
             </div>
             <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-end campaignbay-gap-[4px]">
-              {/* left */}
+              {/* right */}
 
               <Toggler
                 size="small"
@@ -789,6 +789,7 @@ const FiltersAccordion = ({
       {/* Reset Text */}
 
       <Button
+        onClick={resetFilters}
         variant="ghost"
         size="small"
         disabled={!hasActiveFilters}

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useGuide } from "../store/GuideContext";
-import { TOUR_STEPS } from "../utils/tourSteps";
+import { useGuide } from "../../store/GuideContext";
+import { TOUR_STEPS } from "../../utils/tourSteps";
 
 const TourGuard = () => {
   const location = useLocation();

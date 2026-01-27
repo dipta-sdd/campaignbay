@@ -17,6 +17,7 @@ import Page from "../components/common/Page";
 import Header from "../components/common/Header";
 import HeaderContainer from "../components/common/HeaderContainer";
 import QuantityTableEditModal from "../components/settings/QuantityTableEditModal";
+import { useCbStoreActions } from "../store/cbStore";
 
 type TabType = "global" | "product" | "cart" | "advanced";
 
@@ -573,6 +574,7 @@ const Settings = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { addToast } = useToast();
+  const { updateStore } = useCbStoreActions();
 
   const defaultSettings: CampaignBaySettingsType = {
     global_enableAddon: true,
@@ -697,6 +699,11 @@ const Settings = () => {
       setSettings(response);
       setSavedSettings(response);
       setIsSaving(false);
+      updateStore("campaignbay_settings", response);
+      addToast(
+        __("Settings saved successfully", "campaignbay"),
+        "success",
+      );
     } catch (error) {
       console.error("Error fetching settings:", error);
       setError("Failed to load settings");
