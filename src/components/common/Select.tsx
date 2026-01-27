@@ -7,32 +7,62 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { useClickOutside } from "./hooks/useClickOutside";
-import { borderClasses, hoverBorderClasses } from "./classes";
+import {
+  borderClasses,
+  hoverBorderClasses,
+  hoverClassesManual,
+} from "./classes";
 
 // SVGs replacement for lucide-react
 const ChevronDown = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="m6 9 6 6 6-6"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="m6 9 6 6 6-6" />
   </svg>
 );
 
 const LockKeyhole = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <circle cx="12" cy="16" r="1"/>
-    <rect x="3" y="10" width="18" height="12" rx="2"/>
-    <path d="M7 10V7a5 5 0 0 1 10 0v3"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <circle cx="12" cy="16" r="1" />
+    <rect x="3" y="10" width="18" height="12" rx="2" />
+    <path d="M7 10V7a5 5 0 0 1 10 0v3" />
   </svg>
 );
 
 const Hourglass = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M5 22h14"/>
-    <path d="M5 2h14"/>
-    <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
-    <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M5 22h14" />
+    <path d="M5 2h14" />
+    <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
+    <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
   </svg>
 );
-
 
 export interface SelectOption {
   value: string | number;
@@ -153,7 +183,7 @@ const Select: React.FC<SelectProps> = ({
   errorClassName = "wpab-input-error",
   differentDropdownWidth = false,
   isCompact = false,
-  classNames = {} as NonNullable<SelectProps['classNames']>,
+  classNames = {} as NonNullable<SelectProps["classNames"]>,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -197,7 +227,7 @@ const Select: React.FC<SelectProps> = ({
   const filteredOptions = useMemo(() => {
     if (!enableSearch || !searchQuery) return options;
     return options.filter((option) =>
-      option.label.toLowerCase().includes(searchQuery.toLowerCase())
+      option.label.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [options, searchQuery, enableSearch]);
 
@@ -354,7 +384,7 @@ const Select: React.FC<SelectProps> = ({
         // Return focus to the trigger
         if (containerRef.current) {
           const trigger = containerRef.current.querySelector(
-            '[role="combobox"]'
+            '[role="combobox"]',
           ) as HTMLElement;
           trigger?.focus();
         }
@@ -368,7 +398,7 @@ const Select: React.FC<SelectProps> = ({
   const handleOptionMouseEnter = (
     e: React.MouseEvent<HTMLLIElement>,
     index: number,
-    isPro: boolean
+    isPro: boolean,
   ) => {
     interactionType.current = "mouse";
     setHighlightedIndex(index);
@@ -451,7 +481,7 @@ const Select: React.FC<SelectProps> = ({
               ? "campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-text-gray-400 campaignbay-border-gray-200"
               : "hover:!campaignbay-border-[#3858e9]"
           }
-          ${isOpen ? `${hoverBorder}` : ""}
+          ${isOpen ? `${hoverClassesManual}` : ""}
           ${isError ? `${errorClassName} ${classNames.error || ""}` : ""}
           ${classNames.select || ""} ${classNames.container || ""}
         `}
@@ -511,7 +541,7 @@ const Select: React.FC<SelectProps> = ({
             boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.3)",
             marginTop: "-1px",
             borderRadius: "12px",
-            padding: "4px"
+            padding: "4px",
           }}
         >
           {/* Options List */}
@@ -596,11 +626,11 @@ const Select: React.FC<SelectProps> = ({
                         <LockKeyhole className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-[#f02a74]" />
                       )}
                       {isComingSoon && (
-                         <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded-full campaignbay-text-xs campaignbay-flex campaignbay-items-center campaignbay-gap-1 campaignbay-flex-nowrap">
-                            <Hourglass className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-white" />
-                            <span className="campaignbay-whitespace-nowrap">
+                        <span className="campaignbay-bg-pink-600 campaignbay-text-white campaignbay-p-1 campaignbay-px-2 campaignbay-rounded-full campaignbay-text-xs campaignbay-flex campaignbay-items-center campaignbay-gap-1 campaignbay-flex-nowrap">
+                          <Hourglass className="campaignbay-w-3.5 campaignbay-h-3.5 campaignbay-text-white" />
+                          <span className="campaignbay-whitespace-nowrap">
                             Coming Soon
-                            </span>
+                          </span>
                         </span>
                       )}
                     </div>
@@ -666,7 +696,7 @@ const Select: React.FC<SelectProps> = ({
             {/* Tooltip Arrow */}
             <div className="campaignbay-absolute campaignbay-top-full campaignbay-left-1/2 -campaignbay-translate-x-1/2 campaignbay-border-4 campaignbay-border-transparent campaignbay-border-t-gray-900"></div>
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );

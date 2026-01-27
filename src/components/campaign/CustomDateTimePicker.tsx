@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useCbStore } from "../../store/cbStore";
 import { date, getSettings as getDateSettings } from "@wordpress/date";
-import { errorWithInClasses, hoverWithInClasses } from "../common/classes";
+import { errorWithInClasses, hoverClassesManual, hoverWithInClasses } from "../common/classes";
 import { Column, Row } from "../../pages/Campaigns";
 import formatDateTime from "../../utils/Dates";
 
@@ -26,6 +26,8 @@ interface DateTimePickerProps {
   use24Hour?: boolean;
   className?: string;
   disabled?: boolean;
+  min?: string;
+  max?: string;
   error?: string;
 }
 
@@ -124,7 +126,7 @@ const TimeColumn: React.FC<TimeColumnProps> = ({
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      className="campaignbay-h-[240px] campaignbay-overflow-y-auto scrollbar-hide campaignbay-w-full campaignbay-flex campaignbay-flex-col campaignbay-relative"
+      className="campaignbay-h-[280px] campaignbay-w-[50px] campaignbay-overflow-y-auto scrollbar-hide campaignbay-flex campaignbay-flex-col campaignbay-relative"
     >
       <div className="campaignbay-flex campaignbay-flex-col campaignbay-w-full">
         {loopedItems.map((item, i) => {
@@ -165,6 +167,8 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
   className,
   disabled = false,
   error,
+  min,
+  max,
 }) => {
   // Helper to get Server Date
   // Replace the implementation of this function to return your server time.
@@ -686,7 +690,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             setNavMonth(date.getMonth());
             setNavYear(date.getFullYear());
           }}
-          className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors"
+          className="campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors"
         >
           {dayNum}
         </button>,
@@ -711,7 +715,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
         <button
           key={`curr-${i}`}
           onClick={() => handleDateClick(i)}
-          className={`campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-transition-colors
+          className={`campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-transition-colors
                         ${
                           isSelected
                             ? "campaignbay-bg-[#183ad6] campaignbay-text-white campaignbay-font-bold"
@@ -741,7 +745,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             setNavMonth(date.getMonth());
             setNavYear(date.getFullYear());
           }}
-          className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors"
+          className=" campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors"
         >
           {i}
         </button>,
@@ -779,7 +783,9 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
           disabled
             ? "campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-opacity-60"
             : hoverWithInClasses + " campaignbay-bg-white"
-        } ${error ? errorWithInClasses : ""}`}
+        }
+        ${isOpen ? hoverClassesManual : ""}
+        ${error ? errorWithInClasses : ""}`}
         onClick={(e) => {
           if (disabled) return;
           // Only focus first element if we clicked the CONTAINER background, not an input
@@ -788,7 +794,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
           }
         }}
       >
-        <div className="campaignbay-flex-grow campaignbay-flex campaignbay-items-center campaignbay-pl-1 campaignbay-cursor-text campaignbay-text-sm md:campaignbay-text-base ">
+        <div className="campaignbay-flex-grow campaignbay-flex campaignbay-items-center campaignbay-pl-1 campaignbay-cursor-text campaignbay-text-base ">
           {/* Month */}
           {renderCharInput("month", 0, gIdx++, "M")}
           {renderCharInput("month", 1, gIdx++, "M")}
@@ -852,16 +858,27 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
 
       {isOpen && (
         <div
-          className={`campaignbay-absolute campaignbay-z-[99999] campaignbay-bg-white  campaignbay-rounded-lg campaignbay-shadow-xl campaignbay-border campaignbay-border-[#bdc4d1] campaignbay-flex campaignbay-flex-row campaignbay-items-stretch campaignbay-right-0 ${
+          className={`campaignbay-absolute campaignbay-z-[99999] campaignbay-bg-white  campaignbay-rounded-lg  campaignbay-border campaignbay-border-[#bdc4d1] campaignbay-flex campaignbay-flex-row campaignbay-items-stretch campaignbay-right-0 ${
             dropdownPos === "top"
-              ? "campaignbay-bottom-full campaignbay-mb-1"
-              : "campaignbay-top-full campaignbay-mt-1"
+              ? "campaignbay-bottom-full"
+              : "campaignbay-top-full"
           }`}
+          style={
+            dropdownPos === "top"
+              ? {
+                  marginBottom: "-19px",
+                  boxShadow: "0px -3px 6px rgba(0, 0, 0, 0.3)",
+                }
+              : {
+                  marginTop: "1px",
+                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.3)",
+                }
+          }
         >
           <Column className="!campaignbay-gap-0">
-            <Row className="!campaignbay-items-start">
-              <div className="campaignbay-p-2 md:campaignbay-p-4 campaignbay-border-r campaignbay-border-[#bdc4d1] campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-rounded-l-lg">
-                <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-2 md:campaignbay-mb-4">
+            <Row className="!campaignbay-items-start !campaignbay-gap-0">
+              <div className="campaignbay-p-3 campaignbay-border-r campaignbay-border-[#bdc4d1] campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-rounded-l-lg">
+                <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mb-2">
                   {view === "dates" && (
                     <button
                       onClick={handlePrevMonth}
@@ -879,7 +896,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                       view === "months" ? "campaignbay-mx-auto" : ""
                     }`}
                   >
-                    <span className="campaignbay-text-sm md:campaignbay-text-base">
+                    <span className="campaignbay-text-sm ">
                       {MONTHS[navMonth]} {navYear}
                     </span>
                     <ChevronDown
@@ -912,7 +929,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                     {DAYS.map((d) => (
                       <div
                         key={d}
-                        className="campaignbay-h-7 campaignbay-w-7 md:campaignbay-h-8 md:campaignbay-w-8 campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-400"
+                        className="campaignbay-h-8 campaignbay-w-8 campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-400"
                       >
                         {d}
                       </div>
@@ -923,41 +940,17 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                   {/* Month/Year Selection Overlay */}
                   {view === "months" && renderMonthYearSelection()}
                 </div>
-
-                {/* <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-mt-2 md:campaignbay-mt-4 campaignbay-pt-2 campaignbay-border-t campaignbay-border-[#bdc4d1]">
-              <button
-                className="campaignbay-text-xs campaignbay-font-medium campaignbay-text-gray-500 hover:campaignbay-text-gray-700 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
-                onClick={() => {
-                  onChange("");
-                  setIsOpen(false);
-                }}
-              >
-                Clear
-              </button>
-              <button
-                className="campaignbay-text-xs campaignbay-font-bold campaignbay-text-[#183ad6] hover:campaignbay-text-blue-800 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
-                onClick={() => {
-                  const now = getServerDate();
-                  onChange(formatDate(now));
-                  setNavMonth(now.getMonth());
-                  setNavYear(now.getFullYear());
-                  setView("dates");
-                }}
-              >
-                Today
-              </button>
-            </div> */}
               </div>
 
-              <div className="campaignbay-bg-gray-50 campaignbay-w-auto md:campaignbay-w-64 campaignbay-flex-shrink-0 campaignbay-flex campaignbay-flex-col campaignbay-pt-2 md:campaignbay-pt-4 campaignbay-rounded-r-lg">
-                <div className="campaignbay-flex campaignbay-justify-center campaignbay-h-[200px] campaignbay-relative campaignbay-w-full campaignbay-px-2 md:campaignbay-px-4 campaignbay-mb-2 md:campaignbay-mb-4">
-                  <div className="campaignbay-flex campaignbay-w-full campaignbay-items-start campaignbay-gap-1 md:campaignbay-gap-0">
+              <div className="campaignbay-bg-gray-50 campaignbay-w-auto campaignbay-flex-shrink-0 campaignbay-flex campaignbay-flex-col campaignbay-p-[12px]  campaignbay-rounded-r-lg">
+                <div className="campaignbay-flex campaignbay-justify-center campaignbay-h-[284px] campaignbay-relative campaignbay-w-full">
+                  <div className="campaignbay-flex campaignbay-w-full campaignbay-items-start campaignbay-gap-0">
                     <TimeColumn
                       items={use24Hour ? HOURS_24 : HOURS_12}
                       selectedValue={use24Hour ? currentHour24 : currentHour12}
                       onChange={(v) => handleTimeColumnChange("hour", v)}
                     />
-                    <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-font-bold campaignbay-text-gray-400 campaignbay-w-2 campaignbay-h-[200px] campaignbay-pb-0.5">
+                    <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-font-bold campaignbay-text-gray-400 campaignbay-w-2 campaignbay-h-[315px] campaignbay-pb-0.5">
                       :
                     </div>
                     <TimeColumn
