@@ -204,10 +204,9 @@ const Campaign: FC<CampaignProps> = ({
       setCampaign({ ...campaign, status: checked ? "active" : "inactive" });
     }
   };
-  console.log(campaign);
   return (
     <>
-      <HeaderContainer className="campaignbay-py-[12px]">
+      <HeaderContainer className="campaignbay-py-[12px] campaignbay-flex-wrap">
         <EditableText
           value={campaign.title}
           onChange={(value) => setCampaign({ ...campaign, title: value })}
@@ -611,6 +610,7 @@ export const OtherSettings = ({
             }));
           }}
           disabled={!campaign.schedule_enabled}
+          min={campaign.start_datetime || undefined}
         />
         {renderError(errors?.end_datetime, false)}
       </Section>

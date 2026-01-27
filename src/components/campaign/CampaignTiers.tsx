@@ -105,7 +105,6 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
     else setCampaign((prev) => ({ ...prev, tiers: [] }));
   }, [quantityTiers, ebTiers, bogoTiers]);
 
-  console.log(campaign.type);
   return (
     <>
       {campaign.type === "quantity" && (

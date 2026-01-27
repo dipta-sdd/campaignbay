@@ -14,7 +14,11 @@ import {
 } from "lucide-react";
 import { useCbStore } from "../../store/cbStore";
 import { date, getSettings as getDateSettings } from "@wordpress/date";
-import { errorWithInClasses, hoverClassesManual, hoverWithInClasses } from "../common/classes";
+import {
+  errorWithInClasses,
+  hoverClassesManual,
+  hoverWithInClasses,
+} from "../common/classes";
 import { Column, Row } from "../../pages/Campaigns";
 import formatDateTime from "../../utils/Dates";
 
@@ -26,8 +30,8 @@ interface DateTimePickerProps {
   use24Hour?: boolean;
   className?: string;
   disabled?: boolean;
-  min?: string;
-  max?: string;
+  min?: string | Date;
+  max?: string | Date;
   error?: string;
 }
 
@@ -218,6 +222,36 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
   });
 
   const parsedValue = useMemo(() => parseDate(value as string), [value]);
+  const minDate = useMemo(
+    () => (min ? parseDate(min as string | Date) : getServerDate()),
+    [min, currentTime],
+  );
+  const maxDate = useMemo(() => parseDate(max as string | Date), [max]);
+
+  // Helper to check if a date is within range (inclusive)
+  const isDateInRange = (d: Date) => {
+    if (minDate && d < minDate) return false;
+    if (maxDate && d > maxDate) return false;
+    return true;
+  };
+
+  // Helper to check if a DAY (ignoring time) is disabled
+  const isDayDisabled = (d: Date) => {
+    const checkDate = new Date(d);
+    checkDate.setHours(0, 0, 0, 0);
+
+    if (minDate) {
+      const minDay = new Date(minDate);
+      minDay.setHours(0, 0, 0, 0);
+      if (checkDate < minDay) return true;
+    }
+    if (maxDate) {
+      const maxDay = new Date(maxDate);
+      maxDay.setHours(0, 0, 0, 0);
+      if (checkDate > maxDay) return true;
+    }
+    return false;
+  };
 
   // Sync external value to inputs
   useEffect(() => {
@@ -355,6 +389,11 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
     }
 
     const newDate = new Date(y, m - 1, d, h, min);
+
+    // Validate range
+    if (minDate && newDate < minDate) return;
+    if (maxDate && newDate > maxDate) return;
+
     onChange(formatDate(newDate));
   };
 
@@ -625,6 +664,12 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
           >
             <button
               ref={year === navYear ? activeYearRef : null}
+              disabled={
+                !!(
+                  (minDate && year < minDate.getFullYear()) ||
+                  (maxDate && year > maxDate.getFullYear())
+                )
+              }
               onClick={() =>
                 setExpandedYear(expandedYear === year ? null : year)
               }
@@ -632,7 +677,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                 year === navYear
                   ? "campaignbay-bg-blue-50 campaignbay-text-blue-700"
                   : "campaignbay-text-gray-600 hover:campaignbay-bg-gray-50"
-              }`}
+              } disabled:campaignbay-opacity-50 disabled:campaignbay-cursor-not-allowed`}
             >
               <span>{year}</span>
               <ChevronDown
@@ -652,7 +697,19 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                       setNavMonth(i);
                       setView("dates");
                     }}
-                    className={`campaignbay-py-1.5 campaignbay-pt-1 campaignbay-text-xs campaignbay-rounded-[4px] campaignbay-transition-colors campaignbay-border ${
+                    disabled={
+                      !!(
+                        (minDate &&
+                          (year < minDate.getFullYear() ||
+                            (year === minDate.getFullYear() &&
+                              i < minDate.getMonth()))) ||
+                        (maxDate &&
+                          (year > maxDate.getFullYear() ||
+                            (year === maxDate.getFullYear() &&
+                              i > maxDate.getMonth())))
+                      )
+                    }
+                    className={`campaignbay-py-1.5 campaignbay-pt-1 campaignbay-text-xs campaignbay-rounded-[4px] campaignbay-transition-colors campaignbay-border disabled:campaignbay-opacity-50 disabled:campaignbay-cursor-not-allowed ${
                       i === navMonth && year === navYear
                         ? "campaignbay-bg-[#183ad6] campaignbay-border-[#183ad6] campaignbay-text-white campaignbay-shadow-sm campaignbay-font-medium"
                         : "campaignbay-bg-white campaignbay-border-[#bdc4d1] campaignbay-text-gray-700 hover:!campaignbay-border-[#183ad6] hover:!campaignbay-bg-[#183ad6] hover:!campaignbay-text-white"
@@ -685,12 +742,17 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
       days.push(
         <button
           key={`prev-${dayNum}`}
+          disabled={isDayDisabled(date)}
           onClick={() => {
             onChange(formatDate(date));
             setNavMonth(date.getMonth());
             setNavYear(date.getFullYear());
           }}
-          className="campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors"
+          className={`campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors ${
+            isDayDisabled(date)
+              ? "campaignbay-opacity-30 campaignbay-cursor-not-allowed hover:!campaignbay-bg-transparent"
+              : ""
+          }`}
         >
           {dayNum}
         </button>,
@@ -711,9 +773,11 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
         serverDate.getMonth() === navMonth &&
         serverDate.getFullYear() === navYear;
 
+      const currentDayDate = new Date(navYear, navMonth, i);
       days.push(
         <button
           key={`curr-${i}`}
+          disabled={isDayDisabled(currentDayDate)}
           onClick={() => handleDateClick(i)}
           className={`campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-transition-colors
                         ${
@@ -724,6 +788,11 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                         ${
                           isToday && !isSelected
                             ? "campaignbay-border campaignbay-border-[#183ad6] campaignbay-text-[#183ad6]"
+                            : ""
+                        }
+                        ${
+                          isDayDisabled(currentDayDate)
+                            ? "campaignbay-opacity-30 campaignbay-cursor-not-allowed hover:!campaignbay-bg-transparent"
                             : ""
                         }
                     `}
@@ -740,12 +809,17 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
       days.push(
         <button
           key={`next-${i}`}
+          disabled={isDayDisabled(date)}
           onClick={() => {
             onChange(formatDate(date));
             setNavMonth(date.getMonth());
             setNavYear(date.getFullYear());
           }}
-          className=" campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors"
+          className={`campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors ${
+            isDayDisabled(date)
+              ? "campaignbay-opacity-30 campaignbay-cursor-not-allowed hover:!campaignbay-bg-transparent"
+              : ""
+          }`}
         >
           {i}
         </button>,
@@ -760,6 +834,55 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
   const currentHour12 = currentHour24 % 12 || 12;
   const currentMinute = safeDate.getMinutes();
   const isPm = currentHour24 >= 12;
+
+  // Filter Time Options
+  const getFilteredHours = () => {
+    let hours = use24Hour ? HOURS_24 : HOURS_12;
+    if (minDate && safeDate.toDateString() === minDate.toDateString()) {
+      const minH = minDate.getHours();
+      hours = hours.filter((h) => {
+        if (use24Hour) return (h as number) >= minH;
+        // 12-hour logic
+        let h24 = h as number;
+        if (isPm && h24 < 12) h24 += 12;
+        if (isPm && h24 === 12) h24 = 12;
+        if (!isPm && h24 === 12) h24 = 0;
+        return h24 >= minH;
+      });
+    }
+    if (maxDate && safeDate.toDateString() === maxDate.toDateString()) {
+      const maxH = maxDate.getHours();
+      hours = hours.filter((h) => {
+        if (use24Hour) return (h as number) <= maxH;
+        // 12-hour logic
+        let h24 = h as number;
+        if (isPm && h24 < 12) h24 += 12;
+        if (isPm && h24 === 12) h24 = 12;
+        if (!isPm && h24 === 12) h24 = 0;
+        return h24 <= maxH;
+      });
+    }
+    return hours;
+  };
+
+  const getFilteredMinutes = () => {
+    let minutes = MINUTES;
+    if (
+      minDate &&
+      safeDate.toDateString() === minDate.toDateString() &&
+      safeDate.getHours() === minDate.getHours()
+    ) {
+      minutes = minutes.filter((m) => (m as number) >= minDate.getMinutes());
+    }
+    if (
+      maxDate &&
+      safeDate.toDateString() === maxDate.toDateString() &&
+      safeDate.getHours() === maxDate.getHours()
+    ) {
+      minutes = minutes.filter((m) => (m as number) <= maxDate.getMinutes());
+    }
+    return minutes;
+  };
 
   const separatorClass =
     "campaignbay-text-gray-400 dark:campaignbay-text-gray-500 campaignbay-mx-0.5 campaignbay-select-none";
@@ -946,7 +1069,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                 <div className="campaignbay-flex campaignbay-justify-center campaignbay-h-[284px] campaignbay-relative campaignbay-w-full">
                   <div className="campaignbay-flex campaignbay-w-full campaignbay-items-start campaignbay-gap-0">
                     <TimeColumn
-                      items={use24Hour ? HOURS_24 : HOURS_12}
+                      items={getFilteredHours()}
                       selectedValue={use24Hour ? currentHour24 : currentHour12}
                       onChange={(v) => handleTimeColumnChange("hour", v)}
                     />
@@ -954,7 +1077,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                       :
                     </div>
                     <TimeColumn
-                      items={MINUTES}
+                      items={getFilteredMinutes()}
                       selectedValue={currentMinute}
                       onChange={(v) => handleTimeColumnChange("minute", v)}
                     />
@@ -975,9 +1098,11 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             </Row>
             <div className="campaignbay-w-full campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-p-[4px] campaignbay-border-t campaignbay-border-[#bdc4d1]">
               <button
-                className="campaignbay-text-xs campaignbay-font-bold campaignbay-text-[#183ad6] hover:campaignbay-text-blue-800 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors"
+                className="campaignbay-text-xs campaignbay-font-bold campaignbay-text-[#183ad6] hover:campaignbay-text-blue-800 campaignbay-px-2 campaignbay-py-1 campaignbay-transition-colors disabled:campaignbay-opacity-50 disabled:campaignbay-cursor-not-allowed disabled:hover:campaignbay-text-[#183ad6]"
+                disabled={!isDateInRange(getServerDate())}
                 onClick={() => {
                   const now = getServerDate();
+                  if (!isDateInRange(now)) return;
                   onChange(formatDate(now));
                   setNavMonth(now.getMonth());
                   setNavYear(now.getFullYear());
