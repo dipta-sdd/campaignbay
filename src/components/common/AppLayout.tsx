@@ -13,7 +13,7 @@ const AppLayout: FC = () => {
       <GuideProvider>
         <Navbar />
         <Notifications />
-        {onboarding.first_campaign ? <FirstCampaign /> : null}
+        {!onboarding.first_campaign ? <FirstCampaign /> : null}
         <Outlet />
         {/* <TourGuard />
         <Guide /> */}

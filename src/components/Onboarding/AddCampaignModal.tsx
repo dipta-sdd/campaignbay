@@ -11,13 +11,13 @@ interface AddCampaignModalProps {
 
 const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
   const navigate = useNavigate();
+  
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
     null,
   );
   const [hoveredTemplateId, setHoveredTemplateId] = useState<string | null>(
     null,
   );
-
   const blankCampaignRef = useGuideStep<HTMLDivElement>(
     TOUR_STEPS.BLANK_CAMPAIGN,
   );
@@ -55,7 +55,7 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
         <div className="campaignbay-grid campaignbay-add-campaigns-modal-grid-cols campaignbay-gap-[10px] campaignbay-px-[20px] campaignbay-py-[10px]">
           <div
             ref={blankCampaignRef}
-            className={`campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-pt-[28px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer hover:campaignbay-shadow-sm ${
+            className={`campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[6px] campaignbay-p-[10px] campaignbay-pt-[28px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer hover:campaignbay-shadow-sm ${
               selectedTemplateId === "blank"
                 ? "!campaignbay-bg-[#183ad6] campaignbay-text-white"
                 : "campaignbay-bg-white "
@@ -91,7 +91,7 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
               }}
               onMouseEnter={() => setHoveredTemplateId(template.id)}
               onMouseLeave={() => setHoveredTemplateId(null)}
-              className={`campaignbay-relative campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer hover:campaignbay-shadow-sm campaignbay-transition-all campaignbay-duration-[200ms] ${
+              className={`campaignbay-relative campaignbay-add-campaigns-modal-grid-item campaignbay-rounded-[6px] campaignbay-p-[10px] campaignbay-flex campaignbay-flex-col campaignbay-justify-start campaignbay-items-start campaignbay-gap-[5px] campaignbay-cursor-pointer hover:campaignbay-shadow-sm campaignbay-transition-all campaignbay-duration-[200ms] ${
                 selectedTemplateId === template.id
                   ? "!campaignbay-bg-[#183ad6] campaignbay-text-white"
                   : "campaignbay-bg-white "
@@ -120,7 +120,7 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
                 >
                   <div className="campaignbay-p-[10px]">
                     <span className="campaignbay-block campaignbay-text-[14px] campaignbay-font-bold campaignbay-mb-1">
-                      Example
+                      {template?.title}
                     </span>
                     <div
                       className={`campaignbay-flex campaignbay-flex-col campaignbay-gap-[5px] campaignbay-text-[12px] campaignbay-font-normal campaignbay-leading-[16px] ${

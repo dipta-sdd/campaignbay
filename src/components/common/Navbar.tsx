@@ -70,10 +70,10 @@ const Navbar: FC = () => {
                   key={menu.path}
                   className={`campaignbay-text-default campaignbay-font-[700]
                     campaignbay-cursor-pointer campaignbay-py-[8px] campaignbay-px-[16px] campaignbay-border-b md:campaignbay-border-b-0 campaignbay-border-gray-300 last:campaignbay-border-gray-300 ${
-                    activeTab === menu.path
-                      ? "campaignbay-text-blue-800 campaignbay-bg-gray-100 campaignbay-rounded-[0] md:campaignbay-rounded-[8px]"
-                      : "campaignbay-text-gray-800 hover:campaignbay-text-blue-800"
-                  }`}
+                      activeTab === menu.path
+                        ? "campaignbay-text-blue-800 campaignbay-bg-gray-100 campaignbay-rounded-[0] md:campaignbay-rounded-[8px]"
+                        : "campaignbay-text-gray-800 hover:campaignbay-text-blue-800"
+                    }`}
                   onClick={() => {
                     navigate(menu.path);
                     setIsMobileMenuOpen(false);
@@ -101,10 +101,7 @@ const Navbar: FC = () => {
                 fill="currentColor"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  d="M0 10C0 4.44444 4.44444 0 10 0C15.5556 0 20 4.44444 20 10C20 15.5556 15.5556 20 10 20C4.44444 20 0 15.5556 0 10ZM11 9V5H9V9H5V11H9V15H11V11H15V9H11Z"
-                  
-                />
+                <path d="M0 10C0 4.44444 4.44444 0 10 0C15.5556 0 20 4.44444 20 10C20 15.5556 15.5556 20 10 20C4.44444 20 0 15.5556 0 10ZM11 9V5H9V9H5V11H9V15H11V11H15V9H11Z" />
               </svg>
             </button>
           </div>
@@ -180,7 +177,7 @@ const Navbar: FC = () => {
         isOpen={isModalOpen}
         showHeader={true}
         maxWidth="campaignbay-add-campaigns-modal campaignbay-w-min"
-        className="campaignbay-w-full !campaignbay-rounded-[4px] !campaignbay-max-h-[92vh]"
+        className="campaignbay-w-full !campaignbay-rounded-[8px] !campaignbay-max-h-[92vh]"
         onClose={() => setIsModalOpen(false)}
         title={__("Add Campaign", "campaignbay")}
         classNames={{
