@@ -148,6 +148,8 @@ const AddCampaignModal = ({ onClose }: AddCampaignModalProps) => {
           title={selectedTemplate?.title}
           example={selectedTemplate?.example}
           isBlank={selectedTemplateId === "blank" ? true : false}
+          id={selectedTemplateId || ""}
+          onClose={onClose}
         />
       </div>
     </div>
@@ -160,8 +162,12 @@ interface ExampleProps {
   example?: { text: string; list: string[] };
   isBlank?: boolean;
   title: string | undefined;
+  id: string;
+  onClose: () => void;
 }
-const Example = ({ example, isBlank, title }: ExampleProps) => {
+const Example = ({ example, isBlank, title, id, onClose }: ExampleProps) => {
+  const navigate = useNavigate();
+
   if (isBlank) {
     return (
       <div className="campaignbay-p-[15px] campaignbay-h-full campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-text-center">
@@ -213,15 +219,29 @@ const Example = ({ example, isBlank, title }: ExampleProps) => {
     );
   }
   return (
-    <div className="campaignbay-p-0 campaignbay-bg-white campaignbay-h-full campaignbay-overflow-y-auto">
-      <span className="campaignbay-block campaignbay-p-[10px] campaignbay-text-[16px] campaignbay-font-bold">
-        {title}
-      </span>
-      <div className="campaignbay-p-[15px] campaignbay-pt-0 campaignbay-flex campaignbay-flex-col campaignbay-gap-[10px] campaignbay-text-[13px] campaignbay-font-normal campaignbay-leading-[20px] campaignbay-text-gray-500">
-        <span>{example?.text}</span>
-        <ul className="campaignbay-list-disc campaignbay-list-inside campaignbay-leading-[24px]">
-          {example?.list.map((item, index) => <li key={index}>{item}</li>)}
-        </ul>
+    <div className="campaignbay-p-0 campaignbay-bg-white campaignbay-h-full campaignbay-overflow-y-auto campaignbay-flex campaignbay-flex-col campaignbay-justify-between">
+      <div>
+        <span className="campaignbay-block campaignbay-p-[10px] campaignbay-text-[16px] campaignbay-font-bold">
+          {title}
+        </span>
+        <div className="campaignbay-p-[15px] campaignbay-pt-0 campaignbay-flex campaignbay-flex-col campaignbay-gap-[10px] campaignbay-text-[13px] campaignbay-font-normal campaignbay-leading-[20px] campaignbay-text-gray-500">
+          <span>{example?.text}</span>
+          <ul className="campaignbay-list-disc campaignbay-list-inside campaignbay-leading-[24px]">
+            {example?.list.map((item, index) => <li key={index}>{item}</li>)}
+          </ul>
+        </div>
+      </div>
+      <div className="campaignbay-p-[15px] campaignbay-flex campaignbay-justify-end">
+        <button
+          className="campaignbay-bg-[#183ad6] campaignbay-text-white campaignbay-rounded-[4px] campaignbay-p-[10px] campaignbay-text-[14px] campaignbay-font-bold campaignbay-leading-[16px] disabled:campaignbay-opacity-40 disabled:campaignbay-cursor-not-allowed"
+          disabled={id === "" || id === null}
+          onClick={() => {
+            navigate("/campaigns/add?templateId=" + id);
+            onClose();
+          }}
+        >
+          Create
+        </button>
       </div>
     </div>
   );

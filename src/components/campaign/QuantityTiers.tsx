@@ -7,11 +7,15 @@ import { Section } from "./Campaign";
 
 interface QuantityTiersProps {
   tiers: QuantityTier[];
-  setTiers: React.Dispatch<React.SetStateAction<QuantityTier[]>>;
+  onUpdateTiers: (tiers: QuantityTier[]) => void;
   errors?: QuantityTierError[];
 }
 
-const QuantityTiers: FC<QuantityTiersProps> = ({ tiers, setTiers, errors }) => {
+const QuantityTiers: FC<QuantityTiersProps> = ({
+  tiers,
+  onUpdateTiers,
+  errors,
+}) => {
   const handleAddTier = (
     setError: React.Dispatch<React.SetStateAction<string>>,
   ) => {
@@ -52,7 +56,7 @@ const QuantityTiers: FC<QuantityTiersProps> = ({ tiers, setTiers, errors }) => {
       value: "",
       type: lastTier.type,
     };
-    setTiers([...tiers, newTier]);
+    onUpdateTiers([...tiers, newTier]);
   };
 
   const handleRemoveTier = (idToRemove: number | string) => {
@@ -64,7 +68,7 @@ const QuantityTiers: FC<QuantityTiersProps> = ({ tiers, setTiers, errors }) => {
         id: index,
       }));
 
-    setTiers(newTiers);
+    onUpdateTiers(newTiers);
   };
 
   const handleTierUpdate = (updatedTier: QuantityTier) => {
@@ -78,7 +82,11 @@ const QuantityTiers: FC<QuantityTiersProps> = ({ tiers, setTiers, errors }) => {
       newTiers[nextTierIndex].min = Number(updatedTier.max) + 1;
     }
 
-    setTiers(newTiers);
+    if (nextTierIndex < newTiers.length && updatedTier.max) {
+      newTiers[nextTierIndex].min = Number(updatedTier.max) + 1;
+    }
+
+    onUpdateTiers(newTiers);
   };
 
   return (

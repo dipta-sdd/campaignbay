@@ -20,6 +20,7 @@ import {
   DependentResponseType,
   DependentType,
   DISCOUNT_TYPES,
+  handleTypeChange,
   OtherSettings,
   Section,
 } from "../../components/campaign/Campaign";
@@ -44,7 +45,6 @@ import { Tooltip } from "../common/ToolTip";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
-  tiers: Tier[] | null;
 }
 
 const FirstCampaign: FC = () => {
@@ -71,7 +71,7 @@ const FirstCampaign: FC = () => {
     schedule_enabled: false,
     start_datetime: "",
     end_datetime: "",
-    tiers: null,
+    tiers: [],
     settings: {},
     conditions: {
       match_type: "all",
@@ -139,6 +139,7 @@ const FirstCampaign: FC = () => {
       addToast(__("Campaign saved successfully", "campaignbay"), "success");
       setIsSaving(false);
       setShowCongrets(true);
+      // @ts-ignore
       setCampaignId(response.id);
       // navigate(`/campaigns`);
     } catch (error: any) {
@@ -157,55 +158,7 @@ const FirstCampaign: FC = () => {
     setIsSaving(false);
   };
 
-  const handleTypeChange = (type: CampaignType) => {
-    if (type === "bogo") {
-      setCampaign((prev) => ({
-        ...prev,
-        type,
-        tiers: [
-          {
-            id: 0,
-            buy_quantity: "",
-            get_quantity: "",
-          },
-        ],
-      }));
-    } else if (type === "quantity") {
-      setCampaign((prev) => ({
-        ...prev,
-        type,
-        tiers: [
-          {
-            id: 0,
-            min: 1,
-            max: "",
-            value: "",
-            type: "percentage",
-          },
-        ],
-      }));
-    } else if (type === "earlybird") {
-      setCampaign((prev) => ({
-        ...prev,
-        type,
-        tiers: [
-          {
-            id: 0,
-            quantity: "",
-            value: "",
-            type: "percentage",
-            total: 0,
-          },
-        ],
-      }));
-    } else {
-      setCampaign((prev) => ({
-        ...prev,
-        type,
-        tiers: null,
-      }));
-    }
-  };
+
   const isEnableNext = (): boolean => {
     if (currentStep === 1) {
       return !!campaign.title;
@@ -492,7 +445,7 @@ const FirstCampaign: FC = () => {
                 className="!campaignbay-shadow-none !campaignbay-p-0"
                 header={
                   <h2 className="campaignbay-text-[15px] campaignbay-leading-[24px] campaignbay-text-[#1e1e1e] campaignbay-font-semibold campaignbay-pb-[15px]">
-                    Select Discount Type{" "}
+                    Select Discount Type
                     <span className="campaignbay-text-red-500">*</span>
                   </h2>
                 }
@@ -505,7 +458,7 @@ const FirstCampaign: FC = () => {
                   options={DISCOUNT_TYPES}
                   // @ts-ignore
                   value={campaign?.type}
-                  onChange={(value) => handleTypeChange(value as CampaignType)}
+                  onChange={(value) => handleTypeChange(value as CampaignType, setCampaign )}
                 />
                 {errors.type && (
                   <p className="campaignbay-text-red-500 campaignbay-text-[12px] campaignbay-mt-[8px]">
@@ -684,7 +637,6 @@ const FirstCampaign: FC = () => {
               >
                 {currentStep === 4 ? (
                   <>
-                    {" "}
                     Create Campaign <Icon
                       icon={check}
                       fill="currentColor"

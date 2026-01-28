@@ -7,11 +7,11 @@ import { Section } from "./Campaign";
 
 interface EBTiersProps {
   tiers: EBTier[];
-  setTiers: React.Dispatch<React.SetStateAction<EBTier[]>>;
+  onUpdateTiers: (tiers: EBTier[]) => void;
   errors?: EBTierError[];
 }
 
-const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
+const EBTiers: FC<EBTiersProps> = ({ tiers, onUpdateTiers, errors }) => {
   const handleAddTier = (
     setError: React.Dispatch<React.SetStateAction<string>>,
   ) => {
@@ -35,12 +35,12 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
       type: lastTier.type,
       total: Number(lastTier.total) + Number(lastTier.quantity),
     };
-    setTiers([...tiers, newTier]);
+    onUpdateTiers([...tiers, newTier]);
   };
 
   const handleRemoveTier = (idToRemove: number | string) => {
     if (tiers.length <= 1) return;
-    setTiers(tiers.filter((tier: EBTier) => tier.id !== idToRemove));
+    onUpdateTiers(tiers.filter((tier: EBTier) => tier.id !== idToRemove));
   };
 
   const handleTierUpdate = (updatedTier: EBTier) => {
@@ -51,7 +51,7 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, setTiers, errors }) => {
       return tier;
     });
     const tmpTiers = calculateTotal(newTiers);
-    setTiers(tmpTiers);
+    onUpdateTiers(tmpTiers);
   };
 
   const calculateTotal = (tiers: EBTier[]) => {

@@ -204,6 +204,7 @@ const Campaign: FC<CampaignProps> = ({
       setCampaign({ ...campaign, status: checked ? "active" : "inactive" });
     }
   };
+
   return (
     <>
       <HeaderContainer className="campaignbay-py-[12px] campaignbay-flex-wrap">
@@ -223,7 +224,9 @@ const Campaign: FC<CampaignProps> = ({
 
           <Switch
             size="small"
-            checked={campaign.status === "active" || campaign.status === "scheduled"}
+            checked={
+              campaign.status === "active" || campaign.status === "scheduled"
+            }
             onChange={(checked) => handleStatusChange(checked)}
           />
           <Button
@@ -268,7 +271,7 @@ const Campaign: FC<CampaignProps> = ({
             // @ts-ignore
             value={campaign?.type}
             onChange={(value) =>
-              setCampaign({ ...campaign, type: value as CampaignType })
+              handleTypeChange(value as CampaignType, setCampaign)
             }
           />
         </Card>
@@ -624,4 +627,61 @@ export const OtherSettings = ({
       </Section>
     </>
   );
+};
+
+export const handleTypeChange = (
+  type: CampaignType,
+  setCampaign: React.Dispatch<React.SetStateAction<CampaignInterface>>,
+) => {
+  if (type === "bogo") {
+    setCampaign((prev: CampaignInterface) => {
+      return {
+        ...prev,
+        type: "bogo",
+        tiers: [
+          {
+            id: 0,
+            buy_quantity: 1,
+            get_quantity: "",
+          },
+        ],
+      };
+    });
+  } else if (type === "earlybird") {
+    setCampaign((prev: CampaignInterface) => {
+      return {
+        ...prev,
+        type: "earlybird",
+        tiers: [
+          {
+            id: 0,
+            quantity: "",
+            value: "",
+            type: "percentage",
+            total: 0,
+          },
+        ],
+      };
+    });
+  } else if (type === "quantity") {
+    setCampaign((prev: CampaignInterface) => {
+      return {
+        ...prev,
+        type: "quantity",
+        tiers: [
+          {
+            id: 0,
+            min: 1,
+            max: "",
+            value: "",
+            type: "percentage",
+          },
+        ],
+      };
+    });
+  } else {
+    setCampaign((prev: CampaignInterface) => {
+      return { ...prev, type: type };
+    });
+  }
 };

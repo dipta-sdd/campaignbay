@@ -13,7 +13,7 @@ const AppLayout: FC = () => {
       <GuideProvider>
         <Navbar />
         <Notifications />
-        {!onboarding.first_campaign ? <FirstCampaign /> : null}
+        {onboarding.first_campaign ? <FirstCampaign /> : null}
         <Outlet />
         {/* <TourGuard />
         <Guide /> */}
@@ -33,7 +33,12 @@ const Notifications = () => {
         <div className="campaignbay-bg-red-50/50 campaignbay-border-red-200 campaignbay-border-[1px] campaignbay-p-[12px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-items-center campaignbay-justify-start campaignbay-w-full campaignbay-backdrop-blur-[8px]">
           <p className="campaignbay-text-red-500">
             {__("CampaignBay is disabled. Enable it from ", "campaignbay")}
-            <a href="#/settings" className="campaignbay-text-blue-800 campaignbay-underline campaignbay-underline-offset-4">{__("Settings", "campaignbay")}</a>
+            <a
+              href="#/settings"
+              className="campaignbay-text-blue-800 campaignbay-underline campaignbay-underline-offset-4"
+            >
+              {__("Settings", "campaignbay")}
+            </a>
             {__(" to start using CampaignBay.", "campaignbay")}
           </p>
         </div>

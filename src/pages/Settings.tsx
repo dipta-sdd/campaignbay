@@ -5,7 +5,10 @@ import CustomSelect from "../components/common/Select";
 import { Checkbox } from "../components/common/Checkbox";
 import Button from "../components/common/Button";
 import { ConfirmationModal } from "../components/common/ConfirmationModal";
-import { CampaignBaySettingsType, DiscountTableOptionsType } from "../components/settings/types";
+import {
+  CampaignBaySettingsType,
+  DiscountTableOptionsType,
+} from "../components/settings/types";
 import Select from "../components/common/Select";
 import { Placeholders } from "../components/campaign/CampaignSettings";
 import { useToast } from "../store/toast/use-toast";
@@ -107,21 +110,21 @@ const GlobalContent: React.FC<ContentProps> = ({ settings, updateSetting }) => {
         <SectionHeader title="Global Options" />
 
         <div className="campaignbay-space-y-6">
-          <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between">
-            <div>
+          <div>
+            <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-start campaignbay-gap-[8px]">
               <label className="!campaignbay-text-[13px] !campaignbay-font-[700] !campaignbay-leading-[20px] !campaignbay-text-[#1e1e1e] !campaignbay-uppercase">
                 Enable Discount Add-on
               </label>
-              <p className="campaignbay-text-[12px] campaignbay-font-[400] campaignbay-leading-[20px] campaignbay-text-gray-600">
-                Turn off to temporarily disable all discount campaigns.
-              </p>
+              <Switch
+                size="small"
+                checked={settings.global_enableAddon}
+                onChange={(v) => updateSetting("global_enableAddon", v)}
+              />
             </div>
-            <Switch
-              checked={settings.global_enableAddon}
-              onChange={(v) => updateSetting("global_enableAddon", v)}
-            />
+            <p className="campaignbay-text-[12px] campaignbay-font-[400] campaignbay-leading-[20px] campaignbay-text-gray-600">
+              Turn off to temporarily disable all discount campaigns.
+            </p>
           </div>
-
           <div className="campaignbay-grid campaignbay-grid-cols-1 lg:campaignbay-grid-cols-2 campaignbay-gap-8">
             <Select
               label="Bulk Table Position"
@@ -180,7 +183,6 @@ const GlobalContent: React.FC<ContentProps> = ({ settings, updateSetting }) => {
               ]}
             />
           </div>
-
           <div className="campaignbay-max-w-md">
             <Select
               label="Calculate Discount From"
@@ -700,10 +702,7 @@ const Settings = () => {
       setSavedSettings(response);
       setIsSaving(false);
       updateStore("campaignbay_settings", response);
-      addToast(
-        __("Settings saved successfully", "campaignbay"),
-        "success",
-      );
+      addToast(__("Settings saved successfully", "campaignbay"), "success");
     } catch (error) {
       console.error("Error fetching settings:", error);
       setError("Failed to load settings");

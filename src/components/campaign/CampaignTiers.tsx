@@ -41,84 +41,86 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
   products,
 }) => {
   const { woocommerce_currency_symbol } = useCbStore();
-  const [quantityTiers, setQuantityTiers] = useState<QuantityTier[]>([
-    {
-      id: 0,
-      min: 1,
-      max: "",
-      value: "",
-      type: "percentage",
-    },
-  ]);
-  const [ebTiers, setEBTiers] = useState<EBTier[]>([
-    {
-      id: 0,
-      quantity: "",
-      value: "",
-      type: "percentage",
-      total: 0,
-    },
-  ]);
-  const [bogoTiers, setBogoTiers] = useState<BogoTier>({
-    id: 0,
-    buy_quantity: 1,
-    get_quantity: 1,
-  });
-
-  //=================================================================================
-  //============================     Guide    =======================================
-  //=================================================================================
-  const bogoBuyInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.BOGO_BUY);
-  const bogoGetInputRef = useGuideStep<HTMLInputElement>(TOUR_STEPS.BOGO_GET);
-  const schedValueInputRef = useGuideStep<HTMLInputElement>(
-    TOUR_STEPS.SCHED_VALUE,
-  );
-  const schedTypeInputRef = useGuideStep<HTMLInputElement>(
-    TOUR_STEPS.SCHED_TYPE,
-  );
-  //=================================================================================
-  //============================     Guide    =======================================
-  //=================================================================================
-
+  // Ensure tiers structure is correct when type changes
   useEffect(() => {
-    if (campaign.type === "quantity" && campaign?.tiers?.length > 0){
-      setQuantityTiers([...(campaign.tiers as QuantityTier[])]);
+    if (campaign.type === "quantity") {
+      if (!campaign.tiers || campaign.tiers.length === 0) {
+        setCampaign((prev) => ({
+          ...prev,
+          tiers: [
+            {
+              id: 0,
+              min: 1,
+              max: "",
+              value: "",
+              type: "percentage",
+            },
+          ] as QuantityTier[],
+        }));
+      }
+    } else if (campaign.type === "earlybird") {
+      if (!campaign.tiers || campaign.tiers.length === 0) {
+        setCampaign((prev) => ({
+          ...prev,
+          tiers: [
+            {
+              id: 0,
+              quantity: "",
+              value: "",
+              type: "percentage",
+              total: 0,
+            },
+          ] as EBTier[],
+        }));
+      }
+    } else if (campaign.type === "bogo") {
+      if (!campaign.tiers || campaign.tiers.length === 0) {
+        setCampaign((prev) => ({
+          ...prev,
+          tiers: [
+            {
+              id: 0,
+              buy_quantity: 1,
+              get_quantity: 1,
+            },
+          ] as BogoTier[],
+        }));
+      }
+    } else if (campaign.tiers && campaign.tiers.length > 0) {
+      // Clear tiers if not needed for current type (optional cleanup)
+      setCampaign((prev) => ({ ...prev, tiers: [] }));
     }
-    else if (campaign.type === "earlybird" && campaign?.tiers?.length > 0){
-      setEBTiers([...(campaign.tiers as EBTier[])]);
-    }
-    else if (campaign.type === "bogo" && campaign?.tiers?.length > 0){
-      setBogoTiers({ ...(campaign.tiers[0] as BogoTier) });
-    }
-  }, []);
+  }, [campaign.type]);
 
-  useEffect(() => {
-    if (campaign.type === "quantity"){
-      setCampaign((prev) => ({ ...prev, tiers: [...quantityTiers] }));
-    }
-    else if (campaign.type === "earlybird"){
-      setCampaign((prev) => ({ ...prev, tiers: [...ebTiers] }));
-    }
-    else if (campaign.type === "bogo"){
-      setCampaign((prev) => ({ ...prev, tiers: [{ ...bogoTiers }] }));
-    }
-    else setCampaign((prev) => ({ ...prev, tiers: [] }));
-  }, [quantityTiers, ebTiers, bogoTiers]);
+  // Type guard helpers
+  const isQuantityTiers = (tiers: any[]): tiers is QuantityTier[] => {
+    return campaign.type === "quantity";
+  };
+  const isEBTiers = (tiers: any[]): tiers is EBTier[] => {
+    return campaign.type === "earlybird";
+  };
+  const isBogoTier = (tier: any): tier is BogoTier => {
+    return campaign.type === "bogo";
+  };
 
   return (
     <>
-      {campaign.type === "quantity" && (
+      {campaign.type === "quantity" && isQuantityTiers(campaign.tiers) && (
         <QuantityTiers
-          tiers={quantityTiers}
-          setTiers={setQuantityTiers}
+          tiers={campaign.tiers}
+          onUpdateTiers={(newTiers) =>
+            setCampaign((prev) => ({ ...prev, tiers: newTiers }))
+          }
           errors={errors?.tiers as QuantityTierError[]}
         />
       )}
 
-      {campaign.type === "earlybird" && (
+      {campaign.type === "earlybird" && isEBTiers(campaign.tiers) && (
         <EBTiers
-          tiers={ebTiers}
-          setTiers={setEBTiers}
+          tiers={campaign.tiers}
+          onUpdateTiers={(newTiers) =>
+            setCampaign((prev) => ({ ...prev, tiers: newTiers }))
+          }
           errors={errors?.tiers as EBTierError[]}
         />
       )}
@@ -177,65 +179,80 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
       )}
 
       {/* Bogo */}
-      {campaign.type === "bogo" || campaign.type === null ? (
+      {campaign.type === "bogo" &&
+      campaign.tiers &&
+      campaign.tiers[0] &&
+      isBogoTier(campaign.tiers[0]) ? (
         <Section header={__("BOGO", "campaignbay")} required>
-            <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-wrap">
-              <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
-                <Label>{__("Buy", "campaignbay")}</Label>
-                <NumberInput
-                  value={
-                    bogoTiers.buy_quantity === ""
-                      ? undefined
-                      : bogoTiers.buy_quantity
-                  }
-                  classNames={{
-                    root: "campaignbay-w-min",
-                  }}
-                  onChange={(value) =>
-                    setBogoTiers((prev) => ({
-                      ...prev,
-                      buy_quantity: value === null ? "" : value,
-                    }))
-                  }
-                />
-
-                <Label className="campaignbay-text-nowrap">
-                  {_n(
-                    "piece ,",
-                    "pieces ,",
-                    bogoTiers.buy_quantity || 1,
-                    "campaignbay",
-                  )}
-                </Label>
-              </div>
-              <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
-                <Label>{__("Get", "campaignbay")}</Label>
-                <NumberInput
+          <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2 campaignbay-flex-wrap">
+            <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
+              <Label>{__("Buy", "campaignbay")}</Label>
+              <NumberInput
+                value={
+                  (campaign.tiers[0] as BogoTier).buy_quantity === "" ||
+                  (campaign.tiers[0] as BogoTier).buy_quantity === null
+                    ? undefined
+                    : Number((campaign.tiers[0] as BogoTier).buy_quantity)
+                }
                 classNames={{
                   root: "campaignbay-w-min",
                 }}
-                  value={
-                    bogoTiers.get_quantity === ""
-                      ? undefined
-                      : bogoTiers.get_quantity
-                  }
-                  onChange={(value) =>
-                    setBogoTiers((prev) => ({
-                      ...prev,
-                      get_quantity: value === null ? "" : value,
-                    }))
-                  }
-                />
-                <Label className="campaignbay-text-nowrap">
-                  {_n(
-                    "piece",
-                    "pieces",
-                    bogoTiers.get_quantity || 1,
-                    "campaignbay",
-                  )}
-                </Label>
-              </div>
+                onChange={(value) => {
+                  const newTiers = [...campaign.tiers];
+                  newTiers[0] = {
+                    ...newTiers[0],
+                    buy_quantity: value === null ? "" : value,
+                  } as BogoTier;
+                  setCampaign((prev) => ({
+                    ...prev,
+                    tiers: newTiers,
+                  }));
+                }}
+              />
+
+              <Label className="campaignbay-text-nowrap">
+                {_n(
+                  "piece ,",
+                  "pieces ,",
+                  (campaign.tiers[0] as BogoTier).buy_quantity || 1,
+                  "campaignbay",
+                )}
+              </Label>
             </div>
+            <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
+              <Label>{__("Get", "campaignbay")}</Label>
+              <NumberInput
+                classNames={{
+                  root: "campaignbay-w-min",
+                }}
+                value={
+                  (campaign.tiers[0] as BogoTier).get_quantity === "" ||
+                  (campaign.tiers[0] as BogoTier).get_quantity === null
+                    ? undefined
+                    : Number((campaign.tiers[0] as BogoTier).get_quantity)
+                }
+                onChange={(value) => {
+                  const newTiers = [...campaign.tiers];
+                  newTiers[0] = {
+                    ...newTiers[0],
+                    get_quantity: value === null ? "" : value,
+                  } as BogoTier;
+                  setCampaign((prev) => ({
+                    ...prev,
+                    tiers: newTiers,
+                  }));
+                }}
+              />
+              <Label className="campaignbay-text-nowrap">
+                {_n(
+                  "piece",
+                  "pieces",
+                  (campaign.tiers[0] as BogoTier).get_quantity || 1,
+                  "campaignbay",
+                )}
+              </Label>
+            </div>
+          </div>
         </Section>
       ) : null}
     </>
@@ -244,9 +261,17 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
 
 export default CampaignTiers;
 
-export const Label = ({ children , className}: { children: React.ReactNode , className?: string}) => {
+export const Label = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
-    <label className={`campaignbay-text-[13px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#1e1e1e] campaignbay-py-[12px] ${className}`}>
+    <label
+      className={`campaignbay-text-[13px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#1e1e1e] campaignbay-py-[12px] ${className}`}
+    >
       {children}
     </label>
   );

@@ -38,6 +38,7 @@ import Skeleton from "../components/common/Skeleton";
 import { Tooltip } from "../components/common/ToolTip";
 import { ConfirmationModal } from "../components/common/ConfirmationModal";
 import { exportDataToCsv } from "../components/importExport/exportDataToCsv";
+import EmptyStateCampaigns from "../components/campaigns/EmptyStateCampaigns";
 
 type ViewType = "table" | "grid";
 interface TableHeader {
@@ -78,7 +79,7 @@ const Campaigns: FC = () => {
   });
 
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [visibleColumns, setVisibleColumns] = useState<string[]>([
     "title",
     "status",
@@ -127,13 +128,13 @@ const Campaigns: FC = () => {
       setTotalPages(response?.headers?.get("x-wp-totalpages"));
       // setTotalItems(response?.headers?.get("x-wp-total"));
       setCampaigns(await response.json());
+      setLoading(false);
     } catch (error) {
       addToast(__("Error fetching campaigns.", "campaignbay"), "error");
-    } finally {
       setLoading(false);
+    } finally {
     }
   };
-
   useEffect(() => {
     // @ts-ignore
     const savedView: ViewType = localStorage.getItem(
@@ -230,16 +231,9 @@ const Campaigns: FC = () => {
       <HeaderContainer className="campaignbay-py-[12px]">
         <Header> Campaigns </Header>
         <div className="campaignbay-flex campaignbay-gap-2 campaignbay-justify-end campaignbay-items-center">
-          {/* <Button size="small" variant="outline" color="primary">
-            Import <Icon icon={arrowDown} size={20} fill="currentColor" />
-          </Button>
-          <Button size="small" variant="outline" color="primary">
-            Export <Icon icon={arrowUp} size={20} fill="currentColor" />
-          </Button> */}
           <ImportExport refresh={fetchCampaigns} />
         </div>
       </HeaderContainer>
-      {/* main body */}
       <div
         className={
           view === "table"
@@ -1029,9 +1023,17 @@ const Table = ({
           </tr>
         </thead>
         <tbody>
-          {campaigns.map((campaign) => {
-            return renderRow(campaign);
-          })}
+          {campaigns.length && campaigns.length > 0 ? (
+            campaigns.map((campaign) => {
+              return renderRow(campaign);
+            })
+          ) : (
+            <tr>
+              <td colSpan={visibleColumns.length + 2}>
+                <EmptyStateCampaigns />
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
@@ -1159,7 +1161,10 @@ const Pagination = ({
           {selectedCampaigns.length} Item Selected
         </span>
         <div className="campaignbay-flex campaignbay-items-center campaignbay-gap-[4px]">
-          <Tooltip content="Delete Selected Campaign">
+          <Tooltip
+            content="Delete Selected Campaign"
+            disabled={selectedCampaigns.length === 0}
+          >
             <Button
               variant="ghost"
               size="small"
@@ -1170,7 +1175,10 @@ const Pagination = ({
               <Icon icon={trash} />
             </Button>
           </Tooltip>
-          <Tooltip content="Export Selected Campaign">
+          <Tooltip
+            content="Export Selected Campaign"
+            disabled={selectedCampaigns.length === 0}
+          >
             <Button
               variant="ghost"
               size="small"
@@ -1181,7 +1189,10 @@ const Pagination = ({
               <Icon icon={download} />
             </Button>
           </Tooltip>
-          <Tooltip content="Clear Selection">
+          <Tooltip
+            content="Clear Selection"
+            disabled={selectedCampaigns.length === 0}
+          >
             <Button
               variant="ghost"
               size="small"
@@ -1271,18 +1282,25 @@ const CampaignsGrid = ({
     }
   };
 
+  if (campaigns.length > 0) {
+    return (
+      <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 2xl:campaignbay-grid-cols-5 campaignbay-gap-default ">
+        {campaigns.map((campaign) => (
+          <CampaignCard
+            key={campaign.id}
+            campaign={campaign}
+            isSelected={selectedCampaigns.includes(campaign.id)}
+            onSelect={handleCheckboxChange}
+            handleDelete={handleDelete}
+            handleDuplicate={handleDuplicate}
+          />
+        ))}
+      </div>
+    );
+  }
   return (
-    <div className="campaignbay-grid campaignbay-grid-cols-1 md:campaignbay-grid-cols-2 2xl:campaignbay-grid-cols-5 campaignbay-gap-default ">
-      {campaigns.map((campaign) => (
-        <CampaignCard
-          key={campaign.id}
-          campaign={campaign}
-          isSelected={selectedCampaigns.includes(campaign.id)}
-          onSelect={handleCheckboxChange}
-          handleDelete={handleDelete}
-          handleDuplicate={handleDuplicate}
-        />
-      ))}
+    <div className="campaignbay-bg-white campaignbay-rounded-[8px]">
+      <EmptyStateCampaigns />
     </div>
   );
 };
