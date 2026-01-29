@@ -63,7 +63,7 @@ export const Input: React.FC<InputProps> = ({
       />
       {error && (
         <span
-          className={`campaignbay-mt-1 campaignbay-text-[11px] campaignbay-leading-[16px] campaignbay-text-red-500 ${
+          className={`campaignbay-mt-1 campaignbay-text-xs campaignbay-text-red-500 ${
             classNames?.error || ""
           }`}
         >

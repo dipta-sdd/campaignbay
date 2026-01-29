@@ -168,11 +168,10 @@ const EBTierRow: FC<EBTierRowProps> = ({
         </div>
       )}
 
-      {/* Error message */}
       {error && (
-        <p className="campaignbay-text-[11px] campaignbay-text-red-600 campaignbay-mt-2 campaignbay-mb-0">
+        <span className="campaignbay-mt-1 campaignbay-text-xs campaignbay-text-red-500">
           {error}
-        </p>
+        </span>
       )}
     </div>
   );

@@ -86,7 +86,6 @@ const Campaigns: FC = () => {
     "type",
     "target",
     "duration",
-    "last_modified"
   ]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [totalPages, setTotalPages] = useState<number>(1);

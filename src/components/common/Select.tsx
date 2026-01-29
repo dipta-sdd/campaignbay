@@ -9,6 +9,8 @@ import { createPortal } from "react-dom";
 import { useClickOutside } from "./hooks/useClickOutside";
 import {
   borderClasses,
+  errorClasses,
+  errorClassesManual,
   hoverBorderClasses,
   hoverClassesManual,
 } from "./classes";
@@ -180,7 +182,7 @@ const Select: React.FC<SelectProps> = ({
   hoverBorder = hoverBorderClasses,
   color = "campaignbay-text-[#0a4b78]",
   isError = false,
-  errorClassName = "wpab-input-error",
+  errorClassName = errorClasses,
   differentDropdownWidth = false,
   isCompact = false,
   classNames = {} as NonNullable<SelectProps["classNames"]>,
@@ -472,6 +474,7 @@ const Select: React.FC<SelectProps> = ({
         onClick={() => !disabled && setIsOpen((prev) => !prev)}
         onKeyDown={handleTriggerKeyDown}
         className={`
+          campaignbay-ring-1 campaignbay-ring-transparent
           campaignbay-relative campaignbay-flex campaignbay-flex-wrap  campaignbay-items-center campaignbay-justify-between campaignbay-w-full campaignbay-gap-0 campaignbay-px-4  campaignbay-text-left !campaignbay-cursor-pointer 
           campaignbay-transition-all campaignbay-duration-200 campaignbay-ease-in-out campaignbay-border campaignbay-rounded-[8px] campaignbay-bg-white ${border} 
           ${isCompact ? "campaignbay-py-[5px]" : "campaignbay-py-[9px]"}
@@ -479,9 +482,11 @@ const Select: React.FC<SelectProps> = ({
           ${
             disabled
               ? "campaignbay-bg-gray-100 campaignbay-cursor-not-allowed campaignbay-text-gray-400 campaignbay-border-gray-200"
+              : isError
+              ? ""
               : "hover:!campaignbay-border-[#3858e9]"
           }
-          ${isOpen ? `${hoverClassesManual}` : ""}
+          ${isOpen ? (isError ? errorClassesManual : hoverClassesManual) : ""}
           ${isError ? `${errorClassName} ${classNames.error || ""}` : ""}
           ${classNames.select || ""} ${classNames.container || ""}
         `}

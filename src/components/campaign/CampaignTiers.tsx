@@ -131,6 +131,10 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
             <Label>{__("Discount will be applied", "campaignbay")}</Label>
             <div>
               <NumberInput
+                error={errors?.discount_value?.message}
+                classNames={{
+                  root: "campaignbay-min-w-min campaignbay-w-min",
+                }}
                 value={
                   campaign.discount_value === "" ||
                   campaign.discount_value === null
@@ -194,8 +198,10 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
                     ? undefined
                     : Number((campaign.tiers[0] as BogoTier).buy_quantity)
                 }
+                // @ts-ignore
+                error={errors?.tiers?.[0]?.buy_quantity?.message}
                 classNames={{
-                  root: "campaignbay-w-min",
+                  root: "campaignbay-min-w-min campaignbay-w-min",
                 }}
                 onChange={(value) => {
                   const newTiers = [...campaign.tiers];
@@ -222,8 +228,10 @@ const CampaignTiers: FC<CampaignTiersProps> = ({
             <div className="campaignbay-flex campaignbay-items-start  campaignbay-gap-[10px]">
               <Label>{__("Get", "campaignbay")}</Label>
               <NumberInput
+                // @ts-ignore
+                error={errors?.tiers?.[0]?.get_quantity?.message}
                 classNames={{
-                  root: "campaignbay-w-min",
+                  root: "campaignbay-min-w-min campaignbay-w-min",
                 }}
                 value={
                   (campaign.tiers[0] as BogoTier).get_quantity === "" ||

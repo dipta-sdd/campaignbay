@@ -1,65 +1,51 @@
+import { RuleErrors, UserRuleCondition } from "./type";
 import { FC } from "react";
-import { ConditionInterface, RuleErrors } from "./type";
-import UsersRule from "./UsersRule";
-import { Trash2 } from "lucide-react";
-import { UserRuleCondition, UserRolesCondition, UsersCondition } from "./type";
-import UserRoleRule from "./UserRoleRule";
-import UserRolesRule from "./UserRolesRule";
-import { closeSmall, Icon } from "@wordpress/icons";
-import Button from "../common/Button";
+import { useCbStore } from "../../store/cbStore";
+import Select from "../common/Select";
+import { __ } from "@wordpress/i18n";
+import { renderErrorMessage } from "../campaign/Campaign";
+import { Label } from "../campaign/CampaignTiers";
 
-interface RuleProps {
-  rule: ConditionInterface;
-  onChange: (rule: ConditionInterface) => void;
-  onDelete: () => void;
+interface UserRoleRuleProps {
+  condition: UserRuleCondition;
+  onChange: (condition: UserRuleCondition) => void;
   errors: RuleErrors;
 }
 
-const Rule: FC<RuleProps> = ({ rule, onChange, onDelete, errors }) => {
+const UserRoleRule: FC<UserRoleRuleProps> = ({
+  condition,
+  onChange,
+  errors,
+}) => {
+  const { wpSettings } = useCbStore();
+  const userRoles = wpSettings?.user_roles?.map((role) => ({
+    label: role.name,
+    value: role.value,
+  }));
   return (
-    <div
-      className={`campaignbay-flex campaignbay-items-center campaignbay-gap-2 campaignbay-justify-between campaignbay-w-full campaignbay-bg-[#F0F0F0] campaignbay-rounded-[4px] campaignbay-p-[10px]`}
-    >
-      {(() => {
-        switch (rule.type) {
-          case "user_role":
-            return (
-              <UserRoleRule
-                errors={errors}
-                condition={rule.condition as UserRuleCondition}
-                onChange={(condition) => onChange({ ...rule, condition })}
-              />
-            );
-          case "user_roles":
-            return (
-              <UserRolesRule
-                errors={errors}
-                condition={rule.condition as UserRolesCondition}
-                onChange={(condition) => onChange({ ...rule, condition })}
-              />
-            );
-          case "users":
-            return (
-              <UsersRule
-                errors={errors}
-                condition={rule.condition as UsersCondition}
-                onChange={(condition) => onChange({ ...rule, condition })}
-              />
-            );
-        }
-      })()}
-      <div className="campaignbay-self-start campaignbay-flex campaignbay-items-start campaignbay-justify-start campaignbay-gap-2">
-        <Button
-          onClick={onDelete}
-          variant="outline"
-          color="danger"
-          className="!campaignbay-p-[7px] !campaignbay-rounded-[4px] !campaignbay-border !campaignbay-border-[#cc1818] !campaignbay-text-[#cc1818] campaignbay-bg-[#ffeeee] hover:campaignbay-bg-[#ffbbbb]"
-        >
-          <Icon icon={closeSmall} fill="currentColor" />
-        </Button>
+    <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2">
+      <Label className="campaignbay-text-[12px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#757575]">
+        {__("Apply this campaign to only users with", "campaignbay")}
+      </Label>
+      <div>
+        <Select
+          isError={!!errors?.option}
+          differentDropdownWidth={true}
+          className="!campaignbay-w-max"
+          placeholder={__("Select User Role", "campaignbay")}
+          value={condition?.option || ""}
+          onChange={(value: string | number) =>
+            onChange({ ...condition, option: value as string })
+          }
+          options={userRoles}
+        />
+        {renderErrorMessage(errors?.option?.message)}
       </div>
+      <Label className="campaignbay-text-[12px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#757575]">
+        {__("role.", "campaignbay")}
+      </Label>
     </div>
   );
 };
 
-export default Rule;
+export default UserRoleRule;

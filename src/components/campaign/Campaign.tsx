@@ -19,7 +19,6 @@ import { useGuide, useGuideStep } from "../../store/GuideContext";
 import { TOUR_STEPS } from "../../utils/tourSteps";
 import Select, { SelectOption } from "../common/Select";
 import apiFetch from "@wordpress/api-fetch";
-import { useCbStore } from "../../store/cbStore";
 import { useToast } from "../../store/toast/use-toast";
 import { getSettings } from "../../utils/settings";
 import { __ } from "@wordpress/i18n";
@@ -406,7 +405,7 @@ const Campaign: FC<CampaignProps> = ({
               </div>
             </Card>
 
-            <div className="campaignbay-py-[15px]">
+            <div className="campaignbay-py-[15px] campaignbay-hidden xl:campaignbay-block">
               <Button
                 size="large"
                 color="primary"
@@ -439,6 +438,18 @@ const Campaign: FC<CampaignProps> = ({
                 enableUsageLimit={enableUsageLimit}
                 setEnableUsageLimit={setEnableUsageLimit}
               />
+              <div className="campaignbay-py-[15px] campaignbay-block xl:campaignbay-hidden">
+                <Button
+                  size="large"
+                  color="primary"
+                  variant="solid"
+                  className="campaignbay-text-[15px] campaignbay-leading-[20px] campaignbay-font-[700] "
+                  onClick={handleSave}
+                  disabled={isSaving || isLoading || campaign?.type === null}
+                >
+                  {buttonText} <Icon icon={check} fill="currentColor" />
+                </Button>
+              </div>
             </div>
           </Card>
         </div>
@@ -533,7 +544,21 @@ export const renderError = (
 
   return <span className={className}>{error.message}</span>;
 };
+export const renderErrorMessage = (
+  error?: string | null,
+  negativeMargin = true,
+): React.ReactNode => {
+  if (!error) {
+    return null;
+  }
 
+  const marginClass = negativeMargin
+    ? "campaignbay--mt-2"
+    : "campaignbay-mt-[1px]";
+  const className = `campaignbay-text-red-500 ${marginClass} campaignbay-text-xs`;
+
+  return <span className={className}>{error}</span>;
+};
 export const OtherSettings = ({
   campaign,
   setCampaign,
@@ -621,18 +646,18 @@ export const OtherSettings = ({
           />
         </div>
 
-          <Checkbox
-            label={
-              <>
-                {__("Enable Schedule", "campaignbay")}{" "}
-                <Helper
-                  content={__(
-                    "Campaign will be active for specific time period.",
-                    "campaignbay",
-                  )}
-                />
-              </>
-            }
+        <Checkbox
+          label={
+            <>
+              {__("Enable Schedule", "campaignbay")}{" "}
+              <Helper
+                content={__(
+                  "Campaign will be active for specific time period.",
+                  "campaignbay",
+                )}
+              />
+            </>
+          }
           checked={!!campaign.schedule_enabled}
           onChange={handleScheduleChange}
         />
