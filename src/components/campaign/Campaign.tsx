@@ -35,6 +35,7 @@ import { check, handle, Icon } from "@wordpress/icons";
 import { Switch } from "../common/Switch";
 import HeaderContainer from "../common/HeaderContainer";
 import { EditableText } from "../common/EditableText";
+import { Tooltip } from "../common/ToolTip";
 // @ts-ignore
 interface CampaignInterface extends CampaignInerfaceBase {
   type: CampaignType | null;
@@ -318,7 +319,7 @@ const Campaign: FC<CampaignProps> = ({
                       }))
                     }
                   />
-                  {/* {renderError(errors?.target_type)} */}
+                  {renderError(errors?.target_type)}
 
                   {campaign.target_type !== "entire_store" ? (
                     <>
@@ -331,11 +332,23 @@ const Campaign: FC<CampaignProps> = ({
                         <MultiSelect
                           ref={targetIdsInputRef}
                           label={
-                            campaign.target_type === "product"
-                              ? __("Select Products *", "campaignbay")
-                              : campaign.target_type === "category"
-                              ? __("Select Categories *", "campaignbay")
-                              : ""
+                            campaign.target_type === "product" ? (
+                              <>
+                                {__("Select Products", "campaignbay")}
+                                <span className="!campaignbay-text-red-500 campaignbay-ml-[5px]">
+                                  *
+                                </span>
+                              </>
+                            ) : campaign.target_type === "category" ? (
+                              <>
+                                {__("Select Categories", "campaignbay")}
+                                <span className="!campaignbay-text-red-500 campaignbay-ml-[5px]">
+                                  *
+                                </span>
+                              </>
+                            ) : (
+                              ""
+                            )
                           }
                           options={
                             campaign.target_type === "product"
@@ -352,10 +365,15 @@ const Campaign: FC<CampaignProps> = ({
                             }))
                           }
                         />
-                        {/* {renderError(errors?.target_ids, false)} */}
+                        {renderError(errors?.target_ids, false)}
                       </div>
                       <Checkbox
-                        label={__("Exclude Items", "campaignbay")}
+                        label={
+                          <>
+                            {__("Exclude Items", "campaignbay")}{" "}
+                            <Helper content="Exclude selected items from the discount" />
+                          </>
+                        }
                         checked={!!campaign.is_exclude}
                         onChange={(checked) =>
                           setCampaign((prev) => ({
@@ -550,7 +568,17 @@ export const OtherSettings = ({
     <>
       <Section header="Others">
         <Checkbox
-          label={__("Exclude Sale Item", "campaignbay")}
+          label={
+            <>
+              {__("Exclude Sale Item", "campaignbay")}{" "}
+              <Helper
+                content={__(
+                  "Products that are on sale will not be affected by this campaign",
+                  "campaignbay",
+                )}
+              />
+            </>
+          }
           checked={!!campaign.exclude_sale_items}
           onChange={(checked) =>
             setCampaign((prev) => ({ ...prev, exclude_sale_items: checked }))
@@ -561,7 +589,17 @@ export const OtherSettings = ({
             classNames={{
               label: "campaignbay-text-nowrap",
             }}
-            label={__("Enable Usage Limit", "campaignbay")}
+            label={
+              <>
+                {__("Enable Usage Limit", "campaignbay")}{" "}
+                <Helper
+                  content={__(
+                    "Campaign will be automatically disabled when the usage limit is reached.",
+                    "campaignbay",
+                  )}
+                />
+              </>
+            }
             checked={!!enableUsageLimit}
             onChange={(checked) => {
               setEnableUsageLimit(checked);
@@ -583,15 +621,35 @@ export const OtherSettings = ({
           />
         </div>
 
-        <Checkbox
-          label={__("Enable Schedule", "campaignbay")}
+          <Checkbox
+            label={
+              <>
+                {__("Enable Schedule", "campaignbay")}{" "}
+                <Helper
+                  content={__(
+                    "Campaign will be active for specific time period.",
+                    "campaignbay",
+                  )}
+                />
+              </>
+            }
           checked={!!campaign.schedule_enabled}
           onChange={handleScheduleChange}
         />
 
         <CustomDateTimePicker
           // inputRef={endTimeInputRef}
-          label={__("START DATE", "campaignbay")}
+          label={
+            <>
+              {__("START DATE", "campaignbay")}{" "}
+              <Helper
+                content={__(
+                  "Campaign will be active from this date and time.",
+                  "campaignbay",
+                )}
+              />
+            </>
+          }
           value={campaign.start_datetime}
           onChange={(date: Date | string) => {
             setCampaign((prev) => ({
@@ -604,7 +662,17 @@ export const OtherSettings = ({
         {renderError(errors?.start_datetime, false)}
         <CustomDateTimePicker
           // inputRef={endTimeInputRef}
-          label={__("END DATE", "campaignbay")}
+          label={
+            <>
+              {__("END DATE", "campaignbay")}{" "}
+              <Helper
+                content={__(
+                  "Campaign will be active until this date and time.",
+                  "campaignbay",
+                )}
+              />
+            </>
+          }
           value={campaign.end_datetime}
           onChange={(date: Date | string) => {
             setCampaign((prev) => ({
@@ -684,4 +752,18 @@ export const handleTypeChange = (
       return { ...prev, type: type };
     });
   }
+};
+
+export const Helper = ({ content }: { content: string }) => {
+  return (
+    <Tooltip
+      content={content}
+      position="bottom"
+      className="!campaignbay-z-[10000]"
+    >
+      <span className=" campaignbay-text-white campaignbay-bg-gray-500 campaignbay-rounded-full campaignbay-w-4 campaignbay-h-4 campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-ml-2">
+        ?
+      </span>
+    </Tooltip>
+  );
 };

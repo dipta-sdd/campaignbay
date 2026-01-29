@@ -21,7 +21,9 @@ import {
   DependentType,
   DISCOUNT_TYPES,
   handleTypeChange,
+  Helper,
   OtherSettings,
+  renderError,
   Section,
 } from "../../components/campaign/Campaign";
 import CustomModal from "../common/CustomModal";
@@ -36,7 +38,6 @@ import { Checkbox } from "../common/Checkbox";
 import CampaignTiers from "../campaign/CampaignTiers";
 import Conditions from "../conditions/Conditions";
 import { ConditionsInterface } from "../conditions/type";
-import { Tier } from "../../old/types";
 import { getSettings } from "../../utils/settings";
 import { ConfirmationModal } from "../common/ConfirmationModal";
 import ReactConfetti from "react-confetti";
@@ -157,7 +158,6 @@ const FirstCampaign: FC = () => {
     }
     setIsSaving(false);
   };
-
 
   const isEnableNext = (): boolean => {
     if (currentStep === 1) {
@@ -347,9 +347,9 @@ const FirstCampaign: FC = () => {
             <Congrets id={campaignId} setIsOpen={setIsOpen} />
           ) : null}
           {/* upper controll buttons */}
-          <div className="campaignbay-absolute campaignbay-top-4 campaignbay-right-4 campaignbay-flex campaignbay-items-center campaignbay-gap-2" >
+          <div className="campaignbay-absolute campaignbay-top-4 campaignbay-right-4 campaignbay-flex campaignbay-items-center campaignbay-gap-2">
             <Tooltip
-            disabled={isSaving}
+              disabled={isSaving}
               position="top"
               content="Back"
               className="!campaignbay-z-[10000]"
@@ -374,7 +374,12 @@ const FirstCampaign: FC = () => {
                 </svg>
               </Button>
             </Tooltip>
-            <Tooltip position="top" content={currentStep === 4 ? "Save" : "Next"} disabled={!isEnableNext() || isSaving} className="!campaignbay-z-[10000]">
+            <Tooltip
+              position="top"
+              content={currentStep === 4 ? "Save" : "Next"}
+              disabled={!isEnableNext() || isSaving}
+              className="!campaignbay-z-[10000]"
+            >
               <Button
                 size="small"
                 onClick={handleNextStep}
@@ -430,7 +435,7 @@ const FirstCampaign: FC = () => {
                       "campaignbay-text-[16px] campaignbay-leading-[24px] !campaignbay-py-[10px]",
                   }}
                   size="large"
-                  placeholder="Enter your campaign name (e.g., summer sale!"
+                  placeholder="Enter your campaign name (e.g., summer sale!)"
                   value={campaign.title}
                   onChange={(e) =>
                     setCampaign({ ...campaign, title: e.target.value })
@@ -458,7 +463,9 @@ const FirstCampaign: FC = () => {
                   options={DISCOUNT_TYPES}
                   // @ts-ignore
                   value={campaign?.type}
-                  onChange={(value) => handleTypeChange(value as CampaignType, setCampaign )}
+                  onChange={(value) =>
+                    handleTypeChange(value as CampaignType, setCampaign)
+                  }
                 />
                 {errors.type && (
                   <p className="campaignbay-text-red-500 campaignbay-text-[12px] campaignbay-mt-[8px]">
@@ -517,13 +524,24 @@ const FirstCampaign: FC = () => {
                           }`}
                         >
                           <MultiSelect
-                            // ref={targetIdsInputRef}
                             label={
-                              campaign.target_type === "product"
-                                ? __("Select Products *", "campaignbay")
-                                : campaign.target_type === "category"
-                                ? __("Select Categories *", "campaignbay")
-                                : ""
+                              campaign.target_type === "product" ? (
+                                <>
+                                  {__("Select Products", "campaignbay")}
+                                  <span className="!campaignbay-text-red-500 campaignbay-ml-[5px]">
+                                    *
+                                  </span>
+                                </>
+                              ) : campaign.target_type === "category" ? (
+                                <>
+                                  {__("Select Categories", "campaignbay")}
+                                  <span className="!campaignbay-text-red-500 campaignbay-ml-[5px]">
+                                    *
+                                  </span>
+                                </>
+                              ) : (
+                                ""
+                              )
                             }
                             options={
                               campaign.target_type === "product"
@@ -540,10 +558,15 @@ const FirstCampaign: FC = () => {
                               }))
                             }
                           />
-                          {/* {renderError(errors?.target_ids, false)} */}
+                          {renderError(errors?.target_ids, false)}
                         </div>
                         <Checkbox
-                          label={__("Exclude Items", "campaignbay")}
+                          label={
+                            <>
+                              {__("Exclude Items", "campaignbay")}
+                              <Helper content="Exclude selected items from the discount" />
+                            </>
+                          }
                           checked={!!campaign.is_exclude}
                           onChange={(checked) =>
                             setCampaign((prev) => ({
@@ -637,10 +660,7 @@ const FirstCampaign: FC = () => {
               >
                 {currentStep === 4 ? (
                   <>
-                    Create Campaign <Icon
-                      icon={check}
-                      fill="currentColor"
-                    />{" "}
+                    Create Campaign <Icon icon={check} fill="currentColor" />{" "}
                   </>
                 ) : (
                   <>

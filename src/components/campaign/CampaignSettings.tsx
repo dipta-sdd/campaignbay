@@ -7,7 +7,7 @@ import {
   CampaignType,
 } from "../../utils/types";
 import { Checkbox } from "../common/Checkbox";
-import { renderError } from "./Campaign";
+import { Helper, renderError } from "./Campaign";
 import Select from "../common/Select";
 import CopyToClipboard from "../common/CopyToClipboard";
 import { Input } from "../common/Input";
@@ -58,10 +58,20 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   ? false
                   : settings?.display_as_regular_price
               }
-              label={__("Display as Regular Price", "campaignbay")}
+              label={
+                <>
+                  {__("Display as Regular Price", "campaignbay")}{" "}
+                  <Helper
+                    content={__(
+                      "Price will be shown as regular price, not as strike through price",
+                      "campaignbay",
+                    )}
+                  />
+                </>
+              }
               onChange={(checked) =>
                 setSettings((prev: CampaignSettingsType) => ({
-                  ...settings,
+                  ...prev,
                   display_as_regular_price: checked,
                 }))
               }
@@ -83,7 +93,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                   )}
                   onChange={(checked) =>
                     setSettings((prev: CampaignSettingsType) => ({
-                      ...settings,
+                      ...prev,
                       show_product_message: checked,
                     }))
                   }
@@ -394,10 +404,19 @@ interface PlaceholderProps {
   };
 }
 
-export const Placeholder: FC<PlaceholderProps> = ({ text , classNames}) => {
+export const Placeholder: FC<PlaceholderProps> = ({ text, classNames }) => {
   return (
-    <span className={classNames?.root || "campaignbay-bg-gray-200 campaignbay-my-[2px] campaignbay-mx-[4px] campaignbay-p-[2px] campaignbay-px-[4px] campaignbay-rounded-md campaignbay-inline-flex campaignbay-items-center campaignbay-justify-center campaignbay-gap-[4px]"}>
-      <span className={classNames?.copy || "campaignbay-mr-[2px] campaignbay-text-gray-600"}>{`{${text}}`}</span>
+    <span
+      className={
+        classNames?.root ||
+        "campaignbay-bg-gray-200 campaignbay-my-[2px] campaignbay-mx-[4px] campaignbay-p-[2px] campaignbay-px-[4px] campaignbay-rounded-md campaignbay-inline-flex campaignbay-items-center campaignbay-justify-center campaignbay-gap-[4px]"
+      }
+    >
+      <span
+        className={
+          classNames?.copy || "campaignbay-mr-[2px] campaignbay-text-gray-600"
+        }
+      >{`{${text}}`}</span>
       <CopyToClipboard text={`{${text}}`} />
     </span>
   );
@@ -411,13 +430,24 @@ interface PlaceholdersProps {
   };
 }
 
-export const Placeholders: FC<PlaceholdersProps> = ({ options , classNames}) => {
+export const Placeholders: FC<PlaceholdersProps> = ({
+  options,
+  classNames,
+}) => {
   return (
-    <span className={classNames?.root || "campaignbay-inline campaignbay-text-wrap"}>
+    <span
+      className={classNames?.root || "campaignbay-inline campaignbay-text-wrap"}
+    >
       {" "}
       Use placeholder like
       {options.map((option, index) => {
-        return <Placeholder key={index} text={option} classNames={{ copy: classNames?.placeholder }} />;
+        return (
+          <Placeholder
+            key={index}
+            text={option}
+            classNames={{ copy: classNames?.placeholder }}
+          />
+        );
       })}
       .
     </span>

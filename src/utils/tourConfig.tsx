@@ -1,6 +1,28 @@
-import { TourConfig } from "../old/types";
 import { TOUR_STEPS } from "./tourSteps";
-
+export interface TourConfig {
+  [key: number]: TourStepConfig;
+}
+interface TourStepConfig {
+  text: string | React.ReactNode;
+  position: string;
+  showNext: boolean;
+  showPrev: boolean;
+  autoFocus?: boolean;
+  nextOnEnter?: boolean;
+  nextOnSelect?: boolean;
+  onNext?: (actions: GuideActions) => void;
+  onPrev?: (actions: GuidePrevActions) => void;
+}
+export interface GuideActions {
+  next: () => void;
+  setStep: (step: number) => void;
+  navigate: (to: string) => void;
+}
+export interface GuidePrevActions {
+  prev: () => void;
+  setStep: (step: number) => void;
+  navigate: (to: string) => void;
+}
 export const campaignTourConfig: TourConfig = {
   // ===========================================================================
   // BASE STEPS

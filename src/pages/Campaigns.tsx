@@ -28,7 +28,7 @@ import { addQueryArgs } from "@wordpress/url";
 import { useToast } from "../store/toast/use-toast";
 import { __, _n } from "@wordpress/i18n";
 import { getCampaignTypeText } from "./Dashboard";
-import formatDateTime, { formatDate } from "../utils/Dates";
+import formatDateTime, { formatDate, timeDiff } from "../utils/Dates";
 import { Toggler } from "../components/common/Toggler";
 import { ListSelect } from "../components/common/ListSelect";
 import ImportExport from "../components/importExport/ImportExport";
@@ -86,6 +86,7 @@ const Campaigns: FC = () => {
     "type",
     "target",
     "duration",
+    "last_modified"
   ]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -989,7 +990,7 @@ const Table = ({
       case "last_modified":
         return (
           <td className="campaignbay-text-left campaignbay-font-[11px] campaignbay-leading-[16px] campaignbay-px-[8px] campaignbay-py-[12px] campaignbay-text-[#757575] campaignbay-border-b-[1px] campaignbay-border-[#e0e0e0] campaignbay-whitespace-nowrap">
-            {formatDateTime(campaign.date_modified_unix)}
+            {timeDiff(campaign.date_modified_unix)}
           </td>
         );
       default:

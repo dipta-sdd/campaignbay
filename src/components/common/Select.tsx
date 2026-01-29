@@ -491,7 +491,7 @@ const Select: React.FC<SelectProps> = ({
             <input
               ref={searchInputRef}
               type="text"
-              className={`campaignbay-w-full !campaignbay-bg-transparent !campaignbay-border-none !campaignbay-shadow-none !campaignbay-outline-none !campaignbay-p-0 !campaignbay-font-[${fontWeight}] !campaignbay-text-[${fontSize}px] !campaignbay-min-h-[unset] ${
+              className={`campaignbay-w-full !campaignbay-bg-transparent !campaignbay-border-none !campaignbay-shadow-none !campaignbay-outline-none !campaignbay-p-0 !campaignbay-font-[${fontWeight}] !campaignbay-text-[${fontSize}px] !campaignbay-leading-[20px] !campaignbay-min-h-[unset] ${
                 classNames.search || ""
               }`}
               value={searchQuery}

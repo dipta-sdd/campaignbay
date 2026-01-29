@@ -26,13 +26,13 @@ import { useGuide } from "../store/GuideContext";
 import Skeleton from "../components/common/Skeleton";
 import HeaderContainer from "../components/common/HeaderContainer";
 import Header from "../components/common/Header";
-import { formatDate } from "../utils/Dates";
-import { CampaignType } from "../old/types";
+import { formatDate, timeDiff } from "../utils/Dates";
 import Page from "../components/common/Page";
 import Select from "../components/common/Select";
 import { Toggler } from "../components/common/Toggler";
 import ActivityLogModal from "../components/dashboard/ActivityLogModal";
 import { useCbStore } from "../store/cbStore";
+import { CampaignType } from "../utils/types";
 
 interface KpiValue {
   value: number;
@@ -144,68 +144,6 @@ const Dashboard: FC = () => {
     }).format(value);
   };
 
-  const formatNumber = (value: number): string => {
-    return new Intl.NumberFormat("en-US").format(value);
-  };
-
-  const formatTimeDifference = (
-    dateString: string,
-    futureTense = "in",
-    pastTense = "ago",
-  ): string => {
-    if (!dateString) {
-      return "";
-    }
-
-    const date: Date = new Date(dateString);
-    const now: Date = new Date();
-
-    // Get the difference in seconds
-    // @ts-ignore
-    const diffInSeconds = (date - now) / 1000;
-    const absDiffInSeconds = Math.abs(diffInSeconds);
-    const tense = diffInSeconds > 0 ? futureTense : pastTense;
-    const tenseStart = diffInSeconds > 0 ? futureTense : "";
-    const tenseEnd = diffInSeconds > 0 ? "" : pastTense;
-
-    // Handle times less than a minute
-    if (absDiffInSeconds < 60) {
-      return diffInSeconds > 0
-        ? __("Just now", "campaignbay")
-        : __("A moment ago", "campaignbay");
-    }
-
-    // Handle times in minutes
-    const diffInMinutes = Math.floor(absDiffInSeconds / 60);
-    if (diffInMinutes < 60) {
-      const value = sprintf(
-        /* translators: %d: number of minutes. */
-        _n("%d minute", "%d minutes", diffInMinutes, "campaignbay"),
-        diffInMinutes,
-      );
-      return `${tenseStart} ${value} ${tenseEnd}`;
-    }
-
-    // Handle times in hours
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) {
-      const value = sprintf(
-        /* translators: %d: number of hours. */
-        _n("%d hour", "%d hours", diffInHours, "campaignbay"),
-        diffInHours,
-      );
-      return `${tenseStart} ${value} ${tenseEnd}`;
-    }
-
-    // Handle times in days
-    const diffInDays = Math.floor(diffInHours / 24);
-    const value = sprintf(
-      /* translators: %d: number of days. */
-      _n("%d day", "%d days", diffInDays, "campaignbay"),
-      diffInDays,
-    );
-    return `${tenseStart} ${value} ${tenseEnd}`;
-  };
 
   // Chart data preparation
   const getDiscountTrendsData = () => {
@@ -721,7 +659,7 @@ const Dashboard: FC = () => {
                   </div>
                   {/* value */}
                   <Header className="campaignbay-pt-1">
-                    w{dashboardData?.kpis?.total_discount_value?.value}
+                    {dashboardData?.kpis?.total_discount_value?.value}
                   </Header>
                   {/* title */}
                   <span className="campaignbay-text-default">
@@ -905,7 +843,7 @@ const Dashboard: FC = () => {
                           .map((activity, index) => (
                             <tr key={index}>
                               <td className="campaignbay-min-w-[130px] campaignbay-text-default campaignbay-align-top">
-                                {formatTimeDifference(activity.timestamp)}
+                                {timeDiff(activity.timestamp)}
                               </td>
                               <td className="campaignbay-w-full campaignbay-pb-[8px]">
                                 <div className="campaignbay-flex campaignbay-items-start campaignbay-flex-col campaignbay-gap-[4px]">

@@ -6,9 +6,20 @@ import React, {
   RefObject,
   useEffect,
   useState,
+  Dispatch,
+  SetStateAction,
 } from "react";
-import { GuideContextType, TourConfig } from "../old/types";
-import { campaignTourConfig } from "../utils/tourConfig";
+import { campaignTourConfig, TourConfig } from "../utils/tourConfig";
+export interface GuideContextType {
+  tourStep: number;
+  setTourStep: (step: number) => void;
+  registerRef: (step: number, ref: RefObject<HTMLElement>) => void;
+  getRef: (step: number) => RefObject<HTMLElement> | undefined;
+  config: TourConfig;
+  setConfig: Dispatch<SetStateAction<TourConfig>>;
+  isModalOpen: boolean;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+}
 
 const GuideContext = createContext<GuideContextType | undefined>(undefined);
 
@@ -24,7 +35,7 @@ export const GuideProvider: React.FC<{ children: React.ReactNode }> = ({
     (step: number, ref: RefObject<HTMLElement>) => {
       refs.current[step] = ref;
     },
-    []
+    [],
   );
 
   const getRef = useCallback((step: number) => {
@@ -74,7 +85,7 @@ export const useGuideStep = <T extends HTMLElement>(step: number) => {
         registerRef(step, { current: node });
       }
     },
-    [registerRef, step]
+    [registerRef, step],
   );
 
   return setRef;

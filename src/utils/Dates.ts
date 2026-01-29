@@ -77,11 +77,12 @@ export function timeDiff(dateTimeString: string | number | null | undefined): st
 
   const { timezone } = getDateSettings();
   // @ts-ignore
-  const dateTime = getDate(dateTimeString * 1000, timezone?.offset);
+  const dateTime = getDate(typeof dateTimeString === "number" ? dateTimeString * 1000 : dateTimeString);
   const currentTime = new Date();
   const diffDays = Math.abs(
     (currentTime.getTime() - dateTime.getTime()) / (1000 * 60 * 60 * 24)
   ).toFixed(2);
+  // console.table({ dateTimeString, diffDays, currentTime: currentTime, ct: currentTime.getTime(), dateTime: dateTime, dt: dateTime.getTime() });
   // @ts-ignore
   if (diffDays > 10) {
     return formatDateTime(dateTimeString);
@@ -93,7 +94,7 @@ export function timeDiff(dateTimeString: string | number | null | undefined): st
 export function currentDateTime() {
   const { timezone } = getDateSettings();
   const { wpSettings } = useCbStore();
-  const localTime = new Date(new Date().setDate(new Date().getDate() + 1));
+  const localTime = new Date(new Date().setDate(new Date().getDate()));
   const format = `${wpSettings?.dateFormat} ${wpSettings?.timeFormat}`;
   // @ts-ignore
   const formatedDate = date(format, localTime, timezone?.offset);

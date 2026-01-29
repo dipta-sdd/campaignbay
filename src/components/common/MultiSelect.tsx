@@ -39,7 +39,7 @@ export interface MultiSelectProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-  label?: string;
+  label?: string | React.ReactNode;
   enableSearch?: boolean;
   isError?: boolean;
   errorClassName?: string;

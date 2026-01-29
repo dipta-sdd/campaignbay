@@ -24,7 +24,7 @@ import formatDateTime from "../../utils/Dates";
 
 interface DateTimePickerProps {
   inputRef?: React.Ref<HTMLDivElement>;
-  label?: string;
+  label?: string | React.ReactNode;
   value?: string | Date | null;
   onChange: (date: string) => void;
   use24Hour?: boolean;

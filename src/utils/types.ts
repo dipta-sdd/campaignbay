@@ -1,4 +1,4 @@
-import { ConditionsInterface } from "../old/conditions/type";
+import { ConditionsInterface } from "../components/conditions/type";
 
 export interface WhiteLabel {
     plugin_name: string;

@@ -248,7 +248,6 @@ class Admin
 			 * @param {string} $script_url The URL to the admin.js file.
 			 */
 			$admin_script = apply_filters('campaignbay_admin_script', CAMPAIGNBAY_URL . 'build/admin.js');
-
 			wp_enqueue_script(CAMPAIGNBAY_PLUGIN_NAME, $admin_script, $dependency, $version, true);
 		} else {
 			$version = CAMPAIGNBAY_VERSION;
