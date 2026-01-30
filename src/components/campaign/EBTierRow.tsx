@@ -77,7 +77,7 @@ const EBTierRow: FC<EBTierRowProps> = ({
   return (
     <div
       className={`campaignbay-rounded-[8px] campaignbay-p-[10px] ${
-        error
+        error || errors
           ? "campaignbay-border-red-200 campaignbay-bg-red-50"
           : "campaignbay-border-[#dddddd] campaignbay-bg-[#f0f0f0]"
       }`}

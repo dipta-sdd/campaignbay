@@ -154,7 +154,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       <div
         className={`
           campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-overflow-hidden
-          campaignbay-rounded-[8px] campaignbay-bg-white campaignbay-min-w-min
+          campaignbay-rounded-[8px] campaignbay-bg-white campaignbay-min-w-min campaignbay-py-[1px]
           ${borderClasses}
           ${transitionClasses}
           ${
@@ -178,11 +178,14 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           onBlur={handleBlur}
           disabled={disabled}
           className={`
-            !campaignbay-border-none !campaignbay-outline-none focus:!campaignbay-outline-none focus:!campaignbay-border-none focus:!campaignbay-shadow-none
-            campaignbay-px-[12px] campaignbay-py-[9px] campaignbay-text-[13px] campaignbay-leading-[20px] 
+            !campaignbay-border-none !campaignbay-outline-none 
+            focus:!campaignbay-outline-none focus:!campaignbay-border-none focus:!campaignbay-shadow-none
+            campaignbay-px-[12px] campaignbay-py-[9px] 
+            campaignbay-text-[13px] campaignbay-leading-[20px] 
             campaignbay-text-[#1e1e1e] campaignbay-font-[400] 
-            campaignbay-min-w-[60px]
-            campaignbay-w-full campaignbay-bg-transparent campaignbay-border-none campaignbay-outline-none campaignbay-placeholder-gray-400
+            campaignbay-min-w-[60px] campaignbay-w-full 
+            campaignbay-bg-transparent campaignbay-border-none campaignbay-outline-none 
+            campaignbay-placeholder-gray-400
             hide-spin-button
             ${disabled ? "campaignbay-cursor-not-allowed" : ""}
             ${classNames?.input || ""}
