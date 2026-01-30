@@ -218,14 +218,10 @@ class Helper
             if ($product === null) {
                 $campaigns[] = $campaign;
             } else {
-                error_log('-------------------------------------------------------------');
                 $is_applicable = $campaign->is_applicable_to_product($product);
 
                 if ($is_applicable) {
-                    error_log('Applicable campaign: ' . $campaign->get_id() . ' - ' . $campaign->get_title());
                     $campaigns[] = $campaign;
-                } else {
-                    error_log('Not applicable campaign: ' . $campaign->get_id() . ' - ' . $campaign->get_title());
                 }
             }
         }

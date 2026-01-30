@@ -598,7 +598,6 @@ class PricingEngine extends Base
 		if (is_array($discount_breakdown) && !empty($discount_breakdown))
 			$this->discount_applied = true;
 
-		error_log('coupons: ' . print_r($this->coupons, true));
 		add_action('woocommerce_before_calculate_totals', [$this, 'before_calculate_totals'], 20, 1);
 	}
 

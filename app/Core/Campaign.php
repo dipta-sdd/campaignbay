@@ -623,7 +623,6 @@ class Campaign
 				'is_included' => 'required|boolean',
 			],
 		];
-		error_log('___________________________');
 		/**
 		 * Filters the default conditions validation rules.
 		 * 
@@ -658,8 +657,6 @@ class Campaign
 			);
 		}
 		$validated_data['rules'] = $validated_rules_data;
-		error_log('validated_data');
-		error_log(print_r($validated_data, true));
 		return $validated_data;
 	}
 

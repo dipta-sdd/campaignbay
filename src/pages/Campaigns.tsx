@@ -1325,7 +1325,7 @@ const CampaignCard = ({
       className={`campaignbay-border campaignbay-rounded-[8px] campaignbay-p-[20px] campaignbay-flex campaignbay-flex-col campaignbay-transition-all hover:campaignbay-shadow-md ${
         isSelected
           ? "campaignbay-border-blue-200 campaignbay-bg-blue-50/10"
-          : "campaignbay-border-[#e0e0e0] campaignbay-bg-white "
+          : "campaignbay-border-[#e0e0e0] campaignbay-bg-white"
       }`}
     >
       {/* Header - Checkbox, Status, Actions */}
