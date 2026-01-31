@@ -24,7 +24,7 @@ const UserRoleRule: FC<UserRoleRuleProps> = ({
   }));
   return (
     <div className="campaignbay-flex campaignbay-items-start campaignbay-gap-2">
-      <Label className="campaignbay-text-[12px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#757575]">
+      <Label className="campaignbay-text-[12px] campaignbay-leading-[16px] campaignbay-font-[400] campaignbay-text-[#757575] campaignbay-text-nowrap">
         {__("Apply this campaign to only users with", "campaignbay")}
       </Label>
       <div>

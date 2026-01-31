@@ -64,21 +64,21 @@ const Conditions: FC<ConditionsProps> = ({
         value: "user_role",
         disabled: disabledUserRole,
       },
+      // {
+      //   label: __("Cart Total", "campaignbay"),
+      //   value: "cart_total",
+      //   variant: "coming_soon",
+      // },
       {
-        label: __("Cart Total", "campaignbay"),
-        value: "cart_total",
-        variant: "coming_soon",
+        label: __("User Roles", "campaignbay"),
+        value: "user_roles",
+        variant: "buy_pro",
       },
-      // {
-      //   label: __("User Roles", "campaignbay"),
-      //   value: "user_roles",
-      //   variant: "buy_pro",
-      // },
-      // {
-      //   label: __("Users", "campaignbay"),
-      //   value: "users",
-      //   variant: "buy_pro",
-      // },
+      {
+        label: __("Users", "campaignbay"),
+        value: "users",
+        variant: "buy_pro",
+      },
     ];
   };
 
