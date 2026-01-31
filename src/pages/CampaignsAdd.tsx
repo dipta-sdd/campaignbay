@@ -68,12 +68,13 @@ const CampaignsAdd: FC = () => {
 
       if (template) {
         if (templateId === "flash_sale_20") {
+          const endDateTime = currentDate.setDate(currentDate.getDate() + 7);
           setCampaign({
             ...campaign,
             ...template.campaign_data,
             schedule_enabled: true,
             // @ts-ignore
-            end_datetime: currentDate,
+            end_datetime: endDateTime,
           });
         } else {
           setCampaign({

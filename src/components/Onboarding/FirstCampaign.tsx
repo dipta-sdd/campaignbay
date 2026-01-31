@@ -649,7 +649,7 @@ const FirstCampaign: FC = () => {
                   />
                 </svg>
 
-                {currentStep !== 1 ? "Back" : "Back to All Campaign"}
+                {currentStep !== 1 ? "Back" : "View All Campaigns"}
               </Button>
               <Button
                 size="large"

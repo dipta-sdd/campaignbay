@@ -33,6 +33,7 @@ import { Toggler } from "../components/common/Toggler";
 import ActivityLogModal from "../components/dashboard/ActivityLogModal";
 import { useCbStore } from "../store/cbStore";
 import { CampaignType } from "../utils/types";
+import Button from "../components/common/Button";
 
 interface KpiValue {
   value: number;
@@ -143,7 +144,6 @@ const Dashboard: FC = () => {
       currency: "USD",
     }).format(value);
   };
-
 
   // Chart data preparation
   const getDiscountTrendsData = () => {
@@ -912,12 +912,14 @@ const Dashboard: FC = () => {
                     image={table_placeholder}
                     mainText={__("No Live Campaigns", "campaignbay")}
                     seconderyText={
-                      <button
-                        className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
+                      <Button
+                        variant="solid"
+                        color="primary"
+                        className="campaignbay-mx-auto campaignbay-mt-3"
                         onClick={() => setIsModalOpen(true)}
                       >
                         Add New Campaign
-                      </button>
+                      </Button>
                     }
                     opacity={40}
                   />
@@ -958,12 +960,14 @@ const Dashboard: FC = () => {
                     image={table_placeholder}
                     mainText={__("No Upcoming Campaigns", "campaignbay")}
                     seconderyText={
-                      <button
-                        className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-p-[6px] campaignbay-px-[8px] campaignbay-rounded-[4px] campaignbay-border campaignbay-border-blue-800 hover:campaignbay-text-blue-900 !campaignbay-text-sm campaignbay-whitespace-nowrap !campaignbay-gap-0 campaignbay-transition-all campaignbay-duration-300 campaignbay-ease-in-out campaignbay-bg-blue-800 hover:campaignbay-bg-gray-100 campaignbay-text-white campaignbay-mx-auto campaignbay-mt-3.5 "
+                      <Button
+                        variant="solid"
+                        color="primary"
+                        className="campaignbay-mx-auto campaignbay-mt-3"
                         onClick={() => setIsModalOpen(true)}
                       >
                         Add New Campaign
-                      </button>
+                      </Button>
                     }
                     opacity={40}
                   />

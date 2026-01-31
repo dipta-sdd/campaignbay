@@ -682,6 +682,7 @@ export const OtherSettings = ({
               start_datetime: date,
             }));
           }}
+          max={campaign.end_datetime || undefined}
           disabled={!campaign.schedule_enabled}
         />
         {renderError(errors?.start_datetime, false)}

@@ -748,7 +748,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             setNavMonth(date.getMonth());
             setNavYear(date.getFullYear());
           }}
-          className={`campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors ${
+          className={`campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-500 hover:campaignbay-bg-gray-100 campaignbay-transition-colors ${
             isDayDisabled(date)
               ? "campaignbay-opacity-30 campaignbay-cursor-not-allowed hover:!campaignbay-bg-transparent"
               : ""
@@ -815,7 +815,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             setNavMonth(date.getMonth());
             setNavYear(date.getFullYear());
           }}
-          className={`campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-400 hover:campaignbay-bg-gray-100 campaignbay-transition-colors ${
+          className={`campaignbay-h-8 campaignbay-w-8 campaignbay-rounded-full campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-text-gray-500 hover:campaignbay-bg-gray-100 campaignbay-transition-colors ${
             isDayDisabled(date)
               ? "campaignbay-opacity-30 campaignbay-cursor-not-allowed hover:!campaignbay-bg-transparent"
               : ""

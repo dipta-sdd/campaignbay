@@ -94,6 +94,7 @@ const Conditions: FC<ConditionsProps> = ({
                 container: "campaignbay-w-max",
               }}
               differentDropdownWidth
+              hideIcon
               value={""}
               onChange={(value) =>
                 handleAddNewCondition(value as ConditionRuleType)

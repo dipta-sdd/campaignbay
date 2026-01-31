@@ -151,6 +151,8 @@ export interface SelectProps {
 
   differentDropdownWidth?: boolean;
 
+  hideIcon?: boolean;
+
   isCompact?: boolean;
 
   classNames?: {
@@ -184,6 +186,7 @@ const Select: React.FC<SelectProps> = ({
   isError = false,
   errorClassName = errorClasses,
   differentDropdownWidth = false,
+  hideIcon = false,
   isCompact = false,
   classNames = {} as NonNullable<SelectProps["classNames"]>,
 }) => {
@@ -526,13 +529,15 @@ const Select: React.FC<SelectProps> = ({
         </div>
 
         {/* Chevron Icon */}
-        <span className="campaignbay-flex-shrink-0 campaignbay-ml-2 campaignbay-flex campaignbay-items-center">
-          <ChevronDown
-            className={`campaignbay-h-4 campaignbay-w-4 campaignbay-text-gray-700 campaignbay-transition-transform campaignbay-duration-200 ${
-              isOpen ? "campaignbay-transform campaignbay-rotate-180" : ""
-            }`}
-          />
-        </span>
+        {!hideIcon ? (
+          <span className="campaignbay-flex-shrink-0 campaignbay-ml-2 campaignbay-flex campaignbay-items-center">
+            <ChevronDown
+              className={`campaignbay-h-4 campaignbay-w-4 campaignbay-text-gray-700 campaignbay-transition-transform campaignbay-duration-200 ${
+                isOpen ? "campaignbay-transform campaignbay-rotate-180" : ""
+              }`}
+            />
+          </span>
+        ) : null}
       </div>
 
       {/* Dropdown Panel */}
