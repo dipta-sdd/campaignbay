@@ -5,20 +5,37 @@ import React, {
   KeyboardEvent,
   useMemo,
 } from "react";
-import { createPortal } from "react-dom";
 import { borderClasses, hoverBorderClasses } from "./classes";
 
 // Inline Icons to replace lucide-react
 const ChevronDown = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="m6 9 6 6 6-6"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="m6 9 6 6 6-6" />
   </svg>
 );
 
 const X = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M18 6 6 18"/>
-    <path d="m6 6 12 12"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M18 6 6 18" />
+    <path d="m6 6 12 12" />
   </svg>
 );
 
@@ -87,23 +104,23 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (!isOpen) return;
       const target = event.target as Node;
-      
+
       const isInsideContainer = containerRef.current?.contains(target);
       const isInsideDropdown = dropdownRef.current?.contains(target);
-      
+
       if (!isInsideContainer && !isInsideDropdown) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
     }
 
     return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-        document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -117,7 +134,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     let filtered = options.filter((opt) => !value.includes(opt.value));
     if (enableSearch && searchQuery) {
       filtered = filtered.filter((option) =>
-        option.label.toLowerCase().includes(searchQuery.toLowerCase())
+        option.label.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
     return filtered;
@@ -170,7 +187,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     setSearchQuery("");
     // Keep dropdown open for multi-select convenience
     requestAnimationFrame(() => {
-        searchInputRef.current?.focus();
+      searchInputRef.current?.focus();
     });
   };
 
@@ -228,11 +245,17 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
   return (
     <div
-      className={`campaignbay-relative campaignbay-w-full ${className} ${classNames.wrapper || ''}`}
+      className={`campaignbay-relative campaignbay-w-full ${className} ${
+        classNames.wrapper || ""
+      }`}
       ref={containerRef}
     >
       {label && (
-        <label className={`campaignbay-block campaignbay-text-sm campaignbay-font-bold campaignbay-text-gray-900 campaignbay-mb-2 ${classNames.label || ''}`}>
+        <label
+          className={`campaignbay-block campaignbay-text-sm campaignbay-font-bold campaignbay-text-gray-900 campaignbay-mb-2 ${
+            classNames.label || ""
+          }`}
+        >
           {label}
         </label>
       )}
@@ -254,7 +277,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
           }
           ${isOpen ? hoverBorderClasses : ""}
           ${isError ? errorClassName : ""}
-          ${classNames.container || ''}
+          ${classNames.container || ""}
         `}
       >
         {/* Selected Tags */}
@@ -263,7 +286,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             key={option.value}
             className={`
                 campaignbay-inline-flex campaignbay-items-center campaignbay-gap-1 campaignbay-bg-gray-100 campaignbay-text-gray-800 campaignbay-px-2 campaignbay-py-[2px] campaignbay-rounded-none campaignbay-text-[13px] campaignbay-leading-[20px] campaignbay-font-[400]
-                ${classNames.tag || ''}
+                ${classNames.tag || ""}
             `}
           >
             {option.label}
@@ -284,7 +307,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
           type="text"
           className={`
             campaignbay-flex-1 campaignbay-min-w-[80px] campaignbay-bg-transparent !campaignbay-border-none !campaignbay-shadow-none campaignbay-outline-none campaignbay-px-1 campaignbay-py-[2px]  !campaignbay-text-[13px] !campaignbay-leading-[20px] campaignbay-font-[400] campaignbay-text-gray-900 campaignbay-placeholder-gray-400 !campaignbay-min-h-[24px]
-            ${classNames.search || ''}
+            ${classNames.search || ""}
           `}
           value={searchQuery}
           onChange={(e) => {
@@ -308,75 +331,74 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         </span>
       </div>
 
-      {/* Dropdown Panel via Portal */}
-      {isOpen &&
-        createPortal(
-            <div
-            ref={dropdownRef}
-            className={`
-                campaignbay-fixed campaignbay-z-[50000] campaignbay-w-full campaignbay-bg-white campaignbay-border campaignbay-border-gray-200 campaignbay-rounded-[12px] campaignbay-p-[4px] campaignbay-shadow-xl
-                ${classNames.dropdown || ''}
+      {/* Dropdown Panel */}
+      {isOpen && (
+        <div
+          ref={dropdownRef}
+          className={`
+                campaignbay-absolute campaignbay-z-[50000] campaignbay-w-full campaignbay-bg-white campaignbay-border campaignbay-border-gray-200 campaignbay-rounded-[12px] campaignbay-p-[4px] campaignbay-shadow-xl
+                ${classNames.dropdown || ""}
             `}
-            style={{
-                width: containerRef.current?.getBoundingClientRect().width,
-                left: containerRef.current?.getBoundingClientRect().left,
-                top: (containerRef.current?.getBoundingClientRect().bottom || 0) - 1,
-            }}
-            >
-            <ul
-                ref={listRef}
-                role="listbox"
-                tabIndex={-1}
-                className="campaignbay-max-h-[204px] campaignbay-overflow-auto focus:campaignbay-outline-none"
-                style={{ scrollbarWidth: "none" }}
-            >
-                {filteredOptions.length === 0 ? (
-                <li className="campaignbay-px-3 campaignbay-py-2 campaignbay-text-gray-500 campaignbay-text-sm campaignbay-text-center campaignbay-italic !campaignbay-mb-0 campaignbay-rounded-[8px]">
-                    {searchQuery ? "No results found" : "No more options"}
-                </li>
-                ) : (
-                filteredOptions.map((option, index) => {
-                    const isHighlighted = highlightedIndex === index;
-                    const isDisabled = option.disabled;
+          style={{
+            top: "100%",
+            left: 0,
+            marginTop: "-1px",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <ul
+            ref={listRef}
+            role="listbox"
+            tabIndex={-1}
+            className="campaignbay-max-h-[204px] campaignbay-overflow-auto focus:campaignbay-outline-none"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {filteredOptions.length === 0 ? (
+              <li className="campaignbay-px-3 campaignbay-py-2 campaignbay-text-gray-500 campaignbay-text-sm campaignbay-text-center campaignbay-italic !campaignbay-mb-0 campaignbay-rounded-[8px]">
+                {searchQuery ? "No results found" : "No more options"}
+              </li>
+            ) : (
+              filteredOptions.map((option, index) => {
+                const isHighlighted = highlightedIndex === index;
+                const isDisabled = option.disabled;
 
-                    return (
-                    <li
-                        key={option.value}
-                        role="option"
-                        aria-selected={false}
-                        onMouseEnter={() => {
-                        interactionType.current = "mouse";
-                        setHighlightedIndex(index);
-                        }}
-                        onClick={(e) => {
-                        e.stopPropagation();
-                        handleSelect(option);
-                        }}
-                        className={`
+                return (
+                  <li
+                    key={option.value}
+                    role="option"
+                    aria-selected={false}
+                    onMouseEnter={() => {
+                      interactionType.current = "mouse";
+                      setHighlightedIndex(index);
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelect(option);
+                    }}
+                    className={`
                         campaignbay-px-4 campaignbay-py-2.5 campaignbay-cursor-pointer campaignbay-text-sm campaignbay-transition-colors campaignbay-border-b campaignbay-border-gray-50 last:campaignbay-border-0 !campaignbay-mb-0  campaignbay-rounded-[8px]
                         ${
-                            isDisabled
+                          isDisabled
                             ? "campaignbay-opacity-50 !campaignbay-cursor-not-allowed campaignbay-text-gray-400"
                             : ""
                         }
                         ${
-                            isHighlighted && !isDisabled
+                          isHighlighted && !isDisabled
                             ? "campaignbay-bg-blue-600 campaignbay-text-white"
                             : "campaignbay-text-gray-700"
                         }
                         ${option.className || ""}
-                        ${classNames.option || ''}
+                        ${classNames.option || ""}
                         `}
-                    >
-                        {option.labelNode || option.label}
-                    </li>
-                    );
-                })
-                )}
-            </ul>
-            </div>,
-            document.body
-        )}
+                  >
+                    {option.labelNode || option.label}
+                  </li>
+                );
+              })
+            )}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
