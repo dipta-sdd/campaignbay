@@ -133,22 +133,18 @@ class Admin
 	 */
 	public function add_admin_bar_new_item($admin_bar)
 	{
-		// 1. Check Permissions: Only show this to admins
 		if (!current_user_can('manage_options')) {
 			return;
 		}
 
-		// 2. Define the URL
-		// This points to your React App's "Add Campaign" route.
-		// Adjust 'campaignbay' if your menu slug is different.
 		$href = admin_url('admin.php?page=' . CAMPAIGNBAY_PLUGIN_NAME . '#/campaigns/add');
 
 		// 3. Add the Node
 		$args = array(
-			'id' => 'wpab_cb_new_campaign',    // Unique ID for this node
+			'id' => 'wpab_cb_new_campaign',   
 			'title' => __('Campaign', CAMPAIGNBAY_TEXT_DOMAIN),
 			'href' => $href,
-			'parent' => 'new-content',             // This ID puts it inside the "+ New" dropdown
+			'parent' => 'new-content',             
 		);
 
 		$admin_bar->add_node($args);
