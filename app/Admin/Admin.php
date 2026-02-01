@@ -131,7 +131,7 @@ class Admin
 	 * @since 1.0.7
 	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object.
 	 */
-	public function add_admin_bar_new_item($wp_admin_bar)
+	public function add_admin_bar_new_item($admin_bar)
 	{
 		// 1. Check Permissions: Only show this to admins
 		if (!current_user_can('manage_options')) {
@@ -151,7 +151,47 @@ class Admin
 			'parent' => 'new-content',             // This ID puts it inside the "+ New" dropdown
 		);
 
-		$wp_admin_bar->add_node($args);
+		$admin_bar->add_node($args);
+
+
+		// 1. Add the Main Parent Item
+		$admin_bar->add_node(array(
+			'id'    => 'campaignbay-admin-bar',
+			'title' => 'CampaignBay',
+			'href'  => admin_url('admin.php?page=campaignbay#/campaigns'),
+			'meta'  => array(
+				'title' => __('Dashboard', 'campaignbay'),
+			),
+		));
+
+		// 2. Add Submenu: Dashboard (Same as parent link)
+		$admin_bar->add_node(array(
+			'id'     => 'campaignbay-dashboard',
+			'parent' => 'campaignbay-admin-bar',
+			'title'  => __('Dashboard', 'campaignbay'),
+			'href'   => admin_url('admin.php?page=campaignbay'),
+		));
+
+		$admin_bar->add_node(array(
+			'id'     => 'campaignbay-campaigns-add',
+			'parent' => 'campaignbay-admin-bar',
+			'title'  => __('Add Campaign', 'campaignbay'),
+			'href'   => admin_url('admin.php?page=campaignbay#/campaigns/add'),
+		));
+		$admin_bar->add_node(array(
+			'id'     => 'campaignbay-campaigns',
+			'parent' => 'campaignbay-admin-bar',
+			'title'  => __('Campaigns', 'campaignbay'),
+			'href'   => admin_url('admin.php?page=campaignbay#/campaigns'),	
+		));
+
+		// 3. Add Submenu: Settings (Example)
+		$admin_bar->add_node(array(
+			'id'     => 'campaignbay-settings',
+			'parent' => 'campaignbay-admin-bar',
+			'title'  => __('Settings', 'campaignbay'),
+			'href'   => admin_url('admin.php?page=campaignbay#/settings'),
+		));
 	}
 
 
@@ -289,7 +329,7 @@ class Admin
 
 		$user_id = get_current_user_id();
 		$onboarding_first_campaign = get_user_meta($user_id, '_campaignbay_onboarding_first_campaign', true);
-		
+
 
 		$user_roles = get_editable_roles();
 		$user_roles = array_map(function ($key, $role) {
