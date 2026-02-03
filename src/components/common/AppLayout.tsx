@@ -1,22 +1,36 @@
 import { Outlet } from "react-router-dom";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { useCbStore } from "../../store/cbStore";
 import FirstCampaign from "../Onboarding/FirstCampaign";
 import { __ } from "@wordpress/i18n";
 import { GuideProvider } from "../../store/GuideContext";
+import { WandSparkles } from "lucide-react";
 
 const AppLayout: FC = () => {
   const { onboarding } = useCbStore();
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+  useEffect(() => {
+    if (!onboarding?.first_campaign) {
+      setShowOnboarding(true);
+    }
+  }, [onboarding]);
   return (
     <div className="wpab-cb-container radius-large">
       <GuideProvider>
         <Navbar />
         <Notifications />
-        {!onboarding.first_campaign ? <FirstCampaign /> : null}
+        <FirstCampaign isOpen={showOnboarding} setIsOpen={setShowOnboarding} />
         <Outlet />
         {/* <TourGuard />
         <Guide /> */}
+        <button
+          className="campaignbay-fixed campaignbay-bottom-[20px] campaignbay-right-[20px] campaignbay-text-white campaignbay-rounded-full campaignbay-p-[12px] campaignbay-shadow-xl campaignbay-transition-all campaignbay-duration-300 hover:campaignbay-scale-110 hover:campaignbay-shadow-[#EE00FF]/30 campaignbay-z-[100]"
+          style={{ background: "linear-gradient(to bottom, #EE00FF, #3300B3)" }}
+          onClick={() => setShowOnboarding(true)}
+        >
+          <WandSparkles size={24} />
+        </button>
       </GuideProvider>
     </div>
   );

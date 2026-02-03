@@ -48,8 +48,11 @@ interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
 }
 
-const FirstCampaign: FC = () => {
-  const [isOpen, setIsOpen] = useState(true);
+interface FirstCampaignProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showCongrets, setShowCongrets] = useState(false);
