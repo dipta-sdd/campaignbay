@@ -1,6 +1,6 @@
 === CampaignBay - Automated Discount Campaigns & Flash Sales for WooCommerce ===
 Contributors: wpanchorbay, sankarsan
-Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
+Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo, flash sale, quantity discount
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
@@ -8,13 +8,14 @@ Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
+
 Automated Discount Campaigns & Flash Sales for WooCommerce
 
 == Description ==
 
 Move beyond basic coupons and revolutionize your WooCommerce store's promotions with CampaignBay.
 
-[youtube https://www.youtube.com/watch?v=LpHZOeBCkk8]
+[youtube https://www.youtube.com/watch?v=6YYr4eOHspM]
 
 CampaignBay is a powerful, user-friendly marketing tool that empowers you to create sophisticated, automated discount campaigns directly from your WordPress dashboard. Whether you're running a Black Friday flash sale, rewarding customers for bulk purchases, or creating urgency with a limited-time offer, CampaignBay provides the robust features you need to drive sales and engage customers.
 
@@ -22,163 +23,214 @@ With its intuitive dashboard, flexible campaign types, and high-performance disc
 
 **New:** Take control to the next level with our robust **Conditional Logic**. Now you can restrict campaigns to specific User Roles, perfect for wholesale programs or VIP exclusives.
 
+**Why Store Owners Love CampaignBay:**
+
+*   Set It & Forget It – Campaigns auto-start and auto-stop on your schedule.
+*   Beautiful Dashboard – Real-time analytics show you exactly how your promotions are performing.
+*   Lightning Fast – Multi-level caching keeps your store blazingly fast.
+*   100% Free Core Features – No artificial limits. Create unlimited campaigns.
+
 **Key Features:**
 
-*   **Multiple Campaign Types:** Create classic **Scheduled Sales**, tiered **Quantity Discounts**, urgency-driven **Early Bird** offers, and popular **BOGO (Buy X Get X)** deals.
-*   **Advanced Analytics Dashboard:** Get an instant, data-rich overview of your campaign performance. Track total discount value, sales from campaigns, and discounted orders with interactive charts.
-*   **Flexible Targeting:** Apply discounts to your entire store, specific products, or categories, with powerful exclusion rules for precise control.
-*   **User Role Targeting:** Limit campaigns to specific user roles (e.g., Wholesale Customers, VIPs) using our new Condition engine.
-*   **Full Scheduling & Automation:** Set specific start and end dates for your campaigns. Our reliable, automated system handles activation and expiration using a robust WP-Cron and failsafe mechanism.
-*   **Intelligent Stacking Logic:** Configure powerful rules for how your discounts interact with each other and with native WooCommerce coupons.
-*   **Customizable Display:** Tailor promotional messages on product and cart pages with dynamic placeholders (e.g., `{percentage_off}`, `{buy_quantity}`).
-*   **Performance Optimized:** Built with a multi-level caching system to ensure your storefront remains fast and responsive, even with complex rules active.
+*   Scheduled Discounts – Run time-limited sales with automatic start and end dates.
+*   Quantity Based Discounts – Tiered pricing like "Buy 3+, get 10% off."
+*   Early Bird Discounts – Reward the first X customers with special pricing.
+*   BOGO (Buy One Get One) – Classic "Buy 2, Get 1 Free" deals.
+*   Flexible Targeting – Target entire store, specific products, or categories.
+*   Product & Category Exclusions – Fine-tune which items are excluded from discounts.
+*   User Role Conditions – Restrict campaigns to Wholesalers, VIPs, or any role.
+*   Smart Stacking Logic – Control how discounts interact with each other.
+*   Coupon Compatibility – Works seamlessly with WooCommerce coupons.
+*   Customizable Messages – Dynamic placeholders for promotional text.
+*   Product Page Display – Discount tables and banners on product pages.
+*   Cart Integration – Automatic discounts with strikethrough pricing.
+*   Campaign Templates – Pre-built templates for quick setup.
+*   Analytics Dashboard – Track KPIs, charts, and top campaigns.
+*   Full Scheduling & Automation – Reliable WP-Cron based activation/deactivation.
+*   Performance Optimized – Multi-level caching for fast storefronts.
 
-For detailed setup and usage instructions, visit our [**Official Documentation**](https://docs.wpanchorbay.com).
-Want to see it in action? Check out our [**Live Demo**](https://wpanchorbay.com/campaignbay/#demo).
-Need help? Visit our [**Support Forum**](https://wpanchorbay.com/support/).
+**Campaign Types:**
+
+*   **Scheduled Discounts** – Run classic time-limited sales. Set a start and end date, choose percentage or fixed discount, and target your entire store or specific products. Perfect for holiday sales or weekly specials.
+
+*   **Quantity Based Discounts** – Encourage bulk purchases with tiered pricing. "Buy 3+, get 10% off. Buy 5+, get 20% off." Customers see a pricing table on the product page.
+
+*   **Early Bird Discounts** – Create urgency and reward early customers. Offer a discount to the first 50 or 100 buyers. A live counter shows remaining slots.
+
+*   **BOGO (Buy One Get One)** – The classic deal. "Buy 2, Get 1 Free" or "Buy 1, Get 1 at 50% Off." Free items are added directly to the cart.
+
+**Analytics Dashboard:**
+
+*   Active Campaigns – See how many promotions are running.
+*   Total Discount Value – Track discounts given over any period.
+*   Discounted Orders – Monitor orders that benefited from campaigns.
+*   Sales from Campaigns – Measure revenue from promotions.
+*   Interactive Charts – Line, bar, and pie chart visualizations.
+*   Top Performing Campaigns – Identify winners at a glance.
+*   Recent Activity Log – Track campaign creation and updates.
+*   Live & Upcoming Campaigns – Quick view of active and scheduled promotions.
+
+**Documentation & Support:**
+
+*   [Official Documentation](https://docs.wpanchorbay.com) – Step-by-step guides.
+*   [Live Demo](https://wpanchorbay.com/campaignbay/#demo-section) – Try before you install.
+*   [Support Forum](https://wpanchorbay.com/support/) – Get help from our team.
 
 == Live Demo ==
 
 Experience the power of CampaignBay firsthand on our interactive demo site. See how campaigns look on the frontend and explore the admin dashboard.
 
-*   [**View the Demo (Frontend & Backend)**](https://wpanchorbay.com/campaignbay/#demo)
+*   [**View the Demo (Frontend & Backend)**](https://wpanchorbay.com/campaignbay/#demo-section)
+
+**Upgrade to CampaignBayPro**
+
+Need more advanced features? [Get CampaignBayPro](https://wpanchorbay.com/campaignbay-pro/) and unlock:
+
+*   BOGO Advanced – Buy from Category A, get discount on Category B.
+*   Product In Cart Discounts – Trigger discounts when specific products are in cart.
+*   Advanced Conditions – Target by cart total, order history, specific products in cart, and more.
+*   Priority Email Support – Direct access to our development team.
+
+[Learn More & Buy Pro](https://wpanchorbay.com/campaignbay-pro/)
 
 == Use Cases ==
 
-CampaignBay is designed to help you achieve specific business goals. Here are just a few examples of what you can build:
+*   **Boost Average Order Value** – "Buy 3+, save 10%. Buy 5+, save 20%."
+*   **Black Friday Automation** – Schedule sales to start and end automatically.
+*   **Product Launch Buzz** – 30% off to the first 100 buyers.
+*   **Clear Old Inventory** – "Buy 2, Get 1 Free" on last season's items.
+*   **Wholesale Pricing** – Exclusive bulk discounts for Wholesaler role.
+*   **Category Promotions** – 20% off specific categories for limited time.
 
-*   **Launch New Products with a Bang:** Create an **Early Bird Discount** offering a steep discount to the first 50 customers to generate instant buzz and social proof.
+== Installation ==
 
-*   **Increase Average Order Value (AOV):** Implement a tiered **Quantity Discount** like "Buy 3+, get 10% off; Buy 5+, get 20% off" and use the built-in cart notices to encourage customers to add more to their cart.
+**Requirements:** WooCommerce must be installed and activated.
 
-*   **Run Holiday Flash Sales:** Set up a **Scheduled Discount** for your entire store that automatically starts at midnight on Black Friday and ends precisely on Cyber Monday.
+**From WordPress Dashboard (Recommended)**
 
-*   **Clear Out Old Inventory:** Run a "Buy 2, Get 1 Free" **BOGO Campaign** on last season's styles to quickly move stock without devaluing your brand.
+1.  Navigate to Plugins → Add New.
+2.  Search for "CampaignBay".
+3.  Click "Install Now", then "Activate".
 
-*   **Create Simple Wholesale Tiers:** Use **Quantity Discounts** on specific product categories to offer wholesale-style pricing to all your customers without needing a separate plugin.
+**Manual Upload**
 
-*   **Targeted Promotions:** Apply a discount to a specific product category to promote a new line or run a brand-specific sale.
+1.  Download campaignbay.zip from WordPress.org.
+2.  Go to Plugins → Add New → Upload Plugin.
+3.  Upload the zip file and click "Install Now".
+4.  Click "Activate".
+
+**Getting Started**
+
+After activation, find CampaignBay in your admin sidebar. Click "Add New Campaign" and follow our guide to create your first promotion in under 2 minutes!
 
 == Frequently Asked Questions ==
 
 = Does CampaignBay require WooCommerce? =
-Yes, CampaignBay is an add-on for WooCommerce and cannot function without it.
+Yes. CampaignBay is built specifically for WooCommerce and requires it to be installed and active.
 
-= What are the minimum system requirements? =
-You need WordPress 5.8+, PHP 7.0+, and an active WooCommerce installation.
+= Is CampaignBay free? =
+Yes! The core plugin is 100% free with no artificial limits. A Pro version is available with advanced features.
 
-= Where can I get support or report a bug? =
-We're happy to help! Please visit our official support forum at [wpanchorbay.com/support](https://wpanchorbay.com/support/) to ask questions, report issues, or suggest new features.
+= What are the system requirements? =
+WordPress 5.8+, PHP 7.0+, and WooCommerce installed.
 
-= Can I track the performance of my campaigns? =
-Absolutely. CampaignBay includes a dedicated analytics dashboard with real-time metrics and interactive charts to monitor the effectiveness of your promotions.
+= Can I track campaign performance? =
+Yes. The built-in analytics dashboard shows real-time KPIs, charts, and top-performing campaigns.
 
-= What types of discounts can I create? =
-You can create Scheduled Discounts (fixed or percentage), Quantity Based Discounts (tiered pricing), Early Bird Discounts (based on order count), and BOGO (Buy X Get X) offers.
+= What discount types are supported? =
+Scheduled Discounts, Quantity Based Discounts, Early Bird Discounts, and BOGO.
 
-= Can discounts stack with each other or with WooCommerce coupons? =
-Yes. By default, only the single best discount applies to a product. However, you can enable stacking for both CampaignBay campaigns and native WooCommerce coupons in the **Settings → Cart Settings** tab.
+= Can discounts stack? =
+By default, only the best discount applies. You can enable stacking in Settings → Cart Settings.
 
-= How does the scheduling feature work? =
-CampaignBay uses WordPress Cron, backed by a failsafe mechanism, to automatically start and stop campaigns based on the dates you define. This ensures your promotions run reliably on time.
+= How does scheduling work? =
+Set a start and end date. CampaignBay uses WordPress Cron to automatically activate and deactivate campaigns.
+
+= Can I limit discounts to specific user roles? =
+Yes! Use the Conditions feature to restrict campaigns to specific roles.
+
+= Where can I get support? =
+Visit our [Support Forum](https://wpanchorbay.com/support/).
 
 == Screenshots ==
 
-1.  **See Your Performance at a Glance.** The main Dashboard, showing key metrics (KPIs) and interactive performance charts.
-2.  **Fine-Tune Your Promotions.** The campaign editor, where you can modify every aspect of an campaign.
-3.  **Manage All Your Campaigns.** The "All Campaigns" table view, with powerful options for filtering, sorting, and bulk actions.
-4.  **Visual Campaign Management.** The alternative Grid View for the "All Campaigns" page, offering a card-based overview of each promotion.
-5.  **Take Full Control.** The global Settings page, showing the tabbed interface for configuring all plugin options.
-6.  **Customize Product Page Display.** The Product Settings tab, for customizing discount message formats and quantity table visibility.
-7.  **Customize the Quantity Discount Table.** The modal editor for changing the appearance, columns, and labels of the pricing table.
-8.  **Configure Cart Logic.** The Cart Settings tab, with powerful options for coupon and campaign stacking.
-9.  **Advanced Plugin Control.** The Advanced Settings tab for plugin data management.
-10. **Frontend Product View.** A single product page showing a quantity discount pricing table and promotional messages.
-11. **Frontend Cart View.** Discounts are applied directly to products in the cart, showing strikethrough pricing and the total savings for each item.
-
-== Installation ==
-
-**Please note:** CampaignBay requires **WooCommerce** to be installed and activated on your site to function correctly.
-
-**From your WordPress Dashboard (Recommended)**
-
-1.  In your WordPress admin panel, navigate to **Plugins → Add New**.
-2.  In the search field, type **"CampaignBay"** and press Enter.
-3.  Once you find the plugin in the search results, click the **"Install Now"** button.
-4.  After the installation is complete, click the **"Activate"** button.
-
-**Manual Upload via .zip File**
-
-1.  Download the plugin from the WordPress.org plugin page by clicking the "Download" button. This will give you a `campaignbay.zip` file.
-2.  In your WordPress admin panel, navigate to **Plugins → Add New**.
-3.  At the top of the page, click the **"Upload Plugin"** button.
-4.  Click **"Choose File"**, select the `campaignbay.zip` file you downloaded, and click **"Install Now"**.
-5.  Once the upload is complete, click the **"Activate Plugin"** button.
-
-**After Activation**
-
-You're all set! Look for the new **CampaignBay** menu item in your admin sidebar. Click on it to visit the dashboard and start creating your first automated discount campaign!
+1.  Dashboard Overview – Real-time KPIs and performance charts.
+2.  Campaign Editor – Intuitive interface for creating campaigns.
+3.  All Campaigns (Table View) – Filtering, sorting, and bulk actions.
+4.  All Campaigns (Grid View) – Card-based visual overview.
+5.  Global Settings – Tabbed interface for plugin configuration.
+6.  Product Settings – Customize discount message formats.
+7.  Quantity Table Customizer – Style the product page pricing table.
+8.  Cart Settings – Configure stacking rules.
+9.  Advanced Settings – Plugin data management.
+10. Frontend: Product Page – Discount table and messages in action.
+11. Frontend: Cart Page – Strikethrough pricing and savings display.
 
 == Changelog ==
 
+= 1.1.0 =
+*   Major Update: Complete UI Redesign! The entire admin interface has been rebuilt for a cleaner, faster, and more intuitive experience.
+*   Enhancement: Modernized dashboard with improved data visualization.
+*   Enhancement: Streamlined campaign editor with better form layouts.
+*   Enhancement: Refreshed settings pages with improved navigation.
+*   Enhancement: Performance improvements and codebase optimizations.
+*   Enhancement: Updated documentation links.
+
 = 1.0.9 =
-*   **Enhancement:** UI Tweaks: refined the user interface for a smoother experience.
+*   Enhancement: UI refinements for a smoother experience.
 
 = 1.0.8 =
-*   **New Feature: Campaign Templates!** Get started faster with pre-built campaign templates. The new "Add Campaign" modal now features ready-to-use templates for Flash Sales, BOGO deals, Bulk Discounts, Early Bird offers, and more. Simply select a template and customize it to your needs.
-*   **Enhancement:** Improved campaign creation workflow with a visual template selector and example previews.
-*   **Enhancement:** Updated all campaign templates to use "active" status by default for a smoother onboarding experience.
+*   New Feature: Campaign Templates! Pre-built templates for Flash Sales, BOGO, Bulk Discounts, and Early Bird offers.
+*   Enhancement: Visual template selector with example previews.
+*   Enhancement: Campaigns now default to "Active" status for faster onboarding.
 
 = 1.0.7 =
-*   **New Feature: Introducing Conditional Discounts!** A new "Conditions" section has been added to the campaign editor. This lays the foundation for a powerful rule engine, allowing you to create smarter, more targeted campaigns. More conditions will be added in future updates.
-*   **Enhancement:** The campaign editor and settings pages have received a significant UI upgrade for a cleaner, faster, and more intuitive user experience.
+*   New Feature: Conditional Discounts! New "Conditions" section with User Role targeting.
+*   Enhancement: Major UI upgrade across campaign editor and settings pages.
 
 = 1.0.6 =
-*   New Feature: Added options to turn off promotional messages on the cart and product pages.
+*   New Feature: Options to disable promotional messages on cart and product pages.
 
 = 1.0.5 =
-*   Enhancement: Major architectural improvement to BOGO (Buy One, Get One) discounts. Free products are now added as separate cart items, providing crystal-clear transparency for customers. This new system unlocks advanced capabilities for our upcoming Pro version, including cross-product BOGO offers and partial discounts.
-*   Enhancement: Improved hook system and standardized discount data structure, making it easier for CampaignBay Pro and other plugins to seamlessly extend campaign functionality.
-*   FIX: Corrected multiple issues where discount messages and quantity tables for variable products were not formatted correctly on product and cart pages.
+*   Enhancement: BOGO architecture upgrade—free products now added as separate cart items.
+*   Enhancement: Improved hook system and standardized discount data structure.
+*   Fix: Variable product message and table formatting issues.
 
 = 1.0.4 =
-*   FIX: Error at new activation on 1.0.3 version.
+*   Fix: Activation error introduced in 1.0.3.
 
 = 1.0.3 =
-*   FIX: Minor bug fixes and stability improvements for the admin interface.
+*   Fix: Minor bug fixes and stability improvements.
 
 = 1.0.2 =
-*   Enhancement: Added an interactive Tour Guide to help new users navigate the "Add Campaign" interface.
+*   Enhancement: Interactive Tour Guide for new users.
 
 = 1.0.1 =
-*   Enhancement: Updated the plugin display name to "CampaignBay - Automated Discount Campaigns & Flash Sales for WooCommerce" for better clarity and searchability in the WordPress repository.
-*   Refactor: Migrated the admin interface scripts from JavaScript to TypeScript for improved long-term stability, code quality, and maintainability.
+*   Enhancement: Updated plugin display name for better discoverability.
+*   Refactor: Migrated admin interface to TypeScript for improved code quality.
 
 = 1.0.0 =
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
 
+= 1.1.0 =
+Major UI Redesign! The entire admin interface has been rebuilt for a cleaner, faster experience. Highly recommended update.
+
 = 1.0.9 =
-*   This update includes minor UI refinements. The upgrade is seamless.
+Minor UI refinements. Seamless upgrade.
 
 = 1.0.8 =
-*   Exciting update! We've added pre-built Campaign Templates to make creating campaigns faster and easier than ever. Simply select a template, customize it, and you're ready to go. The upgrade is seamless and requires no action from you.
+New Campaign Templates feature! Get started faster with pre-built promotions.
 
 = 1.0.7 =
-*   This is a great update! We've introduced a powerful new 'Conditions' feature for creating smarter campaigns and have given the entire admin interface a fresh, modern upgrade. The update is seamless and no action is required.
+Major update! New Conditions feature and refreshed admin interface.
 
 = 1.0.6 =
-*   This update introduces a new feature to turn off promotional messages on the cart and product pages. The upgrade is seamless and requires no action from you.
+New option to disable promotional messages. Seamless upgrade.
 
 = 1.0.5 =
-*   This update contains minor bug fixes. The upgrade is seamless and requires no action.
-
-= 1.0.2 =
-*   This update introduces a helpful Tour Guide for new users. The upgrade is seamless and requires no action from you.
-
-= 1.0.1 =
-*   This update refines the plugin's display name and includes significant under-the-hood code quality improvements. The upgrade is seamless and requires no action from you.
+Important BOGO improvements and bug fixes. Recommended update.
 
 = 1.0.0 =
-*   Initial release. Thank you for installing CampaignBay!
+Initial release. Welcome to CampaignBay!
