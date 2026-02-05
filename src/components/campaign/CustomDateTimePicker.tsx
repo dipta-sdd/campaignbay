@@ -81,6 +81,7 @@ interface TimeColumnProps {
   selectedValue: number | string;
   onChange: (val: number | string) => void;
   infiniteScroll?: boolean;
+  isItemDisabled?: (val: number | string) => boolean;
 }
 
 const TimeColumn: React.FC<TimeColumnProps> = ({
@@ -88,6 +89,7 @@ const TimeColumn: React.FC<TimeColumnProps> = ({
   selectedValue,
   onChange,
   infiniteScroll = true,
+  isItemDisabled,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const loopedItems = useMemo(
@@ -123,6 +125,7 @@ const TimeColumn: React.FC<TimeColumnProps> = ({
   };
 
   const handleItemClick = (val: number | string) => {
+    if (isItemDisabled && isItemDisabled(val)) return;
     onChange(val);
   };
 
@@ -135,6 +138,7 @@ const TimeColumn: React.FC<TimeColumnProps> = ({
       <div className="campaignbay-flex campaignbay-flex-col campaignbay-w-full">
         {loopedItems.map((item, i) => {
           const isSelected = item === selectedValue;
+          const disabled = isItemDisabled ? isItemDisabled(item) : false;
           return (
             <div
               key={`${item}-${i}`}
@@ -142,11 +146,14 @@ const TimeColumn: React.FC<TimeColumnProps> = ({
             >
               <button
                 onClick={() => handleItemClick(item)}
+                disabled={disabled}
                 className={`campaignbay-w-10 campaignbay-h-10 campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-text-sm campaignbay-transition-all campaignbay-duration-200 campaignbay-rounded-md
                                     ${
                                       isSelected
                                         ? "campaignbay-bg-[#183ad6] campaignbay-text-white campaignbay-font-bold campaignbay-shadow-sm"
-                                        : "hover:campaignbay-bg-[#183ad650] "
+                                        : disabled
+                                        ? "campaignbay-text-gray-300 campaignbay-cursor-not-allowed"
+                                        : "hover:campaignbay-bg-[#183ad650]"
                                     }
                                 `}
               >
@@ -835,53 +842,49 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
   const currentMinute = safeDate.getMinutes();
   const isPm = currentHour24 >= 12;
 
-  // Filter Time Options
-  const getFilteredHours = () => {
-    let hours = use24Hour ? HOURS_24 : HOURS_12;
+  // Check if Hour is Disabled
+  const isHourDisabled = (h: number | string) => {
     if (minDate && safeDate.toDateString() === minDate.toDateString()) {
       const minH = minDate.getHours();
-      hours = hours.filter((h) => {
-        if (use24Hour) return (h as number) >= minH;
-        // 12-hour logic
-        let h24 = h as number;
+      let h24 = h as number;
+      if (!use24Hour) {
         if (isPm && h24 < 12) h24 += 12;
         if (isPm && h24 === 12) h24 = 12;
         if (!isPm && h24 === 12) h24 = 0;
-        return h24 >= minH;
-      });
+      }
+      if (h24 < minH) return true;
     }
+
     if (maxDate && safeDate.toDateString() === maxDate.toDateString()) {
       const maxH = maxDate.getHours();
-      hours = hours.filter((h) => {
-        if (use24Hour) return (h as number) <= maxH;
-        // 12-hour logic
-        let h24 = h as number;
+      let h24 = h as number;
+      if (!use24Hour) {
         if (isPm && h24 < 12) h24 += 12;
         if (isPm && h24 === 12) h24 = 12;
         if (!isPm && h24 === 12) h24 = 0;
-        return h24 <= maxH;
-      });
+      }
+      if (h24 > maxH) return true;
     }
-    return hours;
+
+    return false;
   };
 
-  const getFilteredMinutes = () => {
-    let minutes = MINUTES;
+  const isMinuteDisabled = (m: number | string) => {
     if (
       minDate &&
       safeDate.toDateString() === minDate.toDateString() &&
       safeDate.getHours() === minDate.getHours()
     ) {
-      minutes = minutes.filter((m) => (m as number) >= minDate.getMinutes());
+      if ((m as number) < minDate.getMinutes()) return true;
     }
     if (
       maxDate &&
       safeDate.toDateString() === maxDate.toDateString() &&
       safeDate.getHours() === maxDate.getHours()
     ) {
-      minutes = minutes.filter((m) => (m as number) <= maxDate.getMinutes());
+      if ((m as number) > maxDate.getMinutes()) return true;
     }
-    return minutes;
+    return false;
   };
 
   const separatorClass =
@@ -1069,17 +1072,19 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
                 <div className="campaignbay-flex campaignbay-justify-center campaignbay-h-[284px] campaignbay-relative campaignbay-w-full">
                   <div className="campaignbay-flex campaignbay-w-full campaignbay-items-start campaignbay-gap-0">
                     <TimeColumn
-                      items={getFilteredHours()}
+                      items={use24Hour ? HOURS_24 : HOURS_12}
                       selectedValue={use24Hour ? currentHour24 : currentHour12}
                       onChange={(v) => handleTimeColumnChange("hour", v)}
+                      isItemDisabled={isHourDisabled}
                     />
                     <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-font-bold campaignbay-text-gray-400 campaignbay-w-2 campaignbay-h-[315px] campaignbay-pb-0.5">
                       :
                     </div>
                     <TimeColumn
-                      items={getFilteredMinutes()}
+                      items={MINUTES}
                       selectedValue={currentMinute}
                       onChange={(v) => handleTimeColumnChange("minute", v)}
+                      isItemDisabled={isMinuteDisabled}
                     />
                     {!use24Hour && (
                       <>
