@@ -172,6 +172,7 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 
 = 1.1.0 =
 *   Major Update: Complete UI Redesign! The entire admin interface has been rebuilt for a cleaner, faster, and more intuitive experience.
+*   New Feature: Multi-select campaign filters—now filter by multiple types and statuses simultaneously.
 *   Enhancement: Modernized dashboard with improved data visualization.
 *   Enhancement: Streamlined campaign editor with better form layouts.
 *   Enhancement: Refreshed settings pages with improved navigation.
