@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo, flash
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -169,6 +169,8 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 11. Frontend: Cart Page – Strikethrough pricing and savings display.
 
 == Changelog ==
+
+= 1.1.1 =
 
 = 1.1.0 =
 *   Major Update: Complete UI Redesign! The entire admin interface has been rebuilt for a cleaner, faster, and more intuitive experience.
