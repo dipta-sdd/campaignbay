@@ -567,7 +567,7 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
                           label={
                             <>
                               {__("Exclude Items", "campaignbay")}
-                              <Helper content="Exclude selected items from the discount" />
+                              <Helper content="Exclude selected items from the discount"  />
                             </>
                           }
                           checked={!!campaign.is_exclude}

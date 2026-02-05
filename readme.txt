@@ -72,6 +72,7 @@ With its intuitive dashboard, flexible campaign types, and high-performance disc
 
 **Documentation & Support:**
 
+*   [CampaignBay Pro](https://wpanchorbay.com/campaignbay) – Get more advanced features.
 *   [Official Documentation](https://docs.wpanchorbay.com) – Step-by-step guides.
 *   [Live Demo](https://wpanchorbay.com/campaignbay/#demo-section) – Try before you install.
 *   [Support Forum](https://wpanchorbay.com/support/) – Get help from our team.
@@ -84,14 +85,15 @@ Experience the power of CampaignBay firsthand on our interactive demo site. See 
 
 **Upgrade to CampaignBayPro**
 
-Need more advanced features? [Get CampaignBayPro](https://wpanchorbay.com/campaignbay-pro/) and unlock:
+Need more advanced features? [Get CampaignBayPro](https://wpanchorbay.com/campaignbay) and unlock:
 
 *   BOGO Advanced – Buy from Category A, get discount on Category B.
 *   Product In Cart Discounts – Trigger discounts when specific products are in cart.
 *   Advanced Conditions – Target by cart total, order history, specific products in cart, and more.
 *   Priority Email Support – Direct access to our development team.
 
-[Learn More & Buy Pro](https://wpanchorbay.com/campaignbay-pro/)
+[Buy CampaignBayPro Now](https://wpanchorbay.com/campaignbay)
+
 
 == Use Cases ==
 

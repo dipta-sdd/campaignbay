@@ -46,12 +46,24 @@ export const DISCOUNT_TYPES: CardOption[] = [
     title: "Buy X Get X Discount",
     description: "Offer free items when customers buy a specific quantity",
   },
+  // {
+  //   value: "bogo_pro",
+  //   title: "BOGO Advanced",
+  //   description: "Create advanced Buy X Get Y offers with different products",
+  //   variant: "buy_pro",
+  // },
   {
     value: "earlybird",
     title: "EarlyBird Discount",
     description:
       "Offer exclusive discounts for the first X orders of a product",
   },
+  // {
+  //   value: "product_in_cart",
+  //   title: "Product In Cart",
+  //   description: "Apply discounts when specific products are in the cart",
+  //   variant: "buy_pro",
+  // },
   {
     value: "quantity",
     title: "Quantity Based Discount",
@@ -64,6 +76,7 @@ export const DISCOUNT_TYPES: CardOption[] = [
     description: "Set up time-limited discounts that run during specific dates",
   },
 ];
+
 
 export interface DependentType {
   id: number;
@@ -370,7 +383,7 @@ const Campaign: FC<CampaignProps> = ({
                         label={
                           <>
                             {__("Exclude Items", "campaignbay")}{" "}
-                            <Helper content="Exclude selected items from the discount" />
+                            <Helper content="Exclude selected items from the discount" docLink="https://docs.wpanchorbay.com/core-concepts/targeting.html#inverting-the-logic-the-exclude-items-checkbox" />
                           </>
                         }
                         checked={!!campaign.is_exclude}
@@ -601,6 +614,7 @@ export const OtherSettings = ({
                   "Products that are on sale will not be affected by this campaign",
                   "campaignbay",
                 )}
+                docLink="https://docs.wpanchorbay.com/campaigns/scheduled-discounts.html#step-5-set-other-configurations-optional"
               />
             </>
           }
@@ -622,6 +636,7 @@ export const OtherSettings = ({
                     "Campaign will be automatically disabled when the usage limit is reached.",
                     "campaignbay",
                   )}
+                  docLink="https://docs.wpanchorbay.com/campaigns/scheduled-discounts.html#step-5-set-other-configurations-optional"
                 />
               </>
             }
@@ -655,6 +670,7 @@ export const OtherSettings = ({
                   "Campaign will be active for specific time period.",
                   "campaignbay",
                 )}
+                docLink="https://docs.wpanchorbay.com/campaigns/scheduled-discounts.html#step-6-set-the-schedule-optional"
               />
             </>
           }
@@ -672,6 +688,7 @@ export const OtherSettings = ({
                   "Campaign will be active from this date and time.",
                   "campaignbay",
                 )}
+                docLink="https://docs.wpanchorbay.com/campaigns/scheduled-discounts.html#step-6-set-the-schedule-optional"
               />
             </>
           }
@@ -696,6 +713,7 @@ export const OtherSettings = ({
                   "Campaign will be active until this date and time.",
                   "campaignbay",
                 )}
+                docLink="https://docs.wpanchorbay.com/campaigns/scheduled-discounts.html#step-6-set-the-schedule-optional"
               />
             </>
           }
@@ -780,10 +798,11 @@ export const handleTypeChange = (
   }
 };
 
-export const Helper = ({ content }: { content: string }) => {
+export const Helper = ({ content , docLink=""}: { content: string , docLink?: string}) => {
   return (
     <Tooltip
       content={content}
+      docLink={docLink}
       position="bottom"
       className="!campaignbay-z-[10000]"
     >

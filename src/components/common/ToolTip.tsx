@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect, ReactNode } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useState, useRef, useEffect, ReactNode } from "react";
+import { createPortal } from "react-dom";
 
-export type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
+export type TooltipPosition = "top" | "bottom" | "left" | "right";
 
 interface TooltipProps {
   children: ReactNode;
@@ -16,132 +16,190 @@ interface TooltipProps {
     content?: string;
     arrow?: string;
   };
+  docLink?: string;
 }
 
 export const Tooltip: React.FC<TooltipProps> = ({
   children,
   content,
-  position = 'top',
+  position = "top",
   delay = 200,
-  className = '',
+  className = "",
   disabled = false,
   classNames,
+  docLink,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<number | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const showTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const show = () => {
+  const handleMouseEnter = () => {
     if (disabled) return;
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    
-    timeoutRef.current = window.setTimeout(() => {
-      if (triggerRef.current) {
-        const rect = triggerRef.current.getBoundingClientRect();
-        const scrollX = window.scrollX;
-        const scrollY = window.scrollY;
-        const gap = 8; 
 
-        let top = 0;
-        let left = 0;
+    // If there's a timeout to hide the tooltip, cancel it
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
 
-        switch (position) {
-          case 'top':
-            top = rect.top + scrollY - gap;
-            left = rect.left + scrollX + rect.width / 2;
-            break;
-          case 'bottom':
-            top = rect.bottom + scrollY + gap;
-            left = rect.left + scrollX + rect.width / 2;
-            break;
-          case 'left':
-            top = rect.top + scrollY + rect.height / 2;
-            left = rect.left + scrollX - gap;
-            break;
-          case 'right':
-            top = rect.top + scrollY + rect.height / 2;
-            left = rect.right + scrollX + gap;
-            break;
-        }
-
-        setCoords({ top, left });
+    // Set a timeout to show the tooltip if it's not already visible
+    if (!showTimeoutRef.current && !isVisible) {
+      showTimeoutRef.current = setTimeout(() => {
         setIsVisible(true);
-      }
-    }, delay);
+      }, delay);
+    }
   };
 
-  const hide = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+  const handleMouseLeave = () => {
+    // If there's a timeout to show the tooltip, cancel it
+    if (showTimeoutRef.current) {
+      clearTimeout(showTimeoutRef.current);
+      showTimeoutRef.current = null;
     }
-    setIsVisible(false);
+
+    // Set a short timeout to hide the tooltip, allowing the user to move their cursor to it
+    hideTimeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, 100); // A small delay before hiding
+  };
+
+  const calculatePosition = () => {
+    if (!triggerRef.current || !tooltipRef.current) return;
+
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+    const gap = 8;
+
+    let top = 0;
+    let left = 0;
+
+    switch (position) {
+      case "top":
+        top = triggerRect.top - tooltipRect.height - gap;
+        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
+        break;
+      case "bottom":
+        top = triggerRect.bottom + gap;
+        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
+        break;
+      case "left":
+        top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
+        left = triggerRect.left - tooltipRect.width - gap;
+        break;
+      case "right":
+        top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
+        left = triggerRect.right + gap;
+        break;
+    }
+
+    // Boundary collision checks to keep the tooltip within the viewport
+    const padding = 8;
+    if (left < padding) left = padding;
+    if (left + tooltipRect.width > window.innerWidth - padding) {
+      left = window.innerWidth - tooltipRect.width - padding;
+    }
+    if (top < padding) top = padding;
+    if (top + tooltipRect.height > window.innerHeight - padding) {
+      top = window.innerHeight - tooltipRect.height - padding;
+    }
+
+    setCoords({ top, left });
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-        if(isVisible) setIsVisible(false);
-    };
-    window.addEventListener('scroll', handleScroll, true);
-    return () => {
-        window.removeEventListener('scroll', handleScroll, true);
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [isVisible]);
+    if (isVisible) {
+      calculatePosition();
 
-  const transformStyle = {
-    top: 'translate(-50%, -100%)',
-    bottom: 'translate(-50%, 0)',
-    left: 'translate(-100%, -50%)',
-    right: 'translate(0, -50%)',
-  }[position];
+      const handleResizeOrScroll = () => calculatePosition();
+      window.addEventListener("resize", handleResizeOrScroll);
+      window.addEventListener("scroll", handleResizeOrScroll, true);
+
+      return () => {
+        window.removeEventListener("resize", handleResizeOrScroll);
+        window.removeEventListener("scroll", handleResizeOrScroll, true);
+      };
+    }
+  }, [isVisible, position]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (showTimeoutRef.current) clearTimeout(showTimeoutRef.current);
+      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+    };
+  }, []);
 
   const arrowClasses = {
-    top: 'campaignbay-top-full campaignbay-left-1/2 campaignbay--translate-x-1/2 campaignbay-border-t-gray-900',
-    bottom: 'campaignbay-bottom-full campaignbay-left-1/2 campaignbay--translate-x-1/2 campaignbay-border-b-gray-900',
-    left: 'campaignbay-left-full campaignbay-top-1/2 campaignbay--translate-y-1/2 campaignbay-border-l-gray-900',
-    right: 'campaignbay-right-full campaignbay-top-1/2 campaignbay--translate-y-1/2 campaignbay-border-r-gray-900',
+    top: "campaignbay-top-full campaignbay-left-1/2 campaignbay--translate-x-1/2 campaignbay-border-t-gray-900",
+    bottom:
+      "campaignbay-bottom-full campaignbay-left-1/2 campaignbay--translate-x-1/2 campaignbay-border-b-gray-900",
+    left: "campaignbay-left-full campaignbay-top-1/2 campaignbay--translate-y-1/2 campaignbay-border-l-gray-900",
+    right:
+      "campaignbay-right-full campaignbay-top-1/2 campaignbay--translate-y-1/2 campaignbay-border-r-gray-900",
   }[position];
 
   return (
     <>
       <div
         ref={triggerRef}
-        onMouseEnter={show}
-        onMouseLeave={hide}
-        onFocus={show}
-        onBlur={hide}
-        className={`campaignbay-inline-block ${classNames?.trigger || ''}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onFocus={handleMouseEnter}
+        onBlur={handleMouseLeave}
+        className={`campaignbay-inline-block ${classNames?.trigger || ""}`}
       >
         {children}
       </div>
-      {isVisible && createPortal(
-        <div
+      {isVisible &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             className={`
-                campaignbay-absolute campaignbay-z-[60] campaignbay-pointer-events-none
-                ${className}
-                ${classNames?.root || ''}
-            `}
+            campaignbay-fixed campaignbay-z-[60]
+            ${className}
+            ${classNames?.root || ""}
+          `}
             style={{
-                top: coords.top,
-                left: coords.left,
-                transform: transformStyle,
+              top: coords.top,
+              left: coords.left,
+              maxWidth: "300px",
             }}
-        >
-            <div className={`campaignbay-animate-tooltip campaignbay-relative campaignbay-px-2.5 campaignbay-py-1.5 campaignbay-bg-gray-900 campaignbay-text-white campaignbay-text-xs campaignbay-rounded campaignbay-shadow-lg campaignbay-whitespace-nowrap ${classNames?.content || ''}`}>
-                {content}
-                <div 
-                    className={`
-                        campaignbay-absolute campaignbay-border-[5px] campaignbay-border-transparent
-                        ${arrowClasses}
-                        ${classNames?.arrow || ''}
-                    `} 
-                />
+          >
+            <div
+              className={`campaignbay-animate-tooltip campaignbay-relative campaignbay-px-2.5 campaignbay-py-1.5 campaignbay-bg-gray-900 campaignbay-text-white campaignbay-text-xs campaignbay-rounded campaignbay-shadow-lg ${
+                classNames?.content || ""
+              }`}
+            >
+              {content}
+              {docLink && (
+                <>
+                  {" "}
+                  <a
+                    href={docLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="campaignbay-text-blue-400 hover:campaignbay-text-blue-300 campaignbay-underline"
+                  >
+                    Read More
+                  </a>
+                </>
+              )}
+              <div
+                className={`
+                campaignbay-absolute campaignbay-border-[5px] campaignbay-border-transparent
+                ${arrowClasses}
+                ${classNames?.arrow || ""}
+              `}
+              />
             </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body,
+        )}
     </>
   );
 };

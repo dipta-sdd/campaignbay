@@ -66,6 +66,7 @@ const CampaignSettings: FC<CampaignSettingsProps> = ({
                       "Price will be shown as regular price, not as strike through price",
                       "campaignbay",
                     )}
+                    docLink="https://docs.wpanchorbay.com/campaigns/scheduled-discounts.html#step-7-display-configurations"
                   />
                 </>
               }
