@@ -51,7 +51,6 @@ const getNewLink = (
 
     return linksArray.find((link) => {
         if (link.hash && link.hash.includes(path) && path !== "/") {
-            console.log('matched');
             return true;
         }
 
