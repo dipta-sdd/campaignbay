@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { CampaignType } from "../../utils/types";
 import { areDatesSameDay, useCalendar } from "./useCalender";
 import { CalendarHeader } from "./Calender";
@@ -6,6 +6,7 @@ import Page from "../common/Page";
 import HeaderContainer from "../common/HeaderContainer";
 import Header from "../common/Header";
 import { Toggler } from "../common/Toggler";
+import apiFetch from "@wordpress/api-fetch";
 
 export interface CalendarDay {
   date: Date;
@@ -168,7 +169,17 @@ const CampaignCalendarPage: React.FC = () => {
     () => generateCampaigns(new Date(currentYear, selectedDate.getMonth(), 1)),
     [currentYear, selectedDate],
   );
-
+  useEffect(() => {
+    const func = async () => {
+      try {
+        const res = await apiFetch({ path: "/campaignbay/v1/calender/campaigns" });
+        console.log(res);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    func();
+  }, []);
   const filteredCampaigns = useMemo(() => {
     return campaigns.filter((c) => visibleTypes.includes(c.type));
   }, [campaigns, visibleTypes]);

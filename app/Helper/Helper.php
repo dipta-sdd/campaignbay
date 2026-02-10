@@ -16,6 +16,9 @@
 
 namespace WpabCampaignBay\Helper;
 
+use DateTime;
+use DateTimeZone;
+use Exception;
 use WpabCampaignBay\Core\Common;
 use WpabCampaignBay\Engine\CampaignManager;
 
@@ -818,4 +821,27 @@ class Helper
 			);
 		}
 	}
+
+
+    /**
+     * Converts a timezone-aware datetime string to UTC.
+     * 
+     * @since 1.1.1
+     * @access public
+     * @static
+     * @param string $date_time The datetime string to convert.
+     * @return string|null The UTC datetime string.
+     */
+    public static function get_utc_time($date_time){
+
+		try {
+			$date = new DateTime($date_time, new DateTimeZone(wp_timezone_string()));
+			$date->setTimezone(new DateTimeZone('UTC'));
+			return $date->format('Y-m-d H:i:s');
+		} catch (Exception $e) {
+            wpab_campaignbay_log('Invalid date_time format . ( Helper::get_utc_time )', 'ERROR');
+			return null;
+		}
+	
+    }
 }

@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 
 use WpabCampaignBay\Admin\Admin;
 use WpabCampaignBay\Api\ActivityLogController;
+use WpabCampaignBay\Api\CalenderController;
 use WpabCampaignBay\Api\CampaignsController;
 use WpabCampaignBay\Api\DashboardController;
 use WpabCampaignBay\Api\LogsController;
@@ -114,6 +115,7 @@ class Plugin
 		DashboardController::get_instance()->run();
 		ResourceController::get_instance()->run();
 		Scheduler::get_instance()->run();
+		CalenderController::get_instance()->run();
 		// Get instances of components that have hooks
 		$discount_manager = DiscountManager::get_instance();
 		$campaign_manager = CampaignManager::get_instance();
