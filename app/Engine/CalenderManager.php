@@ -139,6 +139,7 @@ class CalenderManager extends Base
 	 */
 	public function clear_cache($source = 'unknown')
 	{
+		wpab_campaignbay_log('clearing calender cache', 'DEBUG');
 		delete_transient('campaignbay_calender_campaigns');
 		$this->campaigns = null;
 	}

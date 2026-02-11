@@ -4,10 +4,17 @@ import { areDatesSameDay, useCalendar } from "./useCalender";
 import { CalendarHeader } from "./Calender";
 import apiFetch from "@wordpress/api-fetch";
 import "../../utils/apiFetch";
+import { useCbStore } from "../../store/cbStore";
+import {
+  date as wpDate,
+  getSettings as getDateSettings,
+  getDate,
+} from "@wordpress/date";
 import Page from "../common/Page";
 import HeaderContainer from "../common/HeaderContainer";
 import Header from "../common/Header";
 import { Toggler } from "../common/Toggler";
+import formatDateTime from "../../utils/Dates";
 
 export interface CalendarDay {
   date: Date;
@@ -100,25 +107,6 @@ const getCampaignLabel = (type: CampaignType): string => {
   }
 };
 
-const fetchCampaignsFromApi = async (): Promise<Campaign[]> => {
-  try {
-    const response: ApiCampaign[] = await apiFetch({
-      path: "/campaignbay/v1/calender/campaigns",
-    });
-
-    return response.map((item) => ({
-      id: typeof item.id === "string" ? parseInt(item.id, 10) : item.id,
-      name: item.name,
-      type: item.type as CampaignType, // Ensure API returns valid CampaignType string
-      startDate: new Date(Number(item.startDate) * 1000), // Convert seconds to ms
-      endDate: item.endDate ? new Date(Number(item.endDate) * 1000) : null,
-    }));
-  } catch (error) {
-    console.error("Failed to fetch campaigns:", error);
-    return [];
-  }
-};
-
 const CampaignCalendarPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [layout, setLayout] = useState<"month" | "week" | "year">("month");
@@ -126,16 +114,64 @@ const CampaignCalendarPage: React.FC = () => {
     useState<CampaignType[]>(CAMPAIGN_TYPES);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
+  const { wpSettings } = useCbStore();
+  const { timezone } = getDateSettings();
+  // Initialize with local time, will update to server time
+  const [serverDate, setServerDate] = useState(new Date());
+  const [serverDateLoaded, setServerDateLoaded] = useState<boolean>(false);
+  useEffect(() => {
+    const updateServerTime = () => {
+      const format = `${wpSettings?.dateFormat} ${wpSettings?.timeFormat}`;
+      const localNow = new Date();
+      const dateString = wpDate(format, localNow, timezone?.offset);
+      const d = new Date(dateString);
 
-  React.useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      const data = await fetchCampaignsFromApi();
-      setCampaigns(data);
-      setLoading(false);
+      if (!isNaN(d.getTime())) {
+        setServerDate(d);
+        if (!serverDateLoaded) {
+          setServerDateLoaded(true);
+        }
+      }
     };
-    load();
-  }, []);
+
+    updateServerTime();
+    const timer = setInterval(updateServerTime, 60000); // Update every minute
+    return () => clearInterval(timer);
+  }, [wpSettings, timezone]);
+  useEffect(() => {
+    if (!serverDateLoaded) {
+      return;
+    }
+    fetchCampaignsFromApi();
+  }, [serverDateLoaded]);
+
+  const fetchCampaignsFromApi = async ()=> {
+    try {
+      const currentDate = new Date();
+      const dif = currentDate.getTime() - serverDate.getTime();
+      // console.log(currentDate);
+      // console.log(serverDate);
+      // console.log(dif);
+      setLoading(true);
+      const response: ApiCampaign[] = await apiFetch({
+        path: "/campaignbay/v1/calender/campaigns",
+      });
+      const data: Campaign[] = response.map((item) => ({
+        id: typeof item.id === "string" ? parseInt(item.id, 10) : item.id,
+        name: item.name,
+        type: item.type as CampaignType, // Ensure API returns valid CampaignType string
+        startDate: getDate((item.startDate * 1000) - dif), // Convert seconds to ms
+        endDate: item.endDate
+          ? getDate((item.endDate * 1000) - dif)
+          : null,
+      }));
+      setLoading(false);
+      setCampaigns(data);
+    } catch (error) {
+      console.error("Failed to fetch campaigns:", error);
+      setLoading(false);
+    }
+  };
 
   // Use the existing hook for campaignbay-grid logic
   const {
@@ -150,7 +186,6 @@ const CampaignCalendarPage: React.FC = () => {
     goToPrevMonth,
     goToNextYear,
     goToPrevYear,
-    goToToday,
   } = useCalendar({ selectedDate, onSelectDate: setSelectedDate });
 
   const filteredCampaigns = useMemo(() => {
@@ -209,12 +244,9 @@ const CampaignCalendarPage: React.FC = () => {
   };
 
   const handleGoToToday = () => {
-    goToToday();
-    // If in Year view, stay in Year view but jump to this year?
-    // Usually users expect to see the day. Let's switch to Month or Week if appropriate.
-    // But standard behavior is just resetting the date.
+    setSelectedDate(serverDate);
+    // Logic for layout switch if needed
     if (layout === "year") {
-      // Optionally switch back to month view?
       // setLayout('month');
     }
   };
@@ -313,7 +345,7 @@ const CampaignCalendarPage: React.FC = () => {
             >
               <span
                 className={`campaignbay-text-sm campaignbay-font-semibold ${
-                  areDatesSameDay(day.date, new Date())
+                  areDatesSameDay(day.date, serverDate)
                     ? "campaignbay-bg-blue-600 campaignbay-text-white campaignbay-w-7 campaignbay-h-7 campaignbay-flex campaignbay-items-center campaignbay-justify-center campaignbay-rounded-full campaignbay-shadow-sm"
                     : day.isCurrentMonth || isWeekView
                     ? "campaignbay-text-gray-700"
@@ -471,14 +503,14 @@ const CampaignCalendarPage: React.FC = () => {
 
                   const hasActivity = dayCampaigns.length > 0;
                   const isSelected = areDatesSameDay(dayDate, selectedDate);
-                  const isToday = areDatesSameDay(dayDate, new Date());
+                  const isToday = areDatesSameDay(dayDate, serverDate);
 
                   return (
                     <div
                       key={dayDate.getDate()}
                       onClick={() => {
                         setSelectedDate(dayDate);
-                        setLayout("month");
+                        setLayout("week");
                       }}
                       className={`
                                             campaignbay-h-8 campaignbay-flex campaignbay-flex-col campaignbay-items-center campaignbay-justify-center campaignbay-rounded-lg campaignbay-text-xs campaignbay-cursor-pointer campaignbay-transition-colors

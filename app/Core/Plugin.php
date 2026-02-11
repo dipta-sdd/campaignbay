@@ -18,6 +18,7 @@ use WpabCampaignBay\Api\LogsController;
 use WpabCampaignBay\Api\ResourceController;
 use WpabCampaignBay\Api\SettingsController;
 use WpabCampaignBay\Core\Scheduler;
+use WpabCampaignBay\Engine\CalenderManager;
 use WpabCampaignBay\Engine\CampaignManager;
 use WpabCampaignBay\Engine\DiscountManager;
 use WpabCampaignBay\Engine\OrderManager;
@@ -116,18 +117,21 @@ class Plugin
 		ResourceController::get_instance()->run();
 		Scheduler::get_instance()->run();
 		CalenderController::get_instance()->run();
+		
 		// Get instances of components that have hooks
 		$discount_manager = DiscountManager::get_instance();
 		$campaign_manager = CampaignManager::get_instance();
 		$pricing_engine = PricingEngine::get_instance();
 		$order_manager = OrderManager::get_instance();
 		$scheduler = Scheduler::get_instance();
+		$calender_manager = CalenderManager::get_instance();
 		$components_with_hooks = array(
 			$discount_manager,
 			$campaign_manager,
 			$pricing_engine,
 			$order_manager,
 			$scheduler,
+			$calender_manager,
 		);
 
 		foreach ($components_with_hooks as $component) {

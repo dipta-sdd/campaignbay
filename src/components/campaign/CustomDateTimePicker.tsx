@@ -180,7 +180,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
   error,
   min,
   max,
-}) => {
+}) => { 
   // Helper to get Server Date
   // Replace the implementation of this function to return your server time.
   const { wpSettings } = useCbStore();
