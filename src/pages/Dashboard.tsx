@@ -120,11 +120,9 @@ const Dashboard: FC = () => {
   const { setIsModalOpen } = useGuide();
   const { woocommerce_currency_symbol } = useCbStore();
 
-
   // states for calendar
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { serverDate, serverDateLoaded } = useCbStoreActions();
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -841,15 +839,40 @@ const Dashboard: FC = () => {
             </div>
             {/* right content */}
             <div className="campaignbay-w-full xl:campaignbay-w-[500px] campaignbay-h-max campaignbay-grid campaignbay-grid-cols-1 campaignbay-gap-default">
-              <Card header={<CardHeader>Calendar</CardHeader>}>
-                  <Calendar 
-                  hasEvent={(b : Date)=> {
-                    return true
+              <Card header={<div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-w-full"><CardHeader>Calendar</CardHeader>
+              <a className="campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858ff] campaignbay-underline campaignbay-underline-offset-4 campaignbay-text-default campaignbay-py-[8px] campaignbay-cursor-pointer" href="#/calenders"> View Full Calendar</a>
+              </div>}>
+                <Calendar
+                className="campaignbay-w-full campaignbay-max-campaignbay-w-2xl campaignbay-mx-auto campaignbay-bg-white campaignbay-rounded-2xl campaignbay-p-0 campaignbay-transition-colors"
+                  hasEvent={(date: Date) => {
+                    if (!dashboardData?.campaignsCalendar) return false;
+
+                    const d = new Date(date);
+                    d.setHours(0, 0, 0, 0);
+                    const dayTime = d.getTime();
+                    console.log(dashboardData?.campaignsCalendar);
+                    return dashboardData?.campaignsCalendar?.some((campaign) => {
+                      // API returns seconds, convert to ms
+                      const startDate = new Date(
+                        Number(campaign.startDate) * 1000,
+                      );
+                      const endDate = campaign.endDate
+                        ? new Date(Number(campaign.endDate) * 1000)
+                        : new Date(9999, 11, 31);
+
+                      const s = new Date(startDate);
+                      s.setHours(0, 0, 0, 0);
+                      const e = new Date(endDate);
+                      e.setHours(0, 0, 0, 0);
+
+                      return dayTime >= s.getTime() && dayTime <= e.getTime();
+                    });
                   }}
-                    selectedDate={selectedDate || serverDate}
-                    onSelectDate={(date) => setSelectedDate(date)}
-                    variant="gridFill"
-                  />
+                  selectedDate={selectedDate || serverDate}
+                  onSelectDate={(date) => setSelectedDate(date)}
+                  variant="bordered"
+                  // "circle" | "rounded" | "bordered" | "campaignbay-grid" | "gridFill"
+                />
               </Card>
               <Card header={<CardHeader>Recent Activity</CardHeader>}>
                 {dashboardData?.recent_activity?.length &&

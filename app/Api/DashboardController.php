@@ -111,7 +111,7 @@ class DashboardController extends ApiController
 			'charts' => $this->get_chart_data($current_start, $current_end),
 			'recent_activity' => $this->get_recent_activity(),
 			'live_and_upcoming' => $this->get_live_and_upcoming_campaigns(),
-			'campaigns_calendar' => $this->get_campaigns_calendar(),
+			'campaignsCalendar' => $this->get_campaigns_calendar(),
 		);
 
 		return new WP_REST_Response($response, 200);
@@ -126,7 +126,7 @@ class DashboardController extends ApiController
 	 */
 	private function get_campaigns_calendar()
 	{
-		return CalenderManager::get_instance()->get_campaigns();
+		return array_values(CalenderManager::get_instance()->get_campaigns());
 	}
 
 	/**

@@ -72,7 +72,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         return (
           <button
             onClick={onTitleClick}
-            className="campaignbay-text-[20px] campaignbay-font-[700] campaignbay-leading-[30px] campaignbay-text-[#000000]   hover:campaignbay-text-[#3858e9] campaignbay-transition-colors"
+            className="campaignbay-font-[700] campaignbay-text-[16px] campaignbay-text-[#1e1e1e]   hover:campaignbay-text-[#3858e9] campaignbay-transition-colors"
             aria-label={`Select year, current year is ${year}`}
           >
             {year}
@@ -80,7 +80,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         );
       case "year":
         return (
-          <span className="campaignbay-text-[20px] campaignbay-font-[700] campaignbay-leading-[30px] campaignbay-text-[#000000]  ">{`${yearViewStart} - ${
+          <span className="campaignbay-font-[700] campaignbay-text-[16px] campaignbay-text-[#1e1e1e]  ">{`${yearViewStart} - ${
             yearViewStart + 19
           }`}</span>
         );
@@ -89,7 +89,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         return (
           <button
             onClick={onTitleClick}
-            className="campaignbay-text-[20px] campaignbay-font-[700] campaignbay-leading-[30px] campaignbay-text-[#000000]   hover:campaignbay-text-primary campaignbay-transition-colors campaignbay-flex campaignbay-items-center campaignbay-gap-1.5"
+            className="campaignbay-font-[700] campaignbay-text-[16px] campaignbay-text-[#1e1e1e]   hover:campaignbay-text-primary campaignbay-transition-colors campaignbay-flex campaignbay-items-center campaignbay-gap-1.5"
             aria-label={`Select month and year, current view is ${monthName} ${year}`}
           >
             <span>{monthName}</span>
@@ -158,6 +158,7 @@ const DateView: React.FC<{
   headerId: string;
   cellRefs: React.MutableRefObject<Map<string, HTMLButtonElement>>;
   variant: "circle" | "rounded" | "bordered" | "campaignbay-grid" | "gridFill";
+  renderDayContent?: (day: CalendarDay) => React.ReactNode;
 }> = ({
   daysOfWeek,
   calendarGrid,
@@ -167,6 +168,7 @@ const DateView: React.FC<{
   headerId,
   cellRefs,
   variant,
+  renderDayContent,
 }) => {
   const rowsCount = Math.ceil(calendarGrid.length / 7);
 
@@ -250,7 +252,7 @@ const DateView: React.FC<{
               const eventDotClasses = `campaignbay-w-1.5 campaignbay-h-1.5 campaignbay-rounded-full ${
                 variant === "gridFill" && isSelected
                   ? "campaignbay-bg-white"
-                  : "campaignbay-bg-red-500"
+                  : "campaignbay-bg-[#3858e9]"
               }`;
 
               return (
@@ -274,11 +276,13 @@ const DateView: React.FC<{
                     tabIndex={isFocused ? 0 : -1}
                   >
                     <span className={numberWrapperClasses}>{dayOfMonth}</span>
-                    {hasEvent && (
-                      <div className="campaignbay-w-full campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-pt-1">
-                        <span className={eventDotClasses}></span>
-                      </div>
-                    )}
+                    {renderDayContent
+                      ? renderDayContent(day)
+                      : hasEvent && (
+                          <div className="campaignbay-w-full campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-pt-1">
+                            <span className={eventDotClasses}></span>
+                          </div>
+                        )}
                   </button>
                 </div>
               );
@@ -394,16 +398,19 @@ const DateView: React.FC<{
                   tabIndex={isFocused ? 0 : -1}
                 >
                   {dayOfMonth}
-                  {hasEvent && isCurrentMonth && (
-                    <span
-                      className={`campaignbay-absolute campaignbay-bottom-1.5 campaignbay-left-1/2 -translate-x-1/2 campaignbay-w-1.5 campaignbay-h-1.5 campaignbay-rounded-full ${
-                        isSelected && variant !== "bordered"
-                          ? "campaignbay-bg-white"
-                          : "campaignbay-bg-red-500"
-                      }`}
-                      aria-hidden="true"
-                    ></span>
-                  )}
+                  {renderDayContent
+                    ? renderDayContent(day)
+                    : hasEvent &&
+                      isCurrentMonth && (
+                        <span
+                          className={`campaignbay-absolute campaignbay-bottom-1.5 campaignbay-left-1/2 -translate-x-1/2 campaignbay-w-1.5 campaignbay-h-1.5 campaignbay-rounded-full ${
+                            isSelected && variant !== "bordered"
+                              ? "campaignbay-bg-white"
+                              : "campaignbay-bg-[#3858e9]"
+                          }`}
+                          aria-hidden="true"
+                        ></span>
+                      )}
                 </button>
               </div>
             );
@@ -577,6 +584,7 @@ const YearView: React.FC<{
 // --- Main Calendar Component ---
 const Calendar: React.FC<{
   hasEvent?: (date: Date) => boolean;
+  renderDayContent?: (day: CalendarDay) => React.ReactNode;
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
   children?: React.ReactNode;
@@ -584,13 +592,14 @@ const Calendar: React.FC<{
   className?: string;
 }> = ({
   hasEvent,
+  renderDayContent,
   selectedDate,
   onSelectDate,
   children,
   variant = "rounded",
   className,
 }) => {
-  const {serverDate} = useCbStoreActions();
+  const { serverDate } = useCbStoreActions();
   const {
     view,
     setView,
@@ -614,7 +623,7 @@ const Calendar: React.FC<{
     selectYear,
     handleKeyDown,
     areDatesSameDay,
-  } = useCalendar({ hasEvent, selectedDate, onSelectDate , today: serverDate });
+  } = useCalendar({ hasEvent, selectedDate, onSelectDate, today: serverDate });
 
   const cellRefs = React.useRef(new Map<string, HTMLButtonElement>());
   const headerId = React.useId();
@@ -702,6 +711,7 @@ const Calendar: React.FC<{
             calendarGrid={calendarGrid}
             onSelectDate={onSelectDate}
             variant={variant}
+            renderDayContent={renderDayContent}
             {...commonProps}
           />
         );
@@ -724,7 +734,7 @@ const Calendar: React.FC<{
         headerId={headerId}
         {...headerNavProps}
       />
-      <div>{renderView()}</div>
+      <div className="campaignbay-mt-2">{renderView()}</div>
       {children && (
         <div className="campaignbay-mt-6 campaignbay-pt-4 campaignbay-border-t campaignbay-border-gray-200">
           {children}
