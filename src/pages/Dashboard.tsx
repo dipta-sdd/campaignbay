@@ -1066,6 +1066,8 @@ export const getCampaignTypeText = (type: CampaignType) => {
   switch (type) {
     case "bogo_pro":
       return "BOGO Advanced";
+    case "product_in_cart":
+      return "Product in Cart";
     case "quantity":
       return "Quantity";
     case "earlybird":

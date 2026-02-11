@@ -14,7 +14,8 @@ import Page from "../common/Page";
 import HeaderContainer from "../common/HeaderContainer";
 import Header from "../common/Header";
 import { Toggler } from "../common/Toggler";
-import formatDateTime from "../../utils/Dates";
+import formatDateTime, { formatDate } from "../../utils/Dates";
+import { getCampaignTypeText } from "../../pages/Dashboard";
 
 export interface CalendarDay {
   date: Date;
@@ -38,7 +39,9 @@ interface Campaign {
   id: number;
   name: string;
   startDate: Date;
+  startDateUnix: number;
   endDate?: Date | null; // Optional end date for ongoing campaigns
+  endDateUnix?: number | null;
   type: CampaignType;
 }
 
@@ -147,8 +150,9 @@ const CampaignCalendarPage: React.FC = () => {
 
   const fetchCampaignsFromApi = async ()=> {
     try {
-      const currentDate = new Date();
-      const dif = currentDate.getTime() - serverDate.getTime();
+      // const currentDate = new Date();
+      const dif = 0;
+      // const dif = currentDate.getTime() - serverDate.getTime();
       // console.log(currentDate);
       // console.log(serverDate);
       // console.log(dif);
@@ -160,10 +164,15 @@ const CampaignCalendarPage: React.FC = () => {
         id: typeof item.id === "string" ? parseInt(item.id, 10) : item.id,
         name: item.name,
         type: item.type as CampaignType, // Ensure API returns valid CampaignType string
+        // @ts-ignore
         startDate: getDate((item.startDate * 1000) - dif), // Convert seconds to ms
+        startDateUnix: item.startDate as number,  
+        // @ts-ignore
         endDate: item.endDate
+        // @ts-ignore
           ? getDate((item.endDate * 1000) - dif)
           : null,
+        endDateUnix: item.endDate as number,
       }));
       setLoading(false);
       setCampaigns(data);
@@ -320,9 +329,9 @@ const CampaignCalendarPage: React.FC = () => {
     });
 
     const maxSlots = Math.max(0, ...slots.map((_, i) => i + 1));
-    const rowHeightPx = 100 + maxSlots * 28;
+    const rowHeightPx =50+ maxSlots * 28;
     // In Week view, we want a minimum height that feels substantial
-    const minHeight = isWeekView ? 500 : 128;
+    const minHeight = isWeekView ? 300 : 100;
 
     return (
       <div
@@ -385,14 +394,14 @@ const CampaignCalendarPage: React.FC = () => {
                 }}
                 title={`${
                   pos.campaign.name
-                } (${pos.campaign.startDate.toLocaleDateString()} - ${
-                  pos.campaign.endDate
-                    ? pos.campaign.endDate.toLocaleDateString()
-                    : "Ongoing"
+                } (${formatDate(pos.campaign.startDateUnix)} - ${
+                  pos.campaign.endDateUnix
+                    ? formatDate(pos.campaign.endDateUnix)
+                    : ""
                 })`}
               >
                 <span className="campaignbay-truncate campaignbay-w-full campaignbay-drop-shadow-sm">
-                  {pos.campaign.name} {!pos.campaign.endDate && "(Ongoing)"}
+                  {pos.campaign.name}
                 </span>
               </div>
             );
@@ -640,7 +649,7 @@ const CampaignCalendarPage: React.FC = () => {
                       : "campaignbay-text-gray-400"
                   }`}
                 >
-                  {getCampaignLabel(type)}
+                  {getCampaignTypeText(type)}
                 </span>
               </label>
             );
