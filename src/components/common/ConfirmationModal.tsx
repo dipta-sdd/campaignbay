@@ -22,7 +22,7 @@ interface ConfirmationModalProps {
       confirmVariant?: "solid" | "outline" | "ghost";
       cancelColor?: "primary" | "secondary" | "danger";
       confirmColor?: "primary" | "secondary" | "danger";
-    }
+    };
   };
 }
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -44,12 +44,12 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       }`}
     >
       <div
-        className={`campaignbay-bg-white campaignbay-rounded-lg campaignbay-shadow-xl campaignbay-p-6 campaignbay-max-w-sm campaignbay-w-full campaignbay-mx-4 campaignbay-transform campaignbay-transition-all campaignbay-scale-100 ${
+        className={`campaignbay-bg-white campaignbay-rounded-lg campaignbay-shadow-xl campaignbay-pt-6 campaignbay-pb-3 campaignbay-px-8 campaignbay-max-w-sm campaignbay-w-full campaignbay-mx-4 campaignbay-transform campaignbay-transition-all campaignbay-scale-100 ${
           classNames.content || ""
         }`}
       >
         <h3
-          className={`campaignbay-text-lg campaignbay-font-bold campaignbay-text-gray-900 campaignbay-mb-2 ${
+          className={`campaignbay-text-lg campaignbay-font-bold campaignbay-text-gray-900 campaignbay-mb-2 campaignbay-text-nowrap ${
             classNames.title || ""
           }`}
         >
@@ -67,10 +67,20 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             classNames.footer || ""
           }`}
         >
-          <Button className={classNames.button?.cancelClassName || ""} variant={classNames.button?.cancelVariant || "ghost"} color={classNames.button?.cancelColor || "secondary"} onClick={onCancel}>
+          <Button
+            className={classNames.button?.cancelClassName || ""}
+            variant={classNames.button?.cancelVariant || "ghost"}
+            color={classNames.button?.cancelColor || "secondary"}
+            onClick={onCancel}
+          >
             {cancelLabel}
           </Button>
-          <Button className={classNames.button?.confirmClassName || ""} variant={classNames.button?.confirmVariant || "solid"} color={classNames.button?.confirmColor || "primary"} onClick={onConfirm}>
+          <Button
+            className={classNames.button?.confirmClassName || ""}
+            variant={classNames.button?.confirmVariant || "solid"}
+            color={classNames.button?.confirmColor || "primary"}
+            onClick={onConfirm}
+          >
             {confirmLabel}
           </Button>
         </div>

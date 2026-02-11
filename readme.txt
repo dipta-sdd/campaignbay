@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo, flash
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -170,6 +170,9 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 
 == Changelog ==
 
+= 1.1.1 =
+*   Added close button to the campaign onboarding modal with a confirmation prompt.
+
 = 1.1.0 =
 *   Major Update: Complete UI Redesign! The entire admin interface has been rebuilt for a cleaner, faster, and more intuitive experience.
 *   New Feature: Multi-select campaign filters—now filter by multiple types and statuses simultaneously.
@@ -216,6 +219,9 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Minor UI refinements. Seamless upgrade.
 
 = 1.1.0 =
 Major UI Redesign! The entire admin interface has been rebuilt for a cleaner, faster experience. Highly recommended update.

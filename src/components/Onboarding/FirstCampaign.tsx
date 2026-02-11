@@ -41,7 +41,7 @@ import { ConditionsInterface } from "../conditions/type";
 import { getSettings } from "../../utils/settings";
 import { ConfirmationModal } from "../common/ConfirmationModal";
 import ReactConfetti from "react-confetti";
-import { check, Icon } from "@wordpress/icons";
+import { check, close, Icon } from "@wordpress/icons";
 import { Tooltip } from "../common/ToolTip";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
@@ -55,6 +55,7 @@ interface FirstCampaignProps {
 const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [ConfirmationModalText , setConfirmationModalText] = useState("Are you sure you want to go back ?");
   const [showCongrets, setShowCongrets] = useState(false);
   const [campaignId, setCampaignId] = useState(0);
 
@@ -86,7 +87,6 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
   const { addToast } = useToast();
 
   const [errors, setErrors] = useState<CampaignErrorsType>({});
-  const currentDate = currentDateTime();
   const [currentStep, setCurrentStep] = useState(1);
   const [enableUsageLimit, setEnableUsageLimit] = useState(false);
   const [settings, setSettings] = useState<CampaignSettingsType>({});
@@ -309,12 +309,22 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
   };
   const handleBack = () => {
     if (currentStep === 1) {
-      setShowConfirmation(true);
+      handleClose();
     } else {
       setCurrentStep(currentStep - 1);
     }
   };
-
+  const handleCloseBtn = () => {
+    handleClose(false);
+  };
+  const handleClose = ( isBackBtn = true) => {
+    setShowConfirmation(true);
+    if(isBackBtn){
+      setConfirmationModalText("Are you sure you want to go back ?");
+    }else{
+      setConfirmationModalText("Are you sure you want to close ?");
+    }
+  };
   const updateOnboardingStatus = async () => {
     try {
       const response = await apiFetch({
@@ -351,7 +361,7 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
           ) : null}
           {/* upper controll buttons */}
           <div className="campaignbay-absolute campaignbay-top-4 campaignbay-right-4 campaignbay-flex campaignbay-items-center campaignbay-gap-2">
-            <Tooltip
+            {/* <Tooltip
               disabled={isSaving}
               position="top"
               content="Back"
@@ -409,7 +419,17 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
                   </svg>
                 )}
               </Button>
-            </Tooltip>
+            </Tooltip> */}
+            <Button
+              size="small"
+              onClick={handleCloseBtn}
+              color="secondary"
+              variant="ghost"
+              disabled={isSaving}
+              className="!campaignbay-rounded-full !campaignbay-p-0 !campaignbay-w-[28px] !campaignbay-h-[28px] "
+            >
+              <Icon icon={close} fill="currentColor" />
+            </Button>
           </div>
           <Header className="campaignbay-text-center">
             Create Your First Campaign
@@ -567,7 +587,7 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
                           label={
                             <>
                               {__("Exclude Items", "campaignbay")}
-                              <Helper content="Exclude selected items from the discount"  />
+                              <Helper content="Exclude selected items from the discount" />
                             </>
                           }
                           checked={!!campaign.is_exclude}
@@ -695,10 +715,15 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
             navigate("/campaigns");
           }}
           onCancel={() => setShowConfirmation(false)}
-          title="Are you sure you want to go back ?"
+          title={ConfirmationModalText}
           message="You will lose all the data you have entered."
           cancelLabel="No"
           confirmLabel="Yes"
+          classNames={{
+            button: {
+              confirmColor: "danger",
+            }
+          }}
         />
       </CustomModal>
     </>
