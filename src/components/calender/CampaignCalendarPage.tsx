@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { CampaignType } from "../../utils/types";
 import { areDatesSameDay, useCalendar } from "./useCalender";
 import { CalendarHeader } from "./Calender";
+import apiFetch from "@wordpress/api-fetch";
+import "../../utils/apiFetch";
 import Page from "../common/Page";
 import HeaderContainer from "../common/HeaderContainer";
 import Header from "../common/Header";
 import { Toggler } from "../common/Toggler";
-import apiFetch from "@wordpress/api-fetch";
 
 export interface CalendarDay {
   date: Date;
@@ -32,6 +33,14 @@ interface Campaign {
   startDate: Date;
   endDate?: Date | null; // Optional end date for ongoing campaigns
   type: CampaignType;
+}
+
+interface ApiCampaign {
+  id: string; // The sample shows string "1", "2"
+  name: string;
+  type: string; // API might return string that matches CampaignType
+  startDate: number | string; // timestamp in seconds (or string)
+  endDate: number | string | null; // or null
 }
 
 const getCampaignColor = (type: CampaignType): string => {
@@ -91,55 +100,23 @@ const getCampaignLabel = (type: CampaignType): string => {
   }
 };
 
-// Generate dummy campaigns based on the current date to ensure they are visible
-const generateCampaigns = (baseDate: Date): Campaign[] => {
-  const y = baseDate.getFullYear();
-  const m = baseDate.getMonth();
+const fetchCampaignsFromApi = async (): Promise<Campaign[]> => {
+  try {
+    const response: ApiCampaign[] = await apiFetch({
+      path: "/campaignbay/v1/calender/campaigns",
+    });
 
-  return [
-    {
-      id: 101,
-      name: "Q3 Brand Awareness",
-      startDate: new Date(y, m - 1, 15), // Starts previous month
-      endDate: new Date(y, m + 1, 15), // Ends next month
-      type: "bogo",
-    },
-    {
-      id: 102,
-      name: "Always On Search",
-      startDate: new Date(y, m, 1),
-      endDate: null, // No end date
-      type: "scheduled",
-    },
-    {
-      id: 1,
-      name: "Summer Sale",
-      startDate: new Date(y, m, 2),
-      endDate: new Date(y, m, 5),
-      type: "quantity",
-    },
-    {
-      id: 2,
-      name: "Product Launch",
-      startDate: new Date(y, m, 4),
-      endDate: new Date(y, m, 12),
-      type: "earlybird",
-    },
-    {
-      id: 3,
-      name: "Team Retreat",
-      startDate: new Date(y, m, 12),
-      endDate: new Date(y, m, 14),
-      type: "bogo_pro",
-    },
-    {
-      id: 6,
-      name: "Black Friday Prep",
-      startDate: new Date(y, m, 22),
-      endDate: new Date(y, m, 28),
-      type: "product_in_cart",
-    },
-  ];
+    return response.map((item) => ({
+      id: typeof item.id === "string" ? parseInt(item.id, 10) : item.id,
+      name: item.name,
+      type: item.type as CampaignType, // Ensure API returns valid CampaignType string
+      startDate: new Date(Number(item.startDate) * 1000), // Convert seconds to ms
+      endDate: item.endDate ? new Date(Number(item.endDate) * 1000) : null,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch campaigns:", error);
+    return [];
+  }
 };
 
 const CampaignCalendarPage: React.FC = () => {
@@ -147,6 +124,18 @@ const CampaignCalendarPage: React.FC = () => {
   const [layout, setLayout] = useState<"month" | "week" | "year">("month");
   const [visibleTypes, setVisibleTypes] =
     useState<CampaignType[]>(CAMPAIGN_TYPES);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      const data = await fetchCampaignsFromApi();
+      setCampaigns(data);
+      setLoading(false);
+    };
+    load();
+  }, []);
 
   // Use the existing hook for campaignbay-grid logic
   const {
@@ -164,22 +153,6 @@ const CampaignCalendarPage: React.FC = () => {
     goToToday,
   } = useCalendar({ selectedDate, onSelectDate: setSelectedDate });
 
-  // Regenerate campaigns when the year changes to ensure data exists near the view
-  const campaigns = useMemo(
-    () => generateCampaigns(new Date(currentYear, selectedDate.getMonth(), 1)),
-    [currentYear, selectedDate],
-  );
-  useEffect(() => {
-    const func = async () => {
-      try {
-        const res = await apiFetch({ path: "/campaignbay/v1/calender/campaigns" });
-        console.log(res);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    func();
-  }, []);
   const filteredCampaigns = useMemo(() => {
     return campaigns.filter((c) => visibleTypes.includes(c.type));
   }, [campaigns, visibleTypes]);
