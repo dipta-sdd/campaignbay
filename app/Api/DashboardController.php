@@ -16,6 +16,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use WpabCampaignBay\Core\Campaign;
+use WpabCampaignBay\Engine\CalenderManager;
 
 /**
  * The REST API Controller for the Dashboard.
@@ -110,9 +111,22 @@ class DashboardController extends ApiController
 			'charts' => $this->get_chart_data($current_start, $current_end),
 			'recent_activity' => $this->get_recent_activity(),
 			'live_and_upcoming' => $this->get_live_and_upcoming_campaigns(),
+			'campaigns_calendar' => $this->get_campaigns_calendar(),
 		);
 
 		return new WP_REST_Response($response, 200);
+	}
+
+	/**
+	 * Get campaigns calendar data.
+	 *
+	 * @since 1.1.1
+	 * @access private
+	 * @return array
+	 */
+	private function get_campaigns_calendar()
+	{
+		return CalenderManager::get_instance()->get_campaigns();
 	}
 
 	/**

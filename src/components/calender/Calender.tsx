@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { CalendarDay } from "./CampaignCalendarPage";
 import { areDatesSameDay, useCalendar } from "./useCalender";
+import { useCbStoreActions } from "../../store/cbStore";
 
 // --- Helper Icon Components ---
 export const ChevronLeftIcon: React.FC<{ className?: string }> = ({
@@ -589,6 +590,7 @@ const Calendar: React.FC<{
   variant = "rounded",
   className,
 }) => {
+  const {serverDate} = useCbStoreActions();
   const {
     view,
     setView,
@@ -612,7 +614,7 @@ const Calendar: React.FC<{
     selectYear,
     handleKeyDown,
     areDatesSameDay,
-  } = useCalendar({ hasEvent, selectedDate, onSelectDate });
+  } = useCalendar({ hasEvent, selectedDate, onSelectDate , today: serverDate });
 
   const cellRefs = React.useRef(new Map<string, HTMLButtonElement>());
   const headerId = React.useId();

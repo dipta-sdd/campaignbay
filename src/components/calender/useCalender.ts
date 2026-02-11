@@ -21,16 +21,16 @@ export const useCalendar = ({
     hasEvent = () => false,
     selectedDate,
     onSelectDate,
+    today
 }: {
     hasEvent?: (date: Date) => boolean;
     selectedDate: Date;
     onSelectDate: (date: Date) => void;
+    today: Date;
 }) => {
     const [currentDate, setCurrentDate] = useState(selectedDate);
     const [view, setView] = useState<'date' | 'month' | 'year'>('date');
     const [focusedDate, setFocusedDate] = useState(selectedDate);
-
-    const today = useMemo(() => new Date(), []);
 
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
@@ -90,7 +90,7 @@ export const useCalendar = ({
     }
 
     const goToToday = () => {
-        const today = new Date();
+        
         setFocusedDate(today);
         setCurrentDate(today);
         setView('date');
@@ -176,6 +176,7 @@ export const useCalendar = ({
         }
     }, [view, focusedDate, yearGrid]);
 
+  
     const calendarGrid: CalendarDay[] = useMemo(() => {
         const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
         const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);

@@ -31,9 +31,11 @@ import Page from "../components/common/Page";
 import Select from "../components/common/Select";
 import { Toggler } from "../components/common/Toggler";
 import ActivityLogModal from "../components/dashboard/ActivityLogModal";
-import { useCbStore } from "../store/cbStore";
+import { useCbStore, useCbStoreActions } from "../store/cbStore";
 import { CampaignType } from "../utils/types";
 import Button from "../components/common/Button";
+import { Campaign } from "../components/calender/CampaignCalendarPage";
+import Calendar from "../components/calender/Calender";
 
 interface KpiValue {
   value: number;
@@ -87,6 +89,7 @@ interface DashboardData {
     scheduled: LiveCampaign[];
   };
   recent_activity: RecentActivity[];
+  campaignsCalendar: Campaign[];
 }
 
 type ChartPeriod = "7days" | "30days" | "1year";
@@ -116,6 +119,12 @@ const Dashboard: FC = () => {
   const navigate = useNavigate();
   const { setIsModalOpen } = useGuide();
   const { woocommerce_currency_symbol } = useCbStore();
+
+
+  // states for calendar
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { serverDate, serverDateLoaded } = useCbStoreActions();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -832,6 +841,16 @@ const Dashboard: FC = () => {
             </div>
             {/* right content */}
             <div className="campaignbay-w-full xl:campaignbay-w-[500px] campaignbay-h-max campaignbay-grid campaignbay-grid-cols-1 campaignbay-gap-default">
+              <Card header={<CardHeader>Calendar</CardHeader>}>
+                  <Calendar 
+                  hasEvent={(b : Date)=> {
+                    return true
+                  }}
+                    selectedDate={selectedDate || serverDate}
+                    onSelectDate={(date) => setSelectedDate(date)}
+                    variant="gridFill"
+                  />
+              </Card>
               <Card header={<CardHeader>Recent Activity</CardHeader>}>
                 {dashboardData?.recent_activity?.length &&
                 dashboardData?.recent_activity?.length > 0 ? (

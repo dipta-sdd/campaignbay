@@ -4,7 +4,7 @@ import { areDatesSameDay, useCalendar } from "./useCalender";
 import { CalendarHeader } from "./Calender";
 import apiFetch from "@wordpress/api-fetch";
 import "../../utils/apiFetch";
-import { useCbStore } from "../../store/cbStore";
+import { useCbStore, useCbStoreActions } from "../../store/cbStore";
 import {
   date as wpDate,
   getSettings as getDateSettings,
@@ -14,8 +14,9 @@ import Page from "../common/Page";
 import HeaderContainer from "../common/HeaderContainer";
 import Header from "../common/Header";
 import { Toggler } from "../common/Toggler";
-import formatDateTime, { formatDate } from "../../utils/Dates";
+import { formatDate } from "../../utils/Dates";
 import { getCampaignTypeText } from "../../pages/Dashboard";
+import { useNavigate } from "react-router-dom";
 
 export interface CalendarDay {
   date: Date;
@@ -35,7 +36,7 @@ const CAMPAIGN_TYPES: CampaignType[] = [
   "product_in_cart",
 ];
 
-interface Campaign {
+export interface Campaign {
   id: number;
   name: string;
   startDate: Date;
@@ -111,36 +112,15 @@ const getCampaignLabel = (type: CampaignType): string => {
 };
 
 const CampaignCalendarPage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [layout, setLayout] = useState<"month" | "week" | "year">("month");
   const [visibleTypes, setVisibleTypes] =
     useState<CampaignType[]>(CAMPAIGN_TYPES);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
-  const { wpSettings } = useCbStore();
-  const { timezone } = getDateSettings();
   // Initialize with local time, will update to server time
-  const [serverDate, setServerDate] = useState(new Date());
-  const [serverDateLoaded, setServerDateLoaded] = useState<boolean>(false);
-  useEffect(() => {
-    const updateServerTime = () => {
-      const format = `${wpSettings?.dateFormat} ${wpSettings?.timeFormat}`;
-      const localNow = new Date();
-      const dateString = wpDate(format, localNow, timezone?.offset);
-      const d = new Date(dateString);
-
-      if (!isNaN(d.getTime())) {
-        setServerDate(d);
-        if (!serverDateLoaded) {
-          setServerDateLoaded(true);
-        }
-      }
-    };
-
-    updateServerTime();
-    const timer = setInterval(updateServerTime, 60000); // Update every minute
-    return () => clearInterval(timer);
-  }, [wpSettings, timezone]);
+  const { serverDate, serverDateLoaded } = useCbStoreActions();
   useEffect(() => {
     if (!serverDateLoaded) {
       return;
@@ -195,7 +175,7 @@ const CampaignCalendarPage: React.FC = () => {
     goToPrevMonth,
     goToNextYear,
     goToPrevYear,
-  } = useCalendar({ selectedDate, onSelectDate: setSelectedDate });
+  } = useCalendar({ selectedDate, onSelectDate: setSelectedDate, today: serverDate });
 
   const filteredCampaigns = useMemo(() => {
     return campaigns.filter((c) => visibleTypes.includes(c.type));
@@ -261,6 +241,11 @@ const CampaignCalendarPage: React.FC = () => {
   };
 
   // --- RENDERERS ---
+
+  const handleCampaignClick = (campaign: Campaign) => {
+    // console.log("Campaign clicked:", campaign);
+    navigate(`/campaigns/${campaign.id}`);
+  };
 
   const renderWeekRow = (
     week: CalendarDay[],
@@ -384,6 +369,7 @@ const CampaignCalendarPage: React.FC = () => {
 
             return (
               <div
+              onClick={() => handleCampaignClick(pos.campaign)}
                 key={`${pos.campaign.id}-${weekIndex}`}
                 className={`campaignbay-absolute campaignbay-h-6 campaignbay-px-2 campaignbay-flex campaignbay-items-center campaignbay-shadow-sm campaignbay-text-xs campaignbay-font-bold campaignbay-text-white campaignbay-whitespace-nowrap campaignbay-overflow-hidden campaignbay-transition-all hover:campaignbay-brightness-110 hover:campaignbay-scale-[1.01] hover:campaignbay-z-10 campaignbay-cursor-pointer ${colorClass} ${roundedLeft} ${roundedRight} ${infiniteIndicator}`}
                 style={{

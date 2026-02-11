@@ -7,7 +7,9 @@ import React, {
   useRef,
 } from "react";
 import apiFetch from "@wordpress/api-fetch";
-import { CbStore, CampaignBaySettingsType } from "../utils/types";
+import { CampaignBaySettingsType } from "../components/settings/types";
+import { CbStore } from "../utils/types";
+import { date, getSettings as getDateSettings } from "@wordpress/date";
 
 interface CbStoreContextType {
   store: CbStore;
@@ -16,6 +18,8 @@ interface CbStoreContextType {
     key: K,
     value: CampaignBaySettingsType[K],
   ) => void;
+  serverDate: Date;
+  serverDateLoaded: boolean;
 }
 
 const CbStoreContext = createContext<CbStoreContextType | null>(null);
@@ -31,6 +35,31 @@ export const CbStoreProvider: React.FC<CbStoreProviderProps> = ({
 }) => {
   const [store, setStore] = useState<CbStore>(initialValue);
   const isInitialized = useRef(false);
+
+  // Initialize with local time, will update to server time
+  const [serverDate, setServerDate] = useState(new Date());
+  const [serverDateLoaded, setServerDateLoaded] = useState<boolean>(false);
+
+  const { timezone } = getDateSettings();
+  useEffect(() => {
+    const updateServerTime = () => {
+      const format = `${store.wpSettings?.dateFormat} ${store.wpSettings?.timeFormat}`;
+      const localNow = new Date();
+      const dateString = date(format, localNow, timezone?.offset);
+      const d = new Date(dateString);
+
+      if (!isNaN(d.getTime())) {
+        setServerDate(d);
+        if (!serverDateLoaded) {
+          setServerDateLoaded(true);
+        }
+      }
+    };
+
+    updateServerTime();
+    const timer = setInterval(updateServerTime, 60000); // Update every minute
+    return () => clearInterval(timer);
+  }, [store.wpSettings, timezone]);
 
   // Setup API fetch middleware only once
   useEffect(() => {
@@ -67,6 +96,8 @@ export const CbStoreProvider: React.FC<CbStoreProviderProps> = ({
     store,
     updateStore,
     updateSettings,
+    serverDate,
+    serverDateLoaded,
   };
 
   return (
@@ -98,6 +129,8 @@ export const useCbStoreActions = () => {
     store: context.store,
     updateStore: context.updateStore,
     updateSettings: context.updateSettings,
+    serverDate: context.serverDate,
+    serverDateLoaded: context.serverDateLoaded,
   };
 };
 
