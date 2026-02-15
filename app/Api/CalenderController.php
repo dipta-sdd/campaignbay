@@ -62,7 +62,7 @@ class CalenderController extends ApiController
 	public function run()
 	{
 		$this->type = 'campaignbay_api_calender';
-		$this->rest_base = 'calender';
+		$this->rest_base = 'calendar';
 
 		/*Custom Rest Routes*/
 		add_action('rest_api_init', array($this, 'register_routes'));

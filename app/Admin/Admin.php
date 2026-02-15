@@ -110,6 +110,10 @@ class Admin
 			'menu_slug' => '#/campaigns/add',
 		);
 		$submenu_pages[] = array(
+			'menu_title' => 'Calendar',
+			'menu_slug' => '#/calendar',
+		);
+		$submenu_pages[] = array(
 			'menu_title' => 'Settings',
 			'menu_slug' => '#/settings',
 		);
@@ -181,7 +185,14 @@ class Admin
 			'href'   => admin_url('admin.php?page=campaignbay#/campaigns'),	
 		));
 
-		// 3. Add Submenu: Settings (Example)
+		// 3. Add Submenu: Calendar 
+		$admin_bar->add_node(array(
+			'id'     => 'campaignbay-calendar',
+			'parent' => 'campaignbay-admin-bar',
+			'title'  => __('Calendar', 'campaignbay'),
+			'href'   => admin_url('admin.php?page=campaignbay#/calendar'),
+		));
+		// 3. Add Submenu: Settings 
 		$admin_bar->add_node(array(
 			'id'     => 'campaignbay-settings',
 			'parent' => 'campaignbay-admin-bar',

@@ -9,8 +9,8 @@ import CampaignsAdd from "./pages/CampaignsAdd";
 import CampaignsEdit from "./pages/CampaignsEdit";
 import Settings from "./pages/Settings";
 import { useMenuSync } from "./utils/useMenuSync";
-import CampaignCalendarPage from "./components/calender/CampaignCalendarPage";
 import { CbStore } from "./utils/types";
+import CampaignCalendarPage from "./components/calender/CampaignCalendarPage";
 
 const App = () => {
   return (
@@ -23,7 +23,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<AppLayout />}>
                 <Route index element={<Dashboard />} />
-                <Route path="Calender" element={<CampaignCalendarPage />} />
+                <Route path="Calendar" element={<CampaignCalendarPage />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="campaigns" element={<Campaigns />} />
                 <Route path="campaigns/add" element={<CampaignsAdd />} />

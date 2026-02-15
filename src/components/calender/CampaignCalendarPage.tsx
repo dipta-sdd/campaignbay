@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { CampaignType } from "../../utils/types";
 import { areDatesSameDay, useCalendar } from "./useCalender";
-import { CalendarHeader } from "./Calender";
 import apiFetch from "@wordpress/api-fetch";
 import "../../utils/apiFetch";
 import { useCbStore, useCbStoreActions } from "../../store/cbStore";
@@ -16,7 +15,8 @@ import Header from "../common/Header";
 import { Toggler } from "../common/Toggler";
 import { formatDate } from "../../utils/Dates";
 import { getCampaignTypeText } from "../../pages/Dashboard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { CalendarHeader } from "./Calendar";
 
 export interface CalendarDay {
   date: Date;
@@ -112,6 +112,8 @@ const getCampaignLabel = (type: CampaignType): string => {
 };
 
 const CampaignCalendarPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [layout, setLayout] = useState<"month" | "week" | "year">("month");
@@ -121,6 +123,7 @@ const CampaignCalendarPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   // Initialize with local time, will update to server time
   const { serverDate, serverDateLoaded } = useCbStoreActions();
+
   useEffect(() => {
     if (!serverDateLoaded) {
       return;
@@ -128,7 +131,7 @@ const CampaignCalendarPage: React.FC = () => {
     fetchCampaignsFromApi();
   }, [serverDateLoaded]);
 
-  const fetchCampaignsFromApi = async ()=> {
+  const fetchCampaignsFromApi = async () => {
     try {
       // const currentDate = new Date();
       const dif = 0;
@@ -138,19 +141,19 @@ const CampaignCalendarPage: React.FC = () => {
       // console.log(dif);
       setLoading(true);
       const response: ApiCampaign[] = await apiFetch({
-        path: "/campaignbay/v1/calender/campaigns",
+        path: "/campaignbay/v1/calendar/campaigns",
       });
       const data: Campaign[] = response.map((item) => ({
         id: typeof item.id === "string" ? parseInt(item.id, 10) : item.id,
         name: item.name,
         type: item.type as CampaignType, // Ensure API returns valid CampaignType string
         // @ts-ignore
-        startDate: getDate((item.startDate * 1000) - dif), // Convert seconds to ms
-        startDateUnix: item.startDate as number,  
+        startDate: getDate(item.startDate * 1000 - dif), // Convert seconds to ms
+        startDateUnix: item.startDate as number,
         // @ts-ignore
         endDate: item.endDate
-        // @ts-ignore
-          ? getDate((item.endDate * 1000) - dif)
+          ? // @ts-ignore
+            getDate(item.endDate * 1000 - dif)
           : null,
         endDateUnix: item.endDate as number,
       }));
@@ -175,7 +178,21 @@ const CampaignCalendarPage: React.FC = () => {
     goToPrevMonth,
     goToNextYear,
     goToPrevYear,
-  } = useCalendar({ selectedDate, onSelectDate: setSelectedDate, today: serverDate });
+    selectMonthAndYear,
+  } = useCalendar({
+    selectedDate,
+    onSelectDate: setSelectedDate,
+    today: serverDate,
+  });
+
+  useEffect(() => {
+    const month = searchParams.get("month");
+    const year = searchParams.get("year");
+    console.log(month, year);
+    if (month && year) {
+      selectMonthAndYear(parseInt(month), parseInt(year));
+    }
+  }, [searchParams]);
 
   const filteredCampaigns = useMemo(() => {
     return campaigns.filter((c) => visibleTypes.includes(c.type));
@@ -314,7 +331,7 @@ const CampaignCalendarPage: React.FC = () => {
     });
 
     const maxSlots = Math.max(0, ...slots.map((_, i) => i + 1));
-    const rowHeightPx =50+ maxSlots * 28;
+    const rowHeightPx = 50 + maxSlots * 28;
     // In Week view, we want a minimum height that feels substantial
     const minHeight = isWeekView ? 300 : 100;
 
@@ -369,7 +386,7 @@ const CampaignCalendarPage: React.FC = () => {
 
             return (
               <div
-              onClick={() => handleCampaignClick(pos.campaign)}
+                onClick={() => handleCampaignClick(pos.campaign)}
                 key={`${pos.campaign.id}-${weekIndex}`}
                 className={`campaignbay-absolute campaignbay-h-6 campaignbay-px-2 campaignbay-flex campaignbay-items-center campaignbay-shadow-sm campaignbay-text-xs campaignbay-font-bold campaignbay-text-white campaignbay-whitespace-nowrap campaignbay-overflow-hidden campaignbay-transition-all hover:campaignbay-brightness-110 hover:campaignbay-scale-[1.01] hover:campaignbay-z-10 campaignbay-cursor-pointer ${colorClass} ${roundedLeft} ${roundedRight} ${infiniteIndicator}`}
                 style={{
@@ -378,9 +395,9 @@ const CampaignCalendarPage: React.FC = () => {
                   top: `${40 + pos.slotIndex * 28}px`,
                   marginLeft: "2px",
                 }}
-                title={`${
-                  pos.campaign.name
-                } (${formatDate(pos.campaign.startDateUnix)} - ${
+                title={`${pos.campaign.name} (${formatDate(
+                  pos.campaign.startDateUnix,
+                )} - ${
                   pos.campaign.endDateUnix
                     ? formatDate(pos.campaign.endDateUnix)
                     : ""
@@ -548,7 +565,7 @@ const CampaignCalendarPage: React.FC = () => {
   return (
     <Page>
       <HeaderContainer className="campaignbay-py-[12px]">
-        <Header> Campaigns Calender </Header>
+        <Header> Campaigns Calendar </Header>
         <div className="campaignbay-flex campaignbay-gap-2 campaignbay-justify-end campaignbay-items-center">
           <Toggler
             size="small"

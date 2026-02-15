@@ -35,7 +35,7 @@ import { useCbStore, useCbStoreActions } from "../store/cbStore";
 import { CampaignType } from "../utils/types";
 import Button from "../components/common/Button";
 import { Campaign } from "../components/calender/CampaignCalendarPage";
-import Calendar from "../components/calender/Calender";
+import Calendar from "../components/calender/Calendar";
 
 interface KpiValue {
   value: number;
@@ -436,6 +436,14 @@ const Dashboard: FC = () => {
     },
   };
 
+  const handleSelectDate = (date: Date) => {
+    // setSelectedDate(date);
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    // console.log(month, year);
+    navigate(`/calendar?month=${month}&year=${year}`);
+  };
+
   return (
     <>
       {loading ? (
@@ -641,7 +649,7 @@ const Dashboard: FC = () => {
                     {dashboardData?.kpis?.active_campaigns?.value}
                   </Header>
                   {/* title */}
-                  <span className="campaignbay-text-default">
+                  <span className="campaignbay-text-default campaignbay-text-center">
                     Active Campaigns
                   </span>
                 </div>
@@ -666,16 +674,17 @@ const Dashboard: FC = () => {
                   </div>
                   {/* value */}
                   <Header className="campaignbay-pt-1">
+                    {woocommerce_currency_symbol}
                     {dashboardData?.kpis?.total_discount_value?.value}
                   </Header>
                   {/* title */}
-                  <span className="campaignbay-text-default">
+                  <span className="campaignbay-text-default campaignbay-text-center">
                     Total Discounts
                   </span>
                 </div>
 
                 {/* kpi */}
-                <div className="campaignbay-bg-white campaignbay-p-[24px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
+                <div className="campaignbay-bg-white campaignbay-py-[24px] campaignbay-px-[12px] campaignbay-rounded-[8px] campaignbay-flex campaignbay-flex-col campaignbay-gap-[0px] campaignbay-justify-center campaignbay-items-center">
                   {/* icon */}
                   <div className="campaignbay-flex campaignbay-justify-center campaignbay-items-center campaignbay-w-[34px] campaignbay-h-[34px] campaignbay-rounded-[8px] campaignbay-bg-[#C6F7FF]">
                     <svg
@@ -699,7 +708,7 @@ const Dashboard: FC = () => {
                     {dashboardData?.kpis?.discounted_orders?.value}
                   </Header>
                   {/* title */}
-                  <span className="campaignbay-text-default">
+                  <span className="campaignbay-text-default campaignbay-text-center">
                     Discounted Orders
                   </span>
                 </div>
@@ -728,7 +737,7 @@ const Dashboard: FC = () => {
                     {dashboardData?.kpis?.sales_from_campaigns?.value}
                   </Header>
                   {/* title */}
-                  <span className="campaignbay-text-default">
+                  <span className="campaignbay-text-default campaignbay-text-center">
                     Total Campaign Sales
                   </span>
                 </div>
@@ -839,37 +848,49 @@ const Dashboard: FC = () => {
             </div>
             {/* right content */}
             <div className="campaignbay-w-full xl:campaignbay-w-[500px] campaignbay-h-max campaignbay-grid campaignbay-grid-cols-1 campaignbay-gap-default">
-              <Card header={<div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-w-full"><CardHeader>Calendar</CardHeader>
-              <a className="campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858ff] campaignbay-underline campaignbay-underline-offset-4 campaignbay-text-default campaignbay-py-[8px] campaignbay-cursor-pointer" href="#/calenders"> View Full Calendar</a>
-              </div>}>
+              <Card
+                header={
+                  <div className="campaignbay-flex campaignbay-items-center campaignbay-justify-between campaignbay-w-full">
+                    <CardHeader>Calendar</CardHeader>
+                    <a
+                      className="campaignbay-text-[#3858e9] hover:!campaignbay-text-[#3858ff] campaignbay-underline campaignbay-underline-offset-4 campaignbay-text-default campaignbay-py-[8px] campaignbay-cursor-pointer"
+                      href="#/calendar"
+                    >
+                      {" "}
+                      View Full Calendar
+                    </a>
+                  </div>
+                }
+              >
                 <Calendar
-                className="campaignbay-w-full campaignbay-max-campaignbay-w-2xl campaignbay-mx-auto campaignbay-bg-white campaignbay-rounded-2xl campaignbay-p-0 campaignbay-transition-colors"
+                  className="campaignbay-w-full campaignbay-max-campaignbay-w-2xl campaignbay-mx-auto campaignbay-bg-white campaignbay-rounded-2xl campaignbay-p-0 campaignbay-transition-colors"
                   hasEvent={(date: Date) => {
                     if (!dashboardData?.campaignsCalendar) return false;
 
                     const d = new Date(date);
                     d.setHours(0, 0, 0, 0);
                     const dayTime = d.getTime();
-                    console.log(dashboardData?.campaignsCalendar);
-                    return dashboardData?.campaignsCalendar?.some((campaign) => {
-                      // API returns seconds, convert to ms
-                      const startDate = new Date(
-                        Number(campaign.startDate) * 1000,
-                      );
-                      const endDate = campaign.endDate
-                        ? new Date(Number(campaign.endDate) * 1000)
-                        : new Date(9999, 11, 31);
+                    return dashboardData?.campaignsCalendar?.some(
+                      (campaign) => {
+                        // API returns seconds, convert to ms
+                        const startDate = new Date(
+                          Number(campaign.startDate) * 1000,
+                        );
+                        const endDate = campaign.endDate
+                          ? new Date(Number(campaign.endDate) * 1000)
+                          : new Date(9999, 11, 31);
 
-                      const s = new Date(startDate);
-                      s.setHours(0, 0, 0, 0);
-                      const e = new Date(endDate);
-                      e.setHours(0, 0, 0, 0);
+                        const s = new Date(startDate);
+                        s.setHours(0, 0, 0, 0);
+                        const e = new Date(endDate);
+                        e.setHours(0, 0, 0, 0);
 
-                      return dayTime >= s.getTime() && dayTime <= e.getTime();
-                    });
+                        return dayTime >= s.getTime() && dayTime <= e.getTime();
+                      },
+                    );
                   }}
                   selectedDate={selectedDate || serverDate}
-                  onSelectDate={(date) => setSelectedDate(date)}
+                  onSelectDate={handleSelectDate}
                   variant="bordered"
                   // "circle" | "rounded" | "bordered" | "campaignbay-grid" | "gridFill"
                 />

@@ -96,7 +96,7 @@ class CalenderManager extends Base
 		);
 
 		if (is_wp_error($results)) {
-			wpab_campaignbay_log('Error in fetching campaigns in calender manager', 'error');
+			wpab_campaignbay_log('Error in fetching campaigns in calendar manager', 'error');
 			return array();
 		}
 
@@ -139,7 +139,7 @@ class CalenderManager extends Base
 	 */
 	public function clear_cache($source = 'unknown')
 	{
-		wpab_campaignbay_log('clearing calender cache', 'DEBUG');
+		wpab_campaignbay_log('clearing calendar cache', 'DEBUG');
 		delete_transient('campaignbay_calender_campaigns');
 		$this->campaigns = null;
 	}

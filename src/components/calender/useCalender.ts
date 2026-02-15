@@ -111,6 +111,13 @@ export const useCalendar = ({
         setView('month');
     };
 
+    const selectMonthAndYear = (monthIndex: number, year: number) => {
+        const newDate = new Date(year, monthIndex, 1);
+        setCurrentDate(newDate);
+        setFocusedDate(newDate);
+        setView('date');
+    };
+
     const yearGrid = useMemo(() => {
         const years = [];
         for (let i = 0; i < 20; i++) {
@@ -251,6 +258,7 @@ export const useCalendar = ({
         goToToday,
         selectMonth,
         selectYear,
+        selectMonthAndYear,
         handleKeyDown,
         areDatesSameDay,
     };

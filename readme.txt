@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -169,8 +169,16 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 11. Frontend: Cart Page – Strikethrough pricing and savings display.
 
 == Changelog ==
+= 1.1.2 =
+*   New Feature: Campaign Calendar Page — a dedicated calendar view to easily manage and visualize all your campaigns.
+*   Enhancement: Month, Week, and Year layout options for flexible campaign planning.
+*   Enhancement: Color-coded campaign bars — each campaign type (BOGO, Scheduled, Quantity, Early Bird, etc.) has its own distinct color for quick identification.
+*   Enhancement: Easily spot upcoming and currently active campaigns at a glance.
+*   Enhancement: Campaign type filter toggles to show or hide specific campaign types on the calendar.
+*   New Feature: Dashboard Calendar Widget — a compact calendar on the Dashboard with dot indicators on dates that have active campaigns.
 
 = 1.1.1 =
+*   Added close button to the campaign onboarding modal with a confirmation prompt.
 
 = 1.1.0 =
 *   Major Update: Complete UI Redesign! The entire admin interface has been rebuilt for a cleaner, faster, and more intuitive experience.
@@ -218,6 +226,9 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+New Campaign Calendar page and Dashboard Calendar widget. Recommended update.
 
 = 1.1.1 =
 Minor UI refinements. Seamless upgrade.

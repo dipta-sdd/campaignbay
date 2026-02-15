@@ -27,8 +27,8 @@ const Navbar: FC = () => {
       path: "/",
     },
     {
-      label: __("Calender", "campaignbay"),
-      path: "/calender",
+      label: __("Calendar", "campaignbay"),
+      path: "/calendar",
     },
     {
       label: __("Campaigns", "campaignbay"),
