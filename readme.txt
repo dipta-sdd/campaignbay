@@ -1,6 +1,6 @@
 === CampaignBay - Automated Discount Campaigns & Flash Sales for WooCommerce ===
 Contributors: wpanchorbay, sankarsan
-Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo, flash sale, quantity discount
+Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
@@ -218,6 +218,9 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Minor UI refinements. Seamless upgrade.
 
 = 1.1.0 =
 Major UI Redesign! The entire admin interface has been rebuilt for a cleaner, faster experience. Highly recommended update.
