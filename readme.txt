@@ -21,14 +21,19 @@ CampaignBay is a powerful, user-friendly marketing tool that empowers you to cre
 
 With its intuitive dashboard, flexible campaign types, and high-performance discount engine, you get unparalleled control over your marketing strategy without sacrificing site speed.
 
-**New:** Take control to the next level with our robust **Conditional Logic**. Now you can restrict campaigns to specific User Roles, perfect for wholesale programs or VIP exclusives.
 
 **Why Store Owners Love CampaignBay:**
 
 *   Set It & Forget It – Campaigns auto-start and auto-stop on your schedule.
 *   Beautiful Dashboard – Real-time analytics show you exactly how your promotions are performing.
 *   Lightning Fast – Multi-level caching keeps your store blazingly fast.
+*   Campaign Calendar - Workable and effective calendar to enable users to have more control over campaigns.
 *   100% Free Core Features – No artificial limits. Create unlimited campaigns.
+
+
+**New:** Campaign Calendar: An informative and interactive calendar with neat visuals that enables users to edit, manage, monitor and evaluate campaigns in a more sophisticated way.
+    [youtube https://www.youtube.com/watch?v=Is2-aguE9o8]
+
 
 **Key Features:**
 
@@ -36,6 +41,8 @@ With its intuitive dashboard, flexible campaign types, and high-performance disc
 *   Quantity Based Discounts – Tiered pricing like "Buy 3+, get 10% off."
 *   Early Bird Discounts – Reward the first X customers with special pricing.
 *   BOGO (Buy One Get One) – Classic "Buy 2, Get 1 Free" deals.
+*   Analytics Dashboard – Track KPIs, charts, and top campaigns.
+*   Campaign Calendar: A manageable, campaign initiator tool that doubles as an informative guide.
 *   Flexible Targeting – Target entire store, specific products, or categories.
 *   Product & Category Exclusions – Fine-tune which items are excluded from discounts.
 *   User Role Conditions – Restrict campaigns to Wholesalers, VIPs, or any role.
@@ -45,7 +52,6 @@ With its intuitive dashboard, flexible campaign types, and high-performance disc
 *   Product Page Display – Discount tables and banners on product pages.
 *   Cart Integration – Automatic discounts with strikethrough pricing.
 *   Campaign Templates – Pre-built templates for quick setup.
-*   Analytics Dashboard – Track KPIs, charts, and top campaigns.
 *   Full Scheduling & Automation – Reliable WP-Cron based activation/deactivation.
 *   Performance Optimized – Multi-level caching for fast storefronts.
 
@@ -70,6 +76,8 @@ With its intuitive dashboard, flexible campaign types, and high-performance disc
 *   Recent Activity Log – Track campaign creation and updates.
 *   Live & Upcoming Campaigns – Quick view of active and scheduled promotions.
 
+
+
 **Documentation & Support:**
 
 *   [CampaignBay Pro](https://wpanchorbay.com/campaignbay) – Get more advanced features.
@@ -87,10 +95,10 @@ Experience the power of CampaignBay firsthand on our interactive demo site. See 
 
 Need more advanced features? [Get CampaignBayPro](https://wpanchorbay.com/campaignbay) and unlock:
 
-*   BOGO Advanced – Buy from Category A, get discount on Category B.
-*   Product In Cart Discounts – Trigger discounts when specific products are in cart.
-*   Advanced Conditions – Target by cart total, order history, specific products in cart, and more.
-*   Priority Email Support – Direct access to our development team.
+*   **BOGO Advanced** – Buy from Category A, get a discount on Category B.
+*   **Product In Cart Discounts** – Trigger discounts when specific products are in cart.
+*   **Advanced Conditions** – Target by cart total, order history, specific products in cart, and more.
+*   **Priority Email Support** – Direct access to our development team.
 
 [Buy CampaignBayPro Now](https://wpanchorbay.com/campaignbay)
 
@@ -101,8 +109,8 @@ Need more advanced features? [Get CampaignBayPro](https://wpanchorbay.com/campai
 *   **Black Friday Automation** – Schedule sales to start and end automatically.
 *   **Product Launch Buzz** – 30% off to the first 100 buyers.
 *   **Clear Old Inventory** – "Buy 2, Get 1 Free" on last season's items.
-*   **Wholesale Pricing** – Exclusive bulk discounts for Wholesaler role.
-*   **Category Promotions** – 20% off specific categories for limited time.
+*   **Wholesale Pricing** – Exclusive bulk discounts for Wholesaler roles.
+*   **Category Promotions** – 20% off specific categories for a limited time.
 
 == Installation ==
 
@@ -158,15 +166,16 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 
 1.  Dashboard Overview – Real-time KPIs and performance charts.
 2.  Campaign Editor – Intuitive interface for creating campaigns.
-3.  All Campaigns (Table View) – Filtering, sorting, and bulk actions.
-4.  All Campaigns (Grid View) – Card-based visual overview.
-5.  Global Settings – Tabbed interface for plugin configuration.
-6.  Product Settings – Customize discount message formats.
-7.  Quantity Table Customizer – Style the product page pricing table.
-8.  Cart Settings – Configure stacking rules.
-9.  Advanced Settings – Plugin data management.
-10. Frontend: Product Page – Discount table and messages in action.
-11. Frontend: Cart Page – Strikethrough pricing and savings display.
+3.  Campaign Calendar – Visualize and manage campaigns with color-coded bars across Month, Week, and Year views.
+4.  All Campaigns (Table View) – Filtering, sorting, and bulk actions.
+5.  All Campaigns (Grid View) – Card-based visual overview.
+6.  Global Settings – Tabbed interface for plugin configuration.
+7.  Product Settings – Customize discount message formats.
+8.  Quantity Table Customizer – Style the product page pricing table.
+9.  Cart Settings – Configure stacking rules.
+10. Advanced Settings – Plugin data management.
+11. Frontend: Product Page – Discount table and messages in action.
+12. Frontend: Cart Page – Strikethrough pricing and savings display.
 
 == Changelog ==
 = 1.1.2 =
