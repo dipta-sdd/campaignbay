@@ -29,7 +29,7 @@ const EBTiers: FC<EBTiersProps> = ({ tiers, onUpdateTiers, errors }) => {
       return;
     }
     const newTier: EBTier = {
-      id: tiers.length,
+      id: tiers.length + 1,
       quantity: "",
       value: "",
       type: lastTier.type,
