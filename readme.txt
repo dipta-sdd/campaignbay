@@ -4,7 +4,7 @@ Tags: discount manager, bulk discount, dynamic pricing, woocommerce, bogo
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -178,6 +178,10 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 12. Frontend: Cart Page – Strikethrough pricing and savings display.
 
 == Changelog ==
+
+= 1.1.4 =
+*   Enhancement: UI Optimization.
+
 = 1.1.3 =
 *   Fix: Small UI Improvements.
 
@@ -238,6 +242,9 @@ Visit our [Support Forum](https://wpanchorbay.com/support/).
 *   Initial release of CampaignBay.
 
 == Upgrade Notice ==
+
+= 1.1.4 =
+UI Optimization. Seamless upgrade.
 
 = 1.1.3 =
 Small UI Improvements. Seamless upgrade.

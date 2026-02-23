@@ -42,7 +42,7 @@ import { getSettings } from "../../utils/settings";
 import { ConfirmationModal } from "../common/ConfirmationModal";
 import ReactConfetti from "react-confetti";
 import { check, close, Icon } from "@wordpress/icons";
-import { Tooltip } from "../common/ToolTip";
+import { useCbStore } from "../../store/cbStore";
 // @ts-ignore
 interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
@@ -55,12 +55,11 @@ interface FirstCampaignProps {
 const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [ConfirmationModalText , setConfirmationModalText] = useState("Are you sure you want to go back ?");
+  const [ConfirmationModalText, setConfirmationModalText] = useState(
+    "Are you sure you want to go back ?",
+  );
   const [showCongrets, setShowCongrets] = useState(false);
   const [campaignId, setCampaignId] = useState(0);
-
-  const [categories, setCategories] = useState<SelectOption[]>([]);
-  const [products, setProducts] = useState<SelectOption[]>([]);
   const [campaign, setCampaign] = useState<CampaignInterface>({
     id: 0,
     title: "",
@@ -90,9 +89,9 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [enableUsageLimit, setEnableUsageLimit] = useState(false);
   const [settings, setSettings] = useState<CampaignSettingsType>({});
+  const { onboarding } = useCbStore();
 
   useEffect(() => {
-    fetchDependency();
     updateOnboardingStatus();
   }, []);
   useEffect(() => {
@@ -101,32 +100,6 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
       settings: { ...getSettings(campaign?.type || "scheduled", settings) },
     }));
   }, [campaign.type, settings]);
-
-  const fetchDependency = async () => {
-    try {
-      const response: DependentResponseType = await apiFetch({
-        path: "/campaignbay/v1/campaigns/dependents?_timestamp=" + Date.now(),
-        method: "GET",
-      });
-      setProducts(
-        response.products.map((item: DependentType) => ({
-          label: item.name,
-          value: item.id,
-        })) || [],
-      );
-      setCategories(
-        response?.categories?.map((item: DependentType) => ({
-          label: item.name,
-          value: item.id,
-        })),
-      );
-    } catch (error: any) {
-      addToast(
-        __("Something went wrong, Please reload the page.", "campaignbay"),
-        "error",
-      );
-    }
-  };
 
   const handleSaveCampaign = async () => {
     setIsSaving(true);
@@ -317,15 +290,18 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
   const handleCloseBtn = () => {
     handleClose(false);
   };
-  const handleClose = ( isBackBtn = true) => {
+  const handleClose = (isBackBtn = true) => {
     setShowConfirmation(true);
-    if(isBackBtn){
+    if (isBackBtn) {
       setConfirmationModalText("Are you sure you want to go back ?");
-    }else{
+    } else {
       setConfirmationModalText("Are you sure you want to close ?");
     }
   };
   const updateOnboardingStatus = async () => {
+    if (onboarding?.first_campaign) {
+      return;
+    }
     try {
       const response = await apiFetch({
         path: "/campaignbay/v1/settings/onboarding",
@@ -566,12 +542,10 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
                                 ""
                               )
                             }
-                            options={
+                            endpoint={
                               campaign.target_type === "product"
-                                ? products
-                                : campaign.target_type === "category"
-                                ? categories
-                                : []
+                                ? "/campaignbay/v1/resources/products"
+                                : "/campaignbay/v1/resources/categories"
                             }
                             value={campaign.target_ids}
                             onChange={(value: (string | number)[]) =>
@@ -611,7 +585,6 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
                       // @ts-ignore
                       setCampaign={setCampaign}
                       errors={errors}
-                      products={products}
                     />
                   ) : null}
                   <Section header="Conditions">
@@ -722,7 +695,7 @@ const FirstCampaign: FC<FirstCampaignProps> = ({ isOpen, setIsOpen }) => {
           classNames={{
             button: {
               confirmColor: "danger",
-            }
+            },
           }}
         />
       </CustomModal>

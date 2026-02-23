@@ -104,7 +104,7 @@ class ResourceController extends ApiController
 		);
 
 		register_rest_route(
-			
+
 			$namespace,
 			'/' . $this->rest_base . '/categories',
 			array(
@@ -149,7 +149,6 @@ class ResourceController extends ApiController
 		$args = array(
 			'post_type' => array('product', 'product_variation', 'variable_product'),
 			'post_status' => 'publish',
-			'numberposts' => -1,          // Get all products
 			'orderby' => 'title',
 			'order' => 'ASC',
 		);
