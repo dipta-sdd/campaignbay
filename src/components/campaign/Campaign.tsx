@@ -116,8 +116,6 @@ const Campaign: FC<CampaignProps> = ({
   onDelete,
 }) => {
   const [enableUsageLimit, setEnableUsageLimit] = useState(false);
-  const [categories, setCategories] = useState<SelectOption[]>([]);
-  const [products, setProducts] = useState<SelectOption[]>([]);
   const [settings, setSettings] = useState<CampaignSettingsType>({});
   const { addToast } = useToast();
 
@@ -172,7 +170,6 @@ const Campaign: FC<CampaignProps> = ({
   //=================================================================================
 
   useEffect(() => {
-    fetchDependency();
     setSettings(campaign.settings);
     if (campaign.usage_limit) setEnableUsageLimit(true);
   }, []);
@@ -184,31 +181,6 @@ const Campaign: FC<CampaignProps> = ({
     }));
   }, [campaign.type, settings]);
 
-  const fetchDependency = async () => {
-    try {
-      const response: DependentResponseType = await apiFetch({
-        path: "/campaignbay/v1/campaigns/dependents?_timestamp=" + Date.now(),
-        method: "GET",
-      });
-      setProducts(
-        response.products.map((item: DependentType) => ({
-          label: item.name,
-          value: item.id,
-        })) || [],
-      );
-      setCategories(
-        response?.categories?.map((item: DependentType) => ({
-          label: item.name,
-          value: item.id,
-        })),
-      );
-    } catch (error: any) {
-      addToast(
-        __("Something went wrong, Please reload the page.", "campaignbay"),
-        "error",
-      );
-    }
-  };
 
   const handleStatusChange = (checked: boolean) => {
     if (checked && campaign.schedule_enabled && campaign.status === "expired") {
@@ -362,13 +334,14 @@ const Campaign: FC<CampaignProps> = ({
                               ""
                             )
                           }
-                          options={
-                            campaign.target_type === "product"
-                              ? products
-                              : campaign.target_type === "category"
-                              ? categories
-                              : []
-                          }
+                          // options={
+                          //   campaign.target_type === "product"
+                          //     ? products
+                          //     : campaign.target_type === "category"
+                          //     ? categories
+                          //     : []
+                          // }
+                          endpoint={campaign.target_type === "product" ? "/campaignbay/v1/resources/products" : "/campaignbay/v1/resources/categories"}
                           value={campaign.target_ids}
                           onChange={(value: (string | number)[]) =>
                             setCampaign((prev) => ({
@@ -403,7 +376,6 @@ const Campaign: FC<CampaignProps> = ({
                     setCampaign as Dispatch<SetStateAction<CampaignInterface>>
                   }
                   errors={errors}
-                  products={products}
                 />
                 <Section header="Conditions">
                   <Conditions

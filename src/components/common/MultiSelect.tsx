@@ -5,6 +5,7 @@ import React, {
   KeyboardEvent,
   useMemo,
 } from "react";
+import apiFetch from "@wordpress/api-fetch";
 import { borderClasses, hoverBorderClasses } from "./classes";
 
 // Inline Icons to replace lucide-react
@@ -52,7 +53,8 @@ export interface MultiSelectProps {
   ref?: React.Ref<HTMLDivElement>;
   value: (string | number)[];
   onChange: (value: (string | number)[]) => void;
-  options: MultiSelectOption[];
+  options?: MultiSelectOption[];
+  endpoint?: string;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -78,7 +80,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   ref,
   value = [],
   onChange,
-  options,
+  options = [],
+  endpoint,
   placeholder = "Select options...",
   disabled = false,
   className = "",
@@ -98,6 +101,72 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   const listRef = useRef<HTMLUListElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const interactionType = useRef<"mouse" | "keyboard">("keyboard");
+
+  // Endpoint fetching state
+  const [fetchedOptions, setFetchedOptions] = useState<MultiSelectOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [allSeenOptions, setAllSeenOptions] = useState<MultiSelectOption[]>(
+    options || [],
+  );
+
+  useEffect(() => {
+    if (options && options.length > 0) {
+      setAllSeenOptions((prev) => {
+        const unique = new Map(prev.map((o) => [o.value, o]));
+        options.forEach((o) => unique.set(o.value, o));
+        return Array.from(unique.values());
+      });
+    }
+  }, [options]);
+
+  useEffect(() => {
+    if (fetchedOptions.length > 0) {
+      setAllSeenOptions((prev) => {
+        const unique = new Map(prev.map((o) => [o.value, o]));
+        fetchedOptions.forEach((o) => unique.set(o.value, o));
+        return Array.from(unique.values());
+      });
+    }
+  }, [fetchedOptions]);
+
+  // Fetch from endpoint with debounce
+  useEffect(() => {
+    if (!endpoint) return;
+
+    let isMounted = true;
+    const delayDebounceFn = setTimeout(async () => {
+      try {
+        setIsLoading(true);
+        const separator = endpoint.includes("?") ? "&" : "?";
+        const path = `${endpoint}${separator}search=${encodeURIComponent(
+          searchQuery,
+        )}`;
+
+        const response: any = await apiFetch({
+          path,
+          method: "GET",
+        });
+
+        if (isMounted && Array.isArray(response)) {
+          const newOptions = response.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+          setFetchedOptions(newOptions);
+        }
+      } catch (error) {
+        console.error("MultiSelect fetch error:", error);
+        if (isMounted) setFetchedOptions([]);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    }, 300);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(delayDebounceFn);
+    };
+  }, [searchQuery, endpoint]);
 
   // Handle outside click logic including Portal
   useEffect(() => {
@@ -126,19 +195,26 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
   // Get selected options objects
   const selectedOptions = useMemo(() => {
-    return options.filter((opt) => value.includes(opt.value));
-  }, [options, value]);
+    const combinedOptions = endpoint ? allSeenOptions : options || [];
+    return value.map((val) => {
+      const found = combinedOptions.find((opt) => opt.value === val);
+      return found ? found : { value: val, label: `${val}` };
+    });
+  }, [options, value, endpoint, allSeenOptions]);
 
   // Filter options based on search query (exclude already selected)
   const filteredOptions = useMemo(() => {
-    let filtered = options.filter((opt) => !value.includes(opt.value));
-    if (enableSearch && searchQuery) {
+    const baseOptions = endpoint ? fetchedOptions : options || [];
+    let filtered = baseOptions.filter((opt) => !value.includes(opt.value));
+
+    // Process local search only if no endpoint is specified
+    if (!endpoint && enableSearch && searchQuery) {
       filtered = filtered.filter((option) =>
         option.label.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
     return filtered;
-  }, [options, value, searchQuery, enableSearch]);
+  }, [options, value, searchQuery, enableSearch, endpoint, fetchedOptions]);
 
   // Reset search and highlighted index when opening/closing
   useEffect(() => {
@@ -353,7 +429,11 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             className="campaignbay-max-h-[204px] campaignbay-overflow-auto focus:campaignbay-outline-none"
             style={{ scrollbarWidth: "none" }}
           >
-            {filteredOptions.length === 0 ? (
+            {isLoading ? (
+              <li className="campaignbay-px-3 campaignbay-py-2 campaignbay-text-gray-500 campaignbay-text-sm campaignbay-text-center campaignbay-italic !campaignbay-mb-0 campaignbay-rounded-[8px]">
+                Loading...
+              </li>
+            ) : filteredOptions.length === 0 ? (
               <li className="campaignbay-px-3 campaignbay-py-2 campaignbay-text-gray-500 campaignbay-text-sm campaignbay-text-center campaignbay-italic !campaignbay-mb-0 campaignbay-rounded-[8px]">
                 {searchQuery ? "No results found" : "No more options"}
               </li>

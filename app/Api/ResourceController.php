@@ -84,8 +84,33 @@ class ResourceController extends ApiController
 			'/' . $this->rest_base . '/users',
 			array(
 				array(
-					'methods'             => WP_REST_Server::READABLE, // POST
-					'callback'            => array($this, 'get_user'),
+					'methods' => WP_REST_Server::READABLE, // POST
+					'callback' => array($this, 'get_user'),
+					'permission_callback' => array($this, 'get_item_permissions_check'),
+				),
+			)
+		);
+
+		register_rest_route(
+			$namespace,
+			'/' . $this->rest_base . '/products',
+			array(
+				array(
+					'methods' => WP_REST_Server::READABLE,
+					'callback' => array($this, 'get_products'),
+					'permission_callback' => array($this, 'get_item_permissions_check'),
+				),
+			)
+		);
+
+		register_rest_route(
+			
+			$namespace,
+			'/' . $this->rest_base . '/categories',
+			array(
+				array(
+					'methods' => WP_REST_Server::READABLE,
+					'callback' => array($this, 'get_categories'),
 					'permission_callback' => array($this, 'get_item_permissions_check'),
 				),
 			)
@@ -96,7 +121,7 @@ class ResourceController extends ApiController
 	{
 		$args = array(
 			'orderby' => 'display_name',
-			'order'   => 'ASC',
+			'order' => 'ASC',
 		);
 
 		$search = $request->get_param('search');
@@ -117,6 +142,74 @@ class ResourceController extends ApiController
 
 
 		return rest_ensure_response($response);
+	}
+
+	public function get_products($request)
+	{
+		$args = array(
+			'post_type' => array('product', 'product_variation', 'variable_product'),
+			'post_status' => 'publish',
+			'numberposts' => -1,          // Get all products
+			'orderby' => 'title',
+			'order' => 'ASC',
+		);
+
+		$search = $request->get_param('search');
+		if (!empty($search)) {
+			$args['s'] = sanitize_text_field($search);
+		}
+
+		$product_posts = get_posts($args);
+
+		$products = array();
+		foreach ($product_posts as $post) {
+			// We only need the ID and title for the selector component.
+			if ($post->post_parent > 0) {
+				if (!isset($products[$post->post_parent]))
+					$products[$post->post_parent]['variants'] = array();
+				$products[$post->post_parent]['variants'][] = array(
+					'id' => $post->ID,
+					'name' => $post->post_title,
+				);
+			} else
+				$products[$post->ID] = array(
+					'id' => $post->ID,
+					'name' => $post->post_title,
+				);
+		}
+
+		$products = array_values($products);
+		return rest_ensure_response($products);
+	}
+
+	public function get_categories($request)
+	{
+		$args = array(
+			'taxonomy' => 'product_cat',
+			'hide_empty' => false, // Include categories that don't have products yet
+			'orderby' => 'name',
+			'order' => 'ASC',
+		);
+
+		$search = $request->get_param('search');
+		if (!empty($search)) {
+			$args['search'] = sanitize_text_field($search);
+		}
+
+		$category_terms = get_terms($args);
+
+		$categories = array();
+		// get_terms can return a WP_Error, so we must check for it.
+		if (!is_wp_error($category_terms)) {
+			foreach ($category_terms as $term) {
+				$categories[] = array(
+					'id' => $term->term_id,
+					'name' => $term->name,
+				);
+			}
+		}
+
+		return rest_ensure_response($categories);
 	}
 
 	/**

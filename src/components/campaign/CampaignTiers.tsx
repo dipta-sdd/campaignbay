@@ -12,14 +12,9 @@ import {
   QuantityTierError,
   CampaignType,
 } from "../../utils/types";
-import { useGuideStep } from "../../store/GuideContext";
-import { TOUR_STEPS } from "../../utils/tourSteps";
-import { SelectOption } from "../common/Select";
 import { useCbStore } from "../../store/cbStore";
 import { renderError, Section } from "./Campaign";
 import { Toggler } from "../common/Toggler";
-import Required from "./Required";
-import { Input } from "../common/Input";
 import { NumberInput } from "../common/NumberInput";
 import QuantityTiers from "./QuantityTiers";
 import EBTiers from "./EBTiers";
@@ -31,14 +26,12 @@ interface CampaignTiersProps {
   campaign: CampaignInterface;
   setCampaign: React.Dispatch<React.SetStateAction<CampaignInterface>>;
   errors: CampaignErrorsType;
-  products: SelectOption[];
 }
 
 const CampaignTiers: FC<CampaignTiersProps> = ({
   campaign,
   setCampaign,
   errors,
-  products,
 }) => {
   const { woocommerce_currency_symbol } = useCbStore();
   // Ensure tiers structure is correct when type changes
