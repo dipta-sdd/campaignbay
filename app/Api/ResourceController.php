@@ -2,14 +2,11 @@
 
 namespace WpabCampaignBay\Api;
 
-use WpabCampaignBay\Core\Common;
-
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 // Import WordPress REST API classes
-
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -19,27 +16,9 @@ use WpabCampaignBay\Admin\Admin;
 /**
  * Class used to manage a plugin's resources via the REST API.
  *
- * @since      1.0.0
- *
+ * @since      1.1.5
  * @package    WPAB_CampaignBay
  * @subpackage WPAB_CampaignBay_Api_Settings
- */
-
-/**
- * Get Plugin's resources via the REST API.
- *
- * @package    WPAB_CampaignBay
- * @subpackage WPAB_CampaignBay_Api_Settings
- * @author     dipta-sdd <sankarsandipta@gmail.com>
- *
- * @see ApiController
- */
-/**
- * ResourceController
- *
- * @see WP_REST_Settings_Controller
- * @package    WPAB_CampaignBay
- * @since 1.0.0
  */
 class ResourceController extends ApiController
 {
@@ -47,15 +26,16 @@ class ResourceController extends ApiController
 	/**
 	 * The single instance of the class.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.5
 	 * @var   ResourceController
 	 * @access private
 	 */
 	private static $instance = null;
+
 	/**
 	 * Initialize the class and set up actions.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.5
 	 * @access public
 	 * @return void
 	 */
@@ -71,7 +51,7 @@ class ResourceController extends ApiController
 	/**
 	 * Register REST API route.
 	 *
-	 * @since    1.0.0
+	 * @since    1.1.5
 	 * @access public
 	 * @return void
 	 */
@@ -84,7 +64,7 @@ class ResourceController extends ApiController
 			'/' . $this->rest_base . '/users',
 			array(
 				array(
-					'methods' => WP_REST_Server::READABLE, // POST
+					'methods' => WP_REST_Server::READABLE,
 					'callback' => array($this, 'get_user'),
 					'permission_callback' => array($this, 'get_item_permissions_check'),
 				),
@@ -104,7 +84,18 @@ class ResourceController extends ApiController
 		);
 
 		register_rest_route(
+			$namespace,
+			'/' . $this->rest_base . '/buyable-products',
+			array(
+				array(
+					'methods' => WP_REST_Server::READABLE,
+					'callback' => array($this, 'get_buyable_products'),
+					'permission_callback' => array($this, 'get_item_permissions_check'),
+				),
+			)
+		);
 
+		register_rest_route(
 			$namespace,
 			'/' . $this->rest_base . '/categories',
 			array(
@@ -117,10 +108,19 @@ class ResourceController extends ApiController
 		);
 	}
 
+	/**
+	 * Get list of users.
+	 *
+	 * @since    1.1.5
+	 * @access public
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
 	public function get_user($request)
 	{
 		$args = array(
 			'orderby' => 'display_name',
+			'number' => 50,
 			'order' => 'ASC',
 		);
 
@@ -140,15 +140,23 @@ class ResourceController extends ApiController
 			);
 		}
 
-
 		return rest_ensure_response($response);
 	}
 
+	/**
+	 * Get all products including variable parents and variations, structured hierarchically.
+	 *
+	 * @since    1.1.5
+	 * @access public
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
 	public function get_products($request)
 	{
 		$args = array(
-			'post_type' => array('product', 'product_variation', 'variable_product'),
+			'post_type' => array('product', 'product_variation'),
 			'post_status' => 'publish',
+			'numberposts' => 50,
 			'orderby' => 'title',
 			'order' => 'ASC',
 		);
@@ -162,25 +170,112 @@ class ResourceController extends ApiController
 
 		$products = array();
 		foreach ($product_posts as $post) {
-			// We only need the ID and title for the selector component.
+			// If it's a variation (has a parent)
 			if ($post->post_parent > 0) {
-				if (!isset($products[$post->post_parent]))
-					$products[$post->post_parent]['variants'] = array();
+				// Ensure the parent structure exists in our array first
+				if (!isset($products[$post->post_parent])) {
+					// Fetch parent title if missing (useful if parent wasn't in the initial query results)
+					$parent_title = get_the_title($post->post_parent);
+					$products[$post->post_parent] = array(
+						'id' => $post->post_parent,
+						'name' => $parent_title,
+						'variants' => array()
+					);
+				}
+
+				// Add variation to parent's 'variants' array
 				$products[$post->post_parent]['variants'][] = array(
 					'id' => $post->ID,
-					'name' => $post->post_title,
+					'name' => $post->post_title, // Often includes attributes like "Hoodie - Blue"
 				);
-			} else
-				$products[$post->ID] = array(
-					'id' => $post->ID,
-					'name' => $post->post_title,
-				);
+			} else {
+				// It's a parent/simple product
+				if (!isset($products[$post->ID])) {
+					$products[$post->ID] = array(
+						'id' => $post->ID,
+						'name' => $post->post_title,
+						'variants' => array() // Initialize empty array for potential variants
+					);
+				} else {
+					// If it was created as a placeholder by a child loop above, just update the name
+					$products[$post->ID]['name'] = $post->post_title;
+				}
+			}
 		}
 
+		// Re-index array keys to 0,1,2... for JSON response
 		$products = array_values($products);
 		return rest_ensure_response($products);
 	}
 
+	/**
+	 * Get only "buyable" items (Simple products and individual Variations).
+	 * Excludes Variable parent containers which cannot be added to cart directly.
+	 *
+	 * @since    1.1.5
+	 
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public function get_buyable_products($request)
+	{
+		$search_term = $request->get_param('search');
+
+		// 1. Get Simple Products
+		$simple_args = array(
+			'status' => 'publish',
+			'limit' => 25,
+			'type' => 'simple',
+		);
+		if (!empty($search_term)) {
+			$simple_args['s'] = sanitize_text_field($search_term);
+		}
+		$simple_products = wc_get_products($simple_args);
+
+		// 2. Get Product Variations
+		$variation_args = array(
+			'status' => 'publish',
+			'limit' => 25,
+			'type' => 'variation',
+		);
+		// Note: Searching variations directly with 's' can be unreliable in standard WC queries.
+		// For a simple implementation, we proceed. For complex search, a custom query might be needed.
+		if (!empty($search_term)) {
+			$variation_args['s'] = sanitize_text_field($search_term);
+		}
+		$variations = wc_get_products($variation_args);
+
+		$products = array();
+
+		// Process Simple Products
+		foreach ($simple_products as $product) {
+			$products[] = array(
+				'id' => $product->get_id(),
+				'name' => $product->get_name(),
+				'type' => 'simple',
+			);
+		}
+
+		// Process Variations
+		foreach ($variations as $product) {
+			$products[] = array(
+				'id' => $product->get_id(),
+				'name' => $product->get_name(), // WC formats this as "Parent - Attribute"
+				'type' => 'variation',
+			);
+		}
+
+		return rest_ensure_response($products);
+	}
+
+	/**
+	 * Get product categories.
+	 *
+	 * @since    1.1.5
+	 
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
 	public function get_categories($request)
 	{
 		$args = array(
@@ -214,7 +309,7 @@ class ResourceController extends ApiController
 	/**
 	 * Prepares a value for output based off a schema array.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.5
 	 * @access public
 	 * @param mixed $value  Value to prepare.
 	 * @param array $schema Schema to match.
@@ -222,9 +317,7 @@ class ResourceController extends ApiController
 	 */
 	protected function prepare_value($value, $schema)
 	{
-
 		$sanitized_value = rest_sanitize_value_from_schema($value, $schema);
-
 		return $sanitized_value;
 	}
 
@@ -232,7 +325,7 @@ class ResourceController extends ApiController
 	 * Gets an instance of this class.
 	 * Prevents duplicate instances which avoid artefacts and improves performance.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.5
 	 * @access public
 	 * @return ResourceController
 	 */

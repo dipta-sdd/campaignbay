@@ -1,4 +1,3 @@
-import { useState } from "@wordpress/element";
 import { __, _n } from "@wordpress/i18n";
 import { FC, useEffect } from "react";
 import {

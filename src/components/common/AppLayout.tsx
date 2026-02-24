@@ -58,7 +58,7 @@ const Notifications = () => {
           >
             <p className="campaignbay-text-[#07090C] campaignbay-font-semibold campaignbay-text-[15px]">
               {__(
-                "⚡ Limited Time Offer: Get 70% off CampaignBayPro!",
+                "⚡ Limited Time Offer: Get 60% off CampaignBayPro!",
                 "campaignbay",
               )}
             </p>

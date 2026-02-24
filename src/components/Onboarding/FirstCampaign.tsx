@@ -14,11 +14,8 @@ import {
   QuantityTier,
   TargetType,
 } from "../../utils/types";
-import { currentDateTime } from "../../utils/Dates";
 import {
   Card,
-  DependentResponseType,
-  DependentType,
   DISCOUNT_TYPES,
   handleTypeChange,
   Helper,
@@ -47,7 +44,6 @@ import { useCbStore } from "../../store/cbStore";
 interface CampaignInterface extends CampaignInterfaceBase {
   type: CampaignType | null;
 }
-
 interface FirstCampaignProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
