@@ -58,12 +58,12 @@ const Notifications = () => {
           >
             <p className="campaignbay-text-[#07090C] campaignbay-font-semibold campaignbay-text-[15px]">
               {__(
-                "⚡ Limited Time Offer: Get 60% off CampaignBayPro!",
+                "⚡ Limited Time Offer: Get Flat 80% off on CampaignBayPro!",
                 "campaignbay",
               )}
             </p>
             <a
-              href="https://wpanchorbay.com/campaignbay"
+              href="https://wpanchorbay.com/campaignbay/#pricing"
               target="_blank"
               rel="noopener noreferrer"
               className="campaignbay-bg-gray-900 campaignbay-text-white campaignbay-px-[16px] campaignbay-py-[6px] campaignbay-rounded-[6px] campaignbay-text-[13px] campaignbay-font-medium campaignbay-transition-all campaignbay-duration-200 hover:campaignbay-bg-gray-800 hover:campaignbay-shadow-lg campaignbay-no-underline"
