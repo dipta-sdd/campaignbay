@@ -1,9 +1,10 @@
 /* This file contains ONLY the styles needed for the admin menu icon. */
 
 #adminmenu #toplevel_page_campaignbay .wp-menu-image img {
-    width: 20px;
-    height: 20px;
-    padding: 7px 0 0;
+    width: 20px !important;
+    height: 20px !important;
+    padding: 7px 0px 0px 7px;
+    box-sizing: content-box;
 }
 
 #adminmenu #toplevel_page_campaignbay .wp-menu-open .wp-menu-image {
